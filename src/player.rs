@@ -17,8 +17,8 @@ pub struct PlayerStats {
 }
 
 impl Default for PlayerStats {
-    fn default() -> PlayerStats {
-        PlayerStats {
+    fn default() -> Self {
+        Self {
             hitpoints: 10,
             attack: 1,
             strength: 1,
@@ -32,7 +32,7 @@ impl Default for PlayerStats {
 
 impl PlayerStats {
     pub fn new() -> Self {
-        PlayerStats::default()
+        Self::default()
     }
 }
 
@@ -49,8 +49,8 @@ pub struct PlayerLiveStats {
 }
 
 impl Default for PlayerLiveStats {
-    fn default() -> PlayerLiveStats {
-        PlayerLiveStats {
+    fn default() -> Self {
+        Self {
             hitpoints: 10,
             attack: 1,
             strength: 1,
@@ -65,7 +65,7 @@ impl Default for PlayerLiveStats {
 
 impl PlayerLiveStats {
     pub fn new() -> Self {
-        PlayerLiveStats::default()
+        Self::default()
     }
 }
 
@@ -88,11 +88,65 @@ pub struct PotionBoosts {
 
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoosts {
-    pub attack: PrayerBoost,
-    pub strength: PrayerBoost,
-    pub defence: PrayerBoost,
-    pub ranged: PrayerBoost,
-    pub magic: PrayerBoost,
+    pub active_prayers: Vec<PrayerBoost>,
+    pub attack: u8,
+    pub strength: u8,
+    pub defence: u8,
+    pub ranged_att: u8,
+    pub ranged_str: u8,
+    pub magic: u8,
+}
+
+impl PrayerBoosts {
+    pub fn add(&mut self, prayer: PrayerBoost) {
+        self.active_prayers.retain(|p| {
+            !(p.attack > 0 && prayer.attack > 0
+                || (p.strength > 0 && prayer.strength > 0)
+                || (p.defence > 0 && prayer.defence > 0)
+                || (p.ranged_att > 0 && prayer.ranged_att > 0)
+                || (p.ranged_str > 0 && prayer.ranged_str > 0)
+                || (p.magic > 0 && prayer.magic > 0))
+        });
+
+        self.active_prayers.push(prayer);
+
+        self.attack = self
+            .active_prayers
+            .iter()
+            .map(|p| p.attack)
+            .max()
+            .unwrap_or(0);
+        self.strength = self
+            .active_prayers
+            .iter()
+            .map(|p| p.strength)
+            .max()
+            .unwrap_or(0);
+        self.defence = self
+            .active_prayers
+            .iter()
+            .map(|p| p.defence)
+            .max()
+            .unwrap_or(0);
+        self.ranged_att = self
+            .active_prayers
+            .iter()
+            .map(|p| p.ranged_att)
+            .max()
+            .unwrap_or(0);
+        self.ranged_str = self
+            .active_prayers
+            .iter()
+            .map(|p| p.ranged_str)
+            .max()
+            .unwrap_or(0);
+        self.magic = self
+            .active_prayers
+            .iter()
+            .map(|p| p.magic)
+            .max()
+            .unwrap_or(0);
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -108,8 +162,8 @@ pub struct StatusBoosts {
 }
 
 impl Default for StatusBoosts {
-    fn default() -> StatusBoosts {
-        StatusBoosts {
+    fn default() -> Self {
+        Self {
             on_task: true,
             in_wilderness: false,
             in_multi: false,
@@ -172,8 +226,8 @@ pub struct PlayerAttrs {
 }
 
 impl Default for PlayerAttrs {
-    fn default() -> PlayerAttrs {
-        PlayerAttrs {
+    fn default() -> Self {
+        Self {
             name: String::new(),
             active_style: CombatStyle::default(),
             spell: Box::<StandardSpell>::default(),
@@ -194,10 +248,11 @@ pub struct Player {
     pub attrs: PlayerAttrs,
     pub att_rolls: HashMap<CombatType, u32>,
     pub max_hits: HashMap<CombatType, u8>,
+    pub def_rolls: HashMap<CombatType, i32>,
 }
 
 impl Default for Player {
-    fn default() -> Player {
+    fn default() -> Self {
         let mut att_rolls = HashMap::new();
         att_rolls.insert(CombatType::Stab, 0);
         att_rolls.insert(CombatType::Slash, 0);
@@ -212,7 +267,14 @@ impl Default for Player {
         max_hits.insert(CombatType::Ranged, 0);
         max_hits.insert(CombatType::Magic, 0);
 
-        Player {
+        let mut def_rolls = HashMap::new();
+        def_rolls.insert(CombatType::Stab, 0);
+        def_rolls.insert(CombatType::Slash, 0);
+        def_rolls.insert(CombatType::Crush, 0);
+        def_rolls.insert(CombatType::Ranged, 0);
+        def_rolls.insert(CombatType::Magic, 0);
+
+        Self {
             stats: PlayerStats::default(),
             live_stats: PlayerLiveStats::default(),
             gear: Gear::default(),
@@ -225,31 +287,19 @@ impl Default for Player {
             attrs: PlayerAttrs::default(),
             att_rolls,
             max_hits,
+            def_rolls,
         }
     }
 }
 
 impl Player {
     pub fn new() -> Self {
-        Player::default()
+        Self::default()
     }
 
     pub fn lookup_stats(&mut self, rsn: &str) {
         let stats = fetch_player_data(rsn).unwrap();
         self.stats = parse_player_data(stats);
-    }
-
-    pub fn reset_live_stats(&mut self) {
-        self.live_stats = PlayerLiveStats {
-            hitpoints: self.stats.hitpoints,
-            attack: self.stats.attack,
-            strength: self.stats.strength,
-            defence: self.stats.defence,
-            ranged: self.stats.ranged,
-            magic: self.stats.magic,
-            prayer: self.stats.prayer,
-            special_attack: 100,
-        };
     }
 
     pub fn is_wearing(&self, gear_name: &str) -> bool {

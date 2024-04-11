@@ -4,6 +4,7 @@ use rusqlite::{Connection, Result, Row};
 use std::collections::HashMap;
 use std::env;
 use std::path::PathBuf;
+use strum_macros::EnumIter;
 
 lazy_static! {
     static ref EQUIPMENT_DB: PathBuf = {
@@ -29,7 +30,7 @@ pub enum GearSlot {
     Cape,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter)]
 pub enum CombatType {
     None,
     Stab,
