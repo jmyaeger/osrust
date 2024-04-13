@@ -235,7 +235,7 @@ impl Player {
     }
 
     pub fn lookup_stats(&mut self, rsn: &str) {
-        let stats = fetch_player_data(rsn).unwrap();
+        let stats = fetch_player_data(rsn).expect("Failed to fetch player data");
         self.stats = parse_player_data(stats);
     }
 
@@ -291,7 +291,9 @@ fn parse_player_data(data: String) -> PlayerStats {
 
     for (i, skill) in skills.iter().enumerate() {
         let line_parts: Vec<&str> = data_lines[i + 1].split(',').collect();
-        let level = line_parts[1].parse::<u8>().unwrap();
+        let level = line_parts[1]
+            .parse::<u8>()
+            .expect("Level could not be parsed as u8.");
         skill_map.insert(*skill, level);
     }
 
