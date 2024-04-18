@@ -110,11 +110,46 @@ pub struct StyleBonus {
     pub magic: i32,
 }
 
+impl StyleBonus {
+    pub fn add_bonuses(&mut self, other: &StyleBonus) {
+        self.stab += other.stab;
+        self.slash += other.slash;
+        self.crush += other.crush;
+        self.ranged += other.ranged;
+        self.magic += other.magic;
+    }
+}
+
 #[derive(Debug, PartialEq, Default)]
 pub struct StrengthBonus {
     pub melee: i32,
     pub ranged: i32,
     pub magic: f32,
+}
+
+impl StrengthBonus {
+    pub fn add_bonuses(&mut self, other: &StrengthBonus) {
+        self.melee += other.melee;
+        self.ranged += other.ranged;
+        self.magic += other.magic;
+    }
+}
+
+#[derive(Debug, Default, PartialEq)]
+pub struct EquipmentBonuses {
+    pub attack: StyleBonus,
+    pub defence: StyleBonus,
+    pub strength: StrengthBonus,
+    pub prayer: i32,
+}
+
+impl EquipmentBonuses {
+    pub fn add_bonuses(&mut self, other: &EquipmentBonuses) {
+        self.attack.add_bonuses(&other.attack);
+        self.defence.add_bonuses(&other.defence);
+        self.strength.add_bonuses(&other.strength);
+        self.prayer += other.prayer;
+    }
 }
 
 pub trait Equipment {
@@ -136,30 +171,27 @@ pub trait Equipment {
 #[derive(Debug, PartialEq, Default)]
 pub struct Armor {
     pub name: String,
-    pub att_bonuses: StyleBonus,
-    pub def_bonuses: StyleBonus,
-    pub str_bonuses: StrengthBonus,
-    pub prayer: i32,
+    pub bonuses: EquipmentBonuses,
     pub slot: GearSlot,
 }
 
 impl Equipment for Armor {
     fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
         self.name = row.get("name")?;
-        self.att_bonuses.stab = row.get::<_, i32>("astab")?;
-        self.att_bonuses.slash = row.get::<_, i32>("aslash")?;
-        self.att_bonuses.crush = row.get::<_, i32>("acrush")?;
-        self.att_bonuses.ranged = row.get::<_, i32>("arange")?;
-        self.att_bonuses.magic = row.get::<_, i32>("amagic")?;
-        self.def_bonuses.stab = row.get::<_, i32>("dstab")?;
-        self.def_bonuses.slash = row.get::<_, i32>("dslash")?;
-        self.def_bonuses.crush = row.get::<_, i32>("dcrush")?;
-        self.def_bonuses.ranged = row.get::<_, i32>("drange")?;
-        self.def_bonuses.magic = row.get::<_, i32>("dmagic")?;
-        self.str_bonuses.melee = row.get::<_, i32>("str")?;
-        self.str_bonuses.ranged = row.get::<_, i32>("rstr")?;
-        self.str_bonuses.magic = row.get::<_, f32>("mdmg")?;
-        self.prayer = row.get::<_, i32>("prayer")?;
+        self.bonuses.attack.stab = row.get::<_, i32>("astab")?;
+        self.bonuses.attack.slash = row.get::<_, i32>("aslash")?;
+        self.bonuses.attack.crush = row.get::<_, i32>("acrush")?;
+        self.bonuses.attack.ranged = row.get::<_, i32>("arange")?;
+        self.bonuses.attack.magic = row.get::<_, i32>("amagic")?;
+        self.bonuses.defence.stab = row.get::<_, i32>("dstab")?;
+        self.bonuses.defence.slash = row.get::<_, i32>("dslash")?;
+        self.bonuses.defence.crush = row.get::<_, i32>("dcrush")?;
+        self.bonuses.defence.ranged = row.get::<_, i32>("drange")?;
+        self.bonuses.defence.magic = row.get::<_, i32>("dmagic")?;
+        self.bonuses.strength.melee = row.get::<_, i32>("str")?;
+        self.bonuses.strength.ranged = row.get::<_, i32>("rstr")?;
+        self.bonuses.strength.magic = row.get::<_, f32>("mdmg")?;
+        self.bonuses.prayer = row.get::<_, i32>("prayer")?;
         self.slot = match row.get::<_, String>("slot")?.as_str() {
             "head" => GearSlot::Head,
             "neck" => GearSlot::Neck,
@@ -188,10 +220,7 @@ impl Armor {
 #[derive(Debug, PartialEq)]
 pub struct Weapon {
     pub name: String,
-    pub att_bonuses: StyleBonus,
-    pub def_bonuses: StyleBonus,
-    pub str_bonuses: StrengthBonus,
-    pub prayer: i32,
+    pub bonuses: EquipmentBonuses,
     pub slot: GearSlot,
     pub speed: i8,
     pub base_speed: i8,
@@ -205,20 +234,20 @@ pub struct Weapon {
 impl Equipment for Weapon {
     fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
         self.name = row.get("name")?;
-        self.att_bonuses.stab = row.get::<_, i32>("astab")?;
-        self.att_bonuses.slash = row.get::<_, i32>("aslash")?;
-        self.att_bonuses.crush = row.get::<_, i32>("acrush")?;
-        self.att_bonuses.ranged = row.get::<_, i32>("arange")?;
-        self.att_bonuses.magic = row.get::<_, i32>("amagic")?;
-        self.def_bonuses.stab = row.get::<_, i32>("dstab")?;
-        self.def_bonuses.slash = row.get::<_, i32>("dslash")?;
-        self.def_bonuses.crush = row.get::<_, i32>("dcrush")?;
-        self.def_bonuses.ranged = row.get::<_, i32>("drange")?;
-        self.def_bonuses.magic = row.get::<_, i32>("dmagic")?;
-        self.str_bonuses.melee = row.get::<_, i32>("str")?;
-        self.str_bonuses.ranged = row.get::<_, i32>("rstr")?;
-        self.str_bonuses.magic = row.get::<_, f32>("mdmg")?;
-        self.prayer = row.get::<_, i32>("prayer")?;
+        self.bonuses.attack.stab = row.get::<_, i32>("astab")?;
+        self.bonuses.attack.slash = row.get::<_, i32>("aslash")?;
+        self.bonuses.attack.crush = row.get::<_, i32>("acrush")?;
+        self.bonuses.attack.ranged = row.get::<_, i32>("arange")?;
+        self.bonuses.attack.magic = row.get::<_, i32>("amagic")?;
+        self.bonuses.defence.stab = row.get::<_, i32>("dstab")?;
+        self.bonuses.defence.slash = row.get::<_, i32>("dslash")?;
+        self.bonuses.defence.crush = row.get::<_, i32>("dcrush")?;
+        self.bonuses.defence.ranged = row.get::<_, i32>("drange")?;
+        self.bonuses.defence.magic = row.get::<_, i32>("dmagic")?;
+        self.bonuses.strength.melee = row.get::<_, i32>("str")?;
+        self.bonuses.strength.ranged = row.get::<_, i32>("rstr")?;
+        self.bonuses.strength.magic = row.get::<_, f32>("mdmg")?;
+        self.bonuses.prayer = row.get::<_, i32>("prayer")?;
         self.slot = GearSlot::Weapon;
         self.speed = row.get::<_, i8>("speed")?;
         self.base_speed = self.speed;
@@ -234,10 +263,7 @@ impl Default for Weapon {
     fn default() -> Weapon {
         Weapon {
             name: String::new(),
-            att_bonuses: StyleBonus::default(),
-            def_bonuses: StyleBonus::default(),
-            str_bonuses: StrengthBonus::default(),
-            prayer: 0,
+            bonuses: EquipmentBonuses::default(),
             slot: GearSlot::Weapon,
             speed: 0,
             base_speed: 0,
@@ -907,6 +933,17 @@ impl Weapon {
     }
 }
 
+pub fn get_slot_name(item_name: &str) -> Result<String> {
+    let conn = Connection::open(EQUIPMENT_DB.as_path()).unwrap();
+    let mut stmt = conn.prepare("SELECT slot FROM equipment WHERE name = ?")?;
+    let mut rows = stmt.query([&item_name])?;
+    if let Some(row) = rows.next()? {
+        Ok(row.get(0)?)
+    } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -915,9 +952,7 @@ mod tests {
     fn test_default_weapon() {
         let weapon = Weapon::default();
         assert_eq!(weapon.name, "");
-        assert_eq!(weapon.att_bonuses, StyleBonus::default());
-        assert_eq!(weapon.def_bonuses, StyleBonus::default());
-        assert_eq!(weapon.str_bonuses, StrengthBonus::default());
+        assert_eq!(weapon.bonuses, EquipmentBonuses::default());
         assert_eq!(weapon.speed, 0);
         assert_eq!(weapon.base_speed, 0);
         assert_eq!(weapon.attack_range, 0);
@@ -933,10 +968,7 @@ mod tests {
     fn test_default_armor() {
         let armor = Armor::default();
         assert_eq!(armor.name, "");
-        assert_eq!(armor.att_bonuses, StyleBonus::default());
-        assert_eq!(armor.def_bonuses, StyleBonus::default());
-        assert_eq!(armor.str_bonuses, StrengthBonus::default());
-        assert_eq!(armor.prayer, 0);
+        assert_eq!(armor.bonuses, EquipmentBonuses::default());
         assert_eq!(armor.slot, GearSlot::None);
     }
 
@@ -945,8 +977,8 @@ mod tests {
         let weapon = Weapon::new("Abyssal whip");
         assert_eq!(weapon.name, "Abyssal whip");
         assert_eq!(weapon.slot, GearSlot::Weapon);
-        assert_eq!(weapon.att_bonuses.slash, 82);
-        assert_eq!(weapon.str_bonuses.melee, 82);
+        assert_eq!(weapon.bonuses.attack.slash, 82);
+        assert_eq!(weapon.bonuses.strength.melee, 82);
         let combat_style = weapon.combat_styles.get(&CombatStyle::Flick).unwrap();
         assert_eq!(combat_style.combat_type, CombatType::Slash);
         assert_eq!(combat_style.stance, CombatStance::Accurate);

@@ -1,4 +1,4 @@
-use crate::equipment::{Armor, CombatStyle, CombatType, StyleBonus, Weapon};
+use crate::equipment::{self, Armor, CombatStyle, CombatType, EquipmentBonuses, Weapon};
 use crate::potions::PotionBoost;
 use crate::prayers::PrayerBoost;
 use crate::spells::{Spell, StandardSpell};
@@ -67,14 +67,6 @@ impl PlayerLiveStats {
     pub fn new() -> Self {
         Self::default()
     }
-}
-
-#[derive(Debug, Default, PartialEq)]
-pub struct EquipmentBonuses {
-    pub attack: StyleBonus,
-    pub defence: StyleBonus,
-    pub strength: StyleBonus,
-    pub prayer: i32,
 }
 
 #[derive(Debug, Default, PartialEq)]
@@ -315,6 +307,46 @@ impl Player {
             || self.gear.feet.name == gear_name
             || self.gear.ring.name == gear_name
     }
+
+    pub fn equip(&mut self, item_name: &str) {
+        let slot_name = equipment::get_slot_name(item_name)
+            .unwrap_or_else(|_| panic!("Slot not found for item {}", item_name));
+        match slot_name.as_str() {
+            "head" => self.gear.head = Armor::new(item_name),
+            "neck" => self.gear.neck = Armor::new(item_name),
+            "cape" => self.gear.cape = Armor::new(item_name),
+            "ammo" => self.gear.ammo = Armor::new(item_name),
+            "weapon" | "2h" => self.gear.weapon = Weapon::new(item_name),
+            "shield" => self.gear.shield = Armor::new(item_name),
+            "body" => self.gear.body = Armor::new(item_name),
+            "legs" => self.gear.legs = Armor::new(item_name),
+            "hands" => self.gear.hands = Armor::new(item_name),
+            "feet" => self.gear.feet = Armor::new(item_name),
+            "ring" => self.gear.ring = Armor::new(item_name),
+            _ => panic!("Slot not found for item {}", item_name),
+        }
+        self.update_bonuses();
+    }
+
+    pub fn update_bonuses(&mut self) {
+        self.bonuses = EquipmentBonuses::default();
+
+        for item in [
+            &self.gear.head,
+            &self.gear.neck,
+            &self.gear.cape,
+            &self.gear.ammo,
+            &self.gear.shield,
+            &self.gear.body,
+            &self.gear.legs,
+            &self.gear.hands,
+            &self.gear.feet,
+            &self.gear.ring,
+        ] {
+            self.bonuses.add_bonuses(&item.bonuses)
+        }
+        self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
+    }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, Error> {
@@ -413,5 +445,40 @@ mod test {
         assert_eq!(player.stats.ranged, 99);
         assert_eq!(player.stats.magic, 99);
         assert_eq!(player.stats.prayer, 99);
+    }
+
+    #[test]
+    fn test_is_wearing() {
+        let mut player = Player::new();
+        player.gear.head.name = "Torva full helm".to_string();
+        assert!(player.is_wearing("Torva full helm"));
+    }
+
+    #[test]
+    fn test_equip_armor() {
+        let mut player = Player::new();
+        player.equip("Torva full helm");
+        let torva_full_helm = Armor::new("Torva full helm");
+        assert_eq!(player.gear.head, torva_full_helm);
+        assert_eq!(player.bonuses, torva_full_helm.bonuses)
+    }
+
+    #[test]
+    fn test_equip_weapon() {
+        let mut player = Player::new();
+        player.equip("Osmumten's fang");
+        let osmumtens_fang = Weapon::new("Osmumten's fang");
+        assert_eq!(player.gear.weapon, osmumtens_fang);
+        assert_eq!(player.bonuses, osmumtens_fang.bonuses)
+    }
+
+    #[test]
+    fn test_replace_gear() {
+        let mut player = Player::new();
+        player.equip("Torva full helm");
+        player.equip("Neitiznot faceguard");
+        let neitiznot_faceguard = Armor::new("Neitiznot faceguard");
+        assert_eq!(player.gear.head, neitiznot_faceguard);
+        assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
 }
