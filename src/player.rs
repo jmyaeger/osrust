@@ -325,7 +325,6 @@ impl Player {
             "ring" => self.gear.ring = Armor::new(item_name),
             _ => panic!("Slot not found for item {}", item_name),
         }
-        self.update_bonuses();
     }
 
     pub fn update_bonuses(&mut self) {
@@ -458,6 +457,7 @@ mod test {
     fn test_equip_armor() {
         let mut player = Player::new();
         player.equip("Torva full helm");
+        player.update_bonuses();
         let torva_full_helm = Armor::new("Torva full helm");
         assert_eq!(player.gear.head, torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
@@ -467,6 +467,7 @@ mod test {
     fn test_equip_weapon() {
         let mut player = Player::new();
         player.equip("Osmumten's fang");
+        player.update_bonuses();
         let osmumtens_fang = Weapon::new("Osmumten's fang");
         assert_eq!(player.gear.weapon, osmumtens_fang);
         assert_eq!(player.bonuses, osmumtens_fang.bonuses)
@@ -476,7 +477,9 @@ mod test {
     fn test_replace_gear() {
         let mut player = Player::new();
         player.equip("Torva full helm");
+        player.update_bonuses();
         player.equip("Neitiznot faceguard");
+        player.update_bonuses();
         let neitiznot_faceguard = Armor::new("Neitiznot faceguard");
         assert_eq!(player.gear.head, neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
