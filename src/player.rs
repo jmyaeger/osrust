@@ -4,16 +4,17 @@ use crate::prayers::PrayerBoost;
 use crate::spells::{Spell, StandardSpell};
 use reqwest::Error;
 use std::collections::HashMap;
+use std::hash::Hash;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerStats {
-    pub hitpoints: u8,
-    pub attack: u8,
-    pub strength: u8,
-    pub defence: u8,
-    pub ranged: u8,
-    pub magic: u8,
-    pub prayer: u8,
+    pub hitpoints: u16,
+    pub attack: u16,
+    pub strength: u16,
+    pub defence: u16,
+    pub ranged: u16,
+    pub magic: u16,
+    pub prayer: u16,
 }
 
 impl Default for PlayerStats {
@@ -38,13 +39,13 @@ impl PlayerStats {
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerLiveStats {
-    pub hitpoints: u8,
-    pub attack: u8,
-    pub strength: u8,
-    pub defence: u8,
-    pub ranged: u8,
-    pub magic: u8,
-    pub prayer: u8,
+    pub hitpoints: u16,
+    pub attack: u16,
+    pub strength: u16,
+    pub defence: u16,
+    pub ranged: u16,
+    pub magic: u16,
+    pub prayer: u16,
     pub special_attack: u8,
 }
 
@@ -81,12 +82,12 @@ pub struct PotionBoosts {
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoosts {
     pub active_prayers: Vec<PrayerBoost>,
-    pub attack: u8,
-    pub strength: u8,
-    pub defence: u8,
-    pub ranged_att: u8,
-    pub ranged_str: u8,
-    pub magic: u8,
+    pub attack: u16,
+    pub strength: u16,
+    pub defence: u16,
+    pub ranged_att: u16,
+    pub ranged_str: u16,
+    pub magic: u16,
 }
 
 impl PrayerBoosts {
@@ -294,6 +295,17 @@ impl Player {
         self.stats = parse_player_data(stats);
     }
 
+    pub fn reset_live_stats(&mut self) {
+        self.live_stats.attack = self.stats.attack;
+        self.live_stats.strength = self.stats.strength;
+        self.live_stats.defence = self.stats.defence;
+        self.live_stats.ranged = self.stats.ranged;
+        self.live_stats.magic = self.stats.magic;
+        self.live_stats.prayer = self.stats.prayer;
+        self.live_stats.hitpoints = self.stats.hitpoints;
+        self.live_stats.special_attack = 100;
+    }
+
     pub fn is_wearing(&self, gear_name: &str) -> bool {
         self.gear.head.name == gear_name
             || self.gear.neck.name == gear_name
@@ -346,6 +358,23 @@ impl Player {
         }
         self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
     }
+
+    pub fn calc_potion_boosts(&mut self) {
+        self.potions.attack.calc_boost(self.stats.attack);
+        self.potions.strength.calc_boost(self.stats.strength);
+        self.potions.defence.calc_boost(self.stats.defence);
+        self.potions.ranged.calc_boost(self.stats.ranged);
+        self.potions.magic.calc_boost(self.stats.magic);
+    }
+
+    pub fn apply_potion_boosts(&mut self) {
+        self.reset_live_stats();
+        self.live_stats.attack += self.potions.attack.boost;
+        self.live_stats.strength += self.potions.strength.boost;
+        self.live_stats.defence += self.potions.defence.boost;
+        self.live_stats.ranged += self.potions.ranged.boost;
+        self.live_stats.magic += self.potions.magic.boost;
+    }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, Error> {
@@ -373,7 +402,7 @@ fn parse_player_data(data: String) -> PlayerStats {
     for (i, skill) in skills.iter().enumerate() {
         let line_parts: Vec<&str> = data_lines[i + 1].split(',').collect();
         let level = line_parts[1]
-            .parse::<u8>()
+            .parse::<u16>()
             .expect("Level could not be parsed as u8.");
         skill_map.insert(*skill, level);
     }
@@ -392,7 +421,8 @@ fn parse_player_data(data: String) -> PlayerStats {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::equipment::{CombatStyle, CombatType};
+    use crate::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
+    use crate::potions::Potion;
     use crate::spells::StandardSpell;
     use std::collections::HashMap;
 
@@ -483,5 +513,112 @@ mod test {
         let neitiznot_faceguard = Armor::new("Neitiznot faceguard");
         assert_eq!(player.gear.head, neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
+    }
+
+    #[test]
+    fn test_max_melee_bonuses() {
+        let mut player = Player::new();
+        let max_melee_gear = Gear {
+            head: Armor::new("Torva full helm"),
+            neck: Armor::new("Amulet of torture"),
+            cape: Armor::new("Infernal cape"),
+            ammo: Armor::new("Rada's blessing 4"),
+            weapon: Weapon::new("Osmumten's fang"),
+            shield: Armor::new("Avernic defender"),
+            body: Armor::new("Torva platebody"),
+            legs: Armor::new("Torva platelegs"),
+            hands: Armor::new("Ferocious gloves"),
+            feet: Armor::new("Primordial boots"),
+            ring: Armor::new("Ultor ring"),
+        };
+        player.gear = max_melee_gear;
+        player.update_bonuses();
+
+        let max_melee_bonuses = EquipmentBonuses {
+            attack: StyleBonus {
+                stab: 172,
+                slash: 141,
+                crush: 65,
+                ranged: -50,
+                magic: -71,
+            },
+            defence: StyleBonus {
+                stab: 327,
+                slash: 312,
+                crush: 320,
+                ranged: 309,
+                magic: -15,
+            },
+            strength: StrengthBonus {
+                melee: 178,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 9,
+        };
+
+        assert_eq!(player.bonuses, max_melee_bonuses);
+    }
+
+    #[test]
+    fn test_potion_boosts() {
+        let mut player = Player::new();
+        player.stats = PlayerStats {
+            attack: 99,
+            strength: 99,
+            defence: 99,
+            ranged: 99,
+            magic: 99,
+            hitpoints: 99,
+            prayer: 99,
+        };
+        player.potions.attack = PotionBoost::new(Potion::SuperAttack);
+        player.potions.strength = PotionBoost::new(Potion::SuperStrength);
+        player.potions.defence = PotionBoost::new(Potion::SuperDefence);
+        player.potions.ranged = PotionBoost::new(Potion::Ranging);
+        player.potions.magic = PotionBoost::new(Potion::SaturatedHeart);
+
+        player.calc_potion_boosts();
+        player.apply_potion_boosts();
+
+        assert_eq!(player.live_stats.attack, 118);
+        assert_eq!(player.live_stats.strength, 118);
+        assert_eq!(player.live_stats.defence, 118);
+        assert_eq!(player.live_stats.ranged, 112);
+        assert_eq!(player.live_stats.magic, 112);
+    }
+
+    #[test]
+    fn test_dragon_battleaxe_boost() {
+        let mut player = Player::new();
+        player.stats = PlayerStats {
+            attack: 99,
+            strength: 99,
+            defence: 99,
+            ranged: 99,
+            magic: 99,
+            hitpoints: 99,
+            prayer: 99,
+        };
+        player.potions.attack = PotionBoost::new(Potion::ZamorakBrewAtt);
+        player.potions.defence = PotionBoost::new(Potion::SuperDefence);
+        player.potions.magic = PotionBoost::new(Potion::Magic);
+        player.potions.ranged = PotionBoost::new(Potion::Ranging);
+        player.potions.strength = PotionBoost::new(Potion::DragonBattleaxe);
+        player.calc_potion_boosts();
+        player.apply_potion_boosts();
+        player.potions.strength.calc_dragon_battleaxe_boost(
+            player.live_stats.attack,
+            player.live_stats.defence,
+            player.live_stats.ranged,
+            player.live_stats.magic,
+        );
+        player.apply_potion_boosts();
+
+        assert_eq!(player.live_stats.attack, 120);
+        assert_eq!(player.live_stats.strength, 120);
+        assert_eq!(player.live_stats.defence, 118);
+        assert_eq!(player.live_stats.ranged, 112);
+        assert_eq!(player.live_stats.magic, 103);
     }
 }

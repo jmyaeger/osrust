@@ -1,7 +1,7 @@
 use crate::player::Player;
 
 pub trait Spell: std::fmt::Debug {
-    fn max_hit(&self, player: &Player) -> u8;
+    fn max_hit(&self, player: &Player) -> u16;
     fn as_any(&self) -> &dyn std::any::Any;
 }
 
@@ -68,7 +68,7 @@ pub enum ArceuusSpell {
 }
 
 impl Spell for StandardSpell {
-    fn max_hit(&self, player: &Player) -> u8 {
+    fn max_hit(&self, player: &Player) -> u16 {
         match self {
             StandardSpell::WindStrike => 2,
             StandardSpell::WaterStrike => 4,
@@ -106,7 +106,7 @@ impl Spell for StandardSpell {
 }
 
 impl Spell for AncientSpell {
-    fn max_hit(&self, _: &Player) -> u8 {
+    fn max_hit(&self, _: &Player) -> u16 {
         match self {
             AncientSpell::SmokeRush => 13,
             AncientSpell::ShadowRush => 14,
@@ -133,7 +133,7 @@ impl Spell for AncientSpell {
 }
 
 impl Spell for ArceuusSpell {
-    fn max_hit(&self, _: &Player) -> u8 {
+    fn max_hit(&self, _: &Player) -> u16 {
         match self {
             ArceuusSpell::GhostlyGrasp => 12,
             ArceuusSpell::SkeletalGrasp => 17,
@@ -149,7 +149,7 @@ impl Spell for ArceuusSpell {
     }
 }
 
-fn magic_dart_max_hit(player: &Player) -> u8 {
+fn magic_dart_max_hit(player: &Player) -> u16 {
     if player.is_wearing("Slayer's staff (e)") {
         13 + player.live_stats.magic / 6
     } else {

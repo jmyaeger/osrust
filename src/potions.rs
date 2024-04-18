@@ -29,9 +29,9 @@ pub enum Potion {
 #[derive(Debug, Default, PartialEq)]
 pub struct PotionBoost {
     pub potion_type: Potion,
-    pub factor: u8,
-    pub constant: u8,
-    pub boost: u8,
+    pub factor: u16,
+    pub constant: u16,
+    pub boost: u16,
 }
 
 impl PotionBoost {
@@ -43,9 +43,15 @@ impl PotionBoost {
                 constant: 3,
                 boost: 0,
             },
-            Potion::Ranging | Potion::Magic => PotionBoost {
+            Potion::Ranging => PotionBoost {
                 potion_type: potion,
                 factor: 10,
+                constant: 4,
+                boost: 0,
+            },
+            Potion::Magic => PotionBoost {
+                potion_type: potion,
+                factor: 0,
                 constant: 4,
                 boost: 0,
             },
@@ -134,19 +140,30 @@ impl PotionBoost {
         }
     }
 
-    pub fn calc_boost(&mut self, level: u8) {
-        self.boost = self.factor * level + self.constant;
+    pub fn calc_boost(&mut self, level: u16) {
+        self.boost = self.factor * level / 100 + self.constant;
     }
 
     pub fn calc_dragon_battleaxe_boost(
         &mut self,
-        att_level: u8,
-        str_level: u8,
-        ranged_level: u8,
-        magic_level: u8,
+        att_level: u16,
+        def_level: u16,
+        ranged_level: u16,
+        magic_level: u16,
     ) {
-        let stats = [att_level, str_level, ranged_level, magic_level];
-        let sum: u8 = stats.iter().map(|&n| n / 10).sum();
-        self.boost = sum;
+        let stats = [att_level, def_level, ranged_level, magic_level];
+        let sum: u16 = stats.iter().map(|&n| n / 10).sum();
+        self.boost = 10 + (sum / 4);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_dragon_battleaxe_boost() {
+        let mut potion = PotionBoost::new(Potion::DragonBattleaxe);
+        potion.calc_dragon_battleaxe_boost(120, 118, 112, 103);
+        assert_eq!(potion.boost, 21);
     }
 }
