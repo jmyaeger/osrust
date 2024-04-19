@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     fn calc_def_roll(def_lvl: i32, def_bonus: i32) -> i32 {
-        (def_lvl + 9) * (def_bonus * 64)
+        (def_lvl + 9) * (def_bonus + 64)
     }
 
     let mut def_rolls = HashMap::new();
@@ -43,7 +43,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
 
 pub fn player_def_rolls(player: &Player) -> HashMap<CombatType, i32> {
     fn calc_def_roll(eff_lvl: i32, def_bonus: i32) -> i32 {
-        eff_lvl * (def_bonus * 64)
+        eff_lvl * (def_bonus + 64)
     }
 
     let mut def_rolls = HashMap::new();
