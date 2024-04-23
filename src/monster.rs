@@ -4,16 +4,15 @@ use crate::constants::*;
 use crate::equipment::{CombatType, StyleBonus};
 use crate::rolls::monster_def_rolls;
 use rusqlite::{Connection, Result, Row};
+use std::cmp::{max, min};
 use std::collections::HashMap;
-use std::env;
+use std::fs;
 use std::path::PathBuf;
 use strum::IntoEnumIterator;
 
 lazy_static! {
-    static ref MONSTER_DB: PathBuf = {
-        let current_dir = env::current_dir().expect("Failed to get current directory");
-        current_dir.join("src/databases/monsters.db")
-    };
+    static ref MONSTER_DB: PathBuf =
+        fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
 }
 
 #[derive(Debug, Eq, PartialEq, Hash)]
@@ -136,13 +135,10 @@ impl Default for Monster {
 }
 
 impl Monster {
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: &str) -> Result<Self> {
         let mut monster = Self::default();
-        match monster.set_info(name) {
-            Ok(()) => monster,
-            Err(rusqlite::Error::QueryReturnedNoRows) => panic!("Monster '{}' not found", name),
-            Err(e) => panic!("Error: {}", e),
-        }
+        monster.set_info(name)?;
+        Ok(monster)
     }
 
     pub fn set_info(&mut self, name: &str) -> Result<()> {
@@ -259,6 +255,29 @@ impl Monster {
             );
         }
     }
+
+    pub fn tbow_bonuses(&self) -> (i32, i32) {
+        let magic_limit = if self.info.attributes.contains(&Attribute::Xerician) {
+            350
+        } else {
+            250
+        };
+        let highest_magic = min(
+            magic_limit,
+            max(self.stats.magic as i32, self.bonuses.attack.magic),
+        );
+        let tbow_m = highest_magic * 3 / 10;
+        let acc_bonus = min(
+            TBOW_ACC_CAP,
+            TBOW_ACC_CAP + (tbow_m * 10 - 10) / 100 - (tbow_m - 100).pow(2) / 100,
+        );
+        let dmg_bonus = min(
+            TBOW_DMG_CAP,
+            TBOW_DMG_CAP + (tbow_m * 10 - 14) / 100 - (tbow_m - 140).pow(2) / 100,
+        );
+
+        (acc_bonus, dmg_bonus)
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {
@@ -303,14 +322,14 @@ mod tests {
 
     #[test]
     fn test_set_info() {
-        let vorkath = Monster::new("Vorkath");
+        let vorkath = Monster::new("Vorkath").unwrap();
         assert_eq!(vorkath.info.name, "Vorkath".to_string());
         assert_eq!(vorkath.info.combat_level, 732)
     }
 
     #[test]
     fn test_toa_scaling() {
-        let mut baba = Monster::new("Ba-Ba");
+        let mut baba = Monster::new("Ba-Ba").unwrap();
         baba.info.toa_level = 400;
         baba.scale_toa();
         assert_eq!(baba.stats.hitpoints, 990);

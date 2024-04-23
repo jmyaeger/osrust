@@ -1,4 +1,6 @@
-use crate::equipment::{self, Armor, CombatStyle, CombatType, EquipmentBonuses, Weapon};
+use crate::equipment::{
+    self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
+};
 use crate::potions::PotionBoost;
 use crate::prayers::PrayerBoost;
 use crate::spells::{Spell, StandardSpell};
@@ -20,13 +22,13 @@ pub struct PlayerStats {
 impl Default for PlayerStats {
     fn default() -> Self {
         Self {
-            hitpoints: 10,
-            attack: 1,
-            strength: 1,
-            defence: 1,
-            ranged: 1,
-            magic: 1,
-            prayer: 1,
+            hitpoints: 99,
+            attack: 99,
+            strength: 99,
+            defence: 99,
+            ranged: 99,
+            magic: 99,
+            prayer: 99,
         }
     }
 }
@@ -52,13 +54,13 @@ pub struct PlayerLiveStats {
 impl Default for PlayerLiveStats {
     fn default() -> Self {
         Self {
-            hitpoints: 10,
-            attack: 1,
-            strength: 1,
-            defence: 1,
-            ranged: 1,
-            magic: 1,
-            prayer: 1,
+            hitpoints: 99,
+            attack: 99,
+            strength: 99,
+            defence: 99,
+            ranged: 99,
+            magic: 99,
+            prayer: 99,
             special_attack: 100,
         }
     }
@@ -152,6 +154,7 @@ pub struct StatusBoosts {
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
     pub sunfire_runes: bool,
+    pub soulreaper_stacks: u16,
 }
 
 impl Default for StatusBoosts {
@@ -165,6 +168,7 @@ impl Default for StatusBoosts {
             kandarin_diary: true,
             mark_of_darkness: false,
             sunfire_runes: false,
+            soulreaper_stacks: 0,
         }
     }
 }
@@ -239,7 +243,7 @@ pub struct Player {
     pub effects: StatusEffects,
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
-    pub att_rolls: HashMap<CombatType, u32>,
+    pub att_rolls: HashMap<CombatType, i32>,
     pub max_hits: HashMap<CombatType, u8>,
     pub def_rolls: HashMap<CombatType, i32>,
 }
@@ -304,6 +308,8 @@ impl Player {
         self.live_stats.prayer = self.stats.prayer;
         self.live_stats.hitpoints = self.stats.hitpoints;
         self.live_stats.special_attack = 100;
+
+        self.apply_potion_boosts();
     }
 
     pub fn is_wearing(&self, gear_name: &str) -> bool {
@@ -318,6 +324,18 @@ impl Player {
             || self.gear.hands.name == gear_name
             || self.gear.feet.name == gear_name
             || self.gear.ring.name == gear_name
+    }
+
+    pub fn is_wearing_any(&self, gear_names: Vec<&str>) -> bool {
+        gear_names
+            .iter()
+            .any(|&gear_name| self.is_wearing(gear_name))
+    }
+
+    pub fn is_wearing_all(&self, gear_names: Vec<&str>) -> bool {
+        gear_names
+            .iter()
+            .all(|&gear_name| self.is_wearing(gear_name))
     }
 
     pub fn equip(&mut self, item_name: &str) {
@@ -367,13 +385,32 @@ impl Player {
         self.potions.magic.calc_boost(self.stats.magic);
     }
 
-    pub fn apply_potion_boosts(&mut self) {
-        self.reset_live_stats();
+    fn apply_potion_boosts(&mut self) {
         self.live_stats.attack += self.potions.attack.boost;
         self.live_stats.strength += self.potions.strength.boost;
         self.live_stats.defence += self.potions.defence.boost;
         self.live_stats.ranged += self.potions.ranged.boost;
         self.live_stats.magic += self.potions.magic.boost;
+    }
+
+    pub fn combat_stance(&self) -> CombatStance {
+        self.gear.weapon.combat_styles[&self.attrs.active_style].stance
+    }
+
+    pub fn combat_type(&self) -> CombatType {
+        self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type
+    }
+
+    pub fn is_using_melee(&self) -> bool {
+        let melee_types = [CombatType::Stab, CombatType::Slash, CombatType::Crush];
+        melee_types.contains(&self.combat_type())
+    }
+
+    pub fn set_active_style(&mut self, style: CombatStyle) {
+        if style == CombatStyle::Rapid {
+            self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+        }
+        self.attrs.active_style = style;
     }
 }
 
@@ -579,7 +616,7 @@ mod test {
         player.potions.magic = PotionBoost::new(Potion::SaturatedHeart);
 
         player.calc_potion_boosts();
-        player.apply_potion_boosts();
+        player.reset_live_stats();
 
         assert_eq!(player.live_stats.attack, 118);
         assert_eq!(player.live_stats.strength, 118);
@@ -591,29 +628,20 @@ mod test {
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut player = Player::new();
-        player.stats = PlayerStats {
-            attack: 99,
-            strength: 99,
-            defence: 99,
-            ranged: 99,
-            magic: 99,
-            hitpoints: 99,
-            prayer: 99,
-        };
         player.potions.attack = PotionBoost::new(Potion::ZamorakBrewAtt);
         player.potions.defence = PotionBoost::new(Potion::SuperDefence);
         player.potions.magic = PotionBoost::new(Potion::Magic);
         player.potions.ranged = PotionBoost::new(Potion::Ranging);
         player.potions.strength = PotionBoost::new(Potion::DragonBattleaxe);
         player.calc_potion_boosts();
-        player.apply_potion_boosts();
+        player.reset_live_stats();
         player.potions.strength.calc_dragon_battleaxe_boost(
             player.live_stats.attack,
             player.live_stats.defence,
             player.live_stats.ranged,
             player.live_stats.magic,
         );
-        player.apply_potion_boosts();
+        player.reset_live_stats();
 
         assert_eq!(player.live_stats.attack, 120);
         assert_eq!(player.live_stats.strength, 120);

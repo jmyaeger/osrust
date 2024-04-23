@@ -41,7 +41,7 @@ pub enum CombatType {
     Magic,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone)]
 pub enum CombatStance {
     None,
     #[default]

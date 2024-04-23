@@ -1,3 +1,7 @@
+pub const TBOW_ACC_CAP: i32 = 140;
+
+pub const TBOW_DMG_CAP: i32 = 250;
+
 pub const MAGIC_DEF_EXCEPTIONS: [&str; 4] = [
     "Baboon Brawler (Level 56)",
     "Baboon Brawler (Level 68)",
