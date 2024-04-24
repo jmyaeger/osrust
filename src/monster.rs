@@ -88,12 +88,12 @@ pub struct Immunities {
 #[derive(Debug, PartialEq, Default)]
 pub struct MonsterInfo {
     pub name: String,
-    pub version: String,
+    pub version: Option<String>,
     pub combat_level: u16,
     pub size: u8,
     pub xpbonus: f32,
     pub slayer_xp: f32,
-    pub attributes: Vec<Attribute>,
+    pub attributes: Option<Vec<Attribute>>,
     pub attack_speed: u8,
     pub aggressive: bool,
     pub poisonous: bool,
@@ -155,17 +155,15 @@ impl Monster {
 
     pub fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
         self.info.name = row.get::<_, Option<String>>("name")?.unwrap_or_default();
-        self.info.version = row.get::<_, Option<String>>("version")?.unwrap_or_default();
+        self.info.version = row.get::<_, Option<String>>("version")?;
         self.info.combat_level = row.get::<_, Option<u16>>("combat")?.unwrap_or_default();
         self.info.size = row.get::<_, Option<u8>>("size")?.unwrap_or_default();
         self.info.xpbonus = row.get::<_, Option<f32>>("xpbonus")?.unwrap_or_default();
         self.info.slayer_xp = row.get::<_, Option<f32>>("slayxp")?.unwrap_or_default();
-        self.info.attributes = parse_attributes(
-            row.get::<_, Option<String>>("attributes")?
-                .unwrap_or_default()
-                .split(',')
-                .collect(),
-        );
+        let attributes = row.get::<_, Option<String>>("attributes")?;
+        if let Some(attributes) = attributes {
+            self.info.attributes = Some(parse_attributes(attributes.split(',').collect()));
+        }
         self.info.attack_speed = row
             .get::<_, Option<u8>>("attack_speed")?
             .unwrap_or_default();
@@ -257,7 +255,12 @@ impl Monster {
     }
 
     pub fn tbow_bonuses(&self) -> (i32, i32) {
-        let magic_limit = if self.info.attributes.contains(&Attribute::Xerician) {
+        let magic_limit = if self
+            .info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Xerician))
+        {
             350
         } else {
             250
@@ -280,15 +283,24 @@ impl Monster {
     }
 
     pub fn is_dragon(&self) -> bool {
-        self.info.attributes.contains(&Attribute::Draconic)
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Draconic))
     }
 
     pub fn is_demon(&self) -> bool {
-        self.info.attributes.contains(&Attribute::Demon)
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Demon))
     }
 
     pub fn is_undead(&self) -> bool {
-        self.info.attributes.contains(&Attribute::Undead)
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Undead))
     }
 
     pub fn is_in_wilderness(&self) -> bool {
@@ -354,5 +366,43 @@ mod tests {
         baba.scale_toa();
         assert_eq!(baba.stats.hitpoints, 990);
         assert_eq!(baba.def_rolls[&CombatType::Stab], 33321);
+    }
+
+    #[test]
+    fn test_is_dragon() {
+        let vorkath = Monster::new("Vorkath").unwrap();
+        assert!(vorkath.is_dragon());
+    }
+
+    #[test]
+    fn test_is_demon() {
+        let kril = Monster::new("K'ril Tsutsaroth").unwrap();
+        assert!(kril.is_demon());
+    }
+
+    #[test]
+    fn test_is_undead() {
+        let vorkath = Monster::new("Vorkath").unwrap();
+        assert!(vorkath.is_undead());
+    }
+
+    #[test]
+    fn test_is_in_wilderness() {
+        let spindel = Monster::new("Spindel").unwrap();
+        assert!(spindel.is_in_wilderness());
+    }
+
+    #[test]
+    fn test_is_revenant() {
+        let revenant = Monster::new("Revenant demon").unwrap();
+        assert!(revenant.is_revenant());
+    }
+
+    #[test]
+    fn test_tbow_olm() {
+        let olm = Monster::new("Great Olm (Head)").unwrap();
+        let (tbow_acc_bonus, tbow_dmg_bonus) = olm.tbow_bonuses();
+        assert_eq!(tbow_acc_bonus, 140);
+        assert_eq!(tbow_dmg_bonus, 215);
     }
 }

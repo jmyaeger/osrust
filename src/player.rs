@@ -3,7 +3,7 @@ use crate::equipment::{
 };
 use crate::potions::PotionBoost;
 use crate::prayers::PrayerBoost;
-use crate::spells::{Spell, StandardSpell};
+use crate::spells::Spell;
 use reqwest::Error;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -233,21 +233,11 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PlayerAttrs {
-    pub name: String,
+    pub name: Option<String>,
     pub active_style: CombatStyle,
-    pub spell: Box<dyn Spell>,
-}
-
-impl Default for PlayerAttrs {
-    fn default() -> Self {
-        Self {
-            name: String::new(),
-            active_style: CombatStyle::default(),
-            spell: Box::<StandardSpell>::default(),
-        }
-    }
+    pub spell: Option<Box<dyn Spell>>,
 }
 
 pub struct Player {
@@ -315,6 +305,7 @@ impl Player {
     pub fn lookup_stats(&mut self, rsn: &str) {
         let stats = fetch_player_data(rsn).expect("Failed to fetch player data");
         self.stats = parse_player_data(stats);
+        self.attrs.name = Some(rsn.to_string());
     }
 
     pub fn reset_live_stats(&mut self) {
@@ -578,7 +569,6 @@ mod test {
     use crate::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
     use crate::potions::Potion;
     use crate::prayers::Prayer;
-    use crate::spells::StandardSpell;
     use std::collections::HashMap;
 
     #[test]
@@ -599,6 +589,13 @@ mod test {
         max_hits.insert(CombatType::Ranged, 0);
         max_hits.insert(CombatType::Magic, 0);
 
+        let mut def_rolls = HashMap::new();
+        def_rolls.insert(CombatType::Stab, 0);
+        def_rolls.insert(CombatType::Slash, 0);
+        def_rolls.insert(CombatType::Crush, 0);
+        def_rolls.insert(CombatType::Ranged, 0);
+        def_rolls.insert(CombatType::Magic, 0);
+
         assert_eq!(player.live_stats, PlayerLiveStats::default());
         assert_eq!(player.stats, PlayerStats::default());
         assert_eq!(player.gear, Gear::default());
@@ -610,12 +607,10 @@ mod test {
         assert_eq!(player.set_effects, SetEffects::default());
         assert_eq!(player.att_rolls, att_rolls);
         assert_eq!(player.max_hits, max_hits);
-        assert_eq!(player.attrs.name, String::new());
+        assert_eq!(player.def_rolls, def_rolls);
+        assert!(player.attrs.name.is_none());
         assert_eq!(player.attrs.active_style, CombatStyle::Punch);
-        assert!(
-            player.attrs.spell.as_any().downcast_ref::<StandardSpell>()
-                == Some(&StandardSpell::None)
-        );
+        assert!(player.attrs.spell.is_none());
     }
 
     #[test]
