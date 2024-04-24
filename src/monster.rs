@@ -278,6 +278,26 @@ impl Monster {
 
         (acc_bonus, dmg_bonus)
     }
+
+    pub fn is_dragon(&self) -> bool {
+        self.info.attributes.contains(&Attribute::Draconic)
+    }
+
+    pub fn is_demon(&self) -> bool {
+        self.info.attributes.contains(&Attribute::Demon)
+    }
+
+    pub fn is_undead(&self) -> bool {
+        self.info.attributes.contains(&Attribute::Undead)
+    }
+
+    pub fn is_in_wilderness(&self) -> bool {
+        WILDERNESS_MONSTERS.contains(&self.info.name.as_str())
+    }
+
+    pub fn is_revenant(&self) -> bool {
+        self.info.name.contains("Revenant")
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {

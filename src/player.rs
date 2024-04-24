@@ -74,16 +74,16 @@ impl PlayerLiveStats {
 
 #[derive(Debug, Default, PartialEq)]
 pub struct PotionBoosts {
-    pub attack: PotionBoost,
-    pub strength: PotionBoost,
-    pub defence: PotionBoost,
-    pub ranged: PotionBoost,
-    pub magic: PotionBoost,
+    pub attack: Option<PotionBoost>,
+    pub strength: Option<PotionBoost>,
+    pub defence: Option<PotionBoost>,
+    pub ranged: Option<PotionBoost>,
+    pub magic: Option<PotionBoost>,
 }
 
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoosts {
-    pub active_prayers: Vec<PrayerBoost>,
+    pub active_prayers: Option<Vec<PrayerBoost>>,
     pub attack: u16,
     pub strength: u16,
     pub defence: u16,
@@ -94,49 +94,67 @@ pub struct PrayerBoosts {
 
 impl PrayerBoosts {
     pub fn add(&mut self, prayer: PrayerBoost) {
-        self.active_prayers.retain(|p| {
-            !(p.attack > 0 && prayer.attack > 0
-                || (p.strength > 0 && prayer.strength > 0)
-                || (p.defence > 0 && prayer.defence > 0)
-                || (p.ranged_att > 0 && prayer.ranged_att > 0)
-                || (p.ranged_str > 0 && prayer.ranged_str > 0)
-                || (p.magic > 0 && prayer.magic > 0))
-        });
-
-        self.active_prayers.push(prayer);
+        match &mut self.active_prayers {
+            Some(active_prayers) => {
+                active_prayers.retain(|p| {
+                    !(p.attack > 0 && prayer.attack > 0
+                        || (p.strength > 0 && prayer.strength > 0)
+                        || (p.defence > 0 && prayer.defence > 0)
+                        || (p.ranged_att > 0 && prayer.ranged_att > 0)
+                        || (p.ranged_str > 0 && prayer.ranged_str > 0)
+                        || (p.magic > 0 && prayer.magic > 0))
+                });
+                active_prayers.push(prayer);
+            }
+            None => {
+                self.active_prayers = Some(vec![prayer]);
+            }
+        }
 
         self.attack = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.attack)
             .max()
             .unwrap_or(0);
         self.strength = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.strength)
             .max()
             .unwrap_or(0);
         self.defence = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.defence)
             .max()
             .unwrap_or(0);
         self.ranged_att = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.ranged_att)
             .max()
             .unwrap_or(0);
         self.ranged_str = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.ranged_str)
             .max()
             .unwrap_or(0);
         self.magic = self
             .active_prayers
+            .as_ref()
+            .unwrap()
             .iter()
             .map(|p| p.magic)
             .max()
@@ -202,17 +220,17 @@ pub struct SetEffects {
 
 #[derive(Default, PartialEq, Debug)]
 pub struct Gear {
-    pub head: Armor,
-    pub neck: Armor,
-    pub cape: Armor,
-    pub ammo: Armor,
+    pub head: Option<Armor>,
+    pub neck: Option<Armor>,
+    pub cape: Option<Armor>,
+    pub ammo: Option<Armor>,
     pub weapon: Weapon,
-    pub shield: Armor,
-    pub body: Armor,
-    pub legs: Armor,
-    pub hands: Armor,
-    pub feet: Armor,
-    pub ring: Armor,
+    pub shield: Option<Armor>,
+    pub body: Option<Armor>,
+    pub legs: Option<Armor>,
+    pub hands: Option<Armor>,
+    pub feet: Option<Armor>,
+    pub ring: Option<Armor>,
 }
 
 #[derive(Debug)]
@@ -244,7 +262,7 @@ pub struct Player {
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
     pub att_rolls: HashMap<CombatType, i32>,
-    pub max_hits: HashMap<CombatType, u8>,
+    pub max_hits: HashMap<CombatType, u16>,
     pub def_rolls: HashMap<CombatType, i32>,
 }
 
@@ -313,17 +331,56 @@ impl Player {
     }
 
     pub fn is_wearing(&self, gear_name: &str) -> bool {
-        self.gear.head.name == gear_name
-            || self.gear.neck.name == gear_name
-            || self.gear.cape.name == gear_name
-            || self.gear.ammo.name == gear_name
+        self.gear
+            .head
+            .as_ref()
+            .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .neck
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .cape
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .ammo
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
             || self.gear.weapon.name == gear_name
-            || self.gear.shield.name == gear_name
-            || self.gear.body.name == gear_name
-            || self.gear.legs.name == gear_name
-            || self.gear.hands.name == gear_name
-            || self.gear.feet.name == gear_name
-            || self.gear.ring.name == gear_name
+            || self
+                .gear
+                .shield
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .body
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .legs
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .hands
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .feet
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
+            || self
+                .gear
+                .ring
+                .as_ref()
+                .map_or(false, |armor| armor.name == gear_name)
     }
 
     pub fn is_wearing_any(&self, gear_names: Vec<&str>) -> bool {
@@ -342,17 +399,17 @@ impl Player {
         let slot_name = equipment::get_slot_name(item_name)
             .unwrap_or_else(|_| panic!("Slot not found for item {}", item_name));
         match slot_name.as_str() {
-            "head" => self.gear.head = Armor::new(item_name),
-            "neck" => self.gear.neck = Armor::new(item_name),
-            "cape" => self.gear.cape = Armor::new(item_name),
-            "ammo" => self.gear.ammo = Armor::new(item_name),
+            "head" => self.gear.head = Some(Armor::new(item_name)),
+            "neck" => self.gear.neck = Some(Armor::new(item_name)),
+            "cape" => self.gear.cape = Some(Armor::new(item_name)),
+            "ammo" => self.gear.ammo = Some(Armor::new(item_name)),
             "weapon" | "2h" => self.gear.weapon = Weapon::new(item_name),
-            "shield" => self.gear.shield = Armor::new(item_name),
-            "body" => self.gear.body = Armor::new(item_name),
-            "legs" => self.gear.legs = Armor::new(item_name),
-            "hands" => self.gear.hands = Armor::new(item_name),
-            "feet" => self.gear.feet = Armor::new(item_name),
-            "ring" => self.gear.ring = Armor::new(item_name),
+            "shield" => self.gear.shield = Some(Armor::new(item_name)),
+            "body" => self.gear.body = Some(Armor::new(item_name)),
+            "legs" => self.gear.legs = Some(Armor::new(item_name)),
+            "hands" => self.gear.hands = Some(Armor::new(item_name)),
+            "feet" => self.gear.feet = Some(Armor::new(item_name)),
+            "ring" => self.gear.ring = Some(Armor::new(item_name)),
             _ => panic!("Slot not found for item {}", item_name),
         }
     }
@@ -371,26 +428,49 @@ impl Player {
             &self.gear.hands,
             &self.gear.feet,
             &self.gear.ring,
-        ] {
-            self.bonuses.add_bonuses(&item.bonuses)
+        ]
+        .into_iter()
+        .flatten()
+        {
+            self.bonuses.add_bonuses(&item.bonuses);
         }
         self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
     }
 
     pub fn calc_potion_boosts(&mut self) {
-        self.potions.attack.calc_boost(self.stats.attack);
-        self.potions.strength.calc_boost(self.stats.strength);
-        self.potions.defence.calc_boost(self.stats.defence);
-        self.potions.ranged.calc_boost(self.stats.ranged);
-        self.potions.magic.calc_boost(self.stats.magic);
+        if let Some(potion) = &mut self.potions.attack {
+            potion.calc_boost(self.stats.attack)
+        }
+        if let Some(potion) = &mut self.potions.strength {
+            potion.calc_boost(self.stats.strength)
+        }
+        if let Some(potion) = &mut self.potions.defence {
+            potion.calc_boost(self.stats.defence);
+        }
+        if let Some(potion) = &mut self.potions.ranged {
+            potion.calc_boost(self.stats.ranged);
+        }
+        if let Some(potion) = &mut self.potions.magic {
+            potion.calc_boost(self.stats.magic);
+        }
     }
 
     fn apply_potion_boosts(&mut self) {
-        self.live_stats.attack += self.potions.attack.boost;
-        self.live_stats.strength += self.potions.strength.boost;
-        self.live_stats.defence += self.potions.defence.boost;
-        self.live_stats.ranged += self.potions.ranged.boost;
-        self.live_stats.magic += self.potions.magic.boost;
+        if let Some(potion) = &self.potions.attack {
+            self.live_stats.attack += potion.boost;
+        }
+        if let Some(potion) = &self.potions.strength {
+            self.live_stats.strength += potion.boost;
+        }
+        if let Some(potion) = &self.potions.defence {
+            self.live_stats.defence += potion.boost;
+        }
+        if let Some(potion) = &self.potions.ranged {
+            self.live_stats.ranged += potion.boost;
+        }
+        if let Some(potion) = &self.potions.magic {
+            self.live_stats.magic += potion.boost;
+        }
     }
 
     pub fn combat_stance(&self) -> CombatStance {
@@ -411,6 +491,43 @@ impl Player {
             self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
         }
         self.attrs.active_style = style;
+    }
+
+    pub fn is_wearing_black_mask(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Black mask",
+            "Black mask (i)",
+            "Slayer helmet",
+            "Slayer helmet (i)",
+        ])
+    }
+
+    pub fn is_wearing_imbued_black_mask(&self) -> bool {
+        self.is_wearing_any(vec!["Black mask (i)", "Slayer helmet (i)"])
+    }
+
+    pub fn is_wearing_salve(&self) -> bool {
+        self.is_wearing_any(vec!["Salve amulet", "Salve amulet (i)"])
+    }
+
+    pub fn is_wearing_salve_e(&self) -> bool {
+        self.is_wearing_any(vec!["Salve amulet (e)", "Salve amulet (ei)"])
+    }
+
+    pub fn is_wearing_wildy_bow(&self) -> bool {
+        self.is_wearing_any(vec!["Craw's bow", "Webweaver bow"])
+    }
+
+    pub fn is_wearing_crystal_bow(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Crystal bow",
+            "Bow of faerdhinen",
+            "Bow of faerdhinen (c)",
+        ])
+    }
+
+    pub fn is_wearing_tzhaar_weapon(&self) -> bool {
+        self.gear.weapon.name.contains("Tzhaar") || self.gear.weapon.name.contains("Toktz")
     }
 }
 
@@ -460,6 +577,7 @@ mod test {
     use super::*;
     use crate::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
     use crate::potions::Potion;
+    use crate::prayers::Prayer;
     use crate::spells::StandardSpell;
     use std::collections::HashMap;
 
@@ -516,7 +634,8 @@ mod test {
     #[test]
     fn test_is_wearing() {
         let mut player = Player::new();
-        player.gear.head.name = "Torva full helm".to_string();
+        player.gear.head = Some(Armor::default());
+        player.gear.head.as_mut().unwrap().name = "Torva full helm".to_string();
         assert!(player.is_wearing("Torva full helm"));
     }
 
@@ -526,7 +645,7 @@ mod test {
         player.equip("Torva full helm");
         player.update_bonuses();
         let torva_full_helm = Armor::new("Torva full helm");
-        assert_eq!(player.gear.head, torva_full_helm);
+        assert_eq!(player.gear.head.unwrap(), torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
     }
 
@@ -548,7 +667,7 @@ mod test {
         player.equip("Neitiznot faceguard");
         player.update_bonuses();
         let neitiznot_faceguard = Armor::new("Neitiznot faceguard");
-        assert_eq!(player.gear.head, neitiznot_faceguard);
+        assert_eq!(player.gear.head.unwrap(), neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
 
@@ -556,17 +675,17 @@ mod test {
     fn test_max_melee_bonuses() {
         let mut player = Player::new();
         let max_melee_gear = Gear {
-            head: Armor::new("Torva full helm"),
-            neck: Armor::new("Amulet of torture"),
-            cape: Armor::new("Infernal cape"),
-            ammo: Armor::new("Rada's blessing 4"),
+            head: Some(Armor::new("Torva full helm")),
+            neck: Some(Armor::new("Amulet of torture")),
+            cape: Some(Armor::new("Infernal cape")),
+            ammo: Some(Armor::new("Rada's blessing 4")),
             weapon: Weapon::new("Osmumten's fang"),
-            shield: Armor::new("Avernic defender"),
-            body: Armor::new("Torva platebody"),
-            legs: Armor::new("Torva platelegs"),
-            hands: Armor::new("Ferocious gloves"),
-            feet: Armor::new("Primordial boots"),
-            ring: Armor::new("Ultor ring"),
+            shield: Some(Armor::new("Avernic defender")),
+            body: Some(Armor::new("Torva platebody")),
+            legs: Some(Armor::new("Torva platelegs")),
+            hands: Some(Armor::new("Ferocious gloves")),
+            feet: Some(Armor::new("Primordial boots")),
+            ring: Some(Armor::new("Ultor ring")),
         };
         player.gear = max_melee_gear;
         player.update_bonuses();
@@ -609,11 +728,11 @@ mod test {
             hitpoints: 99,
             prayer: 99,
         };
-        player.potions.attack = PotionBoost::new(Potion::SuperAttack);
-        player.potions.strength = PotionBoost::new(Potion::SuperStrength);
-        player.potions.defence = PotionBoost::new(Potion::SuperDefence);
-        player.potions.ranged = PotionBoost::new(Potion::Ranging);
-        player.potions.magic = PotionBoost::new(Potion::SaturatedHeart);
+        player.potions.attack = Some(PotionBoost::new(Potion::SuperAttack));
+        player.potions.strength = Some(PotionBoost::new(Potion::SuperStrength));
+        player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
+        player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+        player.potions.magic = Some(PotionBoost::new(Potion::SaturatedHeart));
 
         player.calc_potion_boosts();
         player.reset_live_stats();
@@ -628,19 +747,24 @@ mod test {
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut player = Player::new();
-        player.potions.attack = PotionBoost::new(Potion::ZamorakBrewAtt);
-        player.potions.defence = PotionBoost::new(Potion::SuperDefence);
-        player.potions.magic = PotionBoost::new(Potion::Magic);
-        player.potions.ranged = PotionBoost::new(Potion::Ranging);
-        player.potions.strength = PotionBoost::new(Potion::DragonBattleaxe);
+        player.potions.attack = Some(PotionBoost::new(Potion::ZamorakBrewAtt));
+        player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
+        player.potions.magic = Some(PotionBoost::new(Potion::Magic));
+        player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+        player.potions.strength = Some(PotionBoost::new(Potion::DragonBattleaxe));
         player.calc_potion_boosts();
         player.reset_live_stats();
-        player.potions.strength.calc_dragon_battleaxe_boost(
-            player.live_stats.attack,
-            player.live_stats.defence,
-            player.live_stats.ranged,
-            player.live_stats.magic,
-        );
+        player
+            .potions
+            .strength
+            .as_mut()
+            .unwrap()
+            .calc_dragon_battleaxe_boost(
+                player.live_stats.attack,
+                player.live_stats.defence,
+                player.live_stats.ranged,
+                player.live_stats.magic,
+            );
         player.reset_live_stats();
 
         assert_eq!(player.live_stats.attack, 120);
@@ -648,5 +772,18 @@ mod test {
         assert_eq!(player.live_stats.defence, 118);
         assert_eq!(player.live_stats.ranged, 112);
         assert_eq!(player.live_stats.magic, 103);
+    }
+
+    #[test]
+    fn test_prayer_boost() {
+        let mut player = Player::new();
+        player.prayers.add(PrayerBoost::new(Prayer::Chivalry));
+        assert_eq!(player.prayers.attack, 15);
+        assert_eq!(player.prayers.strength, 18);
+        assert_eq!(player.prayers.defence, 20);
+        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        assert_eq!(player.prayers.attack, 20);
+        assert_eq!(player.prayers.strength, 23);
+        assert_eq!(player.prayers.defence, 25);
     }
 }
