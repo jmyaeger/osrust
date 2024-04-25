@@ -1,8 +1,8 @@
+use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
-use crate::monster::{Attribute, Monster};
+use crate::monster::Monster;
 use crate::player::Player;
-use crate::{constants::*, monster};
-use num::rational::Ratio;
+use crate::utils::Fraction;
 use std::collections::HashMap;
 
 pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
@@ -91,8 +91,8 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let obsidian_boost = obsidian_boost(player);
 
     let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee as u16);
-    let scaled_max_hit = base_max_hit * *gear_bonus.numer() as u16 / *gear_bonus.denom() as u16
-        + base_max_hit * *obsidian_boost.numer() as u16 / *obsidian_boost.denom() as u16;
+    let scaled_max_hit =
+        gear_bonus.multiply_to_int(base_max_hit) + obsidian_boost.multiply_to_int(base_max_hit);
 
     let mut att_rolls = HashMap::new();
     let mut max_hits = HashMap::new();
@@ -103,9 +103,9 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         (CombatType::Crush, player.bonuses.attack.crush),
     ];
 
-    for (combat_type, bonus) in combat_types.iter() {
-        let mut att_roll = calc_roll(eff_att as i32, *bonus);
-        att_roll = att_roll * *gear_bonus.numer() as i32 / *gear_bonus.denom() as i32;
+    for &(combat_type, bonus) in &combat_types {
+        let mut att_roll = calc_roll(eff_att as i32, bonus);
+        att_roll = gear_bonus.multiply_to_int(att_roll);
         let mut max_hit = scaled_max_hit;
 
         if monster.is_dragon() && player.is_wearing("Dragon hunter lance") {
@@ -113,8 +113,8 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
             max_hit = max_hit * 6 / 5;
         }
 
-        att_rolls.insert(*combat_type, att_roll);
-        max_hits.insert(*combat_type, max_hit);
+        att_rolls.insert(combat_type, att_roll);
+        max_hits.insert(combat_type, max_hit);
     }
     att_rolls.insert(
         CombatType::Crush,
@@ -148,12 +148,12 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     max_hit = max_hit * (1000 + crystal_bonus as u16) / 1000;
 
     if monster.is_dragon() && player.is_wearing("Dragon hunter crossbow") {
-        att_gear_bonus += Ratio::new(3, 10);
-        str_gear_bonus += Ratio::new(1, 4);
+        att_gear_bonus += Fraction::new(3, 10);
+        str_gear_bonus += Fraction::new(1, 4);
     }
 
-    att_roll = att_roll * *att_gear_bonus.numer() / *att_gear_bonus.denom();
-    max_hit = max_hit * *str_gear_bonus.numer() as u16 / *str_gear_bonus.denom() as u16;
+    att_roll = att_gear_bonus.multiply_to_int(att_roll);
+    max_hit = str_gear_bonus.multiply_to_int(max_hit);
 
     if player.is_wearing("Twisted bow") {
         let (tbow_acc_bonus, tbow_dmg_bonus) = monster.tbow_bonuses();
@@ -218,32 +218,32 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u16, u16) {
     (eff_att, eff_str)
 }
 
-fn melee_gear_bonus(player: &Player, monster: &Monster) -> Ratio<i32> {
+fn melee_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
     if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
         if player.boosts.forinthry_surge {
-            Ratio::new(135, 100)
+            Fraction::new(135, 100)
         } else {
-            Ratio::new(6, 5)
+            Fraction::new(6, 5)
         }
     } else if monster.is_undead() && player.is_wearing_salve() {
-        Ratio::new(7, 6)
-    } else if player.is_wearing_salve_e() {
-        Ratio::new(6, 5)
+        Fraction::new(7, 6)
+    } else if monster.is_undead() && player.is_wearing_salve_e() {
+        Fraction::new(6, 5)
     } else if player.boosts.on_task && player.is_wearing_black_mask() {
-        Ratio::new(7, 6)
+        Fraction::new(7, 6)
     } else {
-        Ratio::from_integer(1)
+        Fraction::from_integer(1)
     }
 }
 
-fn obsidian_boost(player: &Player) -> Ratio<i32> {
+fn obsidian_boost(player: &Player) -> Fraction {
     if player.set_effects.full_obsidian
         && player.is_wearing_tzhaar_weapon()
         && player.is_using_melee()
     {
-        Ratio::new(1, 10)
+        Fraction::new(1, 10)
     } else {
-        Ratio::from_integer(0)
+        Fraction::from_integer(0)
     }
 }
 
@@ -279,27 +279,27 @@ fn crystal_bonus(player: &Player) -> i32 {
     crystal_bonus
 }
 
-fn ranged_gear_bonus(player: &Player, monster: &Monster) -> Ratio<i32> {
+fn ranged_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
     if player.is_wearing("Eclipse atlatl") {
         return melee_gear_bonus(player, monster);
     }
-    let mut gear_bonus = Ratio::from_integer(1);
+    let mut gear_bonus = Fraction::from_integer(1);
     if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
         if player.boosts.forinthry_surge {
-            gear_bonus = Ratio::new(135, 100)
+            gear_bonus = Fraction::new(135, 100)
         } else {
-            gear_bonus = Ratio::new(6, 5)
+            gear_bonus = Fraction::new(6, 5)
         }
     } else if monster.is_undead() && player.is_wearing("Salve amulet (ei)") {
-        gear_bonus = Ratio::new(6, 5)
+        gear_bonus = Fraction::new(6, 5)
     } else if player.is_wearing("Salve amulet (i)") {
-        gear_bonus = Ratio::new(7, 6)
+        gear_bonus = Fraction::new(7, 6)
     } else if player.boosts.on_task && player.is_wearing_imbued_black_mask() {
-        gear_bonus = Ratio::new(115, 100);
+        gear_bonus = Fraction::new(115, 100);
         if (player.boosts.in_wilderness || monster.is_in_wilderness())
             && player.is_wearing_wildy_bow()
         {
-            gear_bonus += Ratio::new(1, 2);
+            gear_bonus += Fraction::new(1, 2);
         }
     }
     gear_bonus

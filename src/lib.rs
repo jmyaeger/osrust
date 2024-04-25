@@ -6,3 +6,4 @@ pub mod potions;
 pub mod prayers;
 pub mod rolls;
 pub mod spells;
+pub mod utils;
