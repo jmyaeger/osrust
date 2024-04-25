@@ -3,7 +3,7 @@ use crate::equipment::{
 };
 use crate::potions::PotionBoost;
 use crate::prayers::PrayerBoost;
-use crate::spells::Spell;
+use crate::spells;
 use reqwest::Error;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -237,7 +237,7 @@ pub struct Gear {
 pub struct PlayerAttrs {
     pub name: Option<String>,
     pub active_style: CombatStyle,
-    pub spell: Option<Box<dyn Spell>>,
+    pub spell: Option<Box<dyn spells::Spell>>,
 }
 
 pub struct Player {
@@ -478,10 +478,27 @@ impl Player {
     }
 
     pub fn set_active_style(&mut self, style: CombatStyle) {
-        if style == CombatStyle::Rapid {
-            self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
-        }
         self.attrs.active_style = style;
+
+        let stance = self.combat_stance();
+        if stance == CombatStance::Rapid {
+            self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+        } else if [
+            CombatStance::DefensiveAutocast,
+            CombatStance::Autocast,
+            CombatStance::ManualCast,
+        ]
+        .contains(&stance)
+        {
+            self.gear.weapon.speed =
+                if self.is_wearing("Harmonised nightmare staff") && self.is_using_standard_spell() {
+                    4
+                } else {
+                    5
+                }
+        } else {
+            self.gear.weapon.speed = self.gear.weapon.base_speed;
+        }
     }
 
     pub fn is_wearing_black_mask(&self) -> bool {
@@ -509,6 +526,10 @@ impl Player {
         self.is_wearing_any(vec!["Craw's bow", "Webweaver bow"])
     }
 
+    pub fn is_wearing_wildy_staff(&self) -> bool {
+        self.is_wearing_any(vec!["Thammaron's sceptre", "Accursed sceptre"])
+    }
+
     pub fn is_wearing_crystal_bow(&self) -> bool {
         self.is_wearing_any(vec![
             "Crystal bow",
@@ -519,6 +540,42 @@ impl Player {
 
     pub fn is_wearing_tzhaar_weapon(&self) -> bool {
         self.gear.weapon.name.contains("Tzhaar") || self.gear.weapon.name.contains("Toktz")
+    }
+
+    pub fn is_wearing_salamander(&self) -> bool {
+        self.gear.weapon.name.contains("salamander") || self.is_wearing("Swamp lizard")
+    }
+
+    pub fn is_wearing_smoke_staff(&self) -> bool {
+        self.is_wearing_any(vec!["Smoke battlestaff", "Mystic smoke staff"])
+    }
+
+    pub fn is_using_spell(&self) -> bool {
+        self.attrs.spell.is_some()
+            && [
+                CombatStance::Autocast,
+                CombatStance::ManualCast,
+                CombatStance::DefensiveAutocast,
+            ]
+            .contains(&self.combat_stance())
+    }
+
+    pub fn is_using_standard_spell(&self) -> bool {
+        self.is_using_spell()
+            && spells::is_standard_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+    }
+
+    pub fn is_using_water_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_water_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+    }
+
+    pub fn is_using_ancient_spell(&self) -> bool {
+        self.is_using_spell()
+            && spells::is_ancient_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+    }
+
+    pub fn is_using_fire_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap().as_ref())
     }
 }
 

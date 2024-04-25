@@ -56,6 +56,7 @@ pub enum CombatStance {
     LongFuse,
     DefensiveAutocast,
     Autocast,
+    ManualCast,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Default)]

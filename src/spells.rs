@@ -150,9 +150,51 @@ impl Spell for ArceuusSpell {
 }
 
 fn magic_dart_max_hit(player: &Player) -> u16 {
-    if player.is_wearing("Slayer's staff (e)") {
+    if player.is_wearing("Slayer's staff (e)") || player.boosts.on_task {
         13 + player.live_stats.magic / 6
     } else {
         10 + player.live_stats.magic / 10
+    }
+}
+
+pub fn is_standard_spell(spell: &dyn Spell) -> bool {
+    spell.as_any().downcast_ref::<StandardSpell>().is_some()
+}
+
+pub fn is_ancient_spell(spell: &dyn Spell) -> bool {
+    spell.as_any().downcast_ref::<AncientSpell>().is_some()
+}
+
+pub fn is_arceuus_spell(spell: &dyn Spell) -> bool {
+    spell.as_any().downcast_ref::<ArceuusSpell>().is_some()
+}
+
+pub fn is_water_spell(spell: &dyn Spell) -> bool {
+    if let Some(equipped_spell) = spell.as_any().downcast_ref::<StandardSpell>() {
+        [
+            StandardSpell::WaterStrike,
+            StandardSpell::WaterBolt,
+            StandardSpell::WaterBlast,
+            StandardSpell::WaterSurge,
+            StandardSpell::WaterWave,
+        ]
+        .contains(equipped_spell)
+    } else {
+        false
+    }
+}
+
+pub fn is_fire_spell(spell: &dyn Spell) -> bool {
+    if let Some(equipped_spell) = spell.as_any().downcast_ref::<StandardSpell>() {
+        [
+            StandardSpell::FireStrike,
+            StandardSpell::FireBolt,
+            StandardSpell::FireBlast,
+            StandardSpell::FireSurge,
+            StandardSpell::FireWave,
+        ]
+        .contains(equipped_spell)
+    } else {
+        false
     }
 }

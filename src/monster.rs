@@ -310,6 +310,14 @@ impl Monster {
     pub fn is_revenant(&self) -> bool {
         self.info.name.contains("Revenant")
     }
+
+    pub fn is_toa_monster(&self) -> bool {
+        TOA_MONSTERS.contains(&self.info.name.as_str())
+    }
+
+    pub fn is_toa_path_monster(&self) -> bool {
+        TOA_PATH_MONSTERS.contains(&self.info.name.as_str())
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {
