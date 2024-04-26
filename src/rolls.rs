@@ -114,6 +114,60 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
             max_hit = max_hit * 6 / 5;
         }
 
+        if monster.is_kalphite() && player.is_wearing_keris() {
+            max_hit = max_hit * 133 / 100;
+            if player.is_wearing("Keris partisan of breaching") {
+                att_roll = att_roll * 133 / 100;
+            }
+        }
+
+        if monster.is_golem() && player.is_wearing("Barronite mace") {
+            max_hit = max_hit * 115 / 100;
+        }
+
+        if (monster.is_in_wilderness() || player.boosts.in_wilderness)
+            && player.is_wearing_wildy_mace()
+        {
+            att_roll = att_roll * 3 / 2;
+            max_hit = max_hit * 3 / 2;
+        }
+
+        // TODO: check implementation order
+        if player.is_wearing("Berserker necklace") && player.is_wearing_tzhaar_weapon() {
+            max_hit = max_hit * 6 / 5;
+        }
+
+        if (player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid"))
+            && Some(1) == monster.vampyre_tier()
+        {
+            max_hit = max_hit * 11 / 10;
+        }
+
+        if monster.is_demon() {
+            if player.is_wearing_any(vec!["Silverlight", "Darklight"]) {
+                max_hit = max_hit * 8 / 5;
+            } else if player.is_wearing("Arclight") {
+                if !monster.info.name.contains("Duke Sucellus") {
+                    max_hit = max_hit * 17 / 10;
+                    att_roll = att_roll * 17 / 10;
+                } else {
+                    max_hit = max_hit * 3 / 2;
+                    att_roll = att_roll * 3 / 2;
+                }
+            }
+        }
+
+        if monster.vampyre_tier().is_some() {
+            let factors = match player.gear.weapon.name.as_str() {
+                "Blisterwood flail" => [Fraction::new(105, 100), Fraction::new(5, 4)],
+                "Blisterwood sickle" => [Fraction::new(105, 100), Fraction::new(115, 100)],
+                "Ivandis flail" => [Fraction::from_integer(1), Fraction::new(6, 5)],
+                _ => [Fraction::from_integer(1), Fraction::from_integer(1)],
+            };
+            att_roll = factors[0].multiply_to_int(att_roll);
+            max_hit = factors[1].multiply_to_int(max_hit);
+        }
+
         att_rolls.insert(combat_type, att_roll);
         max_hits.insert(combat_type, max_hit);
     }
@@ -161,6 +215,15 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
         att_roll = att_roll * tbow_acc_bonus / 100;
         max_hit = max_hit * tbow_dmg_bonus as u16 / 100;
     }
+
+    if (monster.is_in_wilderness() || player.boosts.in_wilderness)
+        && player.is_wearing_wildy_bow()
+        && !(player.is_wearing_imbued_black_mask() && player.boosts.on_task)
+    {
+        att_roll = att_roll * 3 / 2;
+        max_hit = max_hit * 3 / 2;
+    }
+
     player.att_rolls.insert(CombatType::Ranged, att_roll);
     player.max_hits.insert(CombatType::Ranged, max_hit);
 }

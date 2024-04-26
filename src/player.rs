@@ -522,6 +522,10 @@ impl Player {
         self.is_wearing_any(vec!["Salve amulet (e)", "Salve amulet (ei)"])
     }
 
+    pub fn is_wearing_wildy_mace(&self) -> bool {
+        self.is_wearing_any(vec!["Viggora's chainmace", "Ursine chainmace"])
+    }
+
     pub fn is_wearing_wildy_bow(&self) -> bool {
         self.is_wearing_any(vec!["Craw's bow", "Webweaver bow"])
     }
@@ -548,6 +552,34 @@ impl Player {
 
     pub fn is_wearing_smoke_staff(&self) -> bool {
         self.is_wearing_any(vec!["Smoke battlestaff", "Mystic smoke staff"])
+    }
+
+    pub fn is_wearing_silver_weapon(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Blessed axe",
+            "Silver sickle",
+            "Silver sickle (b)",
+            "Emerald sickle",
+            "Emerald sickle (b)",
+            "Enchanted emerald sickle (b)",
+            "Ruby sickle (b)",
+            "Enchanted ruby sickle (b)",
+            "Silverlight",
+            "Darklight",
+            "Arclight",
+            "Rod of ivandis",
+            "Wolfbane",
+        ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts"))
+    }
+
+    pub fn is_wearing_keris(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Keris",
+            "Keris partisan",
+            "Keris partisan of the sun",
+            "Keris partisan of corruption",
+            "Keris partisan of breaching",
+        ])
     }
 
     pub fn is_using_spell(&self) -> bool {

@@ -303,6 +303,31 @@ impl Monster {
             .map_or(false, |attrs| attrs.contains(&Attribute::Undead))
     }
 
+    pub fn is_kalphite(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Kalphite))
+    }
+
+    pub fn is_golem(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Golem))
+    }
+
+    pub fn vampyre_tier(&self) -> Option<u8> {
+        if let Some(attrs) = self.info.attributes.as_ref() {
+            for attr in attrs {
+                if let Attribute::Vampyre(tier) = attr {
+                    return Some(*tier);
+                }
+            }
+        }
+        None
+    }
+
     pub fn is_in_wilderness(&self) -> bool {
         WILDERNESS_MONSTERS.contains(&self.info.name.as_str())
     }
