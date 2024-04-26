@@ -1,7 +1,8 @@
 use crate::constants::*;
-use crate::equipment::{CombatStance, CombatType};
+use crate::equipment::{CombatStance, CombatStyle, CombatType};
 use crate::monster::Monster;
 use crate::player::Player;
+use crate::spells::{Spellbook, StandardSpell};
 use crate::utils::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
@@ -91,6 +92,9 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let inquisitor_boost = inquisitor_boost(player);
     let obsidian_boost = obsidian_boost(player);
 
+    if player.is_wearing("Dinh's bulwark") && player.attrs.active_style == CombatStyle::Pummel {
+        player.bonuses.strength.melee += player.bulwark_bonus();
+    }
     let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee as u16);
     let scaled_max_hit =
         gear_bonus.multiply_to_int(base_max_hit) + obsidian_boost.multiply_to_int(base_max_hit);
@@ -137,7 +141,13 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
             max_hit = max_hit * 6 / 5;
         }
 
-        if (player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid"))
+        if (player.is_wearing_silver_weapon()
+            || (player.is_wearing("Efaritay's aid")
+                && !player.is_wearing_any(vec![
+                    "Blisterwood flail",
+                    "Blisterwood sickle",
+                    "Ivandis flail",
+                ])))
             && Some(1) == monster.vampyre_tier()
         {
             max_hit = max_hit * 11 / 10;
@@ -166,6 +176,19 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
             };
             att_roll = factors[0].multiply_to_int(att_roll);
             max_hit = factors[1].multiply_to_int(max_hit);
+        }
+
+        if player.is_wearing("Leaf-bladed battleaxe") && monster.is_leafy() {
+            max_hit = max_hit * 47 / 40;
+        }
+
+        if player.is_wearing("Colossal blade") {
+            let colossal_factor = 2 * min(monster.info.size as u16, 5);
+            max_hit += colossal_factor;
+        }
+
+        if player.is_wearing("Bone mace") && monster.is_rat() {
+            max_hit += 10;
         }
 
         att_rolls.insert(combat_type, att_roll);
@@ -224,12 +247,19 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
         max_hit = max_hit * 3 / 2;
     }
 
+    if player.is_wearing("Bone shortbow") && monster.is_rat() {
+        max_hit += 10;
+    }
+
     player.att_rolls.insert(CombatType::Ranged, att_roll);
     player.max_hits.insert(CombatType::Ranged, max_hit);
 }
 
 pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     let base_max_hit = get_base_magic_hit(player);
+    let mut max_hit = apply_chaos_gauntlet_boost(base_max_hit, player);
+    max_hit = apply_charge_boost(max_hit, player);
+
     let mut magic_attack = player.bonuses.attack.magic;
     let mut magic_damage = 2 * player.bonuses.strength.magic as i32;
 
@@ -246,7 +276,7 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     let (att_roll, magic_damage, salve_active) =
         apply_salve_magic_boost(att_roll, magic_damage, player, monster);
 
-    let mut max_hit = base_max_hit * (200 + magic_damage as u16) / 200;
+    max_hit = max_hit * (200 + magic_damage as u16) / 200;
 
     let (mut att_roll, wilderness_boost) = apply_wildy_staff_boost(att_roll, player, monster);
 
@@ -545,4 +575,35 @@ fn apply_wildy_staff_boost(att_roll: i32, player: &Player, monster: &Monster) ->
     } else {
         (att_roll, 0u16)
     }
+}
+
+fn apply_chaos_gauntlet_boost(max_hit: u16, player: &Player) -> u16 {
+    let bolt_spells = [
+        StandardSpell::WindBolt,
+        StandardSpell::WaterBolt,
+        StandardSpell::EarthBolt,
+        StandardSpell::FireBolt,
+    ];
+    if let Some(Spellbook::Standard(standard_spell)) = player.spell() {
+        if player.is_wearing("Chaos gauntlet") && bolt_spells.contains(standard_spell) {
+            return max_hit + 3;
+        }
+    }
+    max_hit
+}
+
+fn apply_charge_boost(max_hit: u16, player: &Player) -> u16 {
+    let god_spells = [
+        StandardSpell::ClawsOfGuthix,
+        StandardSpell::SaradominStrike,
+        StandardSpell::FlamesOfZamorak,
+    ];
+    if player.boosts.charge_active {
+        if let Some(Spellbook::Standard(standard_spell)) = player.spell() {
+            if god_spells.contains(standard_spell) {
+                return max_hit + 10;
+            }
+        }
+    }
+    max_hit
 }

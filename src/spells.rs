@@ -5,6 +5,12 @@ pub trait Spell: std::fmt::Debug {
     fn as_any(&self) -> &dyn std::any::Any;
 }
 
+pub enum Spellbook<'a> {
+    Standard(&'a StandardSpell),
+    Ancient(&'a AncientSpell),
+    Arceuus(&'a ArceuusSpell),
+}
+
 #[derive(Debug, Default, PartialEq)]
 pub enum StandardSpell {
     #[default]

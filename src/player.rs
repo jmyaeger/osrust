@@ -5,6 +5,7 @@ use crate::potions::PotionBoost;
 use crate::prayers::PrayerBoost;
 use crate::spells;
 use reqwest::Error;
+use std::cmp::max;
 use std::collections::HashMap;
 use std::hash::Hash;
 
@@ -608,6 +609,37 @@ impl Player {
 
     pub fn is_using_fire_spell(&self) -> bool {
         self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+    }
+
+    pub fn spell(&self) -> Option<spells::Spellbook> {
+        self.attrs.spell.as_ref().map(|spell| {
+            if let Some(standard_spell) = spell.as_any().downcast_ref::<spells::StandardSpell>() {
+                spells::Spellbook::Standard(standard_spell)
+            } else if let Some(ancient_spell) =
+                spell.as_any().downcast_ref::<spells::AncientSpell>()
+            {
+                spells::Spellbook::Ancient(ancient_spell)
+            } else if let Some(arceuus_spell) =
+                spell.as_any().downcast_ref::<spells::ArceuusSpell>()
+            {
+                spells::Spellbook::Arceuus(arceuus_spell)
+            } else {
+                panic!("Unknown spell type")
+            }
+        })
+    }
+
+    pub fn bulwark_bonus(&self) -> i32 {
+        max(
+            0,
+            (self.bonuses.defence.stab
+                + self.bonuses.defence.slash
+                + self.bonuses.defence.crush
+                + self.bonuses.defence.ranged
+                - 800)
+                / 12
+                - 38,
+        )
     }
 }
 

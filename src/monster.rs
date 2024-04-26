@@ -310,11 +310,25 @@ impl Monster {
             .map_or(false, |attrs| attrs.contains(&Attribute::Kalphite))
     }
 
+    pub fn is_leafy(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Leafy))
+    }
+
     pub fn is_golem(&self) -> bool {
         self.info
             .attributes
             .as_ref()
             .map_or(false, |attrs| attrs.contains(&Attribute::Golem))
+    }
+
+    pub fn is_rat(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Rat))
     }
 
     pub fn vampyre_tier(&self) -> Option<u8> {
