@@ -1,0 +1,100 @@
+Melee:
+
+Standard test cases:
+- Max stats, max melee + rapier, piety + SCB
+- Base 80s, "mid game gear" + whip, piety + SCB
+
+Boost tests:
+- Dragon hunter lance against Vorkath
+- Keris partisan (normal and blue) against KQ
+- Barronite mace against golems
+- Ursine chainmace against Vet'ion
+- Ursine chainmace against non-wilderness opponent
+- Berserker necklace + obby sword against anything
+- Silverlight, Darklight, and Arclight against demons
+- Silverlight, Darklight, and Arclight against Duke Sucellus
+- Leaf-bladed battleaxe against kurasks
+- Colossal blade against Aberrant spectre (size 2), abhorrent spectre (size 3), Graardor (size 4), and adamant dragon (size 5)
+- Bone mace against Scurrius
+- Slayer helm + standard test cases
+- Slayer helm + max melee + each of the weapons in the weapon boosts function
+    - Dragon hunter lance against Vorkath
+    - Keris partisan (normal and blue) against KQ
+    - Ursine chainmace against Vet'ion
+    - Berserker necklace + obby sword against anything
+    - Silverlight, Darklight, and Arclight against demons
+    - Silverlight, Darklight, and Arclight against Duke Sucellus
+    - Leaf-bladed battleaxe against kurasks
+    - Colossal blade against Aberrant spectre (size 2), abhorrent spectre (size 3), Graardor (size 4), and adamant dragon (size 5)
+    - Bone mace against Scurrius
+- Salve amulet + standard test cases
+- Salve amulet + max melee + relevant weapons in the weapon boosts function
+    - Dragon hunter lance against Vorkath
+    - Ursine chainmace against Vet'ion
+    - Colossal blade against Aberrant spectre (size 2), abhorrent spectre (size 3), Bloat (size 5)
+- Slayer helmet + salve and DHL against Vorkath (testing boost priority)
+- Avarice/forinthry surge + standard test cases against revs
+- Avarice/forinthry surge + weapon boosts:
+    - DHL against revenant dragons
+    - Colossal blade against revenant dragons (size 5)
+    - Silverlight/Darklight/Arclight against revenant demons
+    - Ursine chainmace against any revenant
+- Full obsidian with and without berserker necklace on anything
+- Full obsidian with salve on anything undead
+- Vampyre tests:
+    - Arclight against T1 (Count Draynor (Hard)), T2 (Vampyre Juvinate (Level 50)), and T3 (Vanstrom Klause)
+    - Rapier + efaritay's aid against T1, T2, and T3
+    - Blisterwood flail against T1, T2, and T3
+    - Rapier without efaritay's aid against T1, T2, and T3
+    - Cases 1-3 with slayer helmet
+
+    
+Ranged:
+
+Standard test cases:
+- Max stats, max ranged + ZCB, rigour + ranging pot
+- Base 80s, RCB + blessed d'hide, eagle eye + ranging pot
+- Max stats, max ranged + blowpipe with rune/amethyst/dragon darts, rigour + ranging pot
+
+Boost tests:
+- Max stats, max ranged + tbow, rigour + ranging pot
+- Max stats, max ranged + tbow, rigour + overload against Olm head
+- Max stats, max ranged + tbow, rigour + smelling salts on 400 RL Zebak
+- DHCB against Vorkath
+- Webweaver bow against Spindel
+- Webweaver bow against non-wilderness opponent
+- Max stats, full eclipse moon set + atlatl
+    - Test piety and rigour
+    - Test SCB and ranging pot
+- Max stats, high melee str gear with full eclipse moon + atlatl
+    - Test piety and rigour
+    - Test SCB and ranging pot
+- 80 str, 99 ranged, full eclipse moon set + atlatl
+    - Test piety and rigour
+    - Test SCB and ranging pot
+- Slayer helm + standard test cases
+- Slayer helm + max ranged + each of the weapons in the weapon boosts function
+    - Max stats, full eclipse moon set + atlatl
+    - Base 80s, full eclipse moon set + atlatl
+    - DHCB against Vorkath
+    - Webweaver bow against Spindel
+    - Bone shortbow against Scurrius
+    - Tbow against CM shamans
+- Salve amulet + standard test cases
+- Salve amulet + max ranged + relevant weapons in the weapon boosts function
+    - DrHCB against Vorkath (with and without elite void)
+    - Webweaver bow against Vet'ion
+    - Tbow against CM mystics
+- Slayer helmet + salve and DHCB against Vorkath (testing boost priority)
+- Avarice/forinthry surge + standard test cases against revs
+- Avarice/forinthry surge + weapon boosts:
+    - DHCB against revenant dragons
+    - Webweaver bow against any revenant
+- Vampyre tests (once implemented):
+    - RCB + silver bolts against T1 (Count Draynor (Hard)), T2 (Vampyre Juvinate (Level 50)), and T3 (Vanstrom Klause)
+    - RCB + adamant bolts against same NPCs
+
+
+Magic:
+
+Standard test cases:
