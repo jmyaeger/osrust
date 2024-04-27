@@ -113,83 +113,8 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         att_roll = gear_bonus.multiply_to_int(att_roll);
         let mut max_hit = scaled_max_hit;
 
-        if monster.is_dragon() && player.is_wearing("Dragon hunter lance") {
-            att_roll = att_roll * 6 / 5;
-            max_hit = max_hit * 6 / 5;
-        }
-
-        if monster.is_kalphite() && player.is_wearing_keris() {
-            max_hit = max_hit * 133 / 100;
-            if player.is_wearing("Keris partisan of breaching") {
-                att_roll = att_roll * 133 / 100;
-            }
-        }
-
-        if monster.is_golem() && player.is_wearing("Barronite mace") {
-            max_hit = max_hit * 115 / 100;
-        }
-
-        if (monster.is_in_wilderness() || player.boosts.in_wilderness)
-            && player.is_wearing_wildy_mace()
-        {
-            att_roll = att_roll * 3 / 2;
-            max_hit = max_hit * 3 / 2;
-        }
-
-        // TODO: check implementation order
-        if player.is_wearing("Berserker necklace") && player.is_wearing_tzhaar_weapon() {
-            max_hit = max_hit * 6 / 5;
-        }
-
-        if (player.is_wearing_silver_weapon()
-            || (player.is_wearing("Efaritay's aid")
-                && !player.is_wearing_any(vec![
-                    "Blisterwood flail",
-                    "Blisterwood sickle",
-                    "Ivandis flail",
-                ])))
-            && Some(1) == monster.vampyre_tier()
-        {
-            max_hit = max_hit * 11 / 10;
-        }
-
-        if monster.is_demon() {
-            if player.is_wearing_any(vec!["Silverlight", "Darklight"]) {
-                max_hit = max_hit * 8 / 5;
-            } else if player.is_wearing("Arclight") {
-                if !monster.info.name.contains("Duke Sucellus") {
-                    max_hit = max_hit * 17 / 10;
-                    att_roll = att_roll * 17 / 10;
-                } else {
-                    max_hit = max_hit * 3 / 2;
-                    att_roll = att_roll * 3 / 2;
-                }
-            }
-        }
-
-        if monster.vampyre_tier().is_some() {
-            let factors = match player.gear.weapon.name.as_str() {
-                "Blisterwood flail" => [Fraction::new(105, 100), Fraction::new(5, 4)],
-                "Blisterwood sickle" => [Fraction::new(105, 100), Fraction::new(115, 100)],
-                "Ivandis flail" => [Fraction::from_integer(1), Fraction::new(6, 5)],
-                _ => [Fraction::from_integer(1), Fraction::from_integer(1)],
-            };
-            att_roll = factors[0].multiply_to_int(att_roll);
-            max_hit = factors[1].multiply_to_int(max_hit);
-        }
-
-        if player.is_wearing("Leaf-bladed battleaxe") && monster.is_leafy() {
-            max_hit = max_hit * 47 / 40;
-        }
-
-        if player.is_wearing("Colossal blade") {
-            let colossal_factor = 2 * min(monster.info.size as u16, 5);
-            max_hit += colossal_factor;
-        }
-
-        if player.is_wearing("Bone mace") && monster.is_rat() {
-            max_hit += 10;
-        }
+        (att_roll, max_hit) = apply_vampyre_boost(att_roll, max_hit, player, monster);
+        (att_roll, max_hit) = apply_melee_weapon_boosts(att_roll, max_hit, player, monster);
 
         att_rolls.insert(combat_type, att_roll);
         max_hits.insert(combat_type, max_hit);
@@ -211,8 +136,7 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     let (eff_att, eff_str) = calc_eff_ranged_lvls(player);
 
     let crystal_bonus = crystal_bonus(player);
-    let mut att_gear_bonus = ranged_gear_bonus(player, monster);
-    let mut str_gear_bonus = att_gear_bonus;
+    let (att_gear_bonus, str_gear_bonus) = ranged_gear_bonus(player, monster);
     let str_bonus = if player.is_wearing("Eclipse atlatl") {
         player.bonuses.strength.melee
     } else {
@@ -225,31 +149,10 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     let mut max_hit = calc_max_hit(eff_str, str_bonus as u16);
     max_hit = max_hit * (1000 + crystal_bonus as u16) / 1000;
 
-    if monster.is_dragon() && player.is_wearing("Dragon hunter crossbow") {
-        att_gear_bonus += Fraction::new(3, 10);
-        str_gear_bonus += Fraction::new(1, 4);
-    }
-
     att_roll = att_gear_bonus.multiply_to_int(att_roll);
     max_hit = str_gear_bonus.multiply_to_int(max_hit);
 
-    if player.is_wearing("Twisted bow") {
-        let (tbow_acc_bonus, tbow_dmg_bonus) = monster.tbow_bonuses();
-        att_roll = att_roll * tbow_acc_bonus / 100;
-        max_hit = max_hit * tbow_dmg_bonus as u16 / 100;
-    }
-
-    if (monster.is_in_wilderness() || player.boosts.in_wilderness)
-        && player.is_wearing_wildy_bow()
-        && !(player.is_wearing_imbued_black_mask() && player.boosts.on_task)
-    {
-        att_roll = att_roll * 3 / 2;
-        max_hit = max_hit * 3 / 2;
-    }
-
-    if player.is_wearing("Bone shortbow") && monster.is_rat() {
-        max_hit += 10;
-    }
+    (att_roll, max_hit) = apply_ranged_weapon_boosts(att_roll, max_hit, player, monster);
 
     player.att_rolls.insert(CombatType::Ranged, att_roll);
     player.max_hits.insert(CombatType::Ranged, max_hit);
@@ -367,7 +270,7 @@ fn melee_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
     } else if player.boosts.on_task && player.is_wearing_black_mask() {
         Fraction::new(7, 6)
     } else {
-        Fraction::from_integer(1)
+        Fraction::new(1, 1)
     }
 }
 
@@ -380,6 +283,92 @@ fn obsidian_boost(player: &Player) -> Fraction {
     } else {
         Fraction::from_integer(0)
     }
+}
+
+fn apply_vampyre_boost(
+    att_roll: i32,
+    max_hit: u16,
+    player: &Player,
+    monster: &Monster,
+) -> (i32, u16) {
+    if let Some(tier) = monster.vampyre_tier() {
+        if (1..=3).contains(&tier) {
+            let (att_factor, max_hit_factor) = match (
+                player.gear.weapon.name.as_str(),
+                player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid"),
+            ) {
+                ("Blisterwood flail", _) => (Fraction::new(105, 100), Fraction::new(5, 4)),
+                ("Blisterwood sickle", _) => (Fraction::new(105, 100), Fraction::new(115, 100)),
+                ("Ivandis flail", _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
+                (_, true) => (Fraction::new(1, 1), Fraction::new(11, 10)),
+                _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
+            };
+            return (
+                att_factor.multiply_to_int(att_roll),
+                max_hit_factor.multiply_to_int(max_hit),
+            );
+        }
+    }
+    (att_roll, max_hit)
+}
+
+fn apply_melee_weapon_boosts(
+    att_roll: i32,
+    max_hit: u16,
+    player: &Player,
+    monster: &Monster,
+) -> (i32, u16) {
+    let mut att_roll = att_roll;
+    let mut max_hit = max_hit;
+
+    let (att_factor, max_hit_factor) = match player.gear.weapon.name.as_str() {
+        "Dragon hunter lance" if monster.is_dragon() => (Fraction::new(6, 5), Fraction::new(6, 5)),
+        "Keris partisan of breaching" if monster.is_kalphite() => {
+            (Fraction::new(133, 100), Fraction::new(133, 100))
+        }
+        _ if monster.is_kalphite() && player.is_wearing_keris() => {
+            (Fraction::new(1, 1), Fraction::new(133, 100))
+        }
+        "Barronite mace" if monster.is_golem() => (Fraction::new(1, 1), Fraction::new(115, 100)),
+        _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
+            && player.is_wearing_wildy_mace() =>
+        {
+            (Fraction::new(3, 2), Fraction::new(3, 2))
+        }
+        _ if player.is_wearing("Berserker necklace") && player.is_wearing_tzhaar_weapon() => {
+            (Fraction::new(1, 1), Fraction::new(6, 5)) // TODO: check implementation order
+        }
+        "Silverlight" | "Darklight" if monster.is_demon() => {
+            (Fraction::new(1, 1), Fraction::new(8, 5))
+        }
+        "Arclight" if monster.is_demon() => {
+            if monster.info.name.contains("Duke Sucellus") {
+                (Fraction::new(3, 2), Fraction::new(3, 2))
+            } else {
+                (Fraction::new(17, 10), Fraction::new(17, 10))
+            }
+        }
+        "Leaf-bladed battleaxe" if monster.is_leafy() => {
+            (Fraction::new(1, 1), Fraction::new(47, 40))
+        }
+        _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
+    };
+
+    att_roll = att_factor.multiply_to_int(att_roll);
+    max_hit = max_hit_factor.multiply_to_int(max_hit);
+
+    match player.gear.weapon.name.as_str() {
+        "Colossal blade" => {
+            max_hit += 2 * min(monster.info.size as u16, 5);
+        }
+        "Bone mace" => {
+            if monster.is_rat() {
+                max_hit += 10
+            }
+        }
+        _ => {}
+    }
+    (att_roll, max_hit)
 }
 
 fn inquisitor_boost(player: &Player) -> i32 {
@@ -414,30 +403,83 @@ fn crystal_bonus(player: &Player) -> i32 {
     crystal_bonus
 }
 
-fn ranged_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
+fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction) {
     if player.is_wearing("Eclipse atlatl") {
-        return melee_gear_bonus(player, monster);
+        let gear_bonus = melee_gear_bonus(player, monster);
+        return (gear_bonus, gear_bonus);
     }
-    let mut gear_bonus = Fraction::from_integer(1);
+    let mut att_gear_bonus = Fraction::new(1, 1);
+    let mut str_gear_bonus = Fraction::new(1, 1);
     if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
         if player.boosts.forinthry_surge {
-            gear_bonus = Fraction::new(135, 100)
+            att_gear_bonus = Fraction::new(135, 100);
+            str_gear_bonus = Fraction::new(135, 100);
         } else {
-            gear_bonus = Fraction::new(6, 5)
+            att_gear_bonus = Fraction::new(6, 5);
+            str_gear_bonus = Fraction::new(6, 5);
         }
     } else if monster.is_undead() && player.is_wearing("Salve amulet (ei)") {
-        gear_bonus = Fraction::new(6, 5)
+        att_gear_bonus = Fraction::new(6, 5);
+        str_gear_bonus = Fraction::new(6, 5);
     } else if player.is_wearing("Salve amulet (i)") {
-        gear_bonus = Fraction::new(7, 6)
+        att_gear_bonus = Fraction::new(7, 6);
+        str_gear_bonus = Fraction::new(7, 6);
     } else if player.boosts.on_task && player.is_wearing_imbued_black_mask() {
-        gear_bonus = Fraction::new(115, 100);
+        att_gear_bonus = Fraction::new(115, 100);
+        str_gear_bonus = Fraction::new(115, 100);
         if (player.boosts.in_wilderness || monster.is_in_wilderness())
             && player.is_wearing_wildy_bow()
         {
-            gear_bonus += Fraction::new(1, 2);
+            att_gear_bonus += Fraction::new(1, 2);
+            str_gear_bonus += Fraction::new(1, 2);
+        } else if player.is_wearing("Dragon hunter crossbow") && monster.is_dragon() {
+            att_gear_bonus += Fraction::new(3, 10);
+            str_gear_bonus += Fraction::new(1, 4);
         }
     }
-    gear_bonus
+    (att_gear_bonus, str_gear_bonus)
+}
+
+fn apply_ranged_weapon_boosts(
+    att_roll: i32,
+    max_hit: u16,
+    player: &Player,
+    monster: &Monster,
+) -> (i32, u16) {
+    let mut att_roll = att_roll;
+    let mut max_hit = max_hit;
+
+    let (att_factor, max_hit_factor) = match player.gear.weapon.name.as_str() {
+        "Dragon hunter crossbow"
+            if monster.is_dragon()
+                && !(player.boosts.on_task && player.is_wearing_imbued_black_mask()) =>
+        {
+            (Fraction::new(13, 10), Fraction::new(5, 4))
+        }
+        "Twisted bow" => {
+            let (tbow_acc_bonus, tbow_dmg_bonus) = monster.tbow_bonuses();
+            (
+                Fraction::new(tbow_acc_bonus, 100),
+                Fraction::new(tbow_dmg_bonus, 100),
+            )
+        }
+        _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
+            && player.is_wearing_wildy_bow()
+            && !(player.is_wearing_imbued_black_mask() && player.boosts.on_task) =>
+        {
+            (Fraction::new(3, 2), Fraction::new(3, 2))
+        }
+        _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
+    };
+
+    att_roll = att_factor.multiply_to_int(att_roll);
+    max_hit = max_hit_factor.multiply_to_int(max_hit);
+
+    if player.is_wearing("Bone shortbow") && monster.is_rat() {
+        max_hit += 10;
+    }
+
+    (att_roll, max_hit)
 }
 
 fn get_base_magic_hit(player: &Player) -> u16 {
@@ -502,7 +544,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u16 {
     let void_bonus = if player.set_effects.full_void || player.set_effects.full_elite_void {
         Fraction::new(145, 100)
     } else {
-        Fraction::from_integer(1)
+        Fraction::new(1, 1)
     };
     let visible_magic = player.live_stats.magic;
 

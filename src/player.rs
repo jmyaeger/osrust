@@ -570,6 +570,9 @@ impl Player {
             "Arclight",
             "Rod of ivandis",
             "Wolfbane",
+            "Blisterwood flail",
+            "Blisterwood sickle",
+            "Ivandis flail",
         ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts"))
     }
 
