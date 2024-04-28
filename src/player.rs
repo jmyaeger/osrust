@@ -1,3 +1,4 @@
+use crate::constants::*;
 use crate::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
 };
@@ -429,6 +430,22 @@ impl Player {
         self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
     }
 
+    pub fn update_set_effects(&mut self) {
+        self.set_effects.full_ahrims = self.is_wearing_all(Vec::from(FULL_AHRIMS));
+        self.set_effects.full_blood_moon = self.is_wearing_all(Vec::from(FULL_BLOOD_MOON));
+        self.set_effects.full_blue_moon = self.is_wearing_all(Vec::from(FULL_BLUE_MOON));
+        self.set_effects.full_dharoks = self.is_wearing_all(Vec::from(FULL_DHAROKS));
+        self.set_effects.full_guthans = self.is_wearing_all(Vec::from(FULL_GUTHANS));
+        self.set_effects.full_eclipse_moon = self.is_wearing_all(Vec::from(FULL_ECLIPSE_MOON));
+        self.set_effects.full_inquisitor = self.is_wearing_all(Vec::from(FULL_INQUISITOR));
+        self.set_effects.full_justiciar = self.is_wearing_all(Vec::from(FULL_JUSTICIAR));
+        self.set_effects.full_karils = self.is_wearing_all(Vec::from(FULL_KARILS));
+        self.set_effects.full_obsidian = self.is_wearing_all(Vec::from(FULL_OBSIDIAN));
+        self.set_effects.full_torags = self.is_wearing_all(Vec::from(FULL_TORAGS));
+        self.set_effects.full_void = self.is_wearing_full_void();
+        self.set_effects.full_elite_void = self.is_wearing_full_elite_void();
+    }
+
     pub fn calc_potion_boosts(&mut self) {
         if let Some(potion) = &mut self.potions.attack {
             potion.calc_boost(self.stats.attack)
@@ -584,6 +601,18 @@ impl Player {
             "Keris partisan of corruption",
             "Keris partisan of breaching",
         ])
+    }
+
+    pub fn is_wearing_full_void(&self) -> bool {
+        FULL_VOID.iter().filter(|x| self.is_wearing(x)).count() == 4
+    }
+
+    pub fn is_wearing_full_elite_void(&self) -> bool {
+        FULL_ELITE_VOID
+            .iter()
+            .filter(|x| self.is_wearing(x))
+            .count()
+            == 4
     }
 
     pub fn is_using_spell(&self) -> bool {

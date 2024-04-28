@@ -113,4 +113,26 @@ Boost tests:
     - Against Kree'arra
 - Smoke battlestaff + max mage + fire surge
 - Full virtus + kodai + ice barrage
-- Salve with max mage against 
+- Full virtus + kodai + fire surge
+- Salve + fire surge
+- Salve + shadow 
+- Salve + fire bolt + chaos gauntlets
+- Salve + charge + god spell
+- Salve + smoke battlestaff + fire surge
+- Salve + full virtus + kodai + ice barrage
+- Avarice + forinthry surge against revs
+- Accursed sceptre against Callisto
+- Accursed sceptre + salve against revenant
+- Accursed sceptre + avarice + forinthry surge against revenant
+- Accursed sceptre + slayer helm against Callisto
+- Tome of water + water surge 
+- Slayer helm + shadow against Kree
+- Slayer helm + fire bolt with chaos gauntlets-
+- Slayer helm + charge + god spell
+- Slayer helm + smoke battlestaff + fire surge
+- Slayer helm + full virtus + kodai + ice barrage
+- Slayer helm + salve (test exculsivity - same with avarice)
+- Tome of fire + fire surge
+- Tome of fire + fire surge + slayer helm
+- Tome of fire + fire surge + salve
+- Tome of fire + fire bolt + chaos gauntlets

@@ -96,3 +96,104 @@ pub const WILDERNESS_MONSTERS: [&str; 38] = [
     "Spindel's Spiderling",
     "Venenatis' Spiderling",
 ];
+
+pub const FULL_AHRIMS: [&str; 4] = [
+    "Ahrim's hood",
+    "Ahrim's robetop",
+    "Ahrim's robeskirt",
+    "Ahrim's staff",
+];
+
+pub const FULL_BLOOD_MOON: [&str; 4] = [
+    "Blood moon helm",
+    "Blood moon chestplate",
+    "Blood moon tassets",
+    "Dual macuahuitl",
+];
+
+pub const FULL_BLUE_MOON: [&str; 4] = [
+    "Blue moon helm",
+    "Blue moon chestplate",
+    "Blue moon tassets",
+    "Blue moon spear",
+];
+
+pub const FULL_ECLIPSE_MOON: [&str; 4] = [
+    "Eclipse moon helm",
+    "Eclipse moon chestplate",
+    "Eclipse moon tassets",
+    "Eclipse atlatl",
+];
+
+pub const FULL_DHAROKS: [&str; 4] = [
+    "Dharok's helm",
+    "Dharok's platebody",
+    "Dharok's platelegs",
+    "Dharok's greataxe",
+];
+
+pub const FULL_GUTHANS: [&str; 4] = [
+    "Guthan's helm",
+    "Guthan's platebody",
+    "Guthan's platelegs",
+    "Guthan's warspear",
+];
+
+pub const FULL_KARILS: [&str; 4] = [
+    "Karil's coif",
+    "Karil's leathertop",
+    "Karil's leatherskirt",
+    "Karil's crossbow",
+];
+
+pub const FULL_TORAGS: [&str; 4] = [
+    "Torag's helm",
+    "Torag's platebody",
+    "Torag's platelegs",
+    "Torag's hammers",
+];
+
+pub const FULL_VERACS: [&str; 4] = [
+    "Verac's helm",
+    "Verac's brassard",
+    "Verac's plateskirt",
+    "Verac's flail",
+];
+
+pub const FULL_JUSTICIAR: [&str; 3] = [
+    "Justiciar faceguard",
+    "Justiciar chestguard",
+    "Justiciar legguards",
+];
+
+pub const FULL_INQUISITOR: [&str; 3] = [
+    "Inquisitor's great helm",
+    "Inquisitor's hauberk",
+    "Inquisitor's plateskirt",
+];
+
+pub const FULL_OBSIDIAN: [&str; 3] = [
+    "Obsidian helmet",
+    "Obsidian platebody",
+    "Obsidian platelegs",
+];
+
+pub const FULL_VOID: [&str; 8] = [
+    "Void melee helm",
+    "Void ranger helm",
+    "Void mage helm",
+    "Void knight top",
+    "Elite void top",
+    "Elite void robe",
+    "Void knight robe",
+    "Void knight gloves",
+];
+
+pub const FULL_ELITE_VOID: [&str; 6] = [
+    "Void melee helm",
+    "Void ranger helm",
+    "Void mage helm",
+    "Elite void top",
+    "Elite void robe",
+    "Void knight gloves",
+];
