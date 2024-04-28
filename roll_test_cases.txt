@@ -98,3 +98,19 @@ Boost tests:
 Magic:
 
 Standard test cases:
+- Sanguinesti staff, max mage, 99 magic, saturated heart + augury
+    - Same setup with trident of the seas
+    - Same setup with trident of the swamp
+    - Same setup with fire surge
+    - Same setup with kodai + ice barrage
+- Warped sceptre with 80 magic, mid-level mage gear, no magic potion, and mystic might
+
+Boost tests:
+- Fire bolt with chaos gauntlets, mid-level mage setup
+- Charge with a god spell, mid-level mage setup
+- Shadow with max mage
+    - Against Wardens P3
+    - Against Kree'arra
+- Smoke battlestaff + max mage + fire surge
+- Full virtus + kodai + ice barrage
+- Salve with max mage against 
