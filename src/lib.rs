@@ -1,6 +1,8 @@
 pub mod constants;
 pub mod equipment;
+pub mod equipment_json;
 pub mod monster;
+pub mod monster_json;
 pub mod player;
 pub mod potions;
 pub mod prayers;

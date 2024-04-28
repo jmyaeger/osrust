@@ -253,9 +253,9 @@ pub struct Player {
     pub effects: StatusEffects,
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
-    pub att_rolls: HashMap<CombatType, i32>,
-    pub max_hits: HashMap<CombatType, u16>,
-    pub def_rolls: HashMap<CombatType, i32>,
+    pub att_rolls: HashMap<CombatType, u32>,
+    pub max_hits: HashMap<CombatType, u32>,
+    pub def_rolls: HashMap<CombatType, u32>,
 }
 
 impl Default for Player {

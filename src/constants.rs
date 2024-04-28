@@ -56,14 +56,15 @@ pub const TOA_PATH_MONSTERS: [&str; 9] = [
     "Zebak",
 ];
 
-pub const WILDERNESS_MONSTERS: [&str; 38] = [
+pub const WILDERNESS_MONSTERS: [&str; 39] = [
     "Artio",
     "Callisto",
     "Spindel",
     "Venenatis",
     "Calvar'ion (Normal)",
     "Calvar'ion (Enraged)",
-    "Vet'ion",
+    "Vet'ion (Normal)",
+    "Vet'ion (Enraged)",
     "Chaos Elemental",
     "Chaos Fanatic",
     "Crazy archaeologist",

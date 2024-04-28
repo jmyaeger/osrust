@@ -109,8 +109,8 @@ pub struct Monster {
     pub live_stats: MonsterStats,
     pub bonuses: MonsterBonuses,
     pub immunities: Immunities,
-    pub def_rolls: HashMap<CombatType, i32>,
-    pub base_def_rolls: HashMap<CombatType, i32>,
+    pub def_rolls: HashMap<CombatType, u32>,
+    pub base_def_rolls: HashMap<CombatType, u32>,
 }
 
 impl Default for Monster {
@@ -242,7 +242,7 @@ impl Monster {
     }
 
     fn scale_toa_defence(&mut self) {
-        let toa_level_bonus = 1000 + self.info.toa_level as i32 * 4;
+        let toa_level_bonus = 1000 + self.info.toa_level * 4;
         for defence_type in CombatType::iter() {
             if defence_type == CombatType::None {
                 continue;
