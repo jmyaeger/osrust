@@ -40,6 +40,22 @@ fn duke() -> Monster {
 }
 
 #[fixture]
+fn kurask() -> Monster {
+    Monster::new("Kurask (Normal)").unwrap()
+}
+
+#[fixture]
+fn scurrius() -> Monster {
+    Monster::new("Scurrius (Solo)").unwrap()
+}
+
+#[fixture]
+
+fn revenant_dragon() -> Monster {
+    Monster::new("Revenant dragon").unwrap()
+}
+
+#[fixture]
 fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
@@ -155,6 +171,17 @@ fn test_max_melee_keris_partisan_kalphite(mut max_melee_player: Player, kalphite
 }
 
 #[rstest]
+fn test_max_melee_blue_keris_partisan_kalphite(mut max_melee_player: Player, kalphite: Monster) {
+    max_melee_player.equip("Keris partisan of breaching");
+    max_melee_player.set_active_style(CombatStyle::Pound);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &kalphite);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 36859);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 59);
+}
+
+#[rstest]
 fn test_mid_level_melee_barronite_golem(mut mid_level_melee_player: Player) {
     let monster = Monster::new("Chaos Golem").unwrap();
     mid_level_melee_player.equip("Barronite mace");
@@ -226,9 +253,9 @@ fn test_demonbane_against_kril(
 }
 
 #[rstest]
-#[case("Silverlight", (21456, 59))]
+#[case("Silverlight", (21456, 52))]
 #[case("Darklight", (21754, 52))]
-#[case("Arclight", (36636, 53))]
+#[case("Arclight", (37297, 53))]
 fn test_demonbane_against_duke(
     #[case] weapon: &str,
     #[case] expected_rolls: (u32, u32),
@@ -246,6 +273,610 @@ fn test_demonbane_against_duke(
     );
     assert_eq!(
         max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_lbba_against_kurask(mut mid_level_melee_player: Player, kurask: Monster) {
+    mid_level_melee_player.equip("Leaf-bladed battleaxe");
+    mid_level_melee_player.set_active_style(CombatStyle::Hack);
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &kurask);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Slash], 22692);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Slash], 49)
+}
+
+#[rstest]
+#[case("Aberrant spectre", (29651, 60))]
+#[case("Abhorrent spectre", (29651, 62))]
+#[case("General Graardor", (29651, 64))]
+#[case("Rune dragon", (29651, 66))]
+fn test_colossal_blade(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Colossal blade");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_bone_mace_scurrius(mut mid_level_melee_player: Player, scurrius: Monster) {
+    mid_level_melee_player.equip("Bone mace");
+    mid_level_melee_player.set_active_style(CombatStyle::Pummel);
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &scurrius);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Crush], 21080);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Crush], 44)
+}
+
+#[rstest]
+fn test_max_melee_with_slayer_helm(mut max_melee_player: Player, ammonite_crab: Monster) {
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 39112);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 63);
+}
+
+#[rstest]
+fn test_mid_level_melee_with_slayer_helm(
+    mut mid_level_melee_player: Player,
+    ammonite_crab: Monster,
+) {
+    mid_level_melee_player.equip("Slayer helmet (i)");
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &ammonite_crab);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Slash], 28145);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Slash], 45);
+}
+
+#[rstest]
+fn test_max_melee_dhl_slayer_vorkath(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Dragon hunter lance");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 45360);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 67);
+}
+
+#[rstest]
+fn test_max_melee_keris_partisan_slayer_kalphite(mut max_melee_player: Player, kalphite: Monster) {
+    max_melee_player.equip("Keris partisan");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Pound);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &kalphite);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 32333);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 66);
+}
+
+#[rstest]
+fn test_max_melee_blue_keris_partisan_slayer_kalphite(
+    mut max_melee_player: Player,
+    kalphite: Monster,
+) {
+    max_melee_player.equip("Keris partisan of breaching");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Pound);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &kalphite);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 43002);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 66);
+}
+
+#[rstest]
+fn test_max_melee_ursine_chainmace_slayer_vetion(mut max_melee_player: Player, vetion: Monster) {
+    max_melee_player.equip("Ursine chainmace");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Pummel);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vetion);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 52149);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 87);
+}
+
+#[rstest]
+fn test_berserker_necklace_obby_sword_slayer(mut max_melee_player: Player, ammonite_crab: Monster) {
+    max_melee_player.equip("Berserker necklace");
+    max_melee_player.equip("Toktz-xil-ak");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Lunge);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 26596);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 60);
+}
+
+#[rstest]
+#[case("Silverlight", (25032, 64))]
+#[case("Darklight", (25379, 64))]
+#[case("Arclight", (49646, 66))]
+fn test_demonbane_against_kril_slayer(
+    #[case] weapon: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+    kril: Monster,
+) {
+    max_melee_player.equip(weapon);
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &kril);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Silverlight", (25032, 56))]
+#[case("Darklight", (25379, 56))]
+#[case("Arclight", (43513, 58))]
+fn test_demonbane_against_duke_slayer(
+    #[case] weapon: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+    duke: Monster,
+) {
+    max_melee_player.equip(weapon);
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &duke);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_lbba_against_kurask_slayer(mut mid_level_melee_player: Player, kurask: Monster) {
+    mid_level_melee_player.equip("Leaf-bladed battleaxe");
+    mid_level_melee_player.equip("Slayer helmet (i)");
+    mid_level_melee_player.set_active_style(CombatStyle::Hack);
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &kurask);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Slash], 26474);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Slash], 55)
+}
+
+#[rstest]
+#[case("Aberrant spectre", (34592, 67))]
+#[case("Abhorrent spectre", (34592, 69))]
+#[case("General Graardor", (34592, 71))]
+#[case("Rune dragon", (34592, 73))]
+fn test_colossal_blade_slayer(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Colossal blade");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_bone_mace_scurrius_slayer(mut mid_level_melee_player: Player, scurrius: Monster) {
+    mid_level_melee_player.equip("Bone mace");
+    mid_level_melee_player.equip("Slayer helmet (i)");
+    mid_level_melee_player.set_active_style(CombatStyle::Pummel);
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &scurrius);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Crush], 24593);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Crush], 49);
+}
+
+#[rstest]
+fn test_max_melee_with_salve_ei(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 37548);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 63);
+}
+
+#[rstest]
+fn test_max_melee_with_salve_i(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Salve amulet (i)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 36505);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 61);
+}
+
+#[rstest]
+fn test_mid_level_melee_with_salve_ei(mut mid_level_melee_player: Player, vorkath: Monster) {
+    mid_level_melee_player.equip("Salve amulet (ei)");
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &vorkath);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Slash], 27450);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Slash], 45);
+}
+
+#[rstest]
+fn test_mid_level_melee_with_salve_i(mut mid_level_melee_player: Player, vorkath: Monster) {
+    mid_level_melee_player.equip("Salve amulet (i)");
+    mid_level_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut mid_level_melee_player, &vorkath);
+
+    assert_eq!(mid_level_melee_player.att_rolls[&CombatType::Slash], 26687);
+    assert_eq!(mid_level_melee_player.max_hits[&CombatType::Slash], 44);
+}
+
+#[rstest]
+fn test_max_melee_dhl_salve_vorkath(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Dragon hunter lance");
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 43416);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 68);
+}
+
+#[rstest]
+fn test_max_melee_ursine_chainmace_salve_vetion(mut max_melee_player: Player, vetion: Monster) {
+    max_melee_player.equip("Ursine chainmace");
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.set_active_style(CombatStyle::Pummel);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vetion);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 49617);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 87);
+}
+
+#[rstest]
+#[case("Aberrant spectre", (32899, 68))]
+#[case("Abhorrent spectre", (32899, 70))]
+#[case("Pestilent Bloat (Normal)", (32899, 74))]
+fn test_colossal_blade_salve(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Colossal blade");
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_max_melee_dhl_slayer_and_salve_vorkath(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Dragon hunter lance");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 43416);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 66);
+}
+
+#[rstest]
+fn test_avarice_forinthry_against_revenant(mut max_melee_player: Player, revenant_dragon: Monster) {
+    max_melee_player.equip("Amulet of avarice");
+    max_melee_player.boosts.forinthry_surge = true;
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &revenant_dragon);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 44253);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 74);
+}
+
+#[rstest]
+fn test_avarice_forinthry_colossal_blade_against_revenant(
+    mut max_melee_player: Player,
+    revenant_dragon: Monster,
+) {
+    max_melee_player.equip("Amulet of avarice");
+    max_melee_player.equip("Colossal blade");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.boosts.forinthry_surge = true;
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &revenant_dragon);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Slash], 39023);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Slash], 84);
+}
+
+#[rstest]
+fn test_avarice_forinthry_ursine_chainmace_against_revenant(
+    mut max_melee_player: Player,
+    revenant_dragon: Monster,
+) {
+    max_melee_player.equip("Amulet of avarice");
+    max_melee_player.equip("Ursine chainmace");
+    max_melee_player.set_active_style(CombatStyle::Pummel);
+    max_melee_player.boosts.forinthry_surge = true;
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &revenant_dragon);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Crush], 58836);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Crush], 102);
+}
+
+#[rstest]
+fn test_full_obsidian_with_sword(mut max_melee_player: Player, ammonite_crab: Monster) {
+    max_melee_player.equip("Obsidian helmet");
+    max_melee_player.equip("Obsidian platebody");
+    max_melee_player.equip("Obsidian platelegs");
+    max_melee_player.equip("Toktz-xil-ak");
+    max_melee_player.set_active_style(CombatStyle::Lunge);
+    max_melee_player.update_bonuses();
+    max_melee_player.update_set_effects();
+    calc_player_melee_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 29174);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 47);
+}
+#[rstest]
+
+fn test_full_obsidian_with_sword_and_necklace(
+    mut max_melee_player: Player,
+    ammonite_crab: Monster,
+) {
+    max_melee_player.equip("Obsidian helmet");
+    max_melee_player.equip("Obsidian platebody");
+    max_melee_player.equip("Obsidian platelegs");
+    max_melee_player.equip("Toktz-xil-ak");
+    max_melee_player.equip("Berserker necklace");
+    max_melee_player.set_active_style(CombatStyle::Lunge);
+    max_melee_player.update_bonuses();
+    max_melee_player.update_set_effects();
+    calc_player_melee_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 25076);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 55);
+}
+
+#[rstest]
+fn test_full_obsidian_with_sword_and_salve(mut max_melee_player: Player, vorkath: Monster) {
+    max_melee_player.equip("Obsidian helmet");
+    max_melee_player.equip("Obsidian platebody");
+    max_melee_player.equip("Obsidian platelegs");
+    max_melee_player.equip("Toktz-xil-ak");
+    max_melee_player.equip("Salve amulet (ei)");
+    max_melee_player.set_active_style(CombatStyle::Lunge);
+    max_melee_player.update_bonuses();
+    max_melee_player.update_set_effects();
+    calc_player_melee_rolls(&mut max_melee_player, &vorkath);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Stab], 31572);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Stab], 53);
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (25032, 39))]
+#[case("Vampyre Juvinate (Level 50)", (25032, 36))]
+#[case("Vanstrom Klause", (0, 0))]
+fn test_arclight_against_vampyres(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Arclight");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (33525, 58))]
+#[case("Vampyre Juvinate (Level 50)", (33525, 53))] // 10-damage limit applied post-roll
+#[case("Vanstrom Klause", (0, 0))]
+fn test_rapier_and_efaritays_aid_against_vampyres(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Efaritay's aid");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Stab],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Stab],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (33525, 56))]
+#[case("Vampyre Juvinate (Level 50)", (0, 0))]
+#[case("Vanstrom Klause", (0, 0))]
+fn test_rapier_without_efaritays_aid_against_vampyres(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Stab],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Stab],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (30820, 56))]
+#[case("Vampyre Juvinate (Level 50)", (30820, 56))]
+#[case("Vanstrom Klause", (30820, 56))]
+fn test_blisterwood_flail_against_vampyres(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Blisterwood flail");
+    max_melee_player.set_active_style(CombatStyle::Pound);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Crush],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Crush],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (29204, 42))]
+#[case("Vampyre Juvinate (Level 50)", (29204, 39))]
+#[case("Vanstrom Klause", (0, 0))]
+fn test_arclight_against_vampyres_slayer(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Arclight");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Slash);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Slash],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Slash],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (39112, 64))]
+#[case("Vampyre Juvinate (Level 50)", (39112, 59))] // 10-damage limit applied post-roll
+#[case("Vanstrom Klause", (0, 0))]
+fn test_rapier_and_efaritays_aid_against_vampyres_slayer(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Efaritay's aid");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Stab],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Stab],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Count Draynor (Hard)", (35957, 62))]
+#[case("Vampyre Juvinate (Level 50)", (35957, 62))]
+#[case("Vanstrom Klause", (35957, 62))]
+fn test_blisterwood_flail_against_vampyres_slayer(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_melee_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_melee_player.equip("Blisterwood flail");
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.set_active_style(CombatStyle::Pound);
+    max_melee_player.update_bonuses();
+    calc_player_melee_rolls(&mut max_melee_player, &monster);
+
+    assert_eq!(
+        max_melee_player.att_rolls[&CombatType::Crush],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_melee_player.max_hits[&CombatType::Crush],
         expected_rolls.1
     );
 }

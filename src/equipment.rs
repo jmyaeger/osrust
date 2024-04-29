@@ -230,6 +230,7 @@ pub struct Weapon {
     pub spec_cost: u8,
     pub poison_severity: u8,
     pub combat_styles: HashMap<CombatStyle, CombatOption>,
+    pub is_staff: bool,
 }
 
 impl Equipment for Weapon {
@@ -252,7 +253,22 @@ impl Equipment for Weapon {
         self.slot = GearSlot::Weapon;
         self.speed = row.get::<_, i8>("speed")?;
         self.base_speed = self.speed;
-        self.attack_range = row.get::<_, i8>("attackrange")?;
+        self.attack_range = match row.get::<_, i8>("attackrange") {
+            Ok(range) => range,
+            Err(rusqlite::Error::InvalidColumnType(_, _, _)) => {
+                match row.get::<_, String>("attackrange")?.as_str() {
+                    "staff" => {
+                        self.is_staff = true;
+                        1
+                    }
+                    _ => panic!(
+                        "Invalid attack range: {}",
+                        row.get::<_, String>("attackrange")?
+                    ),
+                }
+            }
+            Err(e) => panic!("Error parsing attack range: {}", e),
+        };
         self.two_handed = matches!(row.get::<_, String>("slot")?.as_str(), "2h");
         let weapon_type = row.get::<_, String>("combatstyle")?;
         self.combat_styles = Weapon::get_styles_from_weapon_type(weapon_type.as_str());
@@ -273,6 +289,7 @@ impl Default for Weapon {
             spec_cost: 0,
             poison_severity: 0,
             combat_styles: Weapon::get_styles_from_weapon_type("Unarmed"),
+            is_staff: false,
         }
     }
 }

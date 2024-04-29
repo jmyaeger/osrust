@@ -120,8 +120,9 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     ];
 
     for &(combat_type, bonus) in &combat_types {
-        let mut att_roll = calc_roll(eff_att, bonus);
-        att_roll = gear_bonus.multiply_to_int(att_roll);
+        let base_att_roll = calc_roll(eff_att, bonus);
+        let mut att_roll = gear_bonus.multiply_to_int(base_att_roll)
+            + obsidian_boost.multiply_to_int(base_att_roll);
         let mut max_hit = scaled_max_hit;
 
         // Dragon hunter lance, keris, arclight, etc.
@@ -360,6 +361,7 @@ fn apply_vampyre_boost(
                 ("Ivandis flail", _, _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
                 // Other silver weapons against tier 1
                 (_, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
+                (_, false, 1) => (Fraction::new(1, 1), Fraction::new(1, 1)),
                 // Other silver weapons against tier 2
                 (_, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
                 // Any other weapon against tier 3 or any non-silver weapon against any tier will return (0, 0)
@@ -384,7 +386,7 @@ fn apply_melee_weapon_boosts(
     let mut att_roll = att_roll;
     let mut max_hit = max_hit;
 
-    let (att_factor, max_hit_factor) = match player.gear.weapon.name.as_str() {
+    let (mut att_factor, mut max_hit_factor) = match player.gear.weapon.name.as_str() {
         "Dragon hunter lance" if monster.is_dragon() => (Fraction::new(6, 5), Fraction::new(6, 5)),
         "Keris partisan of breaching" if monster.is_kalphite() => {
             (Fraction::new(133, 100), Fraction::new(133, 100))
@@ -404,22 +406,23 @@ fn apply_melee_weapon_boosts(
             (Fraction::new(1, 1), Fraction::new(6, 5)) // TODO: check implementation order
         }
         "Silverlight" | "Darklight" if monster.is_demon() => {
-            // TODO: Check how this interacts with Duke Sucellus
-            (Fraction::new(1, 1), Fraction::new(8, 5))
+            (Fraction::new(0, 1), Fraction::new(3, 5))
         }
-        "Arclight" if monster.is_demon() => {
-            // Duke only gets 50% boosts
-            if monster.info.name.contains("Duke Sucellus") {
-                (Fraction::new(3, 2), Fraction::new(3, 2))
-            } else {
-                (Fraction::new(17, 10), Fraction::new(17, 10))
-            }
-        }
+        "Arclight" if monster.is_demon() => (Fraction::new(7, 10), Fraction::new(7, 10)),
         "Leaf-bladed battleaxe" if monster.is_leafy() => {
             (Fraction::new(1, 1), Fraction::new(47, 40))
         }
         _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
     };
+
+    if player.is_wearing_any(vec!["Silverlight", "Darklight", "Arclight"]) && monster.is_demon() {
+        if monster.info.name.contains("Duke Sucellus") {
+            att_factor *= Fraction::new(7, 10);
+            max_hit_factor *= Fraction::new(7, 10);
+        }
+        att_factor += Fraction::new(1, 1);
+        max_hit_factor += Fraction::new(1, 1);
+    }
 
     att_roll = att_factor.multiply_to_int(att_roll);
     max_hit = max_hit_factor.multiply_to_int(max_hit);

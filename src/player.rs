@@ -396,7 +396,11 @@ impl Player {
             "neck" => self.gear.neck = Some(Armor::new(item_name)),
             "cape" => self.gear.cape = Some(Armor::new(item_name)),
             "ammo" => self.gear.ammo = Some(Armor::new(item_name)),
-            "weapon" | "2h" => self.gear.weapon = Weapon::new(item_name),
+            "weapon" => self.gear.weapon = Weapon::new(item_name),
+            "2h" => {
+                self.gear.weapon = Weapon::new(item_name);
+                self.gear.shield = None;
+            }
             "shield" => self.gear.shield = Some(Armor::new(item_name)),
             "body" => self.gear.body = Some(Armor::new(item_name)),
             "legs" => self.gear.legs = Some(Armor::new(item_name)),
