@@ -80,6 +80,7 @@ fn max_melee_player() -> Player {
         neck: Some(Armor::new("Amulet of torture")),
         cape: Some(Armor::new("Infernal cape")),
         ammo: Some(Armor::new("Rada's blessing 4")),
+        second_ammo: None,
         weapon: Weapon::new("Ghrazi rapier"),
         shield: Some(Armor::new("Avernic defender")),
         body: Some(Armor::new("Torva platebody")),
@@ -119,6 +120,7 @@ fn mid_level_melee_player() -> Player {
         neck: Some(Armor::new("Amulet of fury")),
         cape: Some(Armor::new("Fire cape")),
         ammo: Some(Armor::new("Rada's blessing 3")),
+        second_ammo: None,
         weapon: Weapon::new("Abyssal whip"),
         shield: Some(Armor::new("Dragon defender")),
         body: Some(Armor::new("Fighter torso")),
@@ -129,6 +131,82 @@ fn mid_level_melee_player() -> Player {
     };
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lash);
+
+    player
+}
+
+#[fixture]
+fn max_ranged_player() -> Player {
+    let mut player = Player::new();
+    player.stats = PlayerStats {
+        attack: 99,
+        strength: 99,
+        defence: 99,
+        ranged: 99,
+        magic: 99,
+        hitpoints: 99,
+        prayer: 99,
+    };
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.potions.attack = Some(PotionBoost::new(Potion::Ranging));
+
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+
+    player.gear = Gear {
+        head: Some(Armor::new("Masori mask (f)")),
+        neck: Some(Armor::new("Necklace of anguish")),
+        cape: Some(Armor::new("Dizana's quiver (charged)")),
+        ammo: Some(Armor::new("Dragon bolts")),
+        second_ammo: None,
+        weapon: Weapon::new("Zaryte crossbow"),
+        shield: Some(Armor::new("Twisted buckler")),
+        body: Some(Armor::new("Masori body (f)")),
+        legs: Some(Armor::new("Masori chaps (f)")),
+        hands: Some(Armor::new("Zaryte vambraces")),
+        feet: Some(Armor::new("Pegasian boots")),
+        ring: Some(Armor::new("Venator ring")),
+    };
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Rapid);
+
+    player
+}
+
+#[fixture]
+fn mid_level_ranged_player() -> Player {
+    let mut player = Player::new();
+    player.stats = PlayerStats {
+        attack: 80,
+        strength: 80,
+        defence: 80,
+        ranged: 80,
+        magic: 80,
+        hitpoints: 80,
+        prayer: 70,
+    };
+    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+    player.potions.attack = Some(PotionBoost::new(Potion::Ranging));
+
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+
+    player.gear = Gear {
+        head: Some(Armor::new("Ancient coif")),
+        neck: Some(Armor::new("Amulet of fury")),
+        cape: Some(Armor::new("Ava's assembler")),
+        ammo: Some(Armor::new("Adamant bolts")),
+        second_ammo: None,
+        weapon: Weapon::new("Rune crossbow"),
+        shield: Some(Armor::new("Odium ward")),
+        body: Some(Armor::new("Ancient d'hide body")),
+        legs: Some(Armor::new("Ancient chaps")),
+        hands: Some(Armor::new("Barrows gloves")),
+        feet: Some(Armor::new("Ancient d'hide boots")),
+        ring: Some(Armor::new("Archers ring (i)")),
+    };
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Rapid);
 
     player
 }
@@ -879,4 +957,23 @@ fn test_blisterwood_flail_against_vampyres_slayer(
         max_melee_player.max_hits[&CombatType::Crush],
         expected_rolls.1
     );
+}
+
+#[rstest]
+fn test_max_ranged_zcb(mut max_ranged_player: Player, ammonite_crab: Monster) {
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 50694);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 49);
+}
+
+#[rstest]
+fn test_mid_level_ranged_rcb(mut mid_level_ranged_player: Player, ammonite_crab: Monster) {
+    calc_player_ranged_rolls(&mut mid_level_ranged_player, &ammonite_crab);
+
+    assert_eq!(
+        mid_level_ranged_player.att_rolls[&CombatType::Ranged],
+        29945
+    );
+    assert_eq!(mid_level_ranged_player.max_hits[&CombatType::Ranged], 30);
 }

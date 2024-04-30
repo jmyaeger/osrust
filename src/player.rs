@@ -226,6 +226,7 @@ pub struct Gear {
     pub neck: Option<Armor>,
     pub cape: Option<Armor>,
     pub ammo: Option<Armor>,
+    pub second_ammo: Option<Armor>,
     pub weapon: Weapon,
     pub shield: Option<Armor>,
     pub body: Option<Armor>,
@@ -394,8 +395,49 @@ impl Player {
         match slot_name.as_str() {
             "head" => self.gear.head = Some(Armor::new(item_name)),
             "neck" => self.gear.neck = Some(Armor::new(item_name)),
-            "cape" => self.gear.cape = Some(Armor::new(item_name)),
-            "ammo" => self.gear.ammo = Some(Armor::new(item_name)),
+            "cape" => {
+                self.gear.cape = Some(Armor::new(
+                    if item_name == "Dizana's quiver (charged)"
+                        && !(self
+                            .gear
+                            .ammo
+                            .as_ref()
+                            .map_or(false, |ammo| ammo.is_bolt_or_arrow())
+                            && self.gear.weapon.uses_bolts_or_arrows())
+                    {
+                        "Dizana's quiver (uncharged)"
+                    } else {
+                        item_name
+                    },
+                ));
+            }
+            "ammo" => {
+                if self.is_wearing_any(vec![
+                    "Dizana's quiver (charged)",
+                    "Dizana's quiver (uncharged)",
+                ]) && self.gear.ammo.is_some()
+                {
+                    self.gear.second_ammo = Some(Armor::new(item_name));
+                    if !self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo()
+                        && self
+                            .gear
+                            .second_ammo
+                            .as_ref()
+                            .unwrap()
+                            .is_valid_ranged_ammo()
+                        && self.is_quiver_bonus_valid()
+                    {
+                        self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
+                    }
+                } else {
+                    self.gear.ammo = Some(Armor::new(item_name));
+                    if self.is_quiver_bonus_valid() {
+                        self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
+                    } else if self.is_wearing("Dizana's quiver (charged)") {
+                        self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                    }
+                }
+            }
             "weapon" => self.gear.weapon = Weapon::new(item_name),
             "2h" => {
                 self.gear.weapon = Weapon::new(item_name);
@@ -677,6 +719,23 @@ impl Player {
                 - 38,
         )
     }
+
+    pub fn is_quiver_bonus_valid(&self) -> bool {
+        self.gear.cape.as_ref().map_or(false, |cape| {
+            cape.name == "Dizana's quiver (charged)"
+                && self.gear.weapon.uses_bolts_or_arrows()
+                && (self
+                    .gear
+                    .ammo
+                    .as_ref()
+                    .map_or(false, |ammo| ammo.is_bolt_or_arrow())
+                    || self
+                        .gear
+                        .second_ammo
+                        .as_ref()
+                        .map_or(false, |ammo| ammo.is_bolt_or_arrow()))
+        })
+    }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, Error> {
@@ -831,6 +890,7 @@ mod test {
             neck: Some(Armor::new("Amulet of torture")),
             cape: Some(Armor::new("Infernal cape")),
             ammo: Some(Armor::new("Rada's blessing 4")),
+            second_ammo: None,
             weapon: Weapon::new("Osmumten's fang"),
             shield: Some(Armor::new("Avernic defender")),
             body: Some(Armor::new("Torva platebody")),

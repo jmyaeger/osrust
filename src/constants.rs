@@ -198,3 +198,28 @@ pub const FULL_ELITE_VOID: [&str; 6] = [
     "Elite void robe",
     "Void knight gloves",
 ];
+
+pub const NON_BOLT_OR_ARROW_AMMO: [&str; 22] = [
+    "Toxic blowpipe (empty)",
+    "Toxic blowpipe (bronze)",
+    "Toxic blowpipe (iron)",
+    "Toxic blowpipe (steel)",
+    "Toxic blowpipe (mithril)",
+    "Toxic blowpipe (adamant)",
+    "Toxic blowpipe (rune)",
+    "Toxic blowpipe (amethyst)",
+    "Toxic blowpipe (dragon)",
+    "Craw's bow",
+    "Crystal bow",
+    "Webweaver bow",
+    "Bow of faerdhinen",
+    "Bow of faerdhinen (c)",
+    "Swamp lizard",
+    "Orange salamander",
+    "Red salamander",
+    "Black salamander",
+    "Tecu salamander",
+    "Eclipse atlatl",
+    "Light ballista",
+    "Heavy ballista",
+];

@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 
+use crate::constants::*;
 use rusqlite::{Connection, Result, Row};
 use std::collections::HashMap;
 use std::env;
@@ -216,6 +217,16 @@ impl Armor {
         armor.set_info(name).unwrap();
         armor
     }
+
+    pub fn is_valid_ranged_ammo(&self) -> bool {
+        !self.name.contains("blessing")
+            && !["Ghommal's lucky penny", "Mith grapple", "Hallowed grapple"]
+                .contains(&self.name.as_str())
+    }
+
+    pub fn is_bolt_or_arrow(&self) -> bool {
+        self.name.contains("bolts") || self.name.contains("arrow")
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -299,6 +310,11 @@ impl Weapon {
         let mut weapon = Weapon::default();
         weapon.set_info(name).unwrap();
         weapon
+    }
+
+    pub fn uses_bolts_or_arrows(&self) -> bool {
+        !NON_BOLT_OR_ARROW_AMMO.contains(&self.name.as_str())
+            && self.combat_styles.contains_key(&CombatStyle::Rapid)
     }
 
     pub fn get_styles_from_weapon_type(weapon_type: &str) -> HashMap<CombatStyle, CombatOption> {
