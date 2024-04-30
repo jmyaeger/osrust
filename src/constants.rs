@@ -223,3 +223,20 @@ pub const NON_BOLT_OR_ARROW_AMMO: [&str; 22] = [
     "Light ballista",
     "Heavy ballista",
 ];
+
+pub const USES_OWN_AMMO: [&str; 14] = [
+    "Toxic blowpipe (empty)",
+    "Toxic blowpipe (bronze)",
+    "Toxic blowpipe (iron)",
+    "Toxic blowpipe (steel)",
+    "Toxic blowpipe (mithril)",
+    "Toxic blowpipe (adamant)",
+    "Toxic blowpipe (rune)",
+    "Toxic blowpipe (amethyst)",
+    "Toxic blowpipe (dragon)",
+    "Craw's bow",
+    "Crystal bow",
+    "Webweaver bow",
+    "Bow of faerdhinen",
+    "Bow of faerdhinen (c)",
+];

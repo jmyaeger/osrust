@@ -131,6 +131,12 @@ impl PotionBoost {
                 constant: 4,
                 boost: 0,
             },
+            Potion::SmellingSalts => PotionBoost {
+                potion_type: potion,
+                factor: 16,
+                constant: 11,
+                boost: 0,
+            },
             _ => PotionBoost {
                 potion_type: potion,
                 factor: 0,

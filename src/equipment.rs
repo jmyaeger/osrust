@@ -803,7 +803,7 @@ impl Weapon {
                     },
                 ),
             ]),
-            "Bow" => HashMap::from([
+            "Bow" | "Crossbow" | "Thrown" => HashMap::from([
                 (
                     CombatStyle::Accurate,
                     CombatOption {

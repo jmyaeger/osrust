@@ -438,12 +438,29 @@ impl Player {
                     }
                 }
             }
-            "weapon" => self.gear.weapon = Weapon::new(item_name),
+            "weapon" => {
+                self.gear.weapon = Weapon::new(item_name);
+                if self.is_quiver_bonus_valid() {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
+                } else if self.is_wearing("Dizana's quiver (charged)") {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                }
+            }
             "2h" => {
                 self.gear.weapon = Weapon::new(item_name);
                 self.gear.shield = None;
+                if self.is_quiver_bonus_valid() {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
+                } else if self.is_wearing("Dizana's quiver (charged)") {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                }
             }
-            "shield" => self.gear.shield = Some(Armor::new(item_name)),
+            "shield" => {
+                self.gear.shield = Some(Armor::new(item_name));
+                if self.gear.weapon.two_handed {
+                    self.gear.weapon = Weapon::default();
+                }
+            }
             "body" => self.gear.body = Some(Armor::new(item_name)),
             "legs" => self.gear.legs = Some(Armor::new(item_name)),
             "hands" => self.gear.hands = Some(Armor::new(item_name)),
@@ -460,7 +477,6 @@ impl Player {
             &self.gear.head,
             &self.gear.neck,
             &self.gear.cape,
-            &self.gear.ammo,
             &self.gear.shield,
             &self.gear.body,
             &self.gear.legs,
@@ -473,6 +489,20 @@ impl Player {
         {
             self.bonuses.add_bonuses(&item.bonuses);
         }
+        if !USES_OWN_AMMO.contains(&self.gear.weapon.name.as_str()) {
+            for item in [&self.gear.ammo, &self.gear.second_ammo]
+                .into_iter()
+                .flatten()
+            {
+                self.bonuses.add_bonuses(&item.bonuses);
+            }
+        } else if self.gear.ammo.is_some()
+            && !self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo()
+        {
+            self.bonuses
+                .add_bonuses(&self.gear.ammo.as_ref().unwrap().bonuses);
+        }
+
         self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
     }
 

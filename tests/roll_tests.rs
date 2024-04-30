@@ -35,6 +35,11 @@ fn vetion() -> Monster {
 }
 
 #[fixture]
+fn spindel() -> Monster {
+    Monster::new("Spindel").unwrap()
+}
+
+#[fixture]
 fn duke() -> Monster {
     Monster::new("Duke Sucellus (Awake)").unwrap()
 }
@@ -50,9 +55,13 @@ fn scurrius() -> Monster {
 }
 
 #[fixture]
-
 fn revenant_dragon() -> Monster {
     Monster::new("Revenant dragon").unwrap()
+}
+
+#[fixture]
+fn zebak() -> Monster {
+    Monster::new("Zebak").unwrap()
 }
 
 #[fixture]
@@ -148,7 +157,7 @@ fn max_ranged_player() -> Player {
         prayer: 99,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-    player.potions.attack = Some(PotionBoost::new(Potion::Ranging));
+    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
 
     player.calc_potion_boosts();
     player.reset_live_stats();
@@ -186,7 +195,7 @@ fn mid_level_ranged_player() -> Player {
         prayer: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    player.potions.attack = Some(PotionBoost::new(Potion::Ranging));
+    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
 
     player.calc_potion_boosts();
     player.reset_live_stats();
@@ -976,4 +985,169 @@ fn test_mid_level_ranged_rcb(mut mid_level_ranged_player: Player, ammonite_crab:
         29945
     );
     assert_eq!(mid_level_ranged_player.max_hits[&CombatType::Ranged], 30);
+}
+
+#[rstest]
+fn test_max_ranged_blowpipe_dragon_darts(mut max_ranged_player: Player, ammonite_crab: Monster) {
+    max_ranged_player.equip("Toxic blowpipe (dragon)");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 35358);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 31);
+}
+
+#[rstest]
+#[case("Ammonite Crab", (16983, 19))]
+#[case("General Graardor", (36089, 43))]
+#[case("K'ril Tsutsaroth", (54770, 70))]
+#[case("Commander Zilyana", (59441, 79))]
+fn test_max_ranged_tbow(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_ranged_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_ranged_player.equip("Twisted bow");
+    max_ranged_player.gear.ammo = None;
+    max_ranged_player.equip("Dragon arrow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &monster);
+
+    assert_eq!(
+        max_ranged_player.att_rolls[&CombatType::Ranged],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_ranged_player.max_hits[&CombatType::Ranged],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+#[case("Lizardman shaman (Chambers of Xeric) (Normal)", (48174, 60))]
+#[case("Abyssal portal (Normal)", (55446, 71))]
+#[case("Skeletal Mystic (Normal)", (50447, 63))]
+#[case("Great Olm (Head)", (63627, 86))]
+#[case("Great Olm (Head (Challenge Mode))", (63627, 99))]
+fn test_max_ranged_tbow_cox(
+    #[case] monster_name: &str,
+    #[case] expected_rolls: (u32, u32),
+    mut max_ranged_player: Player,
+) {
+    let monster = Monster::new(monster_name).unwrap();
+    max_ranged_player.equip("Twisted bow");
+    max_ranged_player.gear.ammo = None;
+    max_ranged_player.equip("Dragon arrow");
+    max_ranged_player.potions.ranged = Some(PotionBoost::new(Potion::OverloadPlus));
+    max_ranged_player.calc_potion_boosts();
+    max_ranged_player.reset_live_stats();
+    max_ranged_player.update_bonuses();
+
+    calc_player_ranged_rolls(&mut max_ranged_player, &monster);
+
+    assert_eq!(
+        max_ranged_player.att_rolls[&CombatType::Ranged],
+        expected_rolls.0
+    );
+    assert_eq!(
+        max_ranged_player.max_hits[&CombatType::Ranged],
+        expected_rolls.1
+    );
+}
+
+#[rstest]
+fn test_max_ranged_tbow_zebak_400(mut max_ranged_player: Player, mut zebak: Monster) {
+    zebak.info.toa_level = 400;
+    zebak.scale_toa();
+
+    max_ranged_player.equip("Twisted bow");
+    max_ranged_player.gear.ammo = None;
+    max_ranged_player.equip("Dragon arrow");
+    max_ranged_player.potions.ranged = Some(PotionBoost::new(Potion::SmellingSalts));
+    max_ranged_player.calc_potion_boosts();
+    max_ranged_player.reset_live_stats();
+    max_ranged_player.update_bonuses();
+
+    calc_player_ranged_rolls(&mut max_ranged_player, &zebak);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 63304);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 83);
+}
+
+#[rstest]
+fn test_dhcb_vorkath(mut max_ranged_player: Player, vorkath: Monster) {
+    max_ranged_player.equip("Dragon hunter crossbow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &vorkath);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 63133);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 61);
+}
+
+#[rstest]
+fn test_webweaver_spindel(mut max_ranged_player: Player, spindel: Monster) {
+    max_ranged_player.equip("Webweaver bow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &spindel);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 64752);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 51);
+}
+
+#[rstest]
+fn test_webweaver_non_wildy_monster(mut max_ranged_player: Player, ammonite_crab: Monster) {
+    max_ranged_player.equip("Webweaver bow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 43168);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 34);
+}
+
+#[rstest]
+fn test_full_eclipse_atlatl_ranged_gear(mut max_ranged_player: Player, ammonite_crab: Monster) {
+    max_ranged_player.equip("Eclipse moon helm");
+    max_ranged_player.equip("Eclipse moon chestplate");
+    max_ranged_player.equip("Eclipse moon tassets");
+    max_ranged_player.equip("Eclipse atlatl");
+    max_ranged_player.equip("Atlatl dart");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 39760);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 22);
+}
+
+#[rstest]
+fn test_full_eclipse_atlatl_melee_gear_rigour_all_pots(
+    mut max_melee_player: Player,
+    ammonite_crab: Monster,
+) {
+    max_melee_player.equip("Eclipse moon helm");
+    max_melee_player.equip("Eclipse moon chestplate");
+    max_melee_player.equip("Eclipse moon tassets");
+    max_melee_player.equip("Eclipse atlatl");
+    max_melee_player.equip("Atlatl dart");
+    max_melee_player.update_bonuses();
+    max_melee_player.set_active_style(CombatStyle::Rapid);
+    max_melee_player
+        .prayers
+        .add(PrayerBoost::new(Prayer::Rigour));
+    max_melee_player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+    max_melee_player.calc_potion_boosts();
+    max_melee_player.reset_live_stats();
+    calc_player_ranged_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Ranged], 27122);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Ranged], 38);
+
+    max_melee_player.stats.strength = 80;
+    max_melee_player.calc_potion_boosts();
+    max_melee_player.reset_live_stats();
+
+    calc_player_ranged_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Ranged], 27122);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Ranged], 32);
 }
