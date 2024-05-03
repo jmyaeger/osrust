@@ -1225,3 +1225,54 @@ fn test_full_eclipse_atlatl_melee_gear_rigour_all_pots_slayer(
     assert_eq!(max_melee_player.att_rolls[&CombatType::Ranged], 18452);
     assert_eq!(max_melee_player.max_hits[&CombatType::Ranged], 45);
 }
+
+#[rstest]
+fn test_dhcb_vorkath_slayer(mut max_ranged_player: Player, vorkath: Monster) {
+    max_ranged_player.equip("Slayer helmet (i)");
+    max_ranged_player.equip("Dragon hunter crossbow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &vorkath);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 68564);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 68);
+}
+
+#[rstest]
+fn test_webweaver_spindel_slayer(mut max_ranged_player: Player, spindel: Monster) {
+    max_ranged_player.equip("Slayer helmet (i)");
+    max_ranged_player.equip("Webweaver bow");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &spindel);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 69118);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 54);
+}
+
+#[rstest]
+fn test_bone_shortbow_scurrius(mut mid_level_ranged_player: Player, scurrius: Monster) {
+    mid_level_ranged_player.equip("Bone shortbow");
+    mid_level_ranged_player.equip("Rune arrow");
+    mid_level_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut mid_level_ranged_player, &scurrius);
+
+    assert_eq!(
+        mid_level_ranged_player.att_rolls[&CombatType::Ranged],
+        26216
+    );
+    assert_eq!(mid_level_ranged_player.max_hits[&CombatType::Ranged], 30);
+}
+
+#[rstest]
+fn test_bone_shortbow_scurrius_slayer(mut mid_level_ranged_player: Player, scurrius: Monster) {
+    mid_level_ranged_player.equip("Slayer helmet (i)");
+    mid_level_ranged_player.equip("Bone shortbow");
+    mid_level_ranged_player.equip("Rune arrow");
+    mid_level_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut mid_level_ranged_player, &scurrius);
+
+    assert_eq!(
+        mid_level_ranged_player.att_rolls[&CombatType::Ranged],
+        29628
+    );
+    assert_eq!(mid_level_ranged_player.max_hits[&CombatType::Ranged], 33);
+}
