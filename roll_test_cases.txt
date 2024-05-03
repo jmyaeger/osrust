@@ -72,7 +72,7 @@ Boost tests:
 - Slayer helm + standard test cases
 - Slayer helm + max ranged + each of the weapons in the weapon boosts function
     - Max stats, full eclipse moon set + atlatl
-    - Base 80s, full eclipse moon set + atlatl
+    ------------------------------------- Current spot
     - DHCB against Vorkath
     - Webweaver bow against Spindel
     - Bone shortbow against Scurrius

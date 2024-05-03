@@ -1151,3 +1151,77 @@ fn test_full_eclipse_atlatl_melee_gear_rigour_all_pots(
     assert_eq!(max_melee_player.att_rolls[&CombatType::Ranged], 27122);
     assert_eq!(max_melee_player.max_hits[&CombatType::Ranged], 32);
 }
+
+#[rstest]
+fn test_max_ranged_zcb_slayer(mut max_ranged_player: Player, ammonite_crab: Monster) {
+    max_ranged_player.equip("Slayer helmet (i)");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 56828);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 56);
+}
+
+#[rstest]
+fn test_mid_level_ranged_rcb_slayer(mut mid_level_ranged_player: Player, ammonite_crab: Monster) {
+    mid_level_ranged_player.equip("Slayer helmet (i)");
+    mid_level_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut mid_level_ranged_player, &ammonite_crab);
+
+    assert_eq!(
+        mid_level_ranged_player.att_rolls[&CombatType::Ranged],
+        33916
+    );
+    assert_eq!(mid_level_ranged_player.max_hits[&CombatType::Ranged], 34);
+}
+
+#[rstest]
+fn test_max_ranged_blowpipe_dragon_darts_slayer(
+    mut max_ranged_player: Player,
+    ammonite_crab: Monster,
+) {
+    max_ranged_player.equip("Slayer helmet (i)");
+    max_ranged_player.equip("Toxic blowpipe (dragon)");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 39192);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 35);
+}
+
+#[rstest]
+fn test_full_eclipse_atlatl_ranged_gear_slayer(
+    mut max_ranged_player: Player,
+    ammonite_crab: Monster,
+) {
+    max_ranged_player.equip("Slayer helmet (i)");
+    max_ranged_player.equip("Eclipse atlatl");
+    max_ranged_player.equip("Atlatl dart");
+    max_ranged_player.update_bonuses();
+    calc_player_ranged_rolls(&mut max_ranged_player, &ammonite_crab);
+
+    assert_eq!(max_ranged_player.att_rolls[&CombatType::Ranged], 48500);
+    assert_eq!(max_ranged_player.max_hits[&CombatType::Ranged], 24);
+}
+
+#[rstest]
+fn test_full_eclipse_atlatl_melee_gear_rigour_all_pots_slayer(
+    mut max_melee_player: Player,
+    ammonite_crab: Monster,
+) {
+    max_melee_player.equip("Slayer helmet (i)");
+    max_melee_player.equip("Eclipse atlatl");
+    max_melee_player.equip("Atlatl dart");
+    max_melee_player.update_bonuses();
+    max_melee_player.set_active_style(CombatStyle::Rapid);
+    max_melee_player
+        .prayers
+        .add(PrayerBoost::new(Prayer::Rigour));
+    max_melee_player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+    max_melee_player.calc_potion_boosts();
+    max_melee_player.reset_live_stats();
+    calc_player_ranged_rolls(&mut max_melee_player, &ammonite_crab);
+
+    assert_eq!(max_melee_player.att_rolls[&CombatType::Ranged], 18452);
+    assert_eq!(max_melee_player.max_hits[&CombatType::Ranged], 45);
+}

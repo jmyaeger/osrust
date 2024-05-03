@@ -478,10 +478,6 @@ fn crystal_bonus(player: &Player) -> u32 {
 
 fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction) {
     // Eclipse atlatl uses melee slayer and salve boosts (TODO: check if true for non-imbued salve)
-    if player.is_wearing("Eclipse atlatl") {
-        let gear_bonus = melee_gear_bonus(player, monster);
-        return (gear_bonus, gear_bonus);
-    }
 
     let mut att_gear_bonus = Fraction::new(1, 1);
     let mut str_gear_bonus = Fraction::new(1, 1);
@@ -514,6 +510,10 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             att_gear_bonus += Fraction::new(3, 10);
             str_gear_bonus += Fraction::new(1, 4);
         }
+    }
+
+    if player.is_wearing("Eclipse atlatl") {
+        str_gear_bonus = melee_gear_bonus(player, monster);
     }
 
     (att_gear_bonus, str_gear_bonus)
