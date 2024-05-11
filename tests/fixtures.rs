@@ -106,6 +106,36 @@ pub fn vanstrom_klause() -> Monster {
 }
 
 #[fixture]
+pub fn zilyana() -> Monster {
+    Monster::new("Commander Zilyana").unwrap()
+}
+
+#[fixture]
+pub fn shaman_cox() -> Monster {
+    Monster::new("Lizardman shaman (Chambers of Xeric) (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn abyssal_portal() -> Monster {
+    Monster::new("Abyssal portal (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn skeletal_mystic() -> Monster {
+    Monster::new("Skeletal Mystic (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn olm_head() -> Monster {
+    Monster::new("Great Olm (Head)").unwrap()
+}
+
+#[fixture]
+pub fn olm_head_cm() -> Monster {
+    Monster::new("Great Olm (Head (Challenge Mode))").unwrap()
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
@@ -186,7 +216,7 @@ pub fn mid_level_melee_player() -> Player {
 }
 
 #[fixture]
-pub fn max_ranged_player() -> Player {
+pub fn max_ranged_zcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
         attack: 99,
@@ -224,7 +254,7 @@ pub fn max_ranged_player() -> Player {
 }
 
 #[fixture]
-pub fn mid_level_ranged_player() -> Player {
+pub fn mid_level_ranged_rcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
         attack: 80,
@@ -399,6 +429,130 @@ pub fn max_melee_blisterwood_flail_player() -> Player {
     player
 }
 
+#[fixture]
+pub fn max_ranged_blowpipe_dragon_darts_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Toxic blowpipe (dragon)");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_tbow_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Twisted bow");
+    player.gear.ammo = None;
+    player.equip("Dragon arrow");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_tbow_overload_player() -> Player {
+    let mut player = max_ranged_tbow_player();
+    player.potions.ranged = Some(PotionBoost::new(Potion::OverloadPlus));
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_tbow_salts_player() -> Player {
+    let mut player = max_ranged_tbow_player();
+    player.potions.ranged = Some(PotionBoost::new(Potion::SmellingSalts));
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_dhcb_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Dragon hunter crossbow");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_webweaver_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Webweaver bow");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_eclipse_atlatl_ranged_gear_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Eclipse atlatl");
+    player.equip("Eclipse moon helm");
+    player.equip("Eclipse moon chestplate");
+    player.equip("Eclipse moon tassets");
+    player.equip("Atlatl dart");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn eclipse_atlatl_ranged_gear_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Eclipse atlatl");
+    player.equip("Atlatl dart");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Eclipse atlatl");
+    player.equip("Eclipse moon helm");
+    player.equip("Eclipse moon chestplate");
+    player.equip("Eclipse moon tassets");
+    player.equip("Atlatl dart");
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Rapid);
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player
+}
+
+#[fixture]
+pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots_80_str() -> Player {
+    let mut player = full_eclipse_atlatl_melee_gear_rigour_all_pots();
+    player.stats.strength = 80;
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player
+}
+
+#[fixture]
+pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Eclipse atlatl");
+    player.equip("Atlatl dart");
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Rapid);
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player
+}
+
+#[fixture]
+pub fn mid_level_ranged_bone_shortbow_player() -> Player {
+    let mut player = mid_level_ranged_rcb_player();
+    player.equip("Bone shortbow");
+    player.equip("Rune arrow");
+    player.update_bonuses();
+    player
+}
+
 pub fn slayer(mut player: Player) -> Player {
     player.equip("Slayer helmet (i)");
     player.update_bonuses();
@@ -428,4 +582,10 @@ pub fn efaritays_aid(mut player: Player) -> Player {
     player.equip("Efaritay's aid");
     player.update_bonuses();
     player
+}
+
+pub fn scale_toa(mut monster: Monster, toa_level: u32) -> Monster {
+    monster.info.toa_level = toa_level;
+    monster.scale_toa();
+    monster
 }
