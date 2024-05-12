@@ -29,9 +29,9 @@ pub enum Potion {
 #[derive(Debug, Default, PartialEq)]
 pub struct PotionBoost {
     pub potion_type: Potion,
-    pub factor: u16,
-    pub constant: u16,
-    pub boost: u16,
+    pub factor: u32,
+    pub constant: u32,
+    pub boost: u32,
 }
 
 impl PotionBoost {
@@ -146,19 +146,19 @@ impl PotionBoost {
         }
     }
 
-    pub fn calc_boost(&mut self, level: u16) {
+    pub fn calc_boost(&mut self, level: u32) {
         self.boost = self.factor * level / 100 + self.constant;
     }
 
     pub fn calc_dragon_battleaxe_boost(
         &mut self,
-        att_level: u16,
-        def_level: u16,
-        ranged_level: u16,
-        magic_level: u16,
+        att_level: u32,
+        def_level: u32,
+        ranged_level: u32,
+        magic_level: u32,
     ) {
         let stats = [att_level, def_level, ranged_level, magic_level];
-        let sum: u16 = stats.iter().map(|&n| n / 10).sum();
+        let sum: u32 = stats.iter().map(|&n| n / 10).sum();
         self.boost = 10 + (sum / 4);
     }
 }

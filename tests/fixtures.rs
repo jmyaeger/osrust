@@ -136,6 +136,16 @@ pub fn olm_head_cm() -> Monster {
 }
 
 #[fixture]
+pub fn shaman_cox_cm() -> Monster {
+    Monster::new("Lizardman shaman (Chambers of Xeric) (Challenge Mode)").unwrap()
+}
+
+#[fixture]
+pub fn skeletal_mystic_cm() -> Monster {
+    Monster::new("Skeletal Mystic (Challenge Mode)").unwrap()
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
@@ -476,6 +486,18 @@ pub fn max_ranged_dhcb_player() -> Player {
 }
 
 #[fixture]
+pub fn elite_void_dhcb_player() -> Player {
+    let mut player = max_ranged_dhcb_player();
+    player.equip("Elite void top");
+    player.equip("Elite void robe");
+    player.equip("Void knight gloves");
+    player.equip("Void ranger helm");
+    player.update_set_effects();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
 pub fn max_ranged_webweaver_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player.equip("Webweaver bow");
@@ -549,6 +571,14 @@ pub fn mid_level_ranged_bone_shortbow_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
     player.equip("Bone shortbow");
     player.equip("Rune arrow");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
+    let mut player = mid_level_ranged_rcb_player();
+    player.equip("Silver bolts");
     player.update_bonuses();
     player
 }

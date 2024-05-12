@@ -157,9 +157,9 @@ impl Spell for ArceuusSpell {
 
 fn magic_dart_max_hit(player: &Player) -> u32 {
     if player.is_wearing("Slayer's staff (e)") || player.boosts.on_task {
-        13 + player.live_stats.magic as u32 / 6
+        13 + player.live_stats.magic / 6
     } else {
-        10 + player.live_stats.magic as u32 / 10
+        10 + player.live_stats.magic / 10
     }
 }
 

@@ -58,18 +58,12 @@ pub fn calc_player_def_rolls(player: &mut Player) {
         (CombatType::Crush, player.bonuses.defence.crush),
         (CombatType::Ranged, player.bonuses.defence.ranged),
     ] {
-        def_rolls.insert(
-            combat_type.0,
-            calc_roll(effective_level as u32, combat_type.1),
-        );
+        def_rolls.insert(combat_type.0, calc_roll(effective_level, combat_type.1));
     }
     // Magic defence uses 70% magic level, 30% defence level
     def_rolls.insert(
         CombatType::Magic,
-        calc_roll(
-            effective_magic as u32 * 7 / 10 + effective_level as u32 * 3 / 10,
-            1,
-        ),
+        calc_roll(effective_magic * 7 / 10 + effective_level * 3 / 10, 1),
     );
     player.def_rolls = def_rolls;
 }
@@ -278,7 +272,7 @@ fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {
         eff_str = eff_str * 11 / 10;
     }
 
-    (eff_att as u32, eff_str as u32)
+    (eff_att, eff_str)
 }
 
 fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
@@ -309,7 +303,7 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
         eff_str = eff_str * 11 / 10;
     }
 
-    (eff_att as u32, eff_str as u32)
+    (eff_att, eff_str)
 }
 
 fn melee_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
@@ -532,7 +526,9 @@ fn apply_ranged_weapon_boosts(
         // DHCB is applied multiplicatively with anything but slayer helm
         "Dragon hunter crossbow"
             if monster.is_dragon()
-                && !(player.boosts.on_task && player.is_wearing_imbued_black_mask()) =>
+                && !(player.boosts.on_task && player.is_wearing_imbued_black_mask())
+                || (player.is_wearing_salve_i() && monster.is_undead())
+                || (player.is_wearing("Amulet of avarice") && monster.is_revenant()) =>
         {
             (Fraction::new(13, 10), Fraction::new(5, 4))
         }
@@ -546,7 +542,9 @@ fn apply_ranged_weapon_boosts(
         // Wildy bow is applied multiplicatively with anything but slayer helm
         _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
             && player.is_wearing_wildy_bow()
-            && !(player.is_wearing_imbued_black_mask() && player.boosts.on_task) =>
+            && (!(player.is_wearing_imbued_black_mask() && player.boosts.on_task)
+                || (player.is_wearing_salve_i() && monster.is_undead())
+                || (player.is_wearing("Amulet of avarice") && monster.is_revenant())) =>
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
@@ -584,11 +582,11 @@ fn salamander_max_hit(player: &Player) -> u32 {
         _ => panic!("Unimplemented salamander: {}", player.gear.weapon.name),
     };
 
-    (1 + 2 * player.live_stats.magic as u32 * factor) / 1280
+    (1 + 2 * player.live_stats.magic * factor) / 1280
 }
 
 fn charged_staff_max_hit(player: &Player) -> u32 {
-    let visible_magic = player.live_stats.magic as u32;
+    let visible_magic = player.live_stats.magic;
     match player.gear.weapon.name.as_str() {
         "Starter staff" => 8,
         "Warped sceptre" => (8 * visible_magic + 96) / 37,
@@ -625,7 +623,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
         9
     };
 
-    let magic_pray_boost = player.prayers.magic as u32;
+    let magic_pray_boost = player.prayers.magic;
 
     let void_bonus = if player.set_effects.full_void || player.set_effects.full_elite_void {
         Fraction::new(145, 100)
@@ -633,7 +631,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
         Fraction::new(1, 1)
     };
 
-    let visible_magic = player.live_stats.magic as u32;
+    let visible_magic = player.live_stats.magic;
 
     void_bonus.multiply_to_int(visible_magic * (100 + magic_pray_boost) / 100) + stance_bonus
 }

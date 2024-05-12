@@ -26,12 +26,12 @@ pub enum Prayer {
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoost {
     pub prayer_type: Prayer,
-    pub attack: u16,
-    pub strength: u16,
-    pub defence: u16,
-    pub ranged_att: u16,
-    pub ranged_str: u16,
-    pub magic: u16,
+    pub attack: u32,
+    pub strength: u32,
+    pub defence: u32,
+    pub ranged_att: u32,
+    pub ranged_str: u32,
+    pub magic: u32,
 }
 
 impl PrayerBoost {

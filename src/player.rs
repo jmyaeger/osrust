@@ -12,13 +12,13 @@ use std::hash::Hash;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerStats {
-    pub hitpoints: u16,
-    pub attack: u16,
-    pub strength: u16,
-    pub defence: u16,
-    pub ranged: u16,
-    pub magic: u16,
-    pub prayer: u16,
+    pub hitpoints: u32,
+    pub attack: u32,
+    pub strength: u32,
+    pub defence: u32,
+    pub ranged: u32,
+    pub magic: u32,
+    pub prayer: u32,
 }
 
 impl Default for PlayerStats {
@@ -43,13 +43,13 @@ impl PlayerStats {
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerLiveStats {
-    pub hitpoints: u16,
-    pub attack: u16,
-    pub strength: u16,
-    pub defence: u16,
-    pub ranged: u16,
-    pub magic: u16,
-    pub prayer: u16,
+    pub hitpoints: u32,
+    pub attack: u32,
+    pub strength: u32,
+    pub defence: u32,
+    pub ranged: u32,
+    pub magic: u32,
+    pub prayer: u32,
     pub special_attack: u8,
 }
 
@@ -86,12 +86,12 @@ pub struct PotionBoosts {
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoosts {
     pub active_prayers: Option<Vec<PrayerBoost>>,
-    pub attack: u16,
-    pub strength: u16,
-    pub defence: u16,
-    pub ranged_att: u16,
-    pub ranged_str: u16,
-    pub magic: u16,
+    pub attack: u32,
+    pub strength: u32,
+    pub defence: u32,
+    pub ranged_att: u32,
+    pub ranged_str: u32,
+    pub magic: u32,
 }
 
 impl PrayerBoosts {
@@ -174,7 +174,7 @@ pub struct StatusBoosts {
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
     pub sunfire_runes: bool,
-    pub soulreaper_stacks: u16,
+    pub soulreaper_stacks: u32,
 }
 
 impl Default for StatusBoosts {
@@ -616,6 +616,10 @@ impl Player {
         self.is_wearing_any(vec!["Salve amulet (e)", "Salve amulet (ei)"])
     }
 
+    pub fn is_wearing_salve_i(&self) -> bool {
+        self.is_wearing_any(vec!["Salve amulet (i)", "Salve amulet (ei)"])
+    }
+
     pub fn is_wearing_wildy_mace(&self) -> bool {
         self.is_wearing_any(vec!["Viggora's chainmace", "Ursine chainmace"])
     }
@@ -793,7 +797,7 @@ fn parse_player_data(data: String) -> PlayerStats {
     for (i, skill) in skills.iter().enumerate() {
         let line_parts: Vec<&str> = data_lines[i + 1].split(',').collect();
         let level = line_parts[1]
-            .parse::<u16>()
+            .parse::<u32>()
             .expect("Level could not be parsed as u8.");
         skill_map.insert(*skill, level);
     }

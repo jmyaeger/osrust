@@ -75,7 +75,6 @@ Boost tests:
     - DHCB against Vorkath
     - Webweaver bow against Spindel
     - Bone shortbow against Scurrius
-    ------------------------------------- Current spot
     - Tbow against CM shamans
 - Salve amulet + standard test cases
 - Salve amulet + max ranged + relevant weapons in the weapon boosts function
@@ -87,7 +86,8 @@ Boost tests:
 - Avarice/forinthry surge + weapon boosts:
     - DHCB against revenant dragons
     - Webweaver bow against any revenant
-- Vampyre tests (once implemented):
+------------------------------------- Current spot
+- Vampyre tests (once tested to make sure it actually applies a 10% boost to T1):
     - RCB + silver bolts against T1 (Count Draynor (Hard)), T2 (Vampyre Juvinate (Level 50)), and T3 (Vanstrom Klause)
     - RCB + adamant bolts against same NPCs
 

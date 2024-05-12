@@ -113,6 +113,7 @@ fn test_melee_player_rolls(
 #[case(max_ranged_tbow_overload_player(), olm_head_cm(), 63627, 99)]
 #[case(max_ranged_tbow_salts_player(), scale_toa(zebak(), 400), 63304, 83)]
 #[case(max_ranged_dhcb_player(), vorkath(), 63133, 61)]
+#[case(elite_void_dhcb_player(), vorkath(), 49077, 66)]
 #[case(max_ranged_webweaver_player(), spindel(), 64752, 51)]
 #[case(max_ranged_webweaver_player(), ammonite_crab(), 43168, 34)]
 #[case(full_eclipse_atlatl_ranged_gear_player(), ammonite_crab(), 39760, 22)]
@@ -152,6 +153,55 @@ fn test_melee_player_rolls(
 #[case(slayer(max_ranged_webweaver_player()), spindel(), 69118, 54)]
 #[case(mid_level_ranged_bone_shortbow_player(), scurrius(), 26216, 30)]
 #[case(slayer(mid_level_ranged_bone_shortbow_player()), scurrius(), 29628, 33)]
+#[case(slayer(max_ranged_tbow_overload_player()), shaman_cox_cm(), 64885, 82)]
+#[case(salve_ei(max_ranged_zcb_player()), vorkath(), 58276, 57)]
+#[case(salve_ei(mid_level_ranged_rcb_player()), vorkath(), 34578, 36)]
+#[case(
+    salve_ei(max_ranged_blowpipe_dragon_darts_player()),
+    vorkath(),
+    39873,
+    36
+)]
+#[case(salve_ei(elite_void_dhcb_player()), vorkath(), 55242, 76)]
+#[case(salve_ei(max_ranged_webweaver_player()), vetion(), 73867, 58)]
+#[case(
+    salve_ei(max_ranged_tbow_overload_player()),
+    skeletal_mystic_cm(),
+    68895,
+    90
+)]
+#[case(salve_ei(slayer(max_ranged_dhcb_player())), vorkath(), 70443, 71)]
+#[case(
+    avarice_forinthry(max_ranged_zcb_player()),
+    revenant_dragon(),
+    67478,
+    64
+)]
+#[case(
+    avarice_forinthry(mid_level_ranged_rcb_player()),
+    revenant_dragon(),
+    40425,
+    40
+)]
+#[case(
+    avarice_forinthry(max_ranged_blowpipe_dragon_darts_player()),
+    revenant_dragon(),
+    46774,
+    40
+)]
+#[case(
+    avarice_forinthry(max_ranged_webweaver_player()),
+    revenant_dragon(),
+    85977,
+    66
+)]
+#[case(
+    avarice_forinthry(slayer(max_ranged_webweaver_player())),
+    revenant_dragon(),
+    83389,
+    64
+)]
+#[case(mid_level_ranged_rcb_silver_bolts_player(), count_draynor(), 33333, 33)]
 fn test_ranged_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
