@@ -240,7 +240,7 @@ pub struct Gear {
 pub struct PlayerAttrs {
     pub name: Option<String>,
     pub active_style: CombatStyle,
-    pub spell: Option<Box<dyn spells::Spell>>,
+    pub spell: Option<spells::Spell>,
 }
 
 pub struct Player {
@@ -706,46 +706,23 @@ impl Player {
     }
 
     pub fn is_using_standard_spell(&self) -> bool {
-        self.is_using_spell()
-            && spells::is_standard_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+        self.is_using_spell() && spells::is_standard_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_water_spell(&self) -> bool {
-        self.is_using_spell() && spells::is_water_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+        self.is_using_spell() && spells::is_water_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_ancient_spell(&self) -> bool {
-        self.is_using_spell()
-            && spells::is_ancient_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+        self.is_using_spell() && spells::is_ancient_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_fire_spell(&self) -> bool {
-        self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap().as_ref())
+        self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap())
     }
 
-    pub fn spell(&self) -> Option<spells::Spellbook> {
-        self.attrs.spell.as_ref().map(|spell| {
-            if let Some(standard_spell) = spell.as_any().downcast_ref::<spells::StandardSpell>() {
-                spells::Spellbook::Standard(standard_spell)
-            } else if let Some(ancient_spell) =
-                spell.as_any().downcast_ref::<spells::AncientSpell>()
-            {
-                spells::Spellbook::Ancient(ancient_spell)
-            } else if let Some(arceuus_spell) =
-                spell.as_any().downcast_ref::<spells::ArceuusSpell>()
-            {
-                spells::Spellbook::Arceuus(arceuus_spell)
-            } else {
-                panic!("Unknown spell type")
-            }
-        })
-    }
-
-    pub fn set_spell<T>(&mut self, spell: T)
-    where
-        T: spells::Spell + 'static,
-    {
-        self.attrs.spell = Some(Box::new(spell));
+    pub fn set_spell(&mut self, spell: spells::Spell) {
+        self.attrs.spell = Some(spell);
     }
 
     pub fn add_potion(&mut self, potion: Potion) {

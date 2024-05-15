@@ -1,17 +1,28 @@
 use crate::player::Player;
 
-pub trait Spell: std::fmt::Debug {
-    fn max_hit(&self, player: &Player) -> u32;
-    fn as_any(&self) -> &dyn std::any::Any;
+// pub trait Spell: std::fmt::Debug {
+//     fn max_hit(&self, player: &Player) -> u32;
+//     fn as_any(&self) -> &dyn std::any::Any;
+// }
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Spell {
+    Standard(StandardSpell),
+    Ancient(AncientSpell),
+    Arceuus(ArceuusSpell),
 }
 
-pub enum Spellbook<'a> {
-    Standard(&'a StandardSpell),
-    Ancient(&'a AncientSpell),
-    Arceuus(&'a ArceuusSpell),
+impl Spell {
+    pub fn max_hit(&self, player: &Player) -> u32 {
+        match self {
+            Spell::Standard(spell) => spell.max_hit(player),
+            Spell::Ancient(spell) => spell.max_hit(),
+            Spell::Arceuus(spell) => spell.max_hit(),
+        }
+    }
 }
 
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum StandardSpell {
     #[default]
     None,
@@ -43,38 +54,8 @@ pub enum StandardSpell {
     MagicDart,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum AncientSpell {
-    SmokeRush,
-    ShadowRush,
-    BloodRush,
-    IceRush,
-    SmokeBurst,
-    ShadowBurst,
-    BloodBurst,
-    IceBurst,
-    SmokeBlitz,
-    ShadowBlitz,
-    BloodBlitz,
-    IceBlitz,
-    SmokeBarrage,
-    ShadowBarrage,
-    BloodBarrage,
-    IceBarrage,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum ArceuusSpell {
-    GhostlyGrasp,
-    SkeletalGrasp,
-    UndeadGrasp,
-    InferiorDemonbane,
-    SuperiorDemonbane,
-    DarkDemonbane,
-}
-
-impl Spell for StandardSpell {
-    fn max_hit(&self, player: &Player) -> u32 {
+impl StandardSpell {
+    pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
             StandardSpell::WindStrike => 2,
             StandardSpell::WaterStrike => 4,
@@ -105,14 +86,30 @@ impl Spell for StandardSpell {
             _ => 0,
         }
     }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
 
-impl Spell for AncientSpell {
-    fn max_hit(&self, _: &Player) -> u32 {
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum AncientSpell {
+    SmokeRush,
+    ShadowRush,
+    BloodRush,
+    IceRush,
+    SmokeBurst,
+    ShadowBurst,
+    BloodBurst,
+    IceBurst,
+    SmokeBlitz,
+    ShadowBlitz,
+    BloodBlitz,
+    IceBlitz,
+    SmokeBarrage,
+    ShadowBarrage,
+    BloodBarrage,
+    IceBarrage,
+}
+
+impl AncientSpell {
+    pub fn max_hit(&self) -> u32 {
         match self {
             AncientSpell::SmokeRush => 13,
             AncientSpell::ShadowRush => 14,
@@ -132,14 +129,20 @@ impl Spell for AncientSpell {
             AncientSpell::IceBarrage => 30,
         }
     }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
 }
 
-impl Spell for ArceuusSpell {
-    fn max_hit(&self, _: &Player) -> u32 {
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum ArceuusSpell {
+    GhostlyGrasp,
+    SkeletalGrasp,
+    UndeadGrasp,
+    InferiorDemonbane,
+    SuperiorDemonbane,
+    DarkDemonbane,
+}
+
+impl ArceuusSpell {
+    pub fn max_hit(&self) -> u32 {
         match self {
             ArceuusSpell::GhostlyGrasp => 12,
             ArceuusSpell::SkeletalGrasp => 17,
@@ -148,10 +151,6 @@ impl Spell for ArceuusSpell {
             ArceuusSpell::SuperiorDemonbane => 23,
             ArceuusSpell::DarkDemonbane => 30,
         }
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
 
@@ -163,44 +162,34 @@ fn magic_dart_max_hit(player: &Player) -> u32 {
     }
 }
 
-pub fn is_standard_spell(spell: &dyn Spell) -> bool {
-    spell.as_any().downcast_ref::<StandardSpell>().is_some()
+pub fn is_standard_spell(spell: &Spell) -> bool {
+    matches!(spell, Spell::Standard(_))
 }
 
-pub fn is_ancient_spell(spell: &dyn Spell) -> bool {
-    spell.as_any().downcast_ref::<AncientSpell>().is_some()
+pub fn is_ancient_spell(spell: &Spell) -> bool {
+    matches!(spell, Spell::Ancient(_))
 }
 
-pub fn is_arceuus_spell(spell: &dyn Spell) -> bool {
-    spell.as_any().downcast_ref::<ArceuusSpell>().is_some()
+pub fn is_arceuus_spell(spell: &Spell) -> bool {
+    matches!(spell, Spell::Arceuus(_))
 }
 
-pub fn is_water_spell(spell: &dyn Spell) -> bool {
-    if let Some(equipped_spell) = spell.as_any().downcast_ref::<StandardSpell>() {
-        [
-            StandardSpell::WaterStrike,
-            StandardSpell::WaterBolt,
-            StandardSpell::WaterBlast,
-            StandardSpell::WaterSurge,
-            StandardSpell::WaterWave,
-        ]
-        .contains(equipped_spell)
-    } else {
-        false
-    }
+pub fn is_water_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::WaterBolt)
+            | Spell::Standard(StandardSpell::WaterWave)
+            | Spell::Standard(StandardSpell::WaterBlast)
+            | Spell::Standard(StandardSpell::WaterSurge)
+    )
 }
 
-pub fn is_fire_spell(spell: &dyn Spell) -> bool {
-    if let Some(equipped_spell) = spell.as_any().downcast_ref::<StandardSpell>() {
-        [
-            StandardSpell::FireStrike,
-            StandardSpell::FireBolt,
-            StandardSpell::FireBlast,
-            StandardSpell::FireSurge,
-            StandardSpell::FireWave,
-        ]
-        .contains(equipped_spell)
-    } else {
-        false
-    }
+pub fn is_fire_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::FireBolt)
+            | Spell::Standard(StandardSpell::FireWave)
+            | Spell::Standard(StandardSpell::FireBlast)
+            | Spell::Standard(StandardSpell::FireSurge)
+    )
 }

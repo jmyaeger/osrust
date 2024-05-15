@@ -3,7 +3,7 @@ use osrs::monster::Monster;
 use osrs::player::{Gear, Player, PlayerStats};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
-use osrs::spells::{AncientSpell, StandardSpell};
+use osrs::spells::{AncientSpell, Spell, StandardSpell};
 use rstest::fixture;
 
 #[fixture]
@@ -619,7 +619,7 @@ pub fn max_mage_harm_fire_surge_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player.equip("Harmonised nightmare staff");
     player.update_bonuses();
-    player.set_spell(StandardSpell::FireSurge);
+    player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -629,7 +629,7 @@ pub fn max_mage_kodai_ice_barrage_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player.equip("Kodai wand");
     player.update_bonuses();
-    player.set_spell(AncientSpell::IceBarrage);
+    player.set_spell(Spell::Ancient(AncientSpell::IceBarrage));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -677,7 +677,7 @@ pub fn mid_level_mage_chaos_gauntlets_fire_bolt_player() -> Player {
     player.equip("Fire battlestaff");
     player.equip("Chaos gauntlets");
     player.update_bonuses();
-    player.set_spell(StandardSpell::FireBolt);
+    player.set_spell(Spell::Standard(StandardSpell::FireBolt));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -688,7 +688,7 @@ pub fn mid_level_mage_god_spell_charge_player() -> Player {
     player.equip("Guthix staff");
     player.update_bonuses();
     player.boosts.charge_active = true;
-    player.set_spell(StandardSpell::ClawsOfGuthix);
+    player.set_spell(Spell::Standard(StandardSpell::ClawsOfGuthix));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -723,7 +723,7 @@ pub fn full_virtus_kodai_ice_barrage_player() -> Player {
 #[fixture]
 pub fn full_virtus_kodai_fire_surge_player() -> Player {
     let mut player = full_virtus_kodai_ice_barrage_player();
-    player.set_spell(StandardSpell::FireSurge);
+    player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player
 }
 

@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::equipment::{CombatStance, CombatStyle, CombatType};
 use crate::monster::Monster;
 use crate::player::Player;
-use crate::spells::{Spellbook, StandardSpell};
+use crate::spells::{Spell, StandardSpell};
 use crate::utils::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
@@ -714,8 +714,8 @@ fn apply_chaos_gauntlet_boost(max_hit: u32, player: &Player) -> u32 {
         StandardSpell::FireBolt,
     ];
 
-    if let Some(Spellbook::Standard(standard_spell)) = player.spell() {
-        if player.is_wearing("Chaos gauntlets") && bolt_spells.contains(standard_spell) {
+    if let Some(Spell::Standard(standard_spell)) = player.attrs.spell {
+        if player.is_wearing("Chaos gauntlets") && bolt_spells.contains(&standard_spell) {
             return max_hit + 3;
         }
     }
@@ -731,8 +731,8 @@ fn apply_charge_boost(max_hit: u32, player: &Player) -> u32 {
     ];
 
     if player.boosts.charge_active {
-        if let Some(Spellbook::Standard(standard_spell)) = player.spell() {
-            if god_spells.contains(standard_spell) {
+        if let Some(Spell::Standard(standard_spell)) = player.attrs.spell {
+            if god_spells.contains(&standard_spell) {
                 return max_hit + 10;
             }
         }
