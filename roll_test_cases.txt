@@ -86,7 +86,8 @@ Boost tests:
 - Avarice/forinthry surge + weapon boosts:
     - DHCB against revenant dragons
     - Webweaver bow against any revenant
-------------------------------------- Current spot
+
+// TODO
 - Vampyre tests (once tested to make sure it actually applies a 10% boost to T1):
     - RCB + silver bolts against T1 (Count Draynor (Hard)), T2 (Vampyre Juvinate (Level 50)), and T3 (Vanstrom Klause)
     - RCB + adamant bolts against same NPCs
@@ -108,6 +109,7 @@ Boost tests:
 - Shadow with max mage
     - Against Wardens P3
     - Against Kree'arra
+------------------------------------- Current spot
 - Smoke battlestaff + max mage + fire surge
 - Full virtus + kodai + ice barrage
 - Full virtus + kodai + fire surge

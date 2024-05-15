@@ -741,6 +741,13 @@ impl Player {
         })
     }
 
+    pub fn set_spell<T>(&mut self, spell: T)
+    where
+        T: spells::Spell + 'static,
+    {
+        self.attrs.spell = Some(Box::new(spell));
+    }
+
     pub fn bulwark_bonus(&self) -> i32 {
         max(
             0,

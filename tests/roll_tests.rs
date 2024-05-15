@@ -1,7 +1,7 @@
 use osrs::equipment::CombatType;
 use osrs::monster::Monster;
 use osrs::player::Player;
-use osrs::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
+use osrs::rolls::{calc_player_magic_rolls, calc_player_melee_rolls, calc_player_ranged_rolls};
 use rstest::rstest;
 
 mod fixtures;
@@ -91,11 +91,11 @@ fn test_melee_player_rolls(
     #[case] monster: Monster,
     #[case] combat_type: &CombatType,
     #[case] att_roll: u32,
-    #[case] max_hits: u32,
+    #[case] max_hit: u32,
 ) {
     calc_player_melee_rolls(&mut player, &monster);
     assert_eq!(player.att_rolls[combat_type], att_roll);
-    assert_eq!(player.max_hits[combat_type], max_hits);
+    assert_eq!(player.max_hits[combat_type], max_hit);
 }
 
 #[rstest]
@@ -201,14 +201,48 @@ fn test_melee_player_rolls(
     83389,
     64
 )]
-#[case(mid_level_ranged_rcb_silver_bolts_player(), count_draynor(), 33333, 33)]
 fn test_ranged_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
     #[case] att_roll: u32,
-    #[case] max_hits: u32,
+    #[case] max_hit: u32,
 ) {
     calc_player_ranged_rolls(&mut player, &monster);
     assert_eq!(player.att_rolls[&CombatType::Ranged], att_roll);
-    assert_eq!(player.max_hits[&CombatType::Ranged], max_hits);
+    assert_eq!(player.max_hits[&CombatType::Ranged], max_hit);
+}
+
+#[rstest]
+#[case(max_mage_sang_staff_player(), ammonite_crab(), 36693, 46)]
+#[case(max_mage_toxic_trident_player(), ammonite_crab(), 36693, 45)]
+#[case(max_mage_trident_player(), ammonite_crab(), 35183, 41)]
+#[case(max_mage_harm_fire_surge_player(), ammonite_crab(), 34866, 34)]
+#[case(max_mage_kodai_ice_barrage_player(), ammonite_crab(), 36654, 43)]
+#[case(mid_level_magic_warped_sceptre_player(), ammonite_crab(), 20188, 21)]
+#[case(
+    mid_level_mage_chaos_gauntlets_fire_bolt_player(),
+    ammonite_crab(),
+    19190,
+    16
+)]
+#[case(mid_level_mage_god_spell_charge_player(), ammonite_crab(), 19190, 33)]
+#[case(max_mage_shadow_player(), ammonite_crab(), 83956, 66)]
+#[case(
+    max_mage_shadow_salts_player(),
+    scale_toa(wardens_p3(), 400),
+    120240,
+    84
+)]
+#[case(max_mage_smoke_staff_fire_surge_player(), ammonite_crab(), 37697, 33)]
+#[case(full_virtus_kodai_ice_barrage_player(), ammonite_crab(), 36654, 45)]
+#[case(full_virtus_kodai_fire_surge_player(), ammonite_crab(), 36654, 34)]
+fn test_magic_player_rolls(
+    #[case] mut player: Player,
+    #[case] monster: Monster,
+    #[case] att_roll: u32,
+    #[case] max_hit: u32,
+) {
+    calc_player_magic_rolls(&mut player, &monster);
+    assert_eq!(player.att_rolls[&CombatType::Magic], att_roll);
+    assert_eq!(player.max_hits[&CombatType::Magic], max_hit);
 }

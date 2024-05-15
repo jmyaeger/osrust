@@ -3,6 +3,7 @@ use osrs::monster::Monster;
 use osrs::player::{Gear, Player, PlayerStats};
 use osrs::potions::{Potion, PotionBoost};
 use osrs::prayers::{Prayer, PrayerBoost};
+use osrs::spells::{AncientSpell, StandardSpell};
 use rstest::fixture;
 
 #[fixture]
@@ -143,6 +144,11 @@ pub fn shaman_cox_cm() -> Monster {
 #[fixture]
 pub fn skeletal_mystic_cm() -> Monster {
     Monster::new("Skeletal Mystic (Challenge Mode)").unwrap()
+}
+
+#[fixture]
+pub fn wardens_p3() -> Monster {
+    Monster::new("Elidinis' Warden (P3)").unwrap()
 }
 
 #[fixture]
@@ -579,6 +585,183 @@ pub fn mid_level_ranged_bone_shortbow_player() -> Player {
 pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
     player.equip("Silver bolts");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_sang_staff_player() -> Player {
+    let mut player = Player::new();
+    player.stats = PlayerStats {
+        attack: 99,
+        strength: 99,
+        defence: 99,
+        ranged: 99,
+        magic: 99,
+        hitpoints: 99,
+        prayer: 99,
+    };
+    player.prayers.add(PrayerBoost::new(Prayer::Augury));
+    player.potions.magic = Some(PotionBoost::new(Potion::SaturatedHeart));
+
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+
+    player.gear = Gear {
+        head: Some(Armor::new("Ancestral hat")),
+        neck: Some(Armor::new("Occult necklace")),
+        cape: Some(Armor::new("Imbued guthix cape")),
+        ammo: Some(Armor::new("Rada's blessing 4")),
+        second_ammo: None,
+        weapon: Weapon::new("Sanguinesti staff"),
+        shield: Some(Armor::new("Elidinis' ward (f)")),
+        body: Some(Armor::new("Ancestral robe top")),
+        legs: Some(Armor::new("Ancestral robe bottom")),
+        hands: Some(Armor::new("Tormented bracelet")),
+        feet: Some(Armor::new("Eternal boots")),
+        ring: Some(Armor::new("Magus ring")),
+    };
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Accurate);
+
+    player
+}
+
+#[fixture]
+pub fn max_mage_toxic_trident_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Trident of the swamp");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_trident_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Trident of the seas");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_harm_fire_surge_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Harmonised nightmare staff");
+    player.update_bonuses();
+    player.set_spell(StandardSpell::FireSurge);
+    player.set_active_style(CombatStyle::Spell);
+    player
+}
+
+#[fixture]
+pub fn max_mage_kodai_ice_barrage_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Kodai wand");
+    player.update_bonuses();
+    player.set_spell(AncientSpell::IceBarrage);
+    player.set_active_style(CombatStyle::Spell);
+    player
+}
+
+#[fixture]
+pub fn mid_level_magic_warped_sceptre_player() -> Player {
+    let mut player = Player::new();
+    player.stats = PlayerStats {
+        attack: 80,
+        strength: 80,
+        defence: 80,
+        ranged: 80,
+        magic: 80,
+        hitpoints: 80,
+        prayer: 70,
+    };
+    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
+
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+
+    player.gear = Gear {
+        head: Some(Armor::new("Ahrim's hood")),
+        neck: Some(Armor::new("Occult necklace")),
+        cape: Some(Armor::new("Imbued guthix cape")),
+        ammo: Some(Armor::new("Rada's blessing 3")),
+        second_ammo: None,
+        weapon: Weapon::new("Warped sceptre"),
+        shield: Some(Armor::new("Malediction ward")),
+        body: Some(Armor::new("Ahrim's robetop")),
+        legs: Some(Armor::new("Ahrim's robeskirt")),
+        hands: Some(Armor::new("Barrows gloves")),
+        feet: Some(Armor::new("Infinity boots")),
+        ring: Some(Armor::new("Seers ring (i)")),
+    };
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Accurate);
+
+    player
+}
+
+#[fixture]
+pub fn mid_level_mage_chaos_gauntlets_fire_bolt_player() -> Player {
+    let mut player = mid_level_magic_warped_sceptre_player();
+    player.equip("Fire battlestaff");
+    player.equip("Chaos gauntlets");
+    player.update_bonuses();
+    player.set_spell(StandardSpell::FireBolt);
+    player.set_active_style(CombatStyle::Spell);
+    player
+}
+
+#[fixture]
+pub fn mid_level_mage_god_spell_charge_player() -> Player {
+    let mut player = mid_level_magic_warped_sceptre_player();
+    player.equip("Guthix staff");
+    player.update_bonuses();
+    player.boosts.charge_active = true;
+    player.set_spell(StandardSpell::ClawsOfGuthix);
+    player.set_active_style(CombatStyle::Spell);
+    player
+}
+
+#[fixture]
+pub fn max_mage_shadow_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Tumeken's shadow");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_shadow_salts_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Tumeken's shadow");
+    player.potions.magic = Some(PotionBoost::new(Potion::SmellingSalts));
+    player.calc_potion_boosts();
+    player.reset_live_stats();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_virtus_kodai_ice_barrage_player() -> Player {
+    let mut player = max_mage_kodai_ice_barrage_player();
+    player.equip("Virtus mask");
+    player.equip("Virtus robe top");
+    player.equip("Virtus robe bottom");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_virtus_kodai_fire_surge_player() -> Player {
+    let mut player = full_virtus_kodai_ice_barrage_player();
+    player.set_spell(StandardSpell::FireSurge);
+    player
+}
+
+#[fixture]
+pub fn max_mage_smoke_staff_fire_surge_player() -> Player {
+    let mut player = max_mage_harm_fire_surge_player();
+    player.equip("Smoke battlestaff");
     player.update_bonuses();
     player
 }

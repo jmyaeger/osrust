@@ -715,7 +715,7 @@ fn apply_chaos_gauntlet_boost(max_hit: u32, player: &Player) -> u32 {
     ];
 
     if let Some(Spellbook::Standard(standard_spell)) = player.spell() {
-        if player.is_wearing("Chaos gauntlet") && bolt_spells.contains(standard_spell) {
+        if player.is_wearing("Chaos gauntlets") && bolt_spells.contains(standard_spell) {
             return max_hit + 3;
         }
     }
