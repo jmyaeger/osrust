@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
 };
-use crate::potions::PotionBoost;
+use crate::potions::{Potion, PotionBoost};
 use crate::prayers::PrayerBoost;
 use crate::spells;
 use reqwest::Error;
@@ -748,6 +748,52 @@ impl Player {
         self.attrs.spell = Some(Box::new(spell));
     }
 
+    pub fn add_potion(&mut self, potion: Potion) {
+        match potion {
+            Potion::Attack | Potion::SuperAttack | Potion::ZamorakBrewAtt => {
+                self.potions.attack = Some(PotionBoost::new(&potion));
+            }
+            Potion::Strength
+            | Potion::SuperStrength
+            | Potion::ZamorakBrewStr
+            | Potion::DragonBattleaxe => {
+                self.potions.strength = Some(PotionBoost::new(&potion));
+            }
+            Potion::Defence | Potion::SuperDefence | Potion::SaradominBrew => {
+                self.potions.defence = Some(PotionBoost::new(&potion));
+            }
+            Potion::Ranging | Potion::SuperRanging => {
+                self.potions.ranged = Some(PotionBoost::new(&potion));
+            }
+            Potion::Magic
+            | Potion::SuperMagic
+            | Potion::ImbuedHeart
+            | Potion::SaturatedHeart
+            | Potion::AncientBrew
+            | Potion::ForgottenBrew => {
+                self.potions.magic = Some(PotionBoost::new(&potion));
+            }
+            Potion::SuperCombat => {
+                self.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
+                self.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
+                self.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
+            }
+            Potion::SmellingSalts
+            | Potion::OverloadMinus
+            | Potion::Overload
+            | Potion::OverloadPlus => {
+                self.potions.attack = Some(PotionBoost::new(&potion));
+                self.potions.strength = Some(PotionBoost::new(&potion));
+                self.potions.defence = Some(PotionBoost::new(&potion));
+                self.potions.ranged = Some(PotionBoost::new(&potion));
+                self.potions.magic = Some(PotionBoost::new(&potion));
+            }
+            _ => panic!("Unknown potion type"),
+        }
+        self.calc_potion_boosts();
+        self.reset_live_stats();
+    }
+
     pub fn bulwark_bonus(&self) -> i32 {
         max(
             0,
@@ -981,11 +1027,11 @@ mod test {
             hitpoints: 99,
             prayer: 99,
         };
-        player.potions.attack = Some(PotionBoost::new(Potion::SuperAttack));
-        player.potions.strength = Some(PotionBoost::new(Potion::SuperStrength));
-        player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
-        player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-        player.potions.magic = Some(PotionBoost::new(Potion::SaturatedHeart));
+        player.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
+        player.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
+        player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
+        player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
+        player.potions.magic = Some(PotionBoost::new(&Potion::SaturatedHeart));
 
         player.calc_potion_boosts();
         player.reset_live_stats();
@@ -1000,11 +1046,11 @@ mod test {
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut player = Player::new();
-        player.potions.attack = Some(PotionBoost::new(Potion::ZamorakBrewAtt));
-        player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
-        player.potions.magic = Some(PotionBoost::new(Potion::Magic));
-        player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-        player.potions.strength = Some(PotionBoost::new(Potion::DragonBattleaxe));
+        player.potions.attack = Some(PotionBoost::new(&Potion::ZamorakBrewAtt));
+        player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
+        player.potions.magic = Some(PotionBoost::new(&Potion::Magic));
+        player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
+        player.potions.strength = Some(PotionBoost::new(&Potion::DragonBattleaxe));
         player.calc_potion_boosts();
         player.reset_live_stats();
         player

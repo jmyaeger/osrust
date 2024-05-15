@@ -1,7 +1,7 @@
 use osrs::equipment::{Armor, CombatStyle, Weapon};
 use osrs::monster::Monster;
 use osrs::player::{Gear, Player, PlayerStats};
-use osrs::potions::{Potion, PotionBoost};
+use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::spells::{AncientSpell, StandardSpell};
 use rstest::fixture;
@@ -164,12 +164,7 @@ pub fn max_melee_player() -> Player {
         prayer: 99,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
-    player.potions.attack = Some(PotionBoost::new(Potion::SuperAttack));
-    player.potions.strength = Some(PotionBoost::new(Potion::SuperStrength));
-    player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
-
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::SuperCombat);
 
     player.gear = Gear {
         head: Some(Armor::new("Torva full helm")),
@@ -204,12 +199,7 @@ pub fn mid_level_melee_player() -> Player {
         prayer: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
-    player.potions.attack = Some(PotionBoost::new(Potion::SuperAttack));
-    player.potions.strength = Some(PotionBoost::new(Potion::SuperStrength));
-    player.potions.defence = Some(PotionBoost::new(Potion::SuperDefence));
-
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::SuperCombat);
 
     player.gear = Gear {
         head: Some(Armor::new("Helm of neitiznot")),
@@ -244,10 +234,7 @@ pub fn max_ranged_zcb_player() -> Player {
         prayer: 99,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::Ranging);
 
     player.gear = Gear {
         head: Some(Armor::new("Masori mask (f)")),
@@ -282,10 +269,7 @@ pub fn mid_level_ranged_rcb_player() -> Player {
         prayer: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::Ranging);
 
     player.gear = Gear {
         head: Some(Armor::new("Ancient coif")),
@@ -466,20 +450,14 @@ pub fn max_ranged_tbow_player() -> Player {
 #[fixture]
 pub fn max_ranged_tbow_overload_player() -> Player {
     let mut player = max_ranged_tbow_player();
-    player.potions.ranged = Some(PotionBoost::new(Potion::OverloadPlus));
-    player.calc_potion_boosts();
-    player.reset_live_stats();
-    player.update_bonuses();
+    player.add_potion(Potion::OverloadPlus);
     player
 }
 
 #[fixture]
 pub fn max_ranged_tbow_salts_player() -> Player {
     let mut player = max_ranged_tbow_player();
-    player.potions.ranged = Some(PotionBoost::new(Potion::SmellingSalts));
-    player.calc_potion_boosts();
-    player.reset_live_stats();
-    player.update_bonuses();
+    player.add_potion(Potion::SmellingSalts);
     player
 }
 
@@ -543,9 +521,7 @@ pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::Ranging);
     player
 }
 
@@ -566,9 +542,7 @@ pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-    player.potions.ranged = Some(PotionBoost::new(Potion::Ranging));
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::Ranging);
     player
 }
 
@@ -602,10 +576,7 @@ pub fn max_mage_sang_staff_player() -> Player {
         prayer: 99,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Augury));
-    player.potions.magic = Some(PotionBoost::new(Potion::SaturatedHeart));
-
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::SaturatedHeart);
 
     player.gear = Gear {
         head: Some(Armor::new("Ancestral hat")),
@@ -734,9 +705,7 @@ pub fn max_mage_shadow_player() -> Player {
 pub fn max_mage_shadow_salts_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player.equip("Tumeken's shadow");
-    player.potions.magic = Some(PotionBoost::new(Potion::SmellingSalts));
-    player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.add_potion(Potion::SmellingSalts);
     player.update_bonuses();
     player
 }
