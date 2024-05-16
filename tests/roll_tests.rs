@@ -236,6 +236,78 @@ fn test_ranged_player_rolls(
 #[case(max_mage_smoke_staff_fire_surge_player(), ammonite_crab(), 37697, 33)]
 #[case(full_virtus_kodai_ice_barrage_player(), ammonite_crab(), 36654, 45)]
 #[case(full_virtus_kodai_fire_surge_player(), ammonite_crab(), 36654, 34)]
+#[case(salve_ei(max_mage_harm_fire_surge_player()), vorkath(), 39693, 37)]
+#[case(salve_ei(max_mage_shadow_player()), vorkath(), 94224, 62)]
+#[case(
+    salve_ei(mid_level_mage_chaos_gauntlets_fire_bolt_player()),
+    vorkath(),
+    21573,
+    18
+)]
+#[case(
+    salve_ei(max_mage_smoke_staff_fire_surge_player()),
+    vorkath(),
+    42876,
+    36
+)]
+#[case(
+    salve_ei(mid_level_mage_god_spell_charge_player()),
+    vorkath(),
+    21573,
+    36
+)]
+#[case(salve_ei(full_virtus_kodai_ice_barrage_player()), vorkath(), 41839, 48)]
+// #[case(
+//     avarice_forinthry(max_mage_sang_staff_player()),
+//     revenant_dragon(),
+//     49127,
+//     58
+// )] // Reimplement after confirming avarice boost placement
+#[case(max_mage_accursed_sceptre_player(), vetion(), 54360, 60)]
+#[case(salve_ei(max_mage_accursed_sceptre_player()), vetion(), 61969, 64)]
+// #[case(avarice_forinthry(max_mage_accursed_sceptre_player()), revenant_dragon(), 72774, 73)]
+#[case(slayer(max_mage_accursed_sceptre_player()), vetion(), 61210, 66)]
+#[case(max_mage_harm_tome_of_water_surge_player(), ammonite_crab(), 38799, 36)]
+#[case(slayer(max_mage_shadow_player()), ammonite_crab(), 93944, 73)]
+#[case(
+    slayer(mid_level_mage_chaos_gauntlets_fire_bolt_player()),
+    ammonite_crab(),
+    21720,
+    18
+)]
+#[case(
+    slayer(mid_level_mage_god_spell_charge_player()),
+    ammonite_crab(),
+    21720,
+    37
+)]
+#[case(
+    slayer(max_mage_smoke_staff_fire_surge_player()),
+    ammonite_crab(),
+    42408,
+    37
+)]
+#[case(
+    slayer(full_virtus_kodai_ice_barrage_player()),
+    ammonite_crab(),
+    41295,
+    50
+)]
+#[case(slayer(salve_ei(max_mage_sang_staff_player())), vorkath(), 40951, 49)]
+#[case(max_mage_harm_fire_surge_tome_player(), ammonite_crab(), 32333, 49)]
+#[case(
+    slayer(max_mage_harm_fire_surge_tome_player()),
+    ammonite_crab(),
+    36326,
+    55
+)]
+#[case(salve_ei(max_mage_harm_fire_surge_tome_player()), vorkath(), 36654, 54)]
+#[case(
+    mid_level_mage_chaos_gauntlets_fire_bolt_tome_player(),
+    ammonite_crab(),
+    18786,
+    24
+)]
 fn test_magic_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,

@@ -208,17 +208,14 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     magic_damage = apply_virtus_bonus(magic_damage, player);
 
     // Determine if salve boost is applicable and apply it if so
-    let (att_roll, magic_damage, salve_active) =
+    let (mut att_roll, magic_damage, salve_active) =
         apply_salve_magic_boost(att_roll, magic_damage, player, monster);
 
     // "Primary" magic damage
     max_hit = max_hit * (200 + magic_damage as u32) / 200;
 
-    // Apply wildy staff boost to attack roll and store the damage boost
-    let (mut att_roll, wilderness_boost) = apply_wildy_staff_boost(att_roll, player, monster);
-
     // Tome of water accuracy boost
-    if player.is_wearing("Tome of water") && player.is_using_water_spell() {
+    if player.is_wearing("Tome of water (charged)") && player.is_using_water_spell() {
         att_roll = att_roll * 6 / 5;
     }
 
@@ -229,13 +226,19 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         slayer_boost = 15u32;
     }
 
-    // "Secondary" magic damage - wiki claims slayer boost and wildy staff boost are additive
-    max_hit = max_hit * (100 + slayer_boost + wilderness_boost) / 100;
+    // Apply wildy staff boost to attack roll and store the damage boost
+    let (att_roll, wilderness_boost) = apply_wildy_staff_boost(att_roll, player, monster);
+
+    // Apply slayer and wilderness boosts
+    max_hit = max_hit * (100 + slayer_boost) / 100;
+    max_hit = max_hit * (100 + wilderness_boost) / 100;
 
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
-    if player.is_wearing("Tome of fire") && player.is_using_fire_spell() {
+    if player.is_wearing("Tome of fire (burnt)")
+        || player.is_wearing("Tome of fire (seared)") && player.is_using_fire_spell()
+    {
         max_hit = max_hit * 3 / 2;
-    } else if player.is_wearing("Tome of water") && player.is_using_water_spell() {
+    } else if player.is_wearing("Tome of water (charged)") && player.is_using_water_spell() {
         max_hit = max_hit * 6 / 5;
     }
 

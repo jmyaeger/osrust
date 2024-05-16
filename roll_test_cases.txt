@@ -109,7 +109,6 @@ Boost tests:
 - Shadow with max mage
     - Against Wardens P3
     - Against Kree'arra
-------------------------------------- Current spot
 - Smoke battlestaff + max mage + fire surge
 - Full virtus + kodai + ice barrage
 - Full virtus + kodai + fire surge

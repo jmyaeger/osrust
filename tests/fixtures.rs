@@ -735,6 +735,38 @@ pub fn max_mage_smoke_staff_fire_surge_player() -> Player {
     player
 }
 
+#[fixture]
+pub fn max_mage_accursed_sceptre_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Accursed sceptre");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
+    let mut player = max_mage_harm_fire_surge_player();
+    player.equip("Tome of water (charged)");
+    player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_harm_fire_surge_tome_player() -> Player {
+    let mut player = max_mage_harm_fire_surge_player();
+    player.equip("Tome of fire (burnt)");
+    player.update_bonuses();
+    player
+}
+#[fixture]
+pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
+    let mut player = mid_level_mage_chaos_gauntlets_fire_bolt_player();
+    player.equip("Tome of fire (burnt)");
+    player.update_bonuses();
+    player
+}
+
 pub fn slayer(mut player: Player) -> Player {
     player.equip("Slayer helmet (i)");
     player.update_bonuses();
