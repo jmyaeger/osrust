@@ -1,3 +1,4 @@
+pub mod attacks;
 pub mod constants;
 pub mod equipment;
 pub mod equipment_json;

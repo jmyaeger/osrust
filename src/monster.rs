@@ -70,7 +70,7 @@ pub struct MonsterBonuses {
     pub attack: AttackBonus,
     pub strength: MonsterStrengthBonus,
     pub defence: StyleBonus,
-    pub flat_armour: i8,
+    pub flat_armour: u32,
 }
 
 #[derive(Debug, Eq, PartialEq, Hash, Default)]
@@ -189,7 +189,7 @@ impl Monster {
         self.bonuses.defence.crush = row.get::<_, Option<i32>>("dcrush")?.unwrap_or_default();
         self.bonuses.defence.ranged = row.get::<_, Option<i32>>("drange")?.unwrap_or_default();
         self.bonuses.defence.magic = row.get::<_, Option<i32>>("dmagic")?.unwrap_or_default();
-        self.bonuses.flat_armour = row.get::<_, Option<i8>>("armour")?.unwrap_or_default();
+        self.bonuses.flat_armour = row.get::<_, Option<u32>>("armour")?.unwrap_or_default();
         self.immunities.poison = row
             .get::<_, Option<bool>>("immunepoison")?
             .unwrap_or_default();
