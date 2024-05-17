@@ -98,6 +98,7 @@ pub struct MonsterInfo {
     pub aggressive: bool,
     pub poisonous: bool,
     pub poison_severity: u8,
+    pub freeze_duration: u8,
     pub toa_level: u32,
     pub toa_path_level: u32,
 }
@@ -331,6 +332,20 @@ impl Monster {
             .map_or(false, |attrs| attrs.contains(&Attribute::Rat))
     }
 
+    pub fn is_fiery(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Fiery))
+    }
+
+    pub fn is_shade(&self) -> bool {
+        self.info
+            .attributes
+            .as_ref()
+            .map_or(false, |attrs| attrs.contains(&Attribute::Shade))
+    }
+
     pub fn vampyre_tier(&self) -> Option<u8> {
         if let Some(attrs) = self.info.attributes.as_ref() {
             for attr in attrs {
@@ -356,6 +371,18 @@ impl Monster {
 
     pub fn is_toa_path_monster(&self) -> bool {
         TOA_PATH_MONSTERS.contains(&self.info.name.as_str())
+    }
+
+    pub fn heal(&mut self, amount: u32) {
+        self.live_stats.hitpoints = min(self.live_stats.hitpoints + amount, self.stats.hitpoints);
+    }
+
+    pub fn take_damage(&mut self, amount: u32) {
+        self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
+    }
+
+    pub fn is_freezable(&self) -> bool {
+        self.immunities.freeze != 100 && !self.info.freeze_duration == 0
     }
 }
 

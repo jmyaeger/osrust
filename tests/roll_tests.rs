@@ -247,7 +247,7 @@ fn test_ranged_player_rolls(
 #[case(
     salve_ei(max_mage_smoke_staff_fire_surge_player()),
     vorkath(),
-    42876,
+    42226,
     36
 )]
 #[case(

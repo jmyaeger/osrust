@@ -199,6 +199,14 @@ pub const FULL_ELITE_VOID: [&str; 6] = [
     "Void knight gloves",
 ];
 
+pub const BLOODBARK_ARMOR: [&str; 5] = [
+    "Bloodbark helm",
+    "Bloodbark body",
+    "Bloodbark legs",
+    "Bloodbark gauntlets",
+    "Bloodbark boots",
+];
+
 pub const NON_BOLT_OR_ARROW_AMMO: [&str; 22] = [
     "Toxic blowpipe (empty)",
     "Toxic blowpipe (bronze)",
@@ -240,3 +248,19 @@ pub const USES_OWN_AMMO: [&str; 14] = [
     "Bow of faerdhinen",
     "Bow of faerdhinen (c)",
 ];
+
+pub const OPAL_PROC_CHANCE: f32 = 0.05;
+
+pub const PEARL_PROC_CHANCE: f32 = 0.06;
+
+pub const EMERALD_PROC_CHANCE: f32 = 0.55;
+
+pub const RUBY_PROC_CHANCE: f32 = 0.06;
+
+pub const DIAMOND_PROC_CHANCE: f32 = 0.1;
+
+pub const ONYX_PROC_CHANCE: f32 = 0.11;
+
+pub const DRAGONSTONE_PROC_CHANCE: f32 = 0.06;
+
+pub const SOULREAPER_STACK_DAMAGE: u32 = 8;

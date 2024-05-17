@@ -199,17 +199,15 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     }
 
     let eff_lvl = calc_eff_magic_lvl(player);
-    let mut att_roll = calc_roll(eff_lvl, magic_attack);
-
-    // Apply bonuses for smoke battlestaff and mystic smoke staff on standard spells
-    (att_roll, magic_damage) = apply_smoke_staff_bonus(att_roll, magic_damage, player);
+    let base_att_roll = calc_roll(eff_lvl, magic_attack);
 
     // Apply virtus robe boost for ancient spells
     magic_damage = apply_virtus_bonus(magic_damage, player);
 
     // Determine if salve boost is applicable and apply it if so
+    // Smoke staff boosts are applied additively here as well (source: Mod Ash)
     let (mut att_roll, magic_damage, salve_active) =
-        apply_salve_magic_boost(att_roll, magic_damage, player, monster);
+        apply_salve_and_smoke_magic_boosts(base_att_roll, magic_damage, player, monster);
 
     // "Primary" magic damage
     max_hit = max_hit * (200 + magic_damage as u32) / 200;
@@ -639,18 +637,6 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
     void_bonus.multiply_to_int(visible_magic * (100 + magic_pray_boost) / 100) + stance_bonus
 }
 
-fn apply_smoke_staff_bonus(att_roll: u32, magic_damage: i32, player: &Player) -> (u32, i32) {
-    let mut att_roll = att_roll;
-    let mut magic_damage = magic_damage;
-
-    if player.is_wearing_smoke_staff() && player.is_using_standard_spell() {
-        att_roll = att_roll * 11 / 10;
-        magic_damage += 20;
-    }
-
-    (att_roll, magic_damage)
-}
-
 fn apply_virtus_bonus(magic_damage: i32, player: &Player) -> i32 {
     if player.is_using_ancient_spell() {
         magic_damage
@@ -668,7 +654,7 @@ fn apply_virtus_bonus(magic_damage: i32, player: &Player) -> i32 {
     }
 }
 
-fn apply_salve_magic_boost(
+fn apply_salve_and_smoke_magic_boosts(
     att_roll: u32,
     magic_damage: i32,
     player: &Player,
@@ -677,24 +663,32 @@ fn apply_salve_magic_boost(
     let mut att_roll = att_roll;
     let mut magic_damage = magic_damage;
     let mut salve_active = true;
+    let mut att_roll_mod = 100;
 
     if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
         if player.boosts.forinthry_surge {
-            att_roll = att_roll * 135 / 100;
+            att_roll_mod += 35;
             magic_damage += 70;
         } else {
-            att_roll = att_roll * 6 / 5;
+            att_roll_mod += 20;
             magic_damage += 40;
         }
     } else if player.is_wearing("Salve amulet (ei)") && monster.is_undead() {
-        att_roll = att_roll * 6 / 5;
+        att_roll_mod += 20;
         magic_damage += 40;
     } else if player.is_wearing("Salve amulet (i)") {
-        att_roll = att_roll * 115 / 100;
+        att_roll_mod += 15;
         magic_damage += 30;
     } else {
         salve_active = false;
     }
+
+    if player.is_wearing_smoke_staff() && player.is_using_standard_spell() {
+        att_roll_mod += 10;
+        magic_damage += 20;
+    }
+
+    att_roll = att_roll * att_roll_mod / 100;
 
     (att_roll, magic_damage, salve_active)
 }

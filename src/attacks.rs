@@ -1,10 +1,28 @@
+use crate::constants::*;
 use crate::equipment::CombatType;
 use crate::monster::Monster;
 use crate::player::Player;
+use crate::rolls::calc_player_melee_rolls;
+use crate::spells::{AncientSpell, Spell};
 use rand::Rng;
 use std::cmp::{max, min};
 
-pub fn standard_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+pub trait AttackMethods {
+    fn attack(&self, player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+        standard_attack(player, monster, rng)
+    }
+
+    fn special_attack(
+        &self,
+        player: &Player,
+        monster: &Monster,
+        rng: &mut impl Rng,
+    ) -> (u32, bool) {
+        standard_attack(player, monster, rng)
+    }
+}
+
+fn standard_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
     let combat_type = player.combat_type();
     let max_att_roll = player.att_rolls[&combat_type];
     let mut max_def_roll = monster.def_rolls[&combat_type];
@@ -31,6 +49,12 @@ pub fn standard_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -
     };
 
     (damage, success)
+}
+
+pub struct OsmumtensFang;
+
+impl AttackMethods for OsmumtensFang {
+    fn attack(&self, player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {}
 }
 
 pub fn fang_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
@@ -142,12 +166,11 @@ pub fn guthans_warspear_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng);
     if player.set_effects.full_guthans && rng.gen_range(0..4) == 0 {
-        let max_hp = if player.is_wearing("Amulet of the damned") {
-            player.stats.hitpoints + 10
+        if player.is_wearing("Amulet of the damned") {
+            player.heal(damage, Some(10));
         } else {
-            player.stats.hitpoints
-        };
-        player.live_stats.hitpoints = min(max_hp, player.live_stats.hitpoints + damage);
+            player.heal(damage, None);
+        }
     }
 
     (damage, success)
@@ -178,8 +201,7 @@ pub fn sang_staff_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng);
     if rng.gen_range(0..6) == 0 {
-        player.live_stats.hitpoints =
-            min(player.stats.hitpoints, player.live_stats.hitpoints + damage);
+        player.heal(damage, None)
     }
 
     (damage, success)
@@ -213,13 +235,410 @@ pub fn yellow_keris_attack(
     let (damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
     if monster.live_stats.hitpoints.saturating_sub(damage) == 0 {
-        let max_hp = player.stats.hitpoints + player.stats.hitpoints / 5;
-        player.live_stats.hitpoints = min(max_hp, player.live_stats.hitpoints + 12);
+        player.heal(12, Some(player.stats.hitpoints / 5));
         player.live_stats.prayer = player.live_stats.prayer.saturating_sub(5);
     }
 
     (damage, success)
 }
+
+pub fn opal_bolt_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let mut proc_chance = OPAL_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let extra_damage = if player.is_wearing("Zaryte crossbow") {
+        player.live_stats.ranged / 9
+    } else {
+        player.live_stats.ranged / 10
+    };
+
+    let max_hit = player.max_hits[&CombatType::Ranged];
+
+    if rng.gen::<f32>() <= proc_chance {
+        (damage_roll(0, max_hit, rng) + extra_damage, true)
+    } else {
+        standard_attack(player, monster, rng)
+    }
+}
+
+pub fn pearl_bolt_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let mut proc_chance = PEARL_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let mut denominator = if monster.is_fiery() { 15 } else { 20 };
+
+    if player.is_wearing("Zaryte crossbow") {
+        denominator = denominator * 9 / 10;
+    }
+    let extra_damage = player.live_stats.ranged / denominator;
+
+    let max_hit = player.max_hits[&CombatType::Ranged];
+
+    if rng.gen::<f32>() <= proc_chance {
+        (damage_roll(0, max_hit, rng) + extra_damage, true)
+    } else {
+        standard_attack(player, monster, rng)
+    }
+}
+
+pub fn emerald_bolt_attack(
+    player: &Player,
+    monster: &mut Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let mut proc_chance = EMERALD_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let poison_severity = if player.is_wearing("Zaryte crossbow") {
+        27
+    } else {
+        25
+    };
+
+    let (damage, success) = standard_attack(player, monster, rng);
+
+    if success && rng.gen::<f32>() <= proc_chance {
+        monster.info.poison_severity = poison_severity;
+    }
+
+    (damage, success)
+}
+
+pub fn ruby_bolt_attack(player: &mut Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let mut proc_chance = RUBY_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let ruby_damage = if player.is_wearing("Zaryte crossbow") {
+        min(110, monster.live_stats.hitpoints * 22 / 100)
+    } else {
+        min(100, monster.live_stats.hitpoints / 5)
+    };
+
+    if rng.gen::<f32>() <= proc_chance {
+        player.take_damage(player.live_stats.hitpoints / 10);
+        (ruby_damage, true)
+    } else {
+        standard_attack(player, monster, rng)
+    }
+}
+
+pub fn diamond_bolt_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let mut proc_chance = DIAMOND_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let base_max_hit = player.max_hits[&CombatType::Ranged];
+    let max_hit = if player.is_wearing("Zaryte crossbow") {
+        base_max_hit * 126 / 100
+    } else {
+        base_max_hit * 115 / 100
+    };
+
+    if rng.gen::<f32>() <= proc_chance {
+        (damage_roll(0, max_hit, rng), true)
+    } else {
+        standard_attack(player, monster, rng)
+    }
+}
+
+pub fn onyx_bolt_attack(player: &mut Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let mut proc_chance = ONYX_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let base_max_hit = player.max_hits[&CombatType::Ranged];
+    let max_hit = if player.is_wearing("Zaryte crossbow") {
+        base_max_hit * 132 / 100
+    } else {
+        base_max_hit * 6 / 5
+    };
+
+    let (mut damage, success) = standard_attack(player, monster, rng);
+
+    if success && !monster.is_undead() && rng.gen::<f32>() <= proc_chance {
+        damage = damage_roll(0, max_hit, rng);
+        player.heal(damage / 4, None);
+    }
+
+    (damage, success)
+}
+
+pub fn dragonstone_bolt_attack(
+    player: &Player,
+    monster: &Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let mut proc_chance = DRAGONSTONE_PROC_CHANCE;
+    if player.boosts.kandarin_diary {
+        proc_chance *= 1.1;
+    }
+
+    let extra_damage = if player.is_wearing("Zaryte crossbow") {
+        player.live_stats.ranged * 2 / 9
+    } else {
+        player.live_stats.ranged / 5
+    };
+
+    let (mut damage, success) = standard_attack(player, monster, rng);
+
+    if rng.gen::<f32>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
+        damage += extra_damage;
+    }
+
+    (damage, success)
+}
+
+pub fn smoke_spell_attack(
+    player: &Player,
+    monster: &mut Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    monster.info.poison_severity = match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
+        (
+            true,
+            Some(Spell::Ancient(AncientSpell::SmokeRush))
+            | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+        ) => 11,
+        (
+            true,
+            Some(Spell::Ancient(AncientSpell::SmokeBlitz))
+            | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+        ) => 22,
+        (
+            false,
+            Some(Spell::Ancient(AncientSpell::SmokeRush))
+            | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+        ) => 10,
+        (
+            false,
+            Some(Spell::Ancient(AncientSpell::SmokeBlitz))
+            | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+        ) => 20,
+        _ => 0,
+    };
+
+    standard_attack(player, monster, rng)
+}
+
+pub fn shadow_spell_attack(
+    player: &Player,
+    monster: &mut Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let drain_amount = match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
+        (
+            true,
+            Some(Spell::Ancient(AncientSpell::ShadowRush))
+            | Some(Spell::Ancient(AncientSpell::ShadowBurst)),
+        ) => 110,
+        (
+            true,
+            Some(Spell::Ancient(AncientSpell::ShadowBlitz))
+            | Some(Spell::Ancient(AncientSpell::ShadowBarrage)),
+        ) => 165,
+        (
+            false,
+            Some(Spell::Ancient(AncientSpell::ShadowRush))
+            | Some(Spell::Ancient(AncientSpell::ShadowBurst)),
+        ) => 100,
+        (
+            false,
+            Some(Spell::Ancient(AncientSpell::ShadowBlitz))
+            | Some(Spell::Ancient(AncientSpell::ShadowBarrage)),
+        ) => 150,
+        _ => 0,
+    };
+
+    let (damage, success) = standard_attack(player, monster, rng);
+
+    if success {
+        if monster.live_stats.attack == monster.stats.attack {
+            monster.live_stats.attack -= monster.stats.attack * drain_amount / 1000;
+        }
+        if player.is_wearing("Shadow ancient sceptre") {
+            if monster.live_stats.strength == monster.stats.strength {
+                monster.live_stats.strength -= monster.stats.strength * drain_amount / 1000;
+            }
+            if monster.live_stats.defence == monster.stats.defence {
+                monster.live_stats.defence -= monster.stats.defence * drain_amount / 1000;
+            }
+        }
+    }
+
+    (damage, success)
+}
+
+pub fn blood_spell_attack(
+    player: &mut Player,
+    monster: &Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let heal_factor = if player.is_wearing_ancient_spectre() {
+        275 + 20 * player.set_effects.bloodbark_pieces as u32
+    } else {
+        250 + 20 * player.set_effects.bloodbark_pieces as u32
+    };
+
+    let overheal = if player.is_wearing("Blood ancient sceptre") {
+        Some(player.stats.hitpoints / 10)
+    } else {
+        None
+    };
+
+    let (damage, success) = standard_attack(player, monster, rng);
+    player.heal(damage * heal_factor / 1000, overheal);
+
+    (damage, success)
+}
+
+pub fn ice_spell_attack(player: &Player, monster: &mut Monster, rng: &mut impl Rng) -> (u32, bool) {
+    if monster.is_freezable() {
+        let mut max_att_roll = player.att_rolls[&CombatType::Magic];
+        let max_def_roll = monster.def_rolls[&CombatType::Magic];
+        let max_hit = player.max_hits[&CombatType::Magic];
+
+        if player.is_wearing("Ice ancient sceptre") {
+            max_att_roll = max_att_roll * 11 / 10;
+        }
+
+        let (damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
+
+        if success {
+            monster.info.freeze_duration =
+                match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
+                    (_, Some(Spell::Ancient(AncientSpell::IceRush))) => 8,
+                    (true, Some(Spell::Ancient(AncientSpell::IceBurst))) => 17,
+                    (false, Some(Spell::Ancient(AncientSpell::IceBurst))) => 16,
+                    (true, Some(Spell::Ancient(AncientSpell::IceBlitz))) => 26,
+                    (false, Some(Spell::Ancient(AncientSpell::IceBlitz))) => 24,
+                    (true, Some(Spell::Ancient(AncientSpell::IceBarrage))) => 35,
+                    (false, Some(Spell::Ancient(AncientSpell::IceBarrage))) => 32,
+                    _ => 0,
+                };
+        }
+
+        (damage, success)
+    } else {
+        standard_attack(player, monster, rng)
+    }
+}
+
+pub fn scythe_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let combat_type = player.combat_type();
+    let max_att_roll = player.att_rolls[&combat_type];
+    let max_def_roll = monster.def_rolls[&combat_type];
+    let max_hit = player.max_hits[&combat_type];
+
+    let (damage1, success1) = standard_attack(player, monster, rng);
+    if monster.info.size == 1 {
+        return (damage1, success1);
+    }
+
+    let (damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit / 2, rng);
+    if monster.info.size == 2 {
+        return (damage2, success2);
+    }
+
+    let (damage3, success3) = base_attack(max_att_roll, max_def_roll, 0, max_hit / 4, rng);
+
+    (
+        damage1 + damage2 + damage3,
+        success1 || success2 || success3,
+    )
+}
+
+pub fn soulreaper_axe_attack(
+    player: &mut Player,
+    monster: &Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let (damage, success) = standard_attack(player, monster, rng);
+
+    if player.boosts.soulreaper_stacks < 5 && player.live_stats.hitpoints > 8 {
+        player.take_damage(SOULREAPER_STACK_DAMAGE);
+        player.boosts.soulreaper_stacks += 1;
+        calc_player_melee_rolls(player, monster);
+    }
+
+    (damage, success)
+}
+
+pub fn gadderhammer_attack(player: &Player, monster: &Monster, rng: &mut impl Rng) -> (u32, bool) {
+    let (mut damage, success) = standard_attack(player, monster, rng);
+
+    if success && monster.is_shade() {
+        if rng.gen_range(0..20) == 0 {
+            damage *= 2;
+        } else {
+            damage = damage * 5 / 4;
+        }
+    }
+
+    (damage, success)
+}
+
+pub fn tonalztics_of_ralos_attack(
+    player: &Player,
+    monster: &Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let max_att_roll = player.att_rolls[&CombatType::Ranged];
+    let max_def_roll = monster.def_rolls[&CombatType::Ranged];
+    let max_hit = player.max_hits[&CombatType::Ranged] * 3 / 4;
+
+    let (damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
+    if player.gear.weapon.name.contains("charged") {
+        let (damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
+        return (damage1 + damage2, success1 || success2);
+    }
+
+    (damage1, success1)
+}
+
+pub fn dual_macuahuitl_attack(
+    player: &mut Player,
+    monster: &Monster,
+    rng: &mut impl Rng,
+) -> (u32, bool) {
+    let combat_type = player.combat_type();
+    let max_att_roll = player.att_rolls[&combat_type];
+    let max_def_roll = monster.def_rolls[&combat_type];
+    let max_hit = player.max_hits[&combat_type];
+
+    // Reset attack speed to 4 ticks
+    player.gear.weapon.speed = 4;
+
+    let max_hit1 = max_hit / 2;
+    let max_hit2 = max_hit - max_hit1;
+    let (damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit1, rng);
+    let (damage2, success2) = if success1 {
+        base_attack(max_att_roll, max_def_roll, 0, max_hit2, rng)
+    } else {
+        (0, false)
+    };
+
+    // Roll for next attack to be one tick faster
+    if player.set_effects.full_blood_moon && (success1 && rng.gen_range(0..3) == 0)
+        || (success2 && rng.gen_range(0..3) == 0)
+    {
+        player.gear.weapon.speed = 3;
+    }
+
+    (damage1 + damage2, success1)
+}
+
+// TODO: Implement eclipse atlatl set effect
+// pub fn eclipse_atlatl_attack(player: &Player, monster: &mut Monster, rng: &mut impl Rng) -> (u32, bool) {}
 
 fn base_attack(
     max_att_roll: u32,

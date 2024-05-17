@@ -6,7 +6,7 @@ use crate::potions::{Potion, PotionBoost};
 use crate::prayers::PrayerBoost;
 use crate::spells;
 use reqwest::Error;
-use std::cmp::max;
+use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::hash::Hash;
 
@@ -218,6 +218,7 @@ pub struct SetEffects {
     pub full_blood_moon: bool,
     pub full_blue_moon: bool,
     pub full_eclipse_moon: bool,
+    pub bloodbark_pieces: usize,
 }
 
 #[derive(Default, PartialEq, Debug)]
@@ -520,6 +521,10 @@ impl Player {
         self.set_effects.full_torags = self.is_wearing_all(Vec::from(FULL_TORAGS));
         self.set_effects.full_void = self.is_wearing_full_void();
         self.set_effects.full_elite_void = self.is_wearing_full_elite_void();
+        self.set_effects.bloodbark_pieces = BLOODBARK_ARMOR
+            .iter()
+            .filter(|armor| self.is_wearing(armor))
+            .count();
     }
 
     pub fn calc_potion_boosts(&mut self) {
@@ -695,6 +700,16 @@ impl Player {
             == 4
     }
 
+    pub fn is_wearing_ancient_spectre(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Ancient sceptre",
+            "Smoke ancient sceptre",
+            "Shadow ancient sceptre",
+            "Blood ancient sceptre",
+            "Ice ancient sceptre",
+        ])
+    }
+
     pub fn is_using_spell(&self) -> bool {
         self.attrs.spell.is_some()
             && [
@@ -799,6 +814,18 @@ impl Player {
                         .as_ref()
                         .map_or(false, |ammo| ammo.is_bolt_or_arrow()))
         })
+    }
+
+    pub fn heal(&mut self, amount: u32, overheal_hp: Option<u32>) {
+        let max_hp = match overheal_hp {
+            Some(overheal_hp) => self.stats.hitpoints + overheal_hp,
+            None => self.stats.hitpoints,
+        };
+        self.live_stats.hitpoints = min(max_hp, self.live_stats.hitpoints + amount);
+    }
+
+    pub fn take_damage(&mut self, amount: u32) {
+        self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
     }
 }
 
