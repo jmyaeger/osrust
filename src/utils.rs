@@ -165,3 +165,7 @@ impl FromStr for Fraction {
         Ok(Fraction::new(numer, denom))
     }
 }
+
+pub fn poison_damage(severity: u8) -> u32 {
+    (severity as u32 + 4) / 5
+}

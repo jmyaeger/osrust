@@ -234,8 +234,8 @@ pub struct Weapon {
     pub name: String,
     pub bonuses: EquipmentBonuses,
     pub slot: GearSlot,
-    pub speed: i8,
-    pub base_speed: i8,
+    pub speed: i32,
+    pub base_speed: i32,
     pub attack_range: i8,
     pub two_handed: bool,
     pub spec_cost: u8,
@@ -262,7 +262,7 @@ impl Equipment for Weapon {
         self.bonuses.strength.magic = row.get::<_, f32>("mdmg")?;
         self.bonuses.prayer = row.get::<_, i32>("prayer")?;
         self.slot = GearSlot::Weapon;
-        self.speed = row.get::<_, i8>("speed")?;
+        self.speed = row.get::<_, i32>("speed")?;
         self.base_speed = self.speed;
         self.attack_range = match row.get::<_, i8>("attackrange") {
             Ok(range) => range,

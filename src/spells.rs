@@ -193,3 +193,43 @@ pub fn is_fire_spell(spell: &Spell) -> bool {
             | Spell::Standard(StandardSpell::FireSurge)
     )
 }
+
+pub fn is_smoke_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Ancient(AncientSpell::SmokeRush)
+            | Spell::Ancient(AncientSpell::SmokeBurst)
+            | Spell::Ancient(AncientSpell::SmokeBlitz)
+            | Spell::Ancient(AncientSpell::SmokeBarrage)
+    )
+}
+
+pub fn is_shadow_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Ancient(AncientSpell::ShadowRush)
+            | Spell::Ancient(AncientSpell::ShadowBurst)
+            | Spell::Ancient(AncientSpell::ShadowBlitz)
+            | Spell::Ancient(AncientSpell::ShadowBarrage)
+    )
+}
+
+pub fn is_blood_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Ancient(AncientSpell::BloodRush)
+            | Spell::Ancient(AncientSpell::BloodBurst)
+            | Spell::Ancient(AncientSpell::BloodBlitz)
+            | Spell::Ancient(AncientSpell::BloodBarrage)
+    )
+}
+
+pub fn is_ice_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Ancient(AncientSpell::IceRush)
+            | Spell::Ancient(AncientSpell::IceBurst)
+            | Spell::Ancient(AncientSpell::IceBlitz)
+            | Spell::Ancient(AncientSpell::IceBarrage)
+    )
+}

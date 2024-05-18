@@ -1,4 +1,5 @@
 pub mod attacks;
+pub mod combat;
 pub mod constants;
 pub mod equipment;
 pub mod equipment_json;
@@ -8,5 +9,6 @@ pub mod player;
 pub mod potions;
 pub mod prayers;
 pub mod rolls;
+pub mod sims;
 pub mod spells;
 pub mod utils;

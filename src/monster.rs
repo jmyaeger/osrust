@@ -1,8 +1,8 @@
 use lazy_static::lazy_static;
 
-use crate::constants::*;
 use crate::equipment::{CombatType, StyleBonus};
 use crate::rolls::monster_def_rolls;
+use crate::{constants::*, rolls};
 use rusqlite::{Connection, Result, Row};
 use std::cmp::{max, min};
 use std::collections::HashMap;
@@ -33,7 +33,7 @@ pub enum Attribute {
     Xerician,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 pub struct MonsterStats {
     pub hitpoints: u32,
     pub attack: u32,
@@ -178,7 +178,7 @@ impl Monster {
         self.stats.ranged = row.get::<_, Option<u32>>("ranged")?.unwrap_or_default();
         self.stats.magic = row.get::<_, Option<u32>>("magic")?.unwrap_or_default();
         self.stats.hitpoints = row.get::<_, Option<u32>>("hitpoints")?.unwrap_or_default();
-        self.live_stats = self.stats.clone();
+        self.live_stats = self.stats;
         self.bonuses.attack.melee = row.get::<_, Option<i32>>("attbns")?.unwrap_or_default();
         self.bonuses.attack.ranged = row.get::<_, Option<i32>>("arange")?.unwrap_or_default();
         self.bonuses.attack.magic = row.get::<_, Option<i32>>("amagic")?.unwrap_or_default();
@@ -383,6 +383,35 @@ impl Monster {
 
     pub fn is_freezable(&self) -> bool {
         self.immunities.freeze != 100 && !self.info.freeze_duration == 0
+    }
+
+    pub fn drain_defence(&mut self, amount: u32) {
+        self.live_stats.defence = self.live_stats.defence.saturating_sub(amount);
+        rolls::monster_def_rolls(self);
+    }
+
+    pub fn drain_strength(&mut self, amount: u32) {
+        self.live_stats.strength = self.live_stats.strength.saturating_sub(amount);
+    }
+
+    pub fn drain_magic(&mut self, amount: u32) {
+        self.live_stats.magic = self.live_stats.magic.saturating_sub(amount);
+        rolls::monster_def_rolls(self);
+    }
+
+    pub fn drain_ranged(&mut self, amount: u32) {
+        self.live_stats.ranged = self.live_stats.ranged.saturating_sub(amount);
+    }
+
+    pub fn drain_attack(&mut self, amount: u32) {
+        self.live_stats.attack = self.live_stats.attack.saturating_sub(amount);
+    }
+
+    pub fn reset(&mut self) {
+        self.live_stats = self.stats;
+        self.info.poison_severity = 0;
+        self.info.freeze_duration = 0;
+        rolls::monster_def_rolls(self);
     }
 }
 

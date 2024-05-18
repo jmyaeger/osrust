@@ -1,3 +1,4 @@
+use crate::attacks::{standard_attack, AttackFn};
 use crate::constants::*;
 use crate::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
@@ -258,6 +259,7 @@ pub struct Player {
     pub att_rolls: HashMap<CombatType, u32>,
     pub max_hits: HashMap<CombatType, u32>,
     pub def_rolls: HashMap<CombatType, u32>,
+    pub attack: AttackFn,
 }
 
 impl Default for Player {
@@ -297,6 +299,7 @@ impl Default for Player {
             att_rolls,
             max_hits,
             def_rolls,
+            attack: standard_attack,
         }
     }
 }
@@ -732,8 +735,36 @@ impl Player {
         self.is_using_spell() && spells::is_ancient_spell(self.attrs.spell.as_ref().unwrap())
     }
 
+    pub fn is_using_smoke_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_smoke_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_shadow_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_shadow_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_blood_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_blood_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_ice_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_ice_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
     pub fn is_using_fire_spell(&self) -> bool {
         self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_crossbow(&self) -> bool {
+        self.gear.weapon.name.contains("rossbow")
+            && self.combat_type() == CombatType::Ranged
+            && self
+                .gear
+                .ammo
+                .as_ref()
+                .unwrap_or(&Armor::default())
+                .name
+                .contains("bolt")
     }
 
     pub fn set_spell(&mut self, spell: spells::Spell) {
