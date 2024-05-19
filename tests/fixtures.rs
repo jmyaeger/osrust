@@ -154,15 +154,7 @@ pub fn wardens_p3() -> Monster {
 #[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
-    player.stats = PlayerStats {
-        attack: 99,
-        strength: 99,
-        defence: 99,
-        ranged: 99,
-        magic: 99,
-        hitpoints: 99,
-        prayer: 99,
-    };
+    player.stats = PlayerStats::default();
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
 
@@ -197,6 +189,7 @@ pub fn mid_level_melee_player() -> Player {
         magic: 80,
         hitpoints: 80,
         prayer: 70,
+        mining: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
@@ -224,15 +217,7 @@ pub fn mid_level_melee_player() -> Player {
 #[fixture]
 pub fn max_ranged_zcb_player() -> Player {
     let mut player = Player::new();
-    player.stats = PlayerStats {
-        attack: 99,
-        strength: 99,
-        defence: 99,
-        ranged: 99,
-        magic: 99,
-        hitpoints: 99,
-        prayer: 99,
-    };
+    player.stats = PlayerStats::default();
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
     player.add_potion(Potion::Ranging);
 
@@ -267,6 +252,7 @@ pub fn mid_level_ranged_rcb_player() -> Player {
         magic: 80,
         hitpoints: 80,
         prayer: 70,
+        mining: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
     player.add_potion(Potion::Ranging);
@@ -566,15 +552,7 @@ pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
 #[fixture]
 pub fn max_mage_sang_staff_player() -> Player {
     let mut player = Player::new();
-    player.stats = PlayerStats {
-        attack: 99,
-        strength: 99,
-        defence: 99,
-        ranged: 99,
-        magic: 99,
-        hitpoints: 99,
-        prayer: 99,
-    };
+    player.stats = PlayerStats::default();
     player.prayers.add(PrayerBoost::new(Prayer::Augury));
     player.add_potion(Potion::SaturatedHeart);
 
@@ -645,6 +623,7 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
         magic: 80,
         hitpoints: 80,
         prayer: 70,
+        mining: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
 

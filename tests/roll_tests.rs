@@ -90,7 +90,7 @@ fn test_melee_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
     #[case] combat_type: &CombatType,
-    #[case] att_roll: u32,
+    #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
     calc_player_melee_rolls(&mut player, &monster);
@@ -204,7 +204,7 @@ fn test_melee_player_rolls(
 fn test_ranged_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
-    #[case] att_roll: u32,
+    #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
     calc_player_ranged_rolls(&mut player, &monster);
@@ -311,7 +311,7 @@ fn test_ranged_player_rolls(
 fn test_magic_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
-    #[case] att_roll: u32,
+    #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
     calc_player_magic_rolls(&mut player, &monster);

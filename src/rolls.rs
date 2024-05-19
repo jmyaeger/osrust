@@ -7,7 +7,7 @@ use crate::utils::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
-pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, u32> {
+pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     let mut def_rolls = HashMap::new();
     for combat_type in &[
         (CombatType::Stab, monster.bonuses.defence.stab),
@@ -68,8 +68,8 @@ pub fn calc_player_def_rolls(player: &mut Player) {
     player.def_rolls = def_rolls;
 }
 
-fn calc_roll(eff_lvl: u32, bonus: i32) -> u32 {
-    max(0, eff_lvl as i32 * (bonus + 64)) as u32
+fn calc_roll(eff_lvl: u32, bonus: i32) -> i32 {
+    max(0, eff_lvl as i32 * (bonus + 64))
 }
 
 fn calc_max_hit(eff_lvl: u32, bonus: i32) -> u32 {
@@ -132,7 +132,7 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     // Apply inquisitor boost last
     att_rolls.insert(
         CombatType::Crush,
-        att_rolls[&CombatType::Crush] * inquisitor_boost / 1000,
+        att_rolls[&CombatType::Crush] * inquisitor_boost as i32 / 1000,
     );
     max_hits.insert(
         CombatType::Crush,
@@ -164,7 +164,7 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
 
     // Crystal bow/armor bonus is applied before slayer, salve, etc.
     let mut att_roll = calc_roll(eff_att, player.bonuses.attack.ranged);
-    att_roll = att_roll * (1000 + 2 * crystal_bonus) / 1000;
+    att_roll = att_roll * (1000 + 2 * crystal_bonus as i32) / 1000;
 
     let mut max_hit = calc_max_hit(eff_str, str_bonus);
     max_hit = max_hit * (1000 + crystal_bonus) / 1000;
@@ -191,7 +191,7 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     let mut magic_attack = player.bonuses.attack.magic;
 
     // Multiplied by 2 because it increments by 0.5%
-    let mut magic_damage = 2 * player.bonuses.strength.magic as i32;
+    let mut magic_damage = (2.0 * player.bonuses.strength.magic) as u32;
 
     // Apply shadow multipliers to attack and damage bonuses, if applicable
     if player.is_wearing("Tumeken's shadow") && player.combat_stance() != CombatStance::ManualCast {
@@ -210,7 +210,7 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         apply_salve_and_smoke_magic_boosts(base_att_roll, magic_damage, player, monster);
 
     // "Primary" magic damage
-    max_hit = max_hit * (200 + magic_damage as u32) / 200;
+    max_hit = max_hit * (200 + magic_damage) / 200;
 
     // Tome of water accuracy boost
     if player.is_wearing("Tome of water (charged)") && player.is_using_water_spell() {
@@ -339,11 +339,11 @@ fn obsidian_boost(player: &Player) -> Fraction {
 }
 
 fn apply_vampyre_boost(
-    att_roll: u32,
+    att_roll: i32,
     max_hit: u32,
     player: &Player,
     monster: &Monster,
-) -> (u32, u32) {
+) -> (i32, u32) {
     if let Some(tier) = monster.vampyre_tier() {
         if (1..=3).contains(&tier) {
             let (att_factor, max_hit_factor) = match (
@@ -373,11 +373,11 @@ fn apply_vampyre_boost(
 }
 
 fn apply_melee_weapon_boosts(
-    att_roll: u32,
+    att_roll: i32,
     max_hit: u32,
     player: &Player,
     monster: &Monster,
-) -> (u32, u32) {
+) -> (i32, u32) {
     let mut att_roll = att_roll;
     let mut max_hit = max_hit;
 
@@ -515,11 +515,11 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
 }
 
 fn apply_ranged_weapon_boosts(
-    att_roll: u32,
+    att_roll: i32,
     max_hit: u32,
     player: &Player,
     monster: &Monster,
-) -> (u32, u32) {
+) -> (i32, u32) {
     let mut att_roll = att_roll;
     let mut max_hit = max_hit;
 
@@ -609,10 +609,10 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
     }
 }
 
-fn apply_shadow_boost(magic_attack: i32, magic_damage: i32, monster: &Monster) -> (i32, i32) {
+fn apply_shadow_boost(magic_attack: i32, magic_damage: u32, monster: &Monster) -> (i32, u32) {
     let multiplier = if monster.is_toa_monster() { 4 } else { 3 };
     let magic_attack = magic_attack * multiplier;
-    let magic_damage = min(200, magic_damage * multiplier);
+    let magic_damage = min(200, magic_damage * multiplier as u32);
 
     (magic_attack, magic_damage)
 }
@@ -637,7 +637,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
     void_bonus.multiply_to_int(visible_magic * (100 + magic_pray_boost) / 100) + stance_bonus
 }
 
-fn apply_virtus_bonus(magic_damage: i32, player: &Player) -> i32 {
+fn apply_virtus_bonus(magic_damage: u32, player: &Player) -> u32 {
     if player.is_using_ancient_spell() {
         magic_damage
             + [
@@ -647,7 +647,7 @@ fn apply_virtus_bonus(magic_damage: i32, player: &Player) -> i32 {
             ]
             .iter()
             .filter(|slot| slot.is_some() && slot.as_ref().unwrap().name.contains("Virtus"))
-            .count() as i32
+            .count() as u32
                 * 6
     } else {
         magic_damage
@@ -655,11 +655,11 @@ fn apply_virtus_bonus(magic_damage: i32, player: &Player) -> i32 {
 }
 
 fn apply_salve_and_smoke_magic_boosts(
-    att_roll: u32,
-    magic_damage: i32,
+    att_roll: i32,
+    magic_damage: u32,
     player: &Player,
     monster: &Monster,
-) -> (u32, i32, bool) {
+) -> (i32, u32, bool) {
     let mut att_roll = att_roll;
     let mut magic_damage = magic_damage;
     let mut salve_active = true;
@@ -693,13 +693,13 @@ fn apply_salve_and_smoke_magic_boosts(
     (att_roll, magic_damage, salve_active)
 }
 
-fn apply_wildy_staff_boost(att_roll: u32, player: &Player, monster: &Monster) -> (u32, u32) {
+fn apply_wildy_staff_boost(att_roll: i32, player: &Player, monster: &Monster) -> (i32, u32) {
     if (player.boosts.in_wilderness || monster.is_in_wilderness())
         && player.is_wearing_wildy_staff()
     {
-        (att_roll * 3 / 2, 50u32)
+        (att_roll * 3 / 2, 50)
     } else {
-        (att_roll, 0u32)
+        (att_roll, 0)
     }
 }
 

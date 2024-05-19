@@ -42,8 +42,8 @@ pub fn standard_attack(
 }
 
 fn base_attack(
-    max_att_roll: u32,
-    max_def_roll: u32,
+    max_att_roll: i32,
+    max_def_roll: i32,
     min_hit: u32,
     max_hit: u32,
     rng: &mut ThreadRng,
@@ -60,11 +60,11 @@ fn base_attack(
     (damage, success)
 }
 
-fn accuracy_roll(max_att_roll: u32, rng: &mut ThreadRng) -> u32 {
+fn accuracy_roll(max_att_roll: i32, rng: &mut ThreadRng) -> i32 {
     rng.gen_range(0..=max_att_roll)
 }
 
-fn defence_roll(max_def_roll: u32, rng: &mut ThreadRng) -> u32 {
+fn defence_roll(max_def_roll: i32, rng: &mut ThreadRng) -> i32 {
     rng.gen_range(0..=max_def_roll)
 }
 
@@ -281,7 +281,7 @@ pub fn opal_bolt_attack(
 
     let max_hit = player.max_hits[&CombatType::Ranged];
 
-    if rng.gen::<f32>() <= proc_chance {
+    if rng.gen::<f64>() <= proc_chance {
         (damage_roll(0, max_hit, rng) + extra_damage, true)
     } else {
         standard_attack(player, monster, rng)
@@ -307,7 +307,7 @@ pub fn pearl_bolt_attack(
 
     let max_hit = player.max_hits[&CombatType::Ranged];
 
-    if rng.gen::<f32>() <= proc_chance {
+    if rng.gen::<f64>() <= proc_chance {
         (damage_roll(0, max_hit, rng) + extra_damage, true)
     } else {
         standard_attack(player, monster, rng)
@@ -332,7 +332,7 @@ pub fn emerald_bolt_attack(
 
     let (damage, success) = standard_attack(player, monster, rng);
 
-    if success && rng.gen::<f32>() <= proc_chance {
+    if success && rng.gen::<f64>() <= proc_chance {
         monster.info.poison_severity = poison_severity;
     }
 
@@ -355,7 +355,7 @@ pub fn ruby_bolt_attack(
         min(100, monster.live_stats.hitpoints / 5)
     };
 
-    if rng.gen::<f32>() <= proc_chance {
+    if rng.gen::<f64>() <= proc_chance {
         player.take_damage(player.live_stats.hitpoints / 10);
         (ruby_damage, true)
     } else {
@@ -380,7 +380,7 @@ pub fn diamond_bolt_attack(
         base_max_hit * 115 / 100
     };
 
-    if rng.gen::<f32>() <= proc_chance {
+    if rng.gen::<f64>() <= proc_chance {
         (damage_roll(0, max_hit, rng), true)
     } else {
         standard_attack(player, monster, rng)
@@ -406,7 +406,7 @@ pub fn onyx_bolt_attack(
 
     let (mut damage, success) = standard_attack(player, monster, rng);
 
-    if success && !monster.is_undead() && rng.gen::<f32>() <= proc_chance {
+    if success && !monster.is_undead() && rng.gen::<f64>() <= proc_chance {
         damage = damage_roll(0, max_hit, rng);
         player.heal(damage / 4, None);
     }
@@ -432,7 +432,7 @@ pub fn dragonstone_bolt_attack(
 
     let (mut damage, success) = standard_attack(player, monster, rng);
 
-    if rng.gen::<f32>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
+    if rng.gen::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
         damage += extra_damage;
     }
 
@@ -729,19 +729,26 @@ pub fn get_attack_functions(
     }
 
     match player.gear.weapon.name.as_str() {
-        "Osmumten's fang" => return fang_attack as AttackFn,
-        "Ahrim's staff" => return ahrims_staff_attack as AttackFn,
-        "Dharok's greataxe" => return dharoks_axe_attack as AttackFn,
-        "Verac's flail" => return veracs_flail_attack as AttackFn,
-        "Karil's crossbow" => return karils_crossbow_attack as AttackFn,
-        "Guthan's warspear" => return guthans_warspear_attack as AttackFn,
-        "Torag's hammers" => return torags_hammers_attack as AttackFn,
-        "Sanguinesti staff" => return sang_staff_attack as AttackFn,
+        "Osmumten's fang" => fang_attack as AttackFn,
+        "Ahrim's staff" => ahrims_staff_attack as AttackFn,
+        "Dharok's greataxe" => dharoks_axe_attack as AttackFn,
+        "Verac's flail" => veracs_flail_attack as AttackFn,
+        "Karil's crossbow" => karils_crossbow_attack as AttackFn,
+        "Guthan's warspear" => guthans_warspear_attack as AttackFn,
+        "Torag's hammers" => torags_hammers_attack as AttackFn,
+        "Sanguinesti staff" => sang_staff_attack as AttackFn,
         "Keris"
         | "Keris partisan"
         | "Keris partisan of corruption"
-        | "Keris partisan of breaching" => return keris_attack as AttackFn,
-        "Keris partisan of the sun" => return yellow_keris_attack as AttackFn,
-        _ => return standard_attack as AttackFn,
+        | "Keris partisan of breaching" => keris_attack as AttackFn,
+        "Keris partisan of the sun" => yellow_keris_attack as AttackFn,
+        "Scythe of vitur" => scythe_attack as AttackFn,
+        "Soulreaper axe" => soulreaper_axe_attack as AttackFn,
+        "Gadderhammer" => gadderhammer_attack as AttackFn,
+        "Tonalztics of Ralos (charged)" | "Tonalztics of Ralos (uncharged)" => {
+            tonalztics_of_ralos_attack as AttackFn
+        }
+        "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
+        _ => standard_attack as AttackFn,
     }
 }

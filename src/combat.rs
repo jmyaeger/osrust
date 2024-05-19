@@ -43,15 +43,7 @@ mod tests {
     #[test]
     fn test_simulate_n_fights() {
         let mut player = Player::new();
-        player.stats = PlayerStats {
-            attack: 99,
-            strength: 99,
-            defence: 99,
-            ranged: 99,
-            magic: 99,
-            hitpoints: 99,
-            prayer: 99,
-        };
+        player.stats = PlayerStats::default();
         player.prayers.add(PrayerBoost::new(Prayer::Piety));
         player.add_potion(Potion::SuperCombat);
 

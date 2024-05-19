@@ -20,6 +20,7 @@ pub struct PlayerStats {
     pub ranged: u32,
     pub magic: u32,
     pub prayer: u32,
+    pub mining: u32,
 }
 
 impl Default for PlayerStats {
@@ -32,6 +33,7 @@ impl Default for PlayerStats {
             ranged: 99,
             magic: 99,
             prayer: 99,
+            mining: 99,
         }
     }
 }
@@ -256,9 +258,9 @@ pub struct Player {
     pub effects: StatusEffects,
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
-    pub att_rolls: HashMap<CombatType, u32>,
+    pub att_rolls: HashMap<CombatType, i32>,
     pub max_hits: HashMap<CombatType, u32>,
-    pub def_rolls: HashMap<CombatType, u32>,
+    pub def_rolls: HashMap<CombatType, i32>,
     pub attack: AttackFn,
 }
 
@@ -681,6 +683,14 @@ impl Player {
         ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts"))
     }
 
+    pub fn is_wearing_ivandis_weapon(&self) -> bool {
+        self.is_wearing_any(vec![
+            "Blisterwood flail",
+            "Blisterwood sickle",
+            "Ivandis flail",
+        ])
+    }
+
     pub fn is_wearing_keris(&self) -> bool {
         self.is_wearing_any(vec![
             "Keris",
@@ -689,6 +699,19 @@ impl Player {
             "Keris partisan of corruption",
             "Keris partisan of breaching",
         ])
+    }
+
+    pub fn is_wearing_leaf_bladed_weapon(&self) -> bool {
+        (self.is_using_melee()
+            && self.is_wearing_any(vec![
+                "Leaf-bladed spear",
+                "Leaf-bladed sword",
+                "Leaf-bladed battleaxe",
+            ]))
+            || (self.combat_type() == CombatType::Ranged
+                && (self.is_using_crossbow()
+                    && self.is_wearing_any(vec!["Broad bolts", "Amethyst broad bolts"])))
+            || self.is_wearing("Broad arrows")
     }
 
     pub fn is_wearing_full_void(&self) -> bool {
@@ -711,6 +734,10 @@ impl Player {
             "Blood ancient sceptre",
             "Ice ancient sceptre",
         ])
+    }
+
+    pub fn is_wearing_ratbone_weapon(&self) -> bool {
+        self.is_wearing_any(vec!["Bone mace", "Bone shortbow", "Bone staff"])
     }
 
     pub fn is_using_spell(&self) -> bool {
@@ -765,6 +792,19 @@ impl Player {
                 .unwrap_or(&Armor::default())
                 .name
                 .contains("bolt")
+    }
+
+    pub fn is_using_corpbane_weapon(&self) -> bool {
+        let weapon_name = &self.gear.weapon.name;
+        match self.combat_type() {
+            CombatType::Magic => true,
+            CombatType::Stab => {
+                self.is_wearing("Osmumten's fang")
+                    || weapon_name.contains("halberd")
+                    || (weapon_name.contains("spear") && weapon_name.as_str() != "Blue moon spear")
+            }
+            _ => false,
+        }
     }
 
     pub fn set_spell(&mut self, spell: spells::Spell) {
@@ -890,6 +930,9 @@ fn parse_player_data(data: String) -> PlayerStats {
         skill_map.insert(*skill, level);
     }
 
+    let mining_lvl = data_lines[15].split(',').collect::<Vec<&str>>()[1];
+    skill_map.insert("mining", mining_lvl.parse::<u32>().unwrap());
+
     PlayerStats {
         hitpoints: skill_map["hitpoints"],
         attack: skill_map["attack"],
@@ -898,6 +941,7 @@ fn parse_player_data(data: String) -> PlayerStats {
         ranged: skill_map["ranged"],
         magic: skill_map["magic"],
         prayer: skill_map["prayer"],
+        mining: skill_map["mining"],
     }
 }
 
@@ -1061,6 +1105,7 @@ mod test {
             magic: 99,
             hitpoints: 99,
             prayer: 99,
+            mining: 99,
         };
         player.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
         player.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));

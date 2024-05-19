@@ -91,6 +91,7 @@ pub enum CombatStyle {
     MediumFuse,
     LongFuse,
     DefensiveSpell,
+    ManualCast,
     Spell,
     Scorch,
     Flare,
@@ -103,7 +104,7 @@ pub struct CombatOption {
     pub stance: CombatStance,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Clone)]
 pub struct StyleBonus {
     pub stab: i32,
     pub slash: i32,

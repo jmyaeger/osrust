@@ -98,6 +98,64 @@ pub const WILDERNESS_MONSTERS: [&str; 39] = [
     "Venenatis' Spiderling",
 ];
 
+pub const ONE_HIT_MONSTERS: [&str; 3] = [
+    "Giant rat (Scurrius)",
+    "Flower",
+    "Flower (A Night at the Theatre)",
+];
+
+pub const IMMUNE_TO_MELEE_MONSTERS: [&str; 17] = [
+    "Kraken (Kraken)",
+    "Abyssal portal (Normal)",
+    "Abyssal portal (Challenge Mode)",
+    "TzKal-Zuk (Normal)",
+    "TzKal-Zuk (Enraged)",
+    "Jal-MejJak",
+    "Leviathan (Post-Quest)",
+    "Leviathan (Quest)",
+    "Leviathan (Awakened)",
+    "Dawn",
+    "Great Olm (Right claw)",
+    "Great Olm (Right claw (Challenge Mode))",
+    "Great Olm (Head)",
+    "Great Olm (Head (Challenge Mode))",
+    "Zulrah (Serpentine)",
+    "Zulrah (Magma)",
+    "Zulrah (Tanzanite)",
+];
+
+pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: [&str; 16] = [
+    "Aviansie (Level 69)",
+    "Aviansie (Level 71)",
+    "Aviansie (Level 73)",
+    "Aviansie (Level 79 (1))",
+    "Aviansie (Level 79 (2))",
+    "Aviansie (Level 83)",
+    "Aviansie (Level 84)",
+    "Aviansie (Level 89)",
+    "Aviansie (Level 92)",
+    "Aviansie (Level 94)",
+    "Aviansie (Level 97 (1))",
+    "Aviansie (Level 97 (2))",
+    "Aviansie (Level 131)",
+    "Aviansie (Level 137)",
+    "Aviansie (Level 148)",
+    "Reanimated aviansie",
+];
+
+pub const IMMUNE_TO_RANGED_MONSTERS: [&str; 8] = [
+    "Tekton (Normal)",
+    "Tekton (Enraged)",
+    "Tekton (Normal (Challenge Mode))",
+    "Tekton (Enraged (Challenge Mode))",
+    "Dusk (First form)",
+    "Dusk (Second form)",
+    "Glowing crystal (Normal)",
+    "Glowing crystal (Challenge Mode)",
+];
+
+pub const IMMUNE_TO_MAGIC_MONSTERS: [&str; 2] = ["Dusk (First form)", "Dusk (Second form)"];
+
 pub const FULL_AHRIMS: [&str; 4] = [
     "Ahrim's hood",
     "Ahrim's robetop",
@@ -249,18 +307,37 @@ pub const USES_OWN_AMMO: [&str; 14] = [
     "Bow of faerdhinen (c)",
 ];
 
-pub const OPAL_PROC_CHANCE: f32 = 0.05;
+pub const OPAL_PROC_CHANCE: f64 = 0.05;
 
-pub const PEARL_PROC_CHANCE: f32 = 0.06;
+pub const PEARL_PROC_CHANCE: f64 = 0.06;
 
-pub const EMERALD_PROC_CHANCE: f32 = 0.55;
+pub const EMERALD_PROC_CHANCE: f64 = 0.55;
 
-pub const RUBY_PROC_CHANCE: f32 = 0.06;
+pub const RUBY_PROC_CHANCE: f64 = 0.06;
 
-pub const DIAMOND_PROC_CHANCE: f32 = 0.1;
+pub const DIAMOND_PROC_CHANCE: f64 = 0.1;
 
-pub const ONYX_PROC_CHANCE: f32 = 0.11;
+pub const ONYX_PROC_CHANCE: f64 = 0.11;
 
-pub const DRAGONSTONE_PROC_CHANCE: f32 = 0.06;
+pub const DRAGONSTONE_PROC_CHANCE: f64 = 0.06;
 
 pub const SOULREAPER_STACK_DAMAGE: u32 = 8;
+
+pub const PICKAXE_BONUSES: [(&str, u32); 10] = [
+    ("Bronze pickaxe", 1),
+    ("Iron pickaxe", 1),
+    ("Steel pickaxe", 5),
+    ("Black pickaxe", 11),
+    ("Mithril pickaxe", 21),
+    ("Adamant pickaxe", 31),
+    ("Rune pickaxe", 41),
+    ("Gilded pickaxe", 41),
+    ("Dragon pickaxe", 61),
+    ("Crystal pickaxe", 61),
+];
+
+pub const SECONDS_PER_TICK: f64 = 0.6;
+
+pub const TTK_DIST_MAX_ITER_ROUNDS: usize = 1000;
+
+pub const TTK_DIST_EPSILON: f64 = 0.0001;

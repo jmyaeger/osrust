@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 
 use crate::equipment::{CombatType, StyleBonus};
+use crate::player::Player;
 use crate::rolls::monster_def_rolls;
 use crate::{constants::*, rolls};
 use rusqlite::{Connection, Result, Row};
@@ -15,7 +16,7 @@ lazy_static! {
         fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub enum Attribute {
     Demon,
     Draconic,
@@ -56,7 +57,7 @@ impl Default for MonsterStats {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Default)]
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
 pub struct AttackBonus {
     pub melee: i32,
     pub ranged: i32,
@@ -65,7 +66,7 @@ pub struct AttackBonus {
 
 type MonsterStrengthBonus = AttackBonus;
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Clone)]
 pub struct MonsterBonuses {
     pub attack: AttackBonus,
     pub strength: MonsterStrengthBonus,
@@ -73,7 +74,7 @@ pub struct MonsterBonuses {
     pub flat_armour: u32,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Default)]
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
 pub struct Immunities {
     pub poison: bool,
     pub venom: bool,
@@ -85,7 +86,7 @@ pub struct Immunities {
     pub magic: bool,
 }
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Clone)]
 pub struct MonsterInfo {
     pub name: String,
     pub version: Option<String>,
@@ -103,15 +104,15 @@ pub struct MonsterInfo {
     pub toa_path_level: u32,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Monster {
     pub info: MonsterInfo,
     pub stats: MonsterStats,
     pub live_stats: MonsterStats,
     pub bonuses: MonsterBonuses,
     pub immunities: Immunities,
-    pub def_rolls: HashMap<CombatType, u32>,
-    pub base_def_rolls: HashMap<CombatType, u32>,
+    pub def_rolls: HashMap<CombatType, i32>,
+    pub base_def_rolls: HashMap<CombatType, i32>,
 }
 
 impl Default for Monster {
@@ -250,7 +251,7 @@ impl Monster {
             }
             self.def_rolls.insert(
                 defence_type,
-                self.base_def_rolls[&defence_type] * toa_level_bonus / 1000,
+                self.base_def_rolls[&defence_type] * toa_level_bonus as i32 / 1000,
             );
         }
     }
@@ -412,6 +413,71 @@ impl Monster {
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         rolls::monster_def_rolls(self);
+    }
+
+    pub fn is_immune(&self, player: &Player) -> bool {
+        let combat_type = &player.combat_type();
+
+        if IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.name.as_str())
+            && combat_type == &CombatType::Magic
+        {
+            return true;
+        }
+
+        if IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.name.as_str())
+            && combat_type == &CombatType::Ranged
+        {
+            return true;
+        }
+
+        if IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.name.as_str()) && player.is_using_melee() {
+            return true;
+        }
+
+        if IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS.contains(&self.info.name.as_str())
+            && player.is_using_melee()
+            && !player.is_wearing_salamander()
+        {
+            return true;
+        }
+
+        if self.vampyre_tier() == Some(3) && !player.is_wearing_ivandis_weapon() {
+            return true;
+        }
+
+        if self.info.name.contains("Guardian (Chambers")
+            && (!player.is_using_melee() || !player.gear.weapon.name.contains("pickaxe"))
+        {
+            return true;
+        }
+
+        if self.is_leafy() && !player.is_wearing_leaf_bladed_weapon() {
+            return true;
+        }
+
+        if !self.is_rat() && player.is_wearing_ratbone_weapon() {
+            return true;
+        }
+
+        if self.info.name.as_str() == "Fire Warrior of Lesarkus"
+            && (player.combat_type() != CombatType::Ranged || !player.is_wearing("Ice arrows"))
+        {
+            return true;
+        }
+
+        if self.info.name.contains("Fareed")
+            && (!player.is_using_water_spell()
+                || (player.combat_type() == CombatType::Ranged
+                    && !player
+                        .gear
+                        .ammo
+                        .as_ref()
+                        .map_or(false, |ammo| ammo.name.contains("arrow"))))
+        {
+            return true;
+        }
+
+        false
     }
 }
 
