@@ -47,7 +47,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
             || monster.info.name.contains("Great Olm (Head")
                 && player.combat_type() == CombatType::Magic)
         || (monster.info.name.contains("(Right claw")
-            || monster.info.name.contains("Great Olm (Head")
+            || monster.info.name.contains("Left claw")
                 && player.combat_type() == CombatType::Ranged)
         || (monster.info.name.contains("Ice demon")
             && !player.is_using_fire_spell()
@@ -60,8 +60,8 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             return Some(Box::new(limiters::ZogreCrumbleUndead {}));
-        } else if player.combat_type() == CombatType::Ranged
-            || player
+        } else if player.combat_type() != CombatType::Ranged
+            || !player
                 .gear
                 .ammo
                 .as_ref()

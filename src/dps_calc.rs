@@ -430,8 +430,7 @@ fn apply_limiters(
     }
 
     if monster.info.name.contains("(Right claw")
-        || monster.info.name.contains("Great Olm (Head")
-            && player.combat_type() == CombatType::Ranged
+        || monster.info.name.contains("Left claw") && player.combat_type() == CombatType::Ranged
     {
         dist = dist.transform(division_transformer(3, 0));
     }
@@ -452,8 +451,8 @@ fn apply_limiters(
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             dist = dist.transform(division_transformer(2, 0));
-        } else if player.combat_type() == CombatType::Ranged
-            || player
+        } else if player.combat_type() != CombatType::Ranged
+            || !player
                 .gear
                 .ammo
                 .as_ref()

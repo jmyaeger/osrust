@@ -1,0 +1,44 @@
+- Baseline tests for each style (max gear against ammonite crabs)
+- Max mage with brimstone ring against something with defence
+- Max melee/blade of saeldor agaisnt Vardorvis
+- Max melee/scythe against Vardorvis
+
+Unique attack method tests:
+- Fang inside ToA
+- Fang outside of ToA
+- Full Ahrim's + amulet of the damned
+- Full Dharok's at 1 HP
+- Full Verac's 
+- Full Karil's + amulet of the damned
+- Torag's hammers (check if this is implemented correctly in the wiki calc)
+- Keris partisan of breaching against KQ (first form)
+- Opal bolts (e) with ACB and ZCB
+- Pearl bolts (e) with ACB and ZCB 
+- Ruby bolts (e) with ACB and ZCB
+- Diamond bolts (e) with ACB and ZCB
+- Onyx bolts (e) with ACB and ZCB
+- Dragonstone bolts (e) with ACB and ZCB
+- Scythe against 1x1, 2x2, 3x3, and larger NPCS without a limiter
+- Gadderhammer against shades
+- Tonalztics of Ralos against anything (check if implemented correctly in the wiki calc)
+- Dual macuahuitl without the set effect against anything
+
+Limiter tests:
+- Max range/tbow against Zulrah (tanzanite)
+- Max mage/shadow against Zulrah (magma)
+- Max mage against Seren
+- Max ranged against Kraken
+- Scythe against Verzik P1
+- Tentacle whip against Verzik P1
+- Trident of the swamp against Verzik P1
+- Dawnbringer autos against Verzik P1
+- Max mage against Tekton
+- Max mage against Vasa crystal
+- Max mage against Olm melee hand and head
+- Max ranged against Olm mage and melee hands
+- Max ranged/tbow against Ice demon
+- Max melee against Slagilith
+- Crumble Undead against zogres
+- Comp ogre bow + rune brutal arrows against zogres
+- Max melee against zogres
+
