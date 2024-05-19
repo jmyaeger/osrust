@@ -209,6 +209,7 @@ fn get_distribution(player: &Player, monster: &Monster) -> AttackDistribution {
                 max_hit / (num::pow(2, i as usize)),
             ));
         }
+        dist = AttackDistribution::new(hits);
     }
 
     if player.is_using_melee() && player.is_wearing("Dual macuahuitl") {
@@ -620,7 +621,7 @@ mod tests {
     use crate::player::{Gear, Player, PlayerStats};
     use crate::potions::Potion;
     use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::calc_player_melee_rolls;
+    use crate::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
     #[test]
     fn test_max_melee_ammonite_crab() {
         let mut player = Player::new();
@@ -650,7 +651,7 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(ttk - 10.2 < 0.1);
+        assert!(num::abs(ttk - 10.2) < 0.1);
     }
 
     #[test]
@@ -682,6 +683,74 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(ttk - 84.4 < 0.1);
+        assert!(num::abs(ttk - 44.3) < 0.1);
+    }
+
+    #[test]
+    fn test_scythe_vardorvis() {
+        let mut player = Player::new();
+        player.stats = PlayerStats::default();
+        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        player.add_potion(Potion::SuperCombat);
+
+        player.gear = Gear {
+            head: Some(Armor::new("Torva full helm")),
+            neck: Some(Armor::new("Amulet of torture")),
+            cape: Some(Armor::new("Infernal cape")),
+            ammo: Some(Armor::new("Rada's blessing 4")),
+            second_ammo: None,
+            weapon: Weapon::new("Scythe of vitur"),
+            shield: None,
+            body: Some(Armor::new("Torva platebody")),
+            legs: Some(Armor::new("Torva platelegs")),
+            hands: Some(Armor::new("Ferocious gloves")),
+            feet: Some(Armor::new("Primordial boots")),
+            ring: Some(Armor::new("Ultor ring")),
+        };
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Chop);
+
+        let monster = Monster::new("Vardorvis (Post-Quest)").unwrap();
+        calc_player_melee_rolls(&mut player, &monster);
+        let dist = get_distribution(&player, &monster);
+        let ttk = get_ttk(dist, &player, &monster);
+
+        assert!(num::abs(ttk - 100.7) < 0.1);
+    }
+
+    #[test]
+    fn test_ruby_bolts_zcb_zebak_500() {
+        let mut player = Player::new();
+        player.stats = PlayerStats::default();
+        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.add_potion(Potion::SmellingSalts);
+
+        player.gear = Gear {
+            head: Some(Armor::new("Masori mask (f)")),
+            neck: Some(Armor::new("Necklace of anguish")),
+            cape: Some(Armor::new("Dizana's quiver (charged)")),
+            ammo: Some(Armor::new("Ruby dragon bolts (e)")),
+            second_ammo: None,
+            weapon: Weapon::new("Zaryte crossbow"),
+            shield: Some(Armor::new("Twisted buckler")),
+            body: Some(Armor::new("Masori body (f)")),
+            legs: Some(Armor::new("Masori chaps (f)")),
+            hands: Some(Armor::new("Zaryte vambraces")),
+            feet: Some(Armor::new("Pegasian boots")),
+            ring: Some(Armor::new("Venator ring")),
+        };
+
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Rapid);
+
+        let mut monster = Monster::new("Zebak").unwrap();
+        monster.info.toa_level = 500;
+        monster.scale_toa();
+        calc_player_ranged_rolls(&mut player, &monster);
+
+        let dist = get_distribution(&player, &monster);
+        let ttk = get_ttk(dist, &player, &monster);
+
+        assert!(num::abs(ttk - 225.3) < 0.1);
     }
 }
