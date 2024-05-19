@@ -1,11 +1,35 @@
+use crate::combat::{FightResult, Simulation};
+use crate::limiters::Limiter;
 use crate::{monster::Monster, player::Player, utils};
+use rand::rngs::ThreadRng;
 
-pub fn simulate_fight(player: &mut Player, monster: &mut Monster) -> (f32, i32, i32, Vec<u32>) {
-    let mut rng = rand::thread_rng();
+pub struct SingleWayFight<'a> {
+    pub player: Player,
+    pub monster: Monster,
+    pub limiter: &'a Option<Box<dyn Limiter>>,
+    pub rng: ThreadRng,
+}
 
+impl Simulation for SingleWayFight<'_> {
+    fn simulate(&mut self) -> FightResult {
+        simulate_fight(
+            &mut self.player,
+            &mut self.monster,
+            &mut self.rng,
+            self.limiter,
+        )
+    }
+}
+
+pub fn simulate_fight(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> FightResult {
     let mut tick_counter = 0i32;
     let mut hit_attempts = 0;
-    let mut hits = 0;
+    let mut hit_count = 0;
     let mut hit_amounts = Vec::new();
     let mut attack_tick = 0;
     let mut poison_tick = -1;
@@ -15,10 +39,10 @@ pub fn simulate_fight(player: &mut Player, monster: &mut Monster) -> (f32, i32, 
 
     while monster.live_stats.hitpoints > 0 && player.live_stats.hitpoints > 0 {
         if tick_counter == attack_tick {
-            let (damage, success) = player_attack(player, monster, &mut rng);
+            let (damage, success) = player_attack(player, monster, rng, limiter);
             monster.take_damage(damage);
             hit_attempts += 1;
-            hits += if success { 1 } else { 0 };
+            hit_count += if success { 1 } else { 0 };
             hit_amounts.push(damage);
             attack_tick += player.gear.weapon.speed;
         }
@@ -58,14 +82,20 @@ pub fn simulate_fight(player: &mut Player, monster: &mut Monster) -> (f32, i32, 
         }
     }
 
-    let ttk = tick_counter as f32 * 0.6;
+    let ttk = tick_counter as f64 * 0.6;
 
-    (ttk, hits, hit_attempts, hit_amounts)
+    FightResult {
+        ttk,
+        hit_attempts,
+        hit_count,
+        hit_amounts,
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::combat::assign_limiter;
     use crate::equipment::{Armor, CombatStyle, Weapon};
     use crate::monster::Monster;
     use crate::player::{Gear, Player, PlayerStats};
@@ -98,11 +128,14 @@ mod tests {
         player.set_active_style(CombatStyle::Lunge);
         let mut monster = Monster::new("Ammonite Crab").unwrap();
         calc_player_melee_rolls(&mut player, &monster);
-        let (ttk, hits, hit_attempts, all_hits) = simulate_fight(&mut player, &mut monster);
 
-        assert!(ttk > 0.0);
-        assert!(hit_attempts > 0);
-        assert!(hits > 0);
-        assert!(!all_hits.is_empty());
+        let mut rng = rand::thread_rng();
+        let limiter = assign_limiter(&player, &monster);
+        let result = simulate_fight(&mut player, &mut monster, &mut rng, &limiter);
+
+        assert!(result.ttk > 0.0);
+        assert!(result.hit_attempts > 0);
+        assert!(result.hit_count > 0);
+        assert!(!result.hit_amounts.is_empty());
     }
 }

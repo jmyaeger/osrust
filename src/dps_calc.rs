@@ -1,8 +1,8 @@
 use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
 use crate::hit_dist::{
-    division_transformer, linear_min_transformer, multiply_transformer, AttackDistribution,
-    HitDistribution, WeightedHit,
+    capped_reroll_transformer, division_transformer, linear_min_transformer, multiply_transformer,
+    AttackDistribution, HitDistribution, WeightedHit,
 };
 use crate::monster::Monster;
 use crate::monster_scaling;
@@ -121,7 +121,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
     hit_chance
 }
 
-fn get_distribution(player: &Player, monster: &Monster) -> AttackDistribution {
+pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistribution {
     let acc = get_hit_chance(player, monster);
     let combat_type = player.combat_type();
     let max_hit = player.max_hits[&combat_type];
@@ -392,6 +392,19 @@ fn apply_limiters(
     }
 
     let mut dist = dist;
+
+    if monster.info.name.contains("Zulrah") {
+        dist = dist.transform(capped_reroll_transformer(50, 5, 45));
+    }
+
+    if monster.info.name.contains("Fragment of Seren") {
+        dist = dist.transform(linear_min_transformer(2, 22));
+    }
+
+    if monster.info.name.as_str() == "Kraken (Normal)" && player.combat_type() == CombatType::Ranged
+    {
+        dist = dist.transform(division_transformer(7, 1));
+    }
 
     if monster.info.name.contains("Verzik")
         && monster.info.name.contains("P1")

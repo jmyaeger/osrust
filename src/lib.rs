@@ -5,6 +5,7 @@ pub mod dps_calc;
 pub mod equipment;
 pub mod equipment_json;
 pub mod hit_dist;
+pub mod limiters;
 pub mod monster;
 pub mod monster_json;
 pub mod monster_scaling;
