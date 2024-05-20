@@ -76,10 +76,19 @@ fn calc_max_hit(eff_lvl: u32, bonus: i32) -> u32 {
     max(0, (eff_lvl as i32 * (bonus + 64) + 320) / 640) as u32
 }
 
-pub fn calc_all_player_rolls(player: &mut Player, monster: &Monster) {
-    calc_player_melee_rolls(player, monster);
-    calc_player_ranged_rolls(player, monster);
-    calc_player_magic_rolls(player, monster);
+pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
+    match player.combat_type() {
+        CombatType::Stab | CombatType::Slash | CombatType::Crush => {
+            calc_player_melee_rolls(player, monster);
+        }
+        CombatType::Ranged => {
+            calc_player_ranged_rolls(player, monster);
+        }
+        CombatType::Magic => {
+            calc_player_magic_rolls(player, monster);
+        }
+        _ => {}
+    };
     calc_player_def_rolls(player);
 }
 

@@ -842,9 +842,7 @@ pub fn dual_macuahuitl_attack(
 pub type AttackFn =
     fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> (u32, bool);
 
-pub fn get_attack_functions(
-    player: &Player,
-) -> impl Fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> (u32, bool) {
+pub fn get_attack_functions(player: &Player) -> AttackFn {
     if player.is_using_smoke_spell() {
         return smoke_spell_attack as AttackFn;
     } else if player.is_using_shadow_spell() {

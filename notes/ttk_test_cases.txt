@@ -11,6 +11,7 @@ Unique attack method tests:
 - Full Verac's 
 - Full Karil's + amulet of the damned
 - Torag's hammers (check if this is implemented correctly in the wiki calc)
+------------------------------------------------------ Current place
 - Keris partisan of breaching against KQ (first form)
 - Opal bolts (e) with ACB and ZCB
 - Pearl bolts (e) with ACB and ZCB 

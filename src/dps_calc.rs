@@ -224,6 +224,14 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![effect_dist]);
     }
 
+    if player.is_using_melee() && player.is_wearing_any(vec!["Torag's hammers", "Sulphur blades"]) {
+        let half_max = max_hit / 2;
+        let first_hit = HitDistribution::linear(acc, 0, half_max);
+        let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
+
+        dist = AttackDistribution::new(vec![first_hit, second_hit]);
+    }
+
     if player.is_using_melee() && player.is_wearing_keris() && monster.is_kalphite() {
         let hits1 = standard_hit_dist
             .clone()

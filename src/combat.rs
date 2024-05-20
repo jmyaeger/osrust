@@ -1,3 +1,4 @@
+use crate::attacks::get_attack_functions;
 use crate::equipment::CombatType;
 use crate::limiters;
 use crate::monster::Monster;
@@ -90,6 +91,7 @@ pub fn simulate_n_fights(
     let mut rng = rand::thread_rng();
 
     let limiter = assign_limiter(player, monster);
+    player.attack = get_attack_functions(player);
 
     for _ in 0..n {
         let result = single_way::simulate_fight(player, monster, &mut rng, &limiter);

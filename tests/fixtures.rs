@@ -3,7 +3,7 @@ use osrs::monster::Monster;
 use osrs::player::{Gear, Player, PlayerStats};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
-use osrs::spells::{AncientSpell, Spell, StandardSpell};
+use osrs::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
 use rstest::fixture;
 
 #[fixture]
@@ -149,6 +149,19 @@ pub fn skeletal_mystic_cm() -> Monster {
 #[fixture]
 pub fn wardens_p3() -> Monster {
     Monster::new("Elidinis' Warden (P3)").unwrap()
+}
+
+#[fixture]
+pub fn vardorvis() -> Monster {
+    Monster::new("Vardorvis (Post-Quest)").unwrap()
+}
+
+#[fixture]
+pub fn kephri_400() -> Monster {
+    let mut monster = Monster::new("Kephri (Shield up)").unwrap();
+    monster.info.toa_level = 400;
+    monster.scale_toa();
+    monster
 }
 
 #[fixture]
@@ -577,6 +590,14 @@ pub fn max_mage_sang_staff_player() -> Player {
 }
 
 #[fixture]
+pub fn max_mage_sang_staff_brimstone_ring_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Brimstone ring");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
 pub fn max_mage_toxic_trident_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player.equip("Trident of the swamp");
@@ -742,6 +763,94 @@ pub fn max_mage_harm_fire_surge_tome_player() -> Player {
 pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
     let mut player = mid_level_mage_chaos_gauntlets_fire_bolt_player();
     player.equip("Tome of fire (burnt)");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_melee_blade_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Blade of saeldor (c)");
+    player.set_active_style(CombatStyle::Slash);
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_melee_scythe_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Scythe of vitur");
+    player.set_active_style(CombatStyle::Chop);
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_melee_fang_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Osmumten's fang");
+    player.set_active_style(CombatStyle::Lunge);
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_ahrims_aotd_player() -> Player {
+    let mut player = mid_level_magic_warped_sceptre_player();
+    player.equip("Ahrim's staff");
+    player.equip("Amulet of the damned");
+    player.attrs.spell = Some(Spell::Arceuus(ArceuusSpell::UndeadGrasp));
+    player.set_active_style(CombatStyle::Spell);
+    player.update_set_effects();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_dharoks_1hp_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Dharok's helm");
+    player.equip("Dharok's platebody");
+    player.equip("Dharok's platelegs");
+    player.equip("Dharok's greataxe");
+    player.set_active_style(CombatStyle::Hack);
+    player.update_set_effects();
+    player.update_bonuses();
+    player.live_stats.hitpoints = 1;
+    player
+}
+
+#[fixture]
+pub fn full_veracs_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Verac's helm");
+    player.equip("Verac's plateskirt");
+    player.equip("Verac's brassard");
+    player.equip("Verac's flail");
+    player.set_active_style(CombatStyle::Pummel);
+    player.update_set_effects();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_karils_aotd_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Karil's coif");
+    player.equip("Karil's leathertop");
+    player.equip("Karil's leatherskirt");
+    player.equip("Karil's crossbow");
+    player.equip("Amulet of the damned");
+    player.update_set_effects();
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_melee_torags_hammers_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Torag's hammers");
+    player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
 }
