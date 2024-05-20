@@ -786,7 +786,7 @@ pub fn tonalztics_of_ralos_attack(
             damage1 = limiter.apply(damage1, rng);
         }
     }
-    if player.gear.weapon.name.contains("charged") {
+    if player.gear.weapon.name.contains("(charged)") {
         let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
         if success2 {
             if let Some(limiter) = &limiter {
@@ -834,8 +834,8 @@ pub fn dual_macuahuitl_attack(
     }
 
     // Roll for next attack to be one tick faster
-    if player.set_effects.full_blood_moon && (success1 && rng.gen_range(0..3) == 0)
-        || (success2 && rng.gen_range(0..3) == 0)
+    if player.set_effects.full_blood_moon
+        && ((success1 && rng.gen_range(0..3) == 0) || (success2 && rng.gen_range(0..3) == 0))
     {
         player.gear.weapon.speed = 3;
     }

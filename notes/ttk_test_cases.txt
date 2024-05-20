@@ -11,7 +11,6 @@ Unique attack method tests:
 - Full Verac's 
 - Full Karil's + amulet of the damned
 - Torag's hammers (check if this is implemented correctly in the wiki calc)
------------------------------------------------------- Current place
 - Keris partisan of breaching against KQ (first form)
 - Opal bolts (e) with ACB and ZCB
 - Pearl bolts (e) with ACB and ZCB 
@@ -23,7 +22,7 @@ Unique attack method tests:
 - Gadderhammer against shades
 - Tonalztics of Ralos against anything (check if implemented correctly in the wiki calc)
 - Dual macuahuitl without the set effect against anything
-
+------------------------------------------------------ Current place
 Limiter tests:
 - Max range/tbow against Zulrah (tanzanite)
 - Max mage/shadow against Zulrah (magma)

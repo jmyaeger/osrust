@@ -165,6 +165,16 @@ pub fn kephri_400() -> Monster {
 }
 
 #[fixture]
+pub fn urium_shade() -> Monster {
+    Monster::new("Urium Shade (Shade)").unwrap()
+}
+
+#[fixture]
+pub fn kalphite_queen_p1() -> Monster {
+    Monster::new("Kalphite Queen (Crawling)").unwrap()
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
@@ -858,6 +868,31 @@ pub fn full_karils_aotd_player() -> Player {
 pub fn max_melee_torags_hammers_player() -> Player {
     let mut player = max_melee_player();
     player.equip("Torag's hammers");
+    player.set_active_style(CombatStyle::Pummel);
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_tonalztics_charged_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Tonalztics of Ralos (charged)");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_tonalztics_uncharged_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Tonalztics of Ralos (uncharged)");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_melee_macuahuitl_player() -> Player {
+    let mut player = max_melee_player();
+    player.equip("Dual macuahuitl");
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player

@@ -232,6 +232,18 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![first_hit, second_hit]);
     }
 
+    if player.combat_type() == CombatType::Ranged && player.gear.weapon.name.contains("Tonalztics")
+    {
+        let three_fourths = max_hit * 3 / 4;
+        let first_hit = HitDistribution::linear(acc, 0, three_fourths);
+        if player.gear.weapon.name.contains("uncharged") {
+            dist = AttackDistribution::new(vec![first_hit]);
+        } else {
+            let second_hit = HitDistribution::linear(acc, 0, three_fourths);
+            dist = AttackDistribution::new(vec![first_hit, second_hit]);
+        }
+    }
+
     if player.is_using_melee() && player.is_wearing_keris() && monster.is_kalphite() {
         let hits1 = standard_hit_dist
             .clone()
