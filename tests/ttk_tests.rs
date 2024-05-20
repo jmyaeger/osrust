@@ -64,12 +64,13 @@ fn test_fang_ttk(max_melee_fang_player: Player, #[case] mut monster: Monster) {
 
 #[rstest]
 #[case(full_ahrims_aotd_player())]
+#[case(full_ahrims_aotd_sunfire_player())]
 #[case(full_dharoks_1hp_player())]
 #[case(full_veracs_player())]
 #[case(full_karils_aotd_player())]
 #[case(max_melee_torags_hammers_player())]
-fn test_barrows_gear_ttks(#[case] mut player: Player, abhorrent_spectre: Monster) {
-    let mut monster = abhorrent_spectre;
+fn test_barrows_gear_ttks(#[case] mut player: Player, scurrius: Monster) {
+    let mut monster = scurrius;
     calc_active_player_rolls(&mut player, &monster);
     let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
 

@@ -23,7 +23,7 @@ pub fn standard_attack(
         && player.boosts.sunfire_runes
         && player.is_using_fire_spell()
     {
-        1
+        max_hit / 10
     } else {
         0
     };
@@ -132,8 +132,16 @@ pub fn ahrims_staff_attack(
     let max_att_roll = player.att_rolls[&combat_type];
     let max_def_roll = monster.def_rolls[&combat_type];
     let max_hit = player.max_hits[&combat_type];
+    let min_hit = if player.combat_type() == CombatType::Magic
+        && player.is_using_fire_spell()
+        && player.boosts.sunfire_runes
+    {
+        max_hit / 10
+    } else {
+        0
+    };
 
-    let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
+    let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
 
     if success && rng.gen_range(0..4) == 0 {
         monster.drain_strength(5);
