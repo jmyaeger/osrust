@@ -269,8 +269,13 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     }
 
     if player.combat_type() == CombatType::Magic && player.set_effects.full_ahrims {
-        let hits1 = standard_hit_dist.clone().scale_probability(0.75).hits;
-        let hits2 = standard_hit_dist
+        let hits1 = dist
+            .get_single_hitsplat()
+            .clone()
+            .scale_probability(0.75)
+            .hits;
+        let hits2 = dist
+            .get_single_hitsplat()
             .clone()
             .scale_probability(0.25)
             .scale_damage(13.0, 10)
