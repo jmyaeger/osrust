@@ -175,6 +175,66 @@ pub fn kalphite_queen_p1() -> Monster {
 }
 
 #[fixture]
+pub fn zulrah_tanzanite() -> Monster {
+    Monster::new("Zulrah (Tanzanite)").unwrap()
+}
+
+#[fixture]
+pub fn zulrah_magma() -> Monster {
+    Monster::new("Zulrah (Magma)").unwrap()
+}
+
+#[fixture]
+pub fn seren() -> Monster {
+    Monster::new("Fragment of Seren").unwrap()
+}
+
+#[fixture]
+pub fn kraken() -> Monster {
+    Monster::new("Kraken (Kraken)").unwrap()
+}
+
+#[fixture]
+pub fn verzik_p1() -> Monster {
+    Monster::new("Verzik Vitur (Normal P1)").unwrap()
+}
+
+#[fixture]
+pub fn tekton() -> Monster {
+    Monster::new("Tekton (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn vasa_crystal() -> Monster {
+    Monster::new("Glowing crystal (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn olm_melee_hand() -> Monster {
+    Monster::new("Great Olm (Left claw)").unwrap()
+}
+
+#[fixture]
+pub fn olm_mage_hand() -> Monster {
+    Monster::new("Great Olm (Right claw)").unwrap()
+}
+
+#[fixture]
+pub fn ice_demon() -> Monster {
+    Monster::new("Ice demon (Normal)").unwrap()
+}
+
+#[fixture]
+pub fn slagilith() -> Monster {
+    Monster::new("Slagilith (Hard)").unwrap()
+}
+
+#[fixture]
+pub fn zogre() -> Monster {
+    Monster::new("Zogre").unwrap()
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
@@ -894,6 +954,38 @@ pub fn max_melee_macuahuitl_player() -> Player {
     let mut player = max_melee_player();
     player.equip("Dual macuahuitl");
     player.set_active_style(CombatStyle::Pummel);
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_ranged_zcb_ruby_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Ruby dragon bolts (e)");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_dawnbringer_player() -> Player {
+    let mut player = max_mage_sang_staff_player();
+    player.equip("Dawnbringer");
+    player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn max_mage_harm_crumble_undead() -> Player {
+    let mut player = max_mage_harm_fire_surge_player();
+    player.set_spell(Spell::Standard(StandardSpell::CrumbleUndead));
+    player
+}
+
+#[fixture]
+pub fn max_range_comp_ogre_bow_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+    player.equip("Comp ogre bow");
+    player.equip("Rune brutal");
     player.update_bonuses();
     player
 }

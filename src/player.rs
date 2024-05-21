@@ -446,6 +446,15 @@ impl Player {
             }
             "weapon" => {
                 self.gear.weapon = Weapon::new(item_name);
+                if self.attrs.active_style == CombatStyle::Rapid
+                    && self
+                        .gear
+                        .weapon
+                        .combat_styles
+                        .contains_key(&CombatStyle::Rapid)
+                {
+                    self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+                }
                 if self.is_quiver_bonus_valid() {
                     self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
                 } else if self.is_wearing("Dizana's quiver (charged)") {
@@ -455,6 +464,15 @@ impl Player {
             "2h" => {
                 self.gear.weapon = Weapon::new(item_name);
                 self.gear.shield = None;
+                if self.attrs.active_style == CombatStyle::Rapid
+                    && self
+                        .gear
+                        .weapon
+                        .combat_styles
+                        .contains_key(&CombatStyle::Rapid)
+                {
+                    self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+                }
                 if self.is_quiver_bonus_valid() {
                     self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
                 } else if self.is_wearing("Dizana's quiver (charged)") {

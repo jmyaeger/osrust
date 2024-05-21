@@ -216,7 +216,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(1.0, 0, half_max);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
-        let double_hit = first_hit.transform(|h| HitDistribution::single(1.0, h).zip(&second_hit));
+        let double_hit = first_hit.zip(&second_hit);
 
         let mut effect_dist = double_hit.scale_probability(acc);
         effect_dist.add_hit(WeightedHit::new(1.0 - acc, vec![0, 0]));
@@ -426,7 +426,7 @@ fn apply_limiters(
         dist = dist.transform(linear_min_transformer(2, 22));
     }
 
-    if monster.info.name.as_str() == "Kraken (Normal)" && player.combat_type() == CombatType::Ranged
+    if monster.info.name.as_str() == "Kraken (Kraken)" && player.combat_type() == CombatType::Ranged
     {
         dist = dist.transform(division_transformer(7, 1));
     }
@@ -447,15 +447,14 @@ fn apply_limiters(
         dist = dist.transform(division_transformer(3, 0));
     }
 
-    if monster.info.name.contains("(Left claw")
-        || monster.info.name.contains("Great Olm (Head")
-            && player.combat_type() == CombatType::Magic
+    if (monster.info.name.contains("(Left claw") || monster.info.name.contains("Great Olm (Head"))
+        && player.combat_type() == CombatType::Magic
     {
         dist = dist.transform(division_transformer(3, 0));
     }
 
-    if monster.info.name.contains("(Right claw")
-        || monster.info.name.contains("Left claw") && player.combat_type() == CombatType::Ranged
+    if (monster.info.name.contains("(Right claw") || monster.info.name.contains("(Left claw"))
+        && player.combat_type() == CombatType::Ranged
     {
         dist = dist.transform(division_transformer(3, 0));
     }

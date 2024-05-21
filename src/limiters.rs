@@ -21,8 +21,12 @@ pub struct Seren {}
 
 impl Limiter for Seren {
     fn apply(&self, damage: u32, rng: &mut ThreadRng) -> u32 {
-        let second_roll = rng.gen_range(22..=24);
-        min(damage, second_roll)
+        if damage > 22 {
+            let second_roll = rng.gen_range(22..=24);
+            min(damage, second_roll)
+        } else {
+            damage
+        }
     }
 }
 
@@ -30,7 +34,11 @@ pub struct Kraken {}
 
 impl Limiter for Kraken {
     fn apply(&self, damage: u32, _: &mut ThreadRng) -> u32 {
-        max(1, damage / 7)
+        if damage > 0 {
+            max(1, damage / 7)
+        } else {
+            damage
+        }
     }
 }
 
@@ -49,7 +57,11 @@ pub struct Tekton {}
 
 impl Limiter for Tekton {
     fn apply(&self, damage: u32, _: &mut ThreadRng) -> u32 {
-        damage / 5
+        if damage > 0 {
+            max(1, damage / 5)
+        } else {
+            damage
+        }
     }
 }
 

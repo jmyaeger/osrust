@@ -37,7 +37,9 @@ pub fn standard_attack(
 
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
     if success {
-        damage = max(1, damage - monster.bonuses.flat_armour);
+        if monster.bonuses.flat_armour > 0 {
+            damage = max(1, damage - monster.bonuses.flat_armour);
+        }
 
         if let Some(limiter) = &limiter {
             damage = limiter.apply(damage, rng);
@@ -217,12 +219,7 @@ pub fn karils_crossbow_attack(
         && player.is_wearing("Amulet of the damned")
         && rng.gen_range(0..4) == 0
     {
-        let (mut hit1, success) = standard_attack(player, monster, rng, limiter);
-        if success {
-            if let Some(limiter) = &limiter {
-                hit1 = limiter.apply(hit1, rng);
-            }
-        }
+        let (hit1, success) = standard_attack(player, monster, rng, limiter);
         let hit2 = hit1 / 2;
         (hit1 + hit2, success)
     } else {
@@ -702,12 +699,7 @@ pub fn scythe_attack(
     let max_def_roll = monster.def_rolls[&combat_type];
     let max_hit = player.max_hits[&combat_type];
 
-    let (mut damage1, success1) = standard_attack(player, monster, rng, limiter);
-    if success1 {
-        if let Some(limiter) = &limiter {
-            damage1 = limiter.apply(damage1, rng);
-        }
-    }
+    let (damage1, success1) = standard_attack(player, monster, rng, limiter);
     if monster.info.size == 1 {
         return (damage1, success1);
     }

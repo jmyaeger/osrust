@@ -26,7 +26,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::Seren {}));
     }
 
-    if monster.info.name.as_str() == "Kraken (Normal)" && player.combat_type() == CombatType::Ranged
+    if monster.info.name.as_str() == "Kraken (Kraken)" && player.combat_type() == CombatType::Ranged
     {
         return Some(Box::new(limiters::Kraken {}));
     }
@@ -48,7 +48,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
             || monster.info.name.contains("Great Olm (Head")
                 && player.combat_type() == CombatType::Magic)
         || (monster.info.name.contains("(Right claw")
-            || monster.info.name.contains("Left claw")
+            || monster.info.name.contains("(Left claw")
                 && player.combat_type() == CombatType::Ranged)
         || (monster.info.name.contains("Ice demon")
             && !player.is_using_fire_spell()

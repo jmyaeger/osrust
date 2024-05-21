@@ -2,11 +2,22 @@ pub const TBOW_ACC_CAP: i32 = 140;
 
 pub const TBOW_DMG_CAP: i32 = 250;
 
-pub const MAGIC_DEF_EXCEPTIONS: [&str; 4] = [
+pub const MAGIC_DEF_EXCEPTIONS: [&str; 15] = [
     "Baboon Brawler (Level 56)",
     "Baboon Brawler (Level 68)",
     "Fragment of Seren",
     "Rabbit",
+    "Verzik Vitur (Normal P1)",
+    "Verzik Vitur (Normal P2)",
+    "Verzik Vitur (Normal P3)",
+    "Verzik Vitur (Entry P1)",
+    "Verzik Vitur (Entry P2)",
+    "Verzik Vitur (Entry P3)",
+    "Verzik Vitur (Hard P1)",
+    "Verzik Vitur (Hard P2)",
+    "Verzik Vitur (Hard P3)",
+    "Ice demon (Normal)",
+    "Ice demon (Challenge Mode)",
 ];
 
 pub const TOA_MONSTERS: [&str; 32] = [
