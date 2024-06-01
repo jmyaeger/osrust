@@ -1,10 +1,13 @@
 Next steps:
 
-- Write all of the tests in ttk_test_cases.txt and do any necessary debugging and/or refactoring based on results
 - Revisit the idea of switching to JSON files for monster and equipment data
+    - Top priority now with the addition of elemental weaknesses and ranged defence classes
     - Sort out any issues that are currently present
     - Explore directly deserializing into Monster, Armor, and Weapon structs
     - Decide how to handle monster attack styles and max hits
+- Update hit_dist.rs to match the newest version of the wiki's HitDist.ts (with combat rebalance changes)
+- Update dps_calc.rs to match the newest version of PlayerVsNPCCalc.ts
+- Implement all of the combat rebalance changes in the simulator code
 - Write all of the special attack methods
 - Figure out how I'm going to implement special attacks
     - Likely want to have some form of raw DPS (assuming the spec is a normal attack)

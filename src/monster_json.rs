@@ -12,7 +12,7 @@ const FILE_NAME: &str = "src/databases/monsters.json";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
 // const IMG_PATH: &str = "src/images/monsters/";
 
-const REQUIRED_PRINTOUTS: [&str; 31] = [
+const REQUIRED_PRINTOUTS: [&str; 36] = [
     "Attack bonus",
     "Attack level",
     "Attack speed",
@@ -44,6 +44,11 @@ const REQUIRED_PRINTOUTS: [&str; 31] = [
     "Size",
     "NPC ID",
     "Category",
+    "Elemental weakness",
+    "Elemental weakness percent",
+    "Light range defence bonus",
+    "Standard range defence bonus",
+    "Heavy range defence bonus",
 ];
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -56,6 +61,12 @@ struct WikiResponse {
 #[derive(Debug, Deserialize, Serialize)]
 struct Query {
     results: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct ElementalWeakness {
+    element: String,
+    severity: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -73,6 +84,7 @@ struct Monster {
     offensive: Offensive,
     defensive: Defensive,
     attributes: Vec<String>,
+    weakness: Option<ElementalWeakness>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -99,7 +111,9 @@ struct Offensive {
 struct Defensive {
     crush: i64,
     magic: i64,
-    ranged: i64,
+    heavy: i64,
+    standard: i64,
+    light: i64,
     slash: i64,
     stab: i64,
 }
@@ -311,9 +325,18 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 magic: get_printout_value(&po.get("Magic defence bonus").cloned(), false)
                     .and_then(|magic| magic.as_i64())
                     .unwrap_or(0),
-                ranged: get_printout_value(&po.get("Range defence bonus").cloned(), false)
-                    .and_then(|ranged| ranged.as_i64())
+                heavy: get_printout_value(&po.get("Heavy range defence bonus").cloned(), false)
+                    .and_then(|heavy| heavy.as_i64())
                     .unwrap_or(0),
+                light: get_printout_value(&po.get("Light range defence bonus").cloned(), false)
+                    .and_then(|light| light.as_i64())
+                    .unwrap_or(0),
+                standard: get_printout_value(
+                    &po.get("Standard range defence bonus").cloned(),
+                    false,
+                )
+                .and_then(|standard| standard.as_i64())
+                .unwrap_or(0),
                 slash: get_printout_value(&po.get("Slash defence bonus").cloned(), false)
                     .and_then(|slash| slash.as_i64())
                     .unwrap_or(0),
@@ -330,6 +353,18 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .iter()
                 .map(|attr| attr.as_str().unwrap().to_string())
                 .collect(),
+            weakness: get_printout_value(&po.get("Elemental weakness").cloned(), false)
+                .map(|w| w.to_string())
+                .map(|weakness| ElementalWeakness {
+                    element: weakness.to_lowercase().replace('\"', ""),
+                    severity: get_printout_value(
+                        &po.get("Elemental weakness percent").cloned(),
+                        false,
+                    )
+                    .map(|s| s.to_string().replace('\"', ""))
+                    .and_then(|severity| severity.parse::<i64>().ok())
+                    .unwrap_or(0),
+                }),
         };
 
         if monster.skills.hp == 0

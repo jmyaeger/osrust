@@ -66,7 +66,7 @@ struct Equipment {
 struct Bonuses {
     str: Option<i64>,
     ranged_str: Option<i64>,
-    magic_str: Option<i64>,
+    magic_str: Option<f64>,
     prayer: Option<i64>,
 }
 
@@ -145,33 +145,33 @@ async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::E
     Ok(equipment)
 }
 
-fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<i64> {
+fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<serde_json::Value> {
     prop.as_ref().and_then(|values| {
         if let Some(array) = values.as_array() {
             if array.is_empty() {
                 None
             } else {
-                array[0].as_i64()
+                Some(array[0].clone())
             }
         } else {
-            values.as_i64()
+            Some(values.clone())
         }
     })
 }
 
-fn get_magic_damage_value(prop: &Option<serde_json::Value>) -> Option<i64> {
-    prop.as_ref().and_then(|values| {
-        if let Some(array) = values.as_array() {
-            if array.is_empty() {
-                None
-            } else {
-                array[0].as_f64().map(|v| (v * 10.0) as i64)
-            }
-        } else {
-            values.as_f64().map(|v| (v * 10.0) as i64)
-        }
-    })
-}
+// fn get_magic_damage_value(prop: &Option<serde_json::Value>) -> Option<i64> {
+//     prop.as_ref().and_then(|values| {
+//         if let Some(array) = values.as_array() {
+//             if array.is_empty() {
+//                 None
+//             } else {
+//                 array[0].as_f64().map(|v| (v * 10.0) as i64)
+//             }
+//         } else {
+//             values.as_f64().map(|v| (v * 10.0) as i64)
+//         }
+//     })
+// }
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -189,7 +189,9 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         let po = v.get("printouts").unwrap();
-        let item_id = get_printout_value(&po.get("Item ID").cloned()).unwrap_or_default();
+        let item_id = get_printout_value(&po.get("Item ID").cloned())
+            .and_then(|v| v.as_i64())
+            .unwrap_or_default();
 
         let mut equipment = Equipment {
             name: k.split('#').next().unwrap().to_string(),
@@ -199,7 +201,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .unwrap_or_default(),
             slot: get_printout_value(&po.get("Equipment slot").cloned())
                 .map(|v| v.to_string())
-                .unwrap_or_default(),
+                .unwrap_or_default()
+                .replace('\"', ""),
             image: po
                 .get("Image")
                 .and_then(|v| v.as_array())
@@ -208,29 +211,46 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .and_then(|v| v.as_str())
                 .map(|s| s.replace("File:", ""))
                 .unwrap_or_default(),
-            speed: get_printout_value(&po.get("Weapon attack speed").cloned()).unwrap_or_default(),
+            speed: get_printout_value(&po.get("Weapon attack speed").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
             category: get_printout_value(&po.get("Combat style").cloned())
                 .map(|v| v.to_string())
-                .unwrap_or_default(),
+                .unwrap_or_default()
+                .replace('\"', ""),
             bonuses: Bonuses {
-                str: get_printout_value(&po.get("Strength bonus").cloned()),
-                ranged_str: get_printout_value(&po.get("Ranged Strength bonus").cloned()),
-                magic_str: get_magic_damage_value(&po.get("Magic Damage bonus").cloned()),
-                prayer: get_printout_value(&po.get("Prayer bonus").cloned()),
+                str: get_printout_value(&po.get("Strength bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                ranged_str: get_printout_value(&po.get("Ranged Strength bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                magic_str: get_printout_value(&po.get("Magic Damage bonus").cloned())
+                    .and_then(|v| v.as_f64()),
+                prayer: get_printout_value(&po.get("Prayer bonus").cloned())
+                    .and_then(|v| v.as_i64()),
             },
             offensive: Offensive {
-                stab: get_printout_value(&po.get("Stab attack bonus").cloned()),
-                slash: get_printout_value(&po.get("Slash attack bonus").cloned()),
-                crush: get_printout_value(&po.get("Crush attack bonus").cloned()),
-                magic: get_printout_value(&po.get("Magic attack bonus").cloned()),
-                ranged: get_printout_value(&po.get("Range attack bonus").cloned()),
+                stab: get_printout_value(&po.get("Stab attack bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                slash: get_printout_value(&po.get("Slash attack bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                crush: get_printout_value(&po.get("Crush attack bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                magic: get_printout_value(&po.get("Magic attack bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                ranged: get_printout_value(&po.get("Range attack bonus").cloned())
+                    .and_then(|v| v.as_i64()),
             },
             defensive: Defensive {
-                stab: get_printout_value(&po.get("Stab defence bonus").cloned()),
-                slash: get_printout_value(&po.get("Slash defence bonus").cloned()),
-                crush: get_printout_value(&po.get("Crush defence bonus").cloned()),
-                magic: get_printout_value(&po.get("Magic defence bonus").cloned()),
-                ranged: get_printout_value(&po.get("Range defence bonus").cloned()),
+                stab: get_printout_value(&po.get("Stab defence bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                slash: get_printout_value(&po.get("Slash defence bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                crush: get_printout_value(&po.get("Crush defence bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                magic: get_printout_value(&po.get("Magic defence bonus").cloned())
+                    .and_then(|v| v.as_i64()),
+                ranged: get_printout_value(&po.get("Range defence bonus").cloned())
+                    .and_then(|v| v.as_i64()),
             },
             is_two_handed: false,
         };
@@ -262,7 +282,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
         bonuses: Bonuses {
             str: Some(0),
             ranged_str: Some(0),
-            magic_str: Some(0),
+            magic_str: Some(0.0),
             prayer: Some(0),
         },
         offensive: Offensive {
@@ -285,8 +305,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Total equipment: {}", data.len());
     data.sort_by(|a, b| a.name.cmp(&b.name));
 
-    let mut file = File::create(FILE_NAME)?;
-    writeln!(file, "Saving to JSON at file: {}", FILE_NAME)?;
+    let file = File::create(FILE_NAME)?;
+    println!("Saving to JSON at file: {}", FILE_NAME);
     serde_json::to_writer_pretty(&file, &data)?;
 
     // let mut success_img_dls = 0;
