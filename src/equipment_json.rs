@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::Write;
+use std::{collections::HashMap, fs::File};
 
 use reqwest;
 use serde::{Deserialize, Serialize};
@@ -11,12 +10,11 @@ const FILE_NAME: &str = "src/databases/equipment.json";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
 // const IMG_PATH: &str = "src/images/equipment/";
 
-const REQUIRED_PRINTOUTS: [&str; 21] = [
+const REQUIRED_PRINTOUTS: [&str; 20] = [
     "Crush attack bonus",
     "Crush defence bonus",
     "Equipment slot",
     "Item ID",
-    "Image",
     "Magic Damage bonus",
     "Magic attack bonus",
     "Magic defence bonus",
@@ -51,41 +49,45 @@ struct Query {
 struct Equipment {
     name: String,
     id: i64,
-    version: String,
+    version: Option<String>,
     slot: String,
-    image: String,
-    speed: i64,
-    category: String,
+    speed: Option<i64>,
+    category: Option<String>,
     bonuses: Bonuses,
-    offensive: Offensive,
-    defensive: Defensive,
-    is_two_handed: bool,
+    prayer: i64,
+    is_two_handed: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Bonuses {
-    str: Option<i64>,
-    ranged_str: Option<i64>,
-    magic_str: Option<f64>,
-    prayer: Option<i64>,
+    attack: Offensive,
+    defence: Defensive,
+    strength: StrengthBonuses,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct StrengthBonuses {
+    melee: i64,
+    ranged: i64,
+    magic: f64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Offensive {
-    stab: Option<i64>,
-    slash: Option<i64>,
-    crush: Option<i64>,
-    magic: Option<i64>,
-    ranged: Option<i64>,
+    stab: i64,
+    slash: i64,
+    crush: i64,
+    magic: i64,
+    ranged: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Defensive {
-    stab: Option<i64>,
-    slash: Option<i64>,
-    crush: Option<i64>,
-    magic: Option<i64>,
-    ranged: Option<i64>,
+    stab: i64,
+    slash: i64,
+    crush: i64,
+    magic: i64,
+    ranged: i64,
 }
 
 async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::Error>> {
@@ -193,75 +195,87 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .and_then(|v| v.as_i64())
             .unwrap_or_default();
 
+        let offensive = Offensive {
+            stab: get_printout_value(&po.get("Stab attack bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            slash: get_printout_value(&po.get("Slash attack bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            crush: get_printout_value(&po.get("Crush attack bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            magic: get_printout_value(&po.get("Magic attack bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            ranged: get_printout_value(&po.get("Range attack bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+        };
+
+        let defensive = Defensive {
+            stab: get_printout_value(&po.get("Stab defence bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            slash: get_printout_value(&po.get("Slash defence bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            crush: get_printout_value(&po.get("Crush defence bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            magic: get_printout_value(&po.get("Magic defence bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            ranged: get_printout_value(&po.get("Range defence bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+        };
+
+        let strength_bonuses = StrengthBonuses {
+            melee: get_printout_value(&po.get("Strength bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            ranged: get_printout_value(&po.get("Ranged Strength bonus").cloned())
+                .and_then(|v| v.as_i64())
+                .unwrap_or_default(),
+            magic: get_printout_value(&po.get("Magic Damage bonus").cloned())
+                .and_then(|v| v.as_f64())
+                .unwrap_or_default(),
+        };
+
         let mut equipment = Equipment {
             name: k.split('#').next().unwrap().to_string(),
             id: item_id,
             version: get_printout_value(&po.get("Version anchor").cloned())
-                .map(|v| v.to_string())
-                .unwrap_or_default(),
+                .map(|v| v.to_string().replace('\"', "")),
             slot: get_printout_value(&po.get("Equipment slot").cloned())
                 .map(|v| v.to_string())
                 .unwrap_or_default()
                 .replace('\"', ""),
-            image: po
-                .get("Image")
-                .and_then(|v| v.as_array())
-                .and_then(|a| a.first())
-                .and_then(|v| v.get("fulltext"))
-                .and_then(|v| v.as_str())
-                .map(|s| s.replace("File:", ""))
-                .unwrap_or_default(),
             speed: get_printout_value(&po.get("Weapon attack speed").cloned())
+                .and_then(|v| v.as_i64()),
+            category: get_printout_value(&po.get("Combat style").cloned())
+                .map(|v| v.to_string().replace('\"', "")),
+            bonuses: Bonuses {
+                attack: offensive,
+                defence: defensive,
+                strength: strength_bonuses,
+            },
+            prayer: get_printout_value(&po.get("Prayer bonus").cloned())
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            category: get_printout_value(&po.get("Combat style").cloned())
-                .map(|v| v.to_string())
-                .unwrap_or_default()
-                .replace('\"', ""),
-            bonuses: Bonuses {
-                str: get_printout_value(&po.get("Strength bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                ranged_str: get_printout_value(&po.get("Ranged Strength bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                magic_str: get_printout_value(&po.get("Magic Damage bonus").cloned())
-                    .and_then(|v| v.as_f64()),
-                prayer: get_printout_value(&po.get("Prayer bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-            },
-            offensive: Offensive {
-                stab: get_printout_value(&po.get("Stab attack bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                slash: get_printout_value(&po.get("Slash attack bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                crush: get_printout_value(&po.get("Crush attack bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                magic: get_printout_value(&po.get("Magic attack bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                ranged: get_printout_value(&po.get("Range attack bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-            },
-            defensive: Defensive {
-                stab: get_printout_value(&po.get("Stab defence bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                slash: get_printout_value(&po.get("Slash defence bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                crush: get_printout_value(&po.get("Crush defence bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                magic: get_printout_value(&po.get("Magic defence bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-                ranged: get_printout_value(&po.get("Range defence bonus").cloned())
-                    .and_then(|v| v.as_i64()),
-            },
-            is_two_handed: false,
+            is_two_handed: None,
         };
 
         if equipment.slot == "2h" {
             equipment.slot = "weapon".to_string();
-            equipment.is_two_handed = true;
+            equipment.is_two_handed = Some(true);
+        } else if equipment.slot == "weapon" {
+            equipment.is_two_handed = Some(false);
         }
 
-        if equipment.version == "Nightmare Zone" {
-            equipment.version = "".to_string();
+        if equipment.version == Some("Nightmare Zone".to_string()) {
+            equipment.version = None;
         }
 
         // let image = equipment.image.clone();
@@ -274,33 +288,80 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     data.push(Equipment {
         name: "Snail shell".to_string(),
         id: 7800,
-        version: "".to_string(),
+        version: None,
         slot: "feet".to_string(),
-        image: "Snail shell.png".to_string(),
-        speed: 0,
-        category: "".to_string(),
+        speed: None,
+        category: None,
         bonuses: Bonuses {
-            str: Some(0),
-            ranged_str: Some(0),
-            magic_str: Some(0.0),
-            prayer: Some(0),
+            attack: Offensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 0,
+                ranged: 0,
+                magic: 0.0,
+            },
         },
-        offensive: Offensive {
-            stab: Some(0),
-            slash: Some(0),
-            crush: Some(0),
-            magic: Some(0),
-            ranged: Some(0),
-        },
-        defensive: Defensive {
-            stab: Some(0),
-            slash: Some(0),
-            crush: Some(0),
-            magic: Some(0),
-            ranged: Some(0),
-        },
-        is_two_handed: false,
+        prayer: 0,
+        is_two_handed: None,
     });
+
+    let ammo_list = HashMap::from([
+        ("Bronze", 21),
+        ("Iron", 22),
+        ("Steel", 23),
+        ("Black", 26),
+        ("Mithril", 29),
+        ("Adamant", 37),
+        ("Rune", 46),
+        ("Amethyst", 48),
+        ("Dragon", 55),
+    ]);
+
+    for (k, v) in &ammo_list {
+        data.push(Equipment {
+            name: "Toxic blowpipe".to_string(),
+            id: 12926,
+            version: Some(k.to_string()),
+            slot: "weapon".to_string(),
+            speed: Some(3),
+            category: Some("Thrown".to_string()),
+            bonuses: Bonuses {
+                attack: Offensive {
+                    stab: 0,
+                    slash: 0,
+                    crush: 0,
+                    magic: 0,
+                    ranged: 30,
+                },
+                defence: Defensive {
+                    stab: 0,
+                    slash: 0,
+                    crush: 0,
+                    magic: 0,
+                    ranged: 0,
+                },
+                strength: StrengthBonuses {
+                    melee: 0,
+                    ranged: *v,
+                    magic: 0.0,
+                },
+            },
+            prayer: 0,
+            is_two_handed: Some(true),
+        });
+    }
 
     println!("Total equipment: {}", data.len());
     data.sort_by(|a, b| a.name.cmp(&b.name));

@@ -13,7 +13,9 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
         (CombatType::Stab, monster.bonuses.defence.stab),
         (CombatType::Slash, monster.bonuses.defence.slash),
         (CombatType::Crush, monster.bonuses.defence.crush),
-        (CombatType::Ranged, monster.bonuses.defence.ranged),
+        (CombatType::Light, monster.bonuses.defence.light),
+        (CombatType::Standard, monster.bonuses.defence.standard),
+        (CombatType::Heavy, monster.bonuses.defence.heavy),
     ] {
         def_rolls.insert(
             combat_type.0,
@@ -81,7 +83,7 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
         CombatType::Stab | CombatType::Slash | CombatType::Crush => {
             calc_player_melee_rolls(player, monster);
         }
-        CombatType::Ranged => {
+        CombatType::Light | CombatType::Standard | CombatType::Heavy => {
             calc_player_ranged_rolls(player, monster);
         }
         CombatType::Magic => {
@@ -185,8 +187,10 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     // Apply DHCB (if not on task), twisted bow, etc, if applicable
     (att_roll, max_hit) = apply_ranged_weapon_boosts(att_roll, max_hit, player, monster);
 
-    player.att_rolls.insert(CombatType::Ranged, att_roll);
-    player.max_hits.insert(CombatType::Ranged, max_hit);
+    for &combat_type in &[CombatType::Light, CombatType::Standard, CombatType::Heavy] {
+        player.att_rolls.insert(combat_type, att_roll);
+        player.max_hits.insert(combat_type, max_hit);
+    }
 }
 
 pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
@@ -434,7 +438,7 @@ fn apply_melee_weapon_boosts(
     // Apply colossal blade and bone mace boosts additively
     match player.gear.weapon.name.as_str() {
         "Colossal blade" => {
-            max_hit += 2 * min(monster.info.size as u32, 5);
+            max_hit += 2 * min(monster.info.size, 5);
         }
         "Bone mace" => {
             if monster.is_rat() {

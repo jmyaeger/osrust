@@ -270,14 +270,18 @@ impl Default for Player {
         att_rolls.insert(CombatType::Stab, 0);
         att_rolls.insert(CombatType::Slash, 0);
         att_rolls.insert(CombatType::Crush, 0);
-        att_rolls.insert(CombatType::Ranged, 0);
+        att_rolls.insert(CombatType::Light, 0);
+        att_rolls.insert(CombatType::Standard, 0);
+        att_rolls.insert(CombatType::Heavy, 0);
         att_rolls.insert(CombatType::Magic, 0);
 
         let mut max_hits = HashMap::new();
         max_hits.insert(CombatType::Stab, 0);
         max_hits.insert(CombatType::Slash, 0);
         max_hits.insert(CombatType::Crush, 0);
-        max_hits.insert(CombatType::Ranged, 0);
+        max_hits.insert(CombatType::Light, 0);
+        max_hits.insert(CombatType::Standard, 0);
+        max_hits.insert(CombatType::Heavy, 0);
         max_hits.insert(CombatType::Magic, 0);
 
         let mut def_rolls = HashMap::new();
@@ -599,6 +603,11 @@ impl Player {
         melee_types.contains(&self.combat_type())
     }
 
+    pub fn is_using_ranged(&self) -> bool {
+        let ranged_types = [CombatType::Light, CombatType::Standard, CombatType::Heavy];
+        ranged_types.contains(&self.combat_type())
+    }
+
     pub fn set_active_style(&mut self, style: CombatStyle) {
         self.attrs.active_style = style;
 
@@ -802,7 +811,7 @@ impl Player {
 
     pub fn is_using_crossbow(&self) -> bool {
         self.gear.weapon.name.contains("rossbow")
-            && self.combat_type() == CombatType::Ranged
+            && self.combat_type() == CombatType::Heavy
             && self
                 .gear
                 .ammo
@@ -979,14 +988,18 @@ mod test {
         att_rolls.insert(CombatType::Stab, 0);
         att_rolls.insert(CombatType::Slash, 0);
         att_rolls.insert(CombatType::Crush, 0);
-        att_rolls.insert(CombatType::Ranged, 0);
+        att_rolls.insert(CombatType::Light, 0);
+        att_rolls.insert(CombatType::Standard, 0);
+        att_rolls.insert(CombatType::Heavy, 0);
         att_rolls.insert(CombatType::Magic, 0);
 
         let mut max_hits = HashMap::new();
         max_hits.insert(CombatType::Stab, 0);
         max_hits.insert(CombatType::Slash, 0);
         max_hits.insert(CombatType::Crush, 0);
-        max_hits.insert(CombatType::Ranged, 0);
+        max_hits.insert(CombatType::Light, 0);
+        max_hits.insert(CombatType::Standard, 0);
+        max_hits.insert(CombatType::Heavy, 0);
         max_hits.insert(CombatType::Magic, 0);
 
         let mut def_rolls = HashMap::new();

@@ -126,7 +126,7 @@ mod tests {
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let mut monster = Monster::new("Ammonite Crab").unwrap();
+        let mut monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
 
         let mut rng = rand::thread_rng();

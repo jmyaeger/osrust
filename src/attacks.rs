@@ -347,7 +347,7 @@ pub fn opal_bolt_attack(
         player.live_stats.ranged / 10
     };
 
-    let max_hit = player.max_hits[&CombatType::Ranged];
+    let max_hit = player.max_hits[&player.combat_type()];
 
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
@@ -378,7 +378,7 @@ pub fn pearl_bolt_attack(
     }
     let extra_damage = player.live_stats.ranged / denominator;
 
-    let max_hit = player.max_hits[&CombatType::Ranged];
+    let max_hit = player.max_hits[&player.combat_type()];
 
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
@@ -458,7 +458,7 @@ pub fn diamond_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let base_max_hit = player.max_hits[&CombatType::Ranged];
+    let base_max_hit = player.max_hits[&player.combat_type()];
     let max_hit = if player.is_wearing("Zaryte crossbow") {
         base_max_hit * 126 / 100
     } else {
@@ -487,7 +487,7 @@ pub fn onyx_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let base_max_hit = player.max_hits[&CombatType::Ranged];
+    let base_max_hit = player.max_hits[&player.combat_type()];
     let max_hit = if player.is_wearing("Zaryte crossbow") {
         base_max_hit * 132 / 100
     } else {
@@ -768,9 +768,10 @@ pub fn tonalztics_of_ralos_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
-    let max_att_roll = player.att_rolls[&CombatType::Ranged];
-    let max_def_roll = monster.def_rolls[&CombatType::Ranged];
-    let max_hit = player.max_hits[&CombatType::Ranged] * 3 / 4;
+    let combat_type = player.combat_type();
+    let max_att_roll = player.att_rolls[&combat_type];
+    let max_def_roll = monster.def_rolls[&combat_type];
+    let max_hit = player.max_hits[&combat_type] * 3 / 4;
 
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
     if success1 {

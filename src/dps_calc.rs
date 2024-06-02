@@ -183,7 +183,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
-    if player.combat_type() == CombatType::Ranged && player.set_effects.full_karils {
+    if player.is_using_ranged() && player.set_effects.full_karils {
         let hits1 = standard_hit_dist.clone().scale_probability(0.75).hits;
         let hits2 = standard_hit_dist.clone().hits;
         let hits2 = hits2
@@ -232,8 +232,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![first_hit, second_hit]);
     }
 
-    if player.combat_type() == CombatType::Ranged && player.gear.weapon.name.contains("Tonalztics")
-    {
+    if player.is_using_ranged() && player.gear.weapon.name.contains("Tonalztics") {
         let three_fourths = max_hit * 3 / 4;
         let first_hit = HitDistribution::linear(acc, 0, three_fourths);
         if player.gear.weapon.name.contains("uncharged") {
@@ -296,7 +295,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
-    if player.combat_type() == CombatType::Ranged && player.is_using_crossbow() {
+    if player.is_using_ranged() && player.is_using_crossbow() {
         let zcb = player.is_wearing("Zaryte crossbow");
         let ranged_lvl = player.live_stats.ranged;
         let kandarin = if player.boosts.kandarin_diary {
@@ -384,7 +383,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist.transform(division_transformer(2, 0));
         }
 
-        if player.combat_type() == CombatType::Ranged
+        if player.is_using_ranged()
             && player.is_using_crossbow()
             && player.is_wearing_any(vec!["Ruby bolts (e)", "Ruby dragon bolts (e)"])
         {
@@ -426,8 +425,7 @@ fn apply_limiters(
         dist = dist.transform(linear_min_transformer(2, 22));
     }
 
-    if monster.info.name.as_str() == "Kraken (Kraken)" && player.combat_type() == CombatType::Ranged
-    {
+    if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
         dist = dist.transform(division_transformer(7, 1));
     }
 
@@ -454,7 +452,7 @@ fn apply_limiters(
     }
 
     if (monster.info.name.contains("(Right claw") || monster.info.name.contains("(Left claw"))
-        && player.combat_type() == CombatType::Ranged
+        && player.is_using_ranged()
     {
         dist = dist.transform(division_transformer(3, 0));
     }
@@ -475,7 +473,7 @@ fn apply_limiters(
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             dist = dist.transform(division_transformer(2, 0));
-        } else if player.combat_type() != CombatType::Ranged
+        } else if !player.is_using_ranged()
             || !player
                 .gear
                 .ammo
@@ -630,7 +628,7 @@ fn dist_at_hp<'a>(
         return;
     }
 
-    if player.combat_type() == CombatType::Ranged
+    if player.is_using_ranged()
         && player.is_using_crossbow()
         && player.is_wearing_any(vec!["Ruby bolts (e)", "Ruby dragon bolts (e)"])
         && monster.live_stats.hitpoints >= 500
@@ -681,7 +679,7 @@ mod tests {
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let monster = Monster::new("Ammonite Crab").unwrap();
+        let monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
 
         let dist = get_distribution(&player, &monster);
@@ -714,7 +712,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Pummel);
 
-        let monster = Monster::new("Vet'ion (Normal)").unwrap();
+        let monster = Monster::new("Vet'ion", Some("Normal")).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
@@ -746,7 +744,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
 
-        let monster = Monster::new("Vardorvis (Post-Quest)").unwrap();
+        let monster = Monster::new("Vardorvis", Some("Post-Quest")).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
@@ -779,7 +777,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
 
-        let mut monster = Monster::new("Zebak").unwrap();
+        let mut monster = Monster::new("Zebak", None).unwrap();
         monster.info.toa_level = 500;
         monster.scale_toa();
         calc_player_ranged_rolls(&mut player, &monster);

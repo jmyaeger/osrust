@@ -31,15 +31,18 @@ pub enum GearSlot {
     Cape,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, serde::Deserialize)]
 pub enum CombatType {
     None,
     Stab,
     Slash,
     #[default]
     Crush,
-    Ranged,
+    Light,
+    Standard,
+    Heavy,
     Magic,
+    Ranged,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone)]
@@ -104,7 +107,7 @@ pub struct CombatOption {
     pub stance: CombatStance,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Clone, serde::Deserialize)]
 pub struct StyleBonus {
     pub stab: i32,
     pub slash: i32,
@@ -804,25 +807,71 @@ impl Weapon {
                     },
                 ),
             ]),
-            "Bow" | "Crossbow" | "Thrown" => HashMap::from([
+            "Bow" => HashMap::from([
                 (
                     CombatStyle::Accurate,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Standard,
                         stance: CombatStance::Accurate,
                     },
                 ),
                 (
                     CombatStyle::Rapid,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Standard,
                         stance: CombatStance::Rapid,
                     },
                 ),
                 (
                     CombatStyle::Longrange,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Standard,
+                        stance: CombatStance::Longrange,
+                    },
+                ),
+            ]),
+            "Crossbow" => HashMap::from([
+                (
+                    CombatStyle::Accurate,
+                    CombatOption {
+                        combat_type: CombatType::Heavy,
+                        stance: CombatStance::Accurate,
+                    },
+                ),
+                (
+                    CombatStyle::Rapid,
+                    CombatOption {
+                        combat_type: CombatType::Heavy,
+                        stance: CombatStance::Rapid,
+                    },
+                ),
+                (
+                    CombatStyle::Longrange,
+                    CombatOption {
+                        combat_type: CombatType::Heavy,
+                        stance: CombatStance::Longrange,
+                    },
+                ),
+            ]),
+            "Thrown" => HashMap::from([
+                (
+                    CombatStyle::Accurate,
+                    CombatOption {
+                        combat_type: CombatType::Light,
+                        stance: CombatStance::Accurate,
+                    },
+                ),
+                (
+                    CombatStyle::Rapid,
+                    CombatOption {
+                        combat_type: CombatType::Light,
+                        stance: CombatStance::Rapid,
+                    },
+                ),
+                (
+                    CombatStyle::Longrange,
+                    CombatOption {
+                        combat_type: CombatType::Light,
                         stance: CombatStance::Longrange,
                     },
                 ),
@@ -831,21 +880,21 @@ impl Weapon {
                 (
                     CombatStyle::ShortFuse,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Light,
                         stance: CombatStance::ShortFuse,
                     },
                 ),
                 (
                     CombatStyle::MediumFuse,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Light,
                         stance: CombatStance::MediumFuse,
                     },
                 ),
                 (
                     CombatStyle::LongFuse,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Light,
                         stance: CombatStance::LongFuse,
                     },
                 ),
@@ -951,7 +1000,7 @@ impl Weapon {
                 (
                     CombatStyle::Flare,
                     CombatOption {
-                        combat_type: CombatType::Ranged,
+                        combat_type: CombatType::Standard,
                         stance: CombatStance::Accurate,
                     },
                 ),

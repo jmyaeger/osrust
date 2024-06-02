@@ -26,8 +26,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::Seren {}));
     }
 
-    if monster.info.name.as_str() == "Kraken (Kraken)" && player.combat_type() == CombatType::Ranged
-    {
+    if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
         return Some(Box::new(limiters::Kraken {}));
     }
 
@@ -48,8 +47,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
             || monster.info.name.contains("Great Olm (Head")
                 && player.combat_type() == CombatType::Magic)
         || (monster.info.name.contains("(Right claw")
-            || monster.info.name.contains("(Left claw")
-                && player.combat_type() == CombatType::Ranged)
+            || monster.info.name.contains("(Left claw") && player.is_using_ranged())
         || (monster.info.name.contains("Ice demon")
             && !player.is_using_fire_spell()
             && player.attrs.spell != Some(Spell::Standard(StandardSpell::FlamesOfZamorak)))
@@ -61,7 +59,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             return Some(Box::new(limiters::ZogreCrumbleUndead {}));
-        } else if player.combat_type() != CombatType::Ranged
+        } else if !player.is_using_ranged()
             || !player
                 .gear
                 .ammo
@@ -144,7 +142,7 @@ mod tests {
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let mut monster = Monster::new("Ammonite Crab").unwrap();
+        let mut monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let (ttk, accuracy, all_hits) = simulate_n_fights(&mut player, &mut monster, 100000);
 

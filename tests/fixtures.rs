@@ -8,157 +8,161 @@ use rstest::fixture;
 
 #[fixture]
 pub fn vorkath() -> Monster {
-    Monster::new("Vorkath").unwrap()
+    Monster::new("Vorkath", Some("Post-quest")).unwrap()
 }
 
 #[fixture]
 pub fn kril() -> Monster {
-    Monster::new("K'ril Tsutsaroth").unwrap()
+    Monster::new("K'ril Tsutsaroth", None).unwrap()
 }
 
 #[fixture]
 pub fn kalphite() -> Monster {
-    Monster::new("Kalphite Soldier").unwrap()
+    Monster::new("Kalphite Soldier", Some("Kalphite Lair")).unwrap()
 }
 
 #[fixture]
 pub fn ammonite_crab() -> Monster {
-    Monster::new("Ammonite Crab").unwrap()
+    Monster::new("Ammonite Crab", None).unwrap()
 }
 
 #[fixture]
 pub fn vetion() -> Monster {
-    Monster::new("Vet'ion (Normal)").unwrap()
+    Monster::new("Vet'ion", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn spindel() -> Monster {
-    Monster::new("Spindel").unwrap()
+    Monster::new("Spindel", None).unwrap()
 }
 
 #[fixture]
 pub fn duke() -> Monster {
-    Monster::new("Duke Sucellus (Awake)").unwrap()
+    Monster::new("Duke Sucellus", Some("Awake")).unwrap()
 }
 
 #[fixture]
 pub fn kurask() -> Monster {
-    Monster::new("Kurask (Normal)").unwrap()
+    Monster::new("Kurask", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn scurrius() -> Monster {
-    Monster::new("Scurrius (Solo)").unwrap()
+    Monster::new("Scurrius", Some("Solo")).unwrap()
 }
 
 #[fixture]
 pub fn revenant_dragon() -> Monster {
-    Monster::new("Revenant dragon").unwrap()
+    Monster::new("Revenant dragon", None).unwrap()
 }
 
 #[fixture]
 pub fn zebak() -> Monster {
-    Monster::new("Zebak").unwrap()
+    Monster::new("Zebak", None).unwrap()
 }
 
 #[fixture]
 pub fn chaos_golem() -> Monster {
-    Monster::new("Chaos Golem").unwrap()
+    Monster::new("Chaos Golem", None).unwrap()
 }
 
 #[fixture]
 pub fn aberrant_spectre() -> Monster {
-    Monster::new("Aberrant spectre").unwrap()
+    Monster::new("Aberrant spectre", None).unwrap()
 }
 
 #[fixture]
 pub fn abhorrent_spectre() -> Monster {
-    Monster::new("Abhorrent spectre").unwrap()
+    Monster::new("Abhorrent spectre", None).unwrap()
 }
 
 #[fixture]
 pub fn general_graardor() -> Monster {
-    Monster::new("General Graardor").unwrap()
+    Monster::new("General Graardor", None).unwrap()
 }
 
 #[fixture]
 pub fn rune_dragon() -> Monster {
-    Monster::new("Rune dragon").unwrap()
+    Monster::new("Rune dragon", None).unwrap()
 }
 
 #[fixture]
 pub fn bloat() -> Monster {
-    Monster::new("Pestilent Bloat (Normal)").unwrap()
+    Monster::new("Pestilent Bloat", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn count_draynor() -> Monster {
-    Monster::new("Count Draynor (Hard)").unwrap()
+    Monster::new("Count Draynor", Some("Hard")).unwrap()
 }
 
 #[fixture]
 pub fn vampyre_juvinate() -> Monster {
-    Monster::new("Vampyre Juvinate (Level 50)").unwrap()
+    Monster::new("Vampyre Juvinate", Some("Level 50")).unwrap()
 }
 
 #[fixture]
 pub fn vanstrom_klause() -> Monster {
-    Monster::new("Vanstrom Klause").unwrap()
+    Monster::new("Vanstrom Klause", None).unwrap()
 }
 
 #[fixture]
 pub fn zilyana() -> Monster {
-    Monster::new("Commander Zilyana").unwrap()
+    Monster::new("Commander Zilyana", None).unwrap()
 }
 
 #[fixture]
 pub fn shaman_cox() -> Monster {
-    Monster::new("Lizardman shaman (Chambers of Xeric) (Normal)").unwrap()
+    Monster::new("Lizardman shaman (Chambers of Xeric)", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn abyssal_portal() -> Monster {
-    Monster::new("Abyssal portal (Normal)").unwrap()
+    Monster::new("Abyssal portal", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn skeletal_mystic() -> Monster {
-    Monster::new("Skeletal Mystic (Normal)").unwrap()
+    Monster::new("Skeletal Mystic", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn olm_head() -> Monster {
-    Monster::new("Great Olm (Head)").unwrap()
+    Monster::new("Great Olm", Some("Head")).unwrap()
 }
 
 #[fixture]
 pub fn olm_head_cm() -> Monster {
-    Monster::new("Great Olm (Head (Challenge Mode))").unwrap()
+    Monster::new("Great Olm", Some("Head (Challenge Mode)")).unwrap()
 }
 
 #[fixture]
 pub fn shaman_cox_cm() -> Monster {
-    Monster::new("Lizardman shaman (Chambers of Xeric) (Challenge Mode)").unwrap()
+    Monster::new(
+        "Lizardman shaman (Chambers of Xeric)",
+        Some("Challenge Mode"),
+    )
+    .unwrap()
 }
 
 #[fixture]
 pub fn skeletal_mystic_cm() -> Monster {
-    Monster::new("Skeletal Mystic (Challenge Mode)").unwrap()
+    Monster::new("Skeletal Mystic", Some("Challenge Mode")).unwrap()
 }
 
 #[fixture]
 pub fn wardens_p3() -> Monster {
-    Monster::new("Elidinis' Warden (P3)").unwrap()
+    Monster::new("Elidinis' Warden", Some("Damaged")).unwrap()
 }
 
 #[fixture]
 pub fn vardorvis() -> Monster {
-    Monster::new("Vardorvis (Post-Quest)").unwrap()
+    Monster::new("Vardorvis", Some("Post-Quest")).unwrap()
 }
 
 #[fixture]
 pub fn kephri_400() -> Monster {
-    let mut monster = Monster::new("Kephri (Shield up)").unwrap();
+    let mut monster = Monster::new("Kephri", Some("Shield up")).unwrap();
     monster.info.toa_level = 400;
     monster.scale_toa();
     monster
@@ -166,72 +170,72 @@ pub fn kephri_400() -> Monster {
 
 #[fixture]
 pub fn urium_shade() -> Monster {
-    Monster::new("Urium Shade (Shade)").unwrap()
+    Monster::new("Urium Shade", Some("Shade")).unwrap()
 }
 
 #[fixture]
 pub fn kalphite_queen_p1() -> Monster {
-    Monster::new("Kalphite Queen (Crawling)").unwrap()
+    Monster::new("Kalphite Queen", Some("Crawling")).unwrap()
 }
 
 #[fixture]
 pub fn zulrah_tanzanite() -> Monster {
-    Monster::new("Zulrah (Tanzanite)").unwrap()
+    Monster::new("Zulrah", Some("Tanzanite")).unwrap()
 }
 
 #[fixture]
 pub fn zulrah_magma() -> Monster {
-    Monster::new("Zulrah (Magma)").unwrap()
+    Monster::new("Zulrah", Some("Magma")).unwrap()
 }
 
 #[fixture]
 pub fn seren() -> Monster {
-    Monster::new("Fragment of Seren").unwrap()
+    Monster::new("Fragment of Seren", None).unwrap()
 }
 
 #[fixture]
 pub fn kraken() -> Monster {
-    Monster::new("Kraken (Kraken)").unwrap()
+    Monster::new("Kraken", Some("Kraken")).unwrap()
 }
 
 #[fixture]
 pub fn verzik_p1() -> Monster {
-    Monster::new("Verzik Vitur (Normal P1)").unwrap()
+    Monster::new("Verzik Vitur", Some("Normal mode, phase 1")).unwrap()
 }
 
 #[fixture]
 pub fn tekton() -> Monster {
-    Monster::new("Tekton (Normal)").unwrap()
+    Monster::new("Tekton", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn vasa_crystal() -> Monster {
-    Monster::new("Glowing crystal (Normal)").unwrap()
+    Monster::new("Glowing crystal", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn olm_melee_hand() -> Monster {
-    Monster::new("Great Olm (Left claw)").unwrap()
+    Monster::new("Great Olm", Some("Left claw")).unwrap()
 }
 
 #[fixture]
 pub fn olm_mage_hand() -> Monster {
-    Monster::new("Great Olm (Right claw)").unwrap()
+    Monster::new("Great Olm", Some("Right claw")).unwrap()
 }
 
 #[fixture]
 pub fn ice_demon() -> Monster {
-    Monster::new("Ice demon (Normal)").unwrap()
+    Monster::new("Ice demon", Some("Normal")).unwrap()
 }
 
 #[fixture]
 pub fn slagilith() -> Monster {
-    Monster::new("Slagilith (Hard)").unwrap()
+    Monster::new("Slagilith", Some("Hard")).unwrap()
 }
 
 #[fixture]
 pub fn zogre() -> Monster {
-    Monster::new("Zogre").unwrap()
+    Monster::new("Zogre", None).unwrap()
 }
 
 #[fixture]

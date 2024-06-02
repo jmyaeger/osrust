@@ -1,19 +1,25 @@
 use lazy_static::lazy_static;
 
-use crate::equipment::{CombatType, StyleBonus};
+use crate::equipment::CombatType;
+use crate::monster_json::ElementalWeakness;
 use crate::player::Player;
-use crate::rolls::monster_def_rolls;
 use crate::{constants::*, rolls};
-use rusqlite::{Connection, Result, Row};
+use rusqlite::Result;
+use serde::Deserialize;
+use serde_json::Value;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
-use strum::IntoEnumIterator;
 
 lazy_static! {
     static ref MONSTER_DB: PathBuf =
         fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
+}
+lazy_static! {
+    static ref MONSTER_JSON: PathBuf =
+        fs::canonicalize("src/databases/monsters.json").expect("Failed to get database path");
 }
 
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
@@ -34,7 +40,7 @@ pub enum Attribute {
     Xerician,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Deserialize)]
 pub struct MonsterStats {
     pub hitpoints: u32,
     pub attack: u32,
@@ -57,61 +63,143 @@ impl Default for MonsterStats {
     }
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
 pub struct AttackBonus {
     pub melee: i32,
     pub ranged: i32,
     pub magic: i32,
 }
 
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
+pub struct MonsterDefBonuses {
+    pub stab: i32,
+    pub slash: i32,
+    pub crush: i32,
+    pub light: i32,
+    pub standard: i32,
+    pub heavy: i32,
+    pub magic: i32,
+}
+
 type MonsterStrengthBonus = AttackBonus;
 
-#[derive(Debug, PartialEq, Default, Clone)]
+#[derive(Debug, PartialEq, Default, Clone, Deserialize)]
 pub struct MonsterBonuses {
     pub attack: AttackBonus,
     pub strength: MonsterStrengthBonus,
-    pub defence: StyleBonus,
+    pub defence: MonsterDefBonuses,
+    #[serde(default)]
     pub flat_armour: u32,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
 pub struct Immunities {
     pub poison: bool,
     pub venom: bool,
+    #[serde(default)]
     pub cannon: bool,
+    #[serde(default)]
     pub thrall: bool,
-    pub freeze: u8,
+    pub freeze: u32,
+    #[serde(default)]
     pub melee: bool,
+    #[serde(default)]
     pub ranged: bool,
+    #[serde(default)]
     pub magic: bool,
 }
 
-#[derive(Debug, PartialEq, Default, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
+pub struct MonsterMaxHit {
+    pub value: u32,
+    pub style: String,
+}
+
+#[derive(Debug, PartialEq, Default, Clone, Deserialize)]
 pub struct MonsterInfo {
+    pub id: Option<i32>,
     pub name: String,
     pub version: Option<String>,
-    pub combat_level: u16,
-    pub size: u8,
-    pub xpbonus: f32,
-    pub slayer_xp: f32,
+    pub combat_level: u32,
+    pub size: u32,
+    #[serde(deserialize_with = "deserialize_attributes")]
     pub attributes: Option<Vec<Attribute>>,
+    #[serde(deserialize_with = "deserialize_max_hits")]
+    pub max_hit: Option<Vec<MonsterMaxHit>>,
+    pub attack_styles: Option<Vec<String>>,
+    pub weakness: Option<ElementalWeakness>,
     pub attack_speed: u8,
-    pub aggressive: bool,
-    pub poisonous: bool,
+    #[serde(default)]
     pub poison_severity: u8,
+    #[serde(default)]
     pub freeze_duration: u8,
+    #[serde(default)]
     pub toa_level: u32,
+    #[serde(default)]
     pub toa_path_level: u32,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+fn deserialize_attributes<'de, D>(deserializer: D) -> Result<Option<Vec<Attribute>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let attributes: Option<Vec<String>> = Option::deserialize(deserializer)?;
+    let parsed_attributes = attributes.map(|attrs| {
+        attrs
+            .into_iter()
+            .map(|attr| match attr.as_str() {
+                "demon" => Attribute::Demon,
+                "dragon" => Attribute::Draconic,
+                "fiery" => Attribute::Fiery,
+                "golem" => Attribute::Golem,
+                "icy" => Attribute::Icy,
+                "kalphite" => Attribute::Kalphite,
+                "leafy" => Attribute::Leafy,
+                "penance" => Attribute::Penance,
+                "rat" => Attribute::Rat,
+                "shade" => Attribute::Shade,
+                "spectral" => Attribute::Spectral,
+                "undead" => Attribute::Undead,
+                "vampyre1" => Attribute::Vampyre(1),
+                "vampyre2" => Attribute::Vampyre(2),
+                "vampyre3" => Attribute::Vampyre(3),
+                "xerician" => Attribute::Xerician,
+                _ => panic!("Unknown attribute: {}", attr),
+            })
+            .collect()
+    });
+    Ok(parsed_attributes)
+}
+
+fn deserialize_max_hits<'de, D>(deserializer: D) -> Result<Option<Vec<MonsterMaxHit>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let max_hits: Option<Vec<String>> = Option::deserialize(deserializer)?;
+    let parsed_max_hits = max_hits.map(|hits| {
+        hits.into_iter()
+            .map(|hit| {
+                let mut parts = hit.split('(');
+                let value = parts.next().unwrap().parse().unwrap_or_default();
+                let style = parts.next().unwrap_or_default().to_string();
+                MonsterMaxHit { value, style }
+            })
+            .collect()
+    });
+    Ok(parsed_max_hits)
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Monster {
     pub info: MonsterInfo,
     pub stats: MonsterStats,
+    #[serde(default)]
     pub live_stats: MonsterStats,
     pub bonuses: MonsterBonuses,
     pub immunities: Immunities,
+    #[serde(skip)]
     pub def_rolls: HashMap<CombatType, i32>,
+    #[serde(skip)]
     pub base_def_rolls: HashMap<CombatType, i32>,
 }
 
@@ -121,7 +209,9 @@ impl Default for Monster {
         def_rolls.insert(CombatType::Stab, 0);
         def_rolls.insert(CombatType::Slash, 0);
         def_rolls.insert(CombatType::Crush, 0);
-        def_rolls.insert(CombatType::Ranged, 0);
+        def_rolls.insert(CombatType::Light, 0);
+        def_rolls.insert(CombatType::Standard, 0);
+        def_rolls.insert(CombatType::Heavy, 0);
         def_rolls.insert(CombatType::Magic, 0);
 
         Self {
@@ -137,82 +227,126 @@ impl Default for Monster {
 }
 
 impl Monster {
-    pub fn new(name: &str) -> Result<Self> {
-        let mut monster = Self::default();
-        monster.set_info(name)?;
-        Ok(monster)
-    }
+    // pub fn new(name: &str) -> Result<Self> {
+    //     let mut monster = Self::default();
+    //     monster.set_info(name)?;
+    //     Ok(monster)
+    // }
 
-    pub fn set_info(&mut self, name: &str) -> Result<()> {
-        let conn = Connection::open(MONSTER_DB.as_path())?;
-        let mut stmt = conn.prepare("SELECT * FROM monsters WHERE name = ?")?;
-        let mut rows = stmt.query([&name])?;
-        if let Some(row) = rows.next()? {
-            self.set_fields_from_row(row)?;
-            Ok(())
-        } else {
-            Err(rusqlite::Error::QueryReturnedNoRows)
+    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, String> {
+        let mut file = match fs::File::open(MONSTER_JSON.as_path()) {
+            Ok(file) => file,
+            Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
+        };
+        let mut contents = String::new();
+        if let Err(err) = file.read_to_string(&mut contents) {
+            return Err(format!("Failed to read JSON file: {}", err));
         }
-    }
 
-    pub fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
-        self.info.name = row.get::<_, Option<String>>("name")?.unwrap_or_default();
-        self.info.version = row.get::<_, Option<String>>("version")?;
-        self.info.combat_level = row.get::<_, Option<u16>>("combat")?.unwrap_or_default();
-        self.info.size = row.get::<_, Option<u8>>("size")?.unwrap_or_default();
-        self.info.xpbonus = row.get::<_, Option<f32>>("xpbonus")?.unwrap_or_default();
-        self.info.slayer_xp = row.get::<_, Option<f32>>("slayxp")?.unwrap_or_default();
-        let attributes = row.get::<_, Option<String>>("attributes")?;
-        if let Some(attributes) = attributes {
-            self.info.attributes = Some(parse_attributes(attributes.split(',').collect()));
+        let json: Value = match serde_json::from_str(&contents) {
+            Ok(json) => json,
+            Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
+        };
+
+        let monster = match json.as_array() {
+            Some(array) => array
+                .iter()
+                .find(|entry| {
+                    entry["info"]["name"].as_str() == Some(name)
+                        && entry["info"]["version"].as_str() == version
+                })
+                .cloned(),
+            None => return Err("Invalid JSON structure".to_string()),
+        };
+
+        let mut monster_struct: Monster = match monster {
+            Some(entry) => match serde_json::from_value(entry) {
+                Ok(monster) => Ok(monster),
+                Err(err) => Err(format!("Failed to deserialize monster: {}", err)),
+            },
+            None => Err(format!(
+                "Monster not found: {} (version: {:?})",
+                name, version
+            )),
         }
-        self.info.attack_speed = row
-            .get::<_, Option<u8>>("attack_speed")?
-            .unwrap_or_default();
-        self.info.aggressive = row
-            .get::<_, Option<bool>>("aggressive")?
-            .unwrap_or_default();
-        self.info.poisonous = row.get::<_, Option<bool>>("poisonous")?.unwrap_or_default();
-        self.stats.attack = row.get::<_, Option<u32>>("attack")?.unwrap_or_default();
-        self.stats.strength = row.get::<_, Option<u32>>("strength")?.unwrap_or_default();
-        self.stats.defence = row.get::<_, Option<u32>>("defence")?.unwrap_or_default();
-        self.stats.ranged = row.get::<_, Option<u32>>("ranged")?.unwrap_or_default();
-        self.stats.magic = row.get::<_, Option<u32>>("magic")?.unwrap_or_default();
-        self.stats.hitpoints = row.get::<_, Option<u32>>("hitpoints")?.unwrap_or_default();
-        self.live_stats = self.stats;
-        self.bonuses.attack.melee = row.get::<_, Option<i32>>("attbns")?.unwrap_or_default();
-        self.bonuses.attack.ranged = row.get::<_, Option<i32>>("arange")?.unwrap_or_default();
-        self.bonuses.attack.magic = row.get::<_, Option<i32>>("amagic")?.unwrap_or_default();
-        self.bonuses.strength.melee = row.get::<_, Option<i32>>("strbns")?.unwrap_or_default();
-        self.bonuses.strength.ranged = row.get::<_, Option<i32>>("rngbns")?.unwrap_or_default();
-        self.bonuses.strength.magic = row.get::<_, Option<i32>>("mbns")?.unwrap_or_default();
-        self.bonuses.defence.stab = row.get::<_, Option<i32>>("dstab")?.unwrap_or_default();
-        self.bonuses.defence.slash = row.get::<_, Option<i32>>("dslash")?.unwrap_or_default();
-        self.bonuses.defence.crush = row.get::<_, Option<i32>>("dcrush")?.unwrap_or_default();
-        self.bonuses.defence.ranged = row.get::<_, Option<i32>>("drange")?.unwrap_or_default();
-        self.bonuses.defence.magic = row.get::<_, Option<i32>>("dmagic")?.unwrap_or_default();
-        self.bonuses.flat_armour = row.get::<_, Option<u32>>("armour")?.unwrap_or_default();
-        self.immunities.poison = row
-            .get::<_, Option<bool>>("immunepoison")?
-            .unwrap_or_default();
-        self.immunities.venom = row
-            .get::<_, Option<bool>>("immunevenom")?
-            .unwrap_or_default();
-        self.immunities.cannon = row
-            .get::<_, Option<bool>>("immunecannon")?
-            .unwrap_or_default();
-        self.immunities.thrall = row
-            .get::<_, Option<bool>>("immunethrall")?
-            .unwrap_or_default();
-        self.immunities.freeze = row
-            .get::<_, Option<u8>>("freezeresistance")?
-            .unwrap_or_default();
+        .expect("Failed to deserialize monster");
+        monster_struct.live_stats = monster_struct.stats;
+        monster_struct.base_def_rolls = rolls::monster_def_rolls(&monster_struct);
+        monster_struct.def_rolls = monster_struct.base_def_rolls.clone();
 
-        self.base_def_rolls = monster_def_rolls(self);
-        self.def_rolls = self.base_def_rolls.clone();
-
-        Ok(())
+        Ok(monster_struct)
     }
+
+    // pub fn set_info(&mut self, name: &str) -> Result<()> {
+    //     let conn = Connection::open(MONSTER_DB.as_path())?;
+    //     let mut stmt = conn.prepare("SELECT * FROM monsters WHERE name = ?")?;
+    //     let mut rows = stmt.query([&name])?;
+    //     if let Some(row) = rows.next()? {
+    //         self.set_fields_from_row(row)?;
+    //         Ok(())
+    //     } else {
+    //         Err(rusqlite::Error::QueryReturnedNoRows)
+    //     }
+    // }
+
+    // pub fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
+    //     self.info.name = row.get::<_, Option<String>>("name")?.unwrap_or_default();
+    //     self.info.version = row.get::<_, Option<String>>("version")?;
+    //     self.info.combat_level = row.get::<_, Option<u16>>("combat")?.unwrap_or_default();
+    //     self.info.size = row.get::<_, Option<u8>>("size")?.unwrap_or_default();
+    //     self.info.xpbonus = row.get::<_, Option<f32>>("xpbonus")?.unwrap_or_default();
+    //     self.info.slayer_xp = row.get::<_, Option<f32>>("slayxp")?.unwrap_or_default();
+    //     let attributes = row.get::<_, Option<String>>("attributes")?;
+    //     if let Some(attributes) = attributes {
+    //         self.info.attributes = Some(parse_attributes(attributes.split(',').collect()));
+    //     }
+    //     self.info.attack_speed = row
+    //         .get::<_, Option<u8>>("attack_speed")?
+    //         .unwrap_or_default();
+    //     self.info.aggressive = row
+    //         .get::<_, Option<bool>>("aggressive")?
+    //         .unwrap_or_default();
+    //     self.info.poisonous = row.get::<_, Option<bool>>("poisonous")?.unwrap_or_default();
+    //     self.stats.attack = row.get::<_, Option<u32>>("attack")?.unwrap_or_default();
+    //     self.stats.strength = row.get::<_, Option<u32>>("strength")?.unwrap_or_default();
+    //     self.stats.defence = row.get::<_, Option<u32>>("defence")?.unwrap_or_default();
+    //     self.stats.ranged = row.get::<_, Option<u32>>("ranged")?.unwrap_or_default();
+    //     self.stats.magic = row.get::<_, Option<u32>>("magic")?.unwrap_or_default();
+    //     self.stats.hitpoints = row.get::<_, Option<u32>>("hitpoints")?.unwrap_or_default();
+    //     self.live_stats = self.stats;
+    //     self.bonuses.attack.melee = row.get::<_, Option<i32>>("attbns")?.unwrap_or_default();
+    //     self.bonuses.attack.ranged = row.get::<_, Option<i32>>("arange")?.unwrap_or_default();
+    //     self.bonuses.attack.magic = row.get::<_, Option<i32>>("amagic")?.unwrap_or_default();
+    //     self.bonuses.strength.melee = row.get::<_, Option<i32>>("strbns")?.unwrap_or_default();
+    //     self.bonuses.strength.ranged = row.get::<_, Option<i32>>("rngbns")?.unwrap_or_default();
+    //     self.bonuses.strength.magic = row.get::<_, Option<i32>>("mbns")?.unwrap_or_default();
+    //     self.bonuses.defence.stab = row.get::<_, Option<i32>>("dstab")?.unwrap_or_default();
+    //     self.bonuses.defence.slash = row.get::<_, Option<i32>>("dslash")?.unwrap_or_default();
+    //     self.bonuses.defence.crush = row.get::<_, Option<i32>>("dcrush")?.unwrap_or_default();
+    //     self.bonuses.defence.ranged = row.get::<_, Option<i32>>("drange")?.unwrap_or_default();
+    //     self.bonuses.defence.magic = row.get::<_, Option<i32>>("dmagic")?.unwrap_or_default();
+    //     self.bonuses.flat_armour = row.get::<_, Option<u32>>("armour")?.unwrap_or_default();
+    //     self.immunities.poison = row
+    //         .get::<_, Option<bool>>("immunepoison")?
+    //         .unwrap_or_default();
+    //     self.immunities.venom = row
+    //         .get::<_, Option<bool>>("immunevenom")?
+    //         .unwrap_or_default();
+    //     self.immunities.cannon = row
+    //         .get::<_, Option<bool>>("immunecannon")?
+    //         .unwrap_or_default();
+    //     self.immunities.thrall = row
+    //         .get::<_, Option<bool>>("immunethrall")?
+    //         .unwrap_or_default();
+    //     self.immunities.freeze = row
+    //         .get::<_, Option<u8>>("freezeresistance")?
+    //         .unwrap_or_default();
+
+    //     self.base_def_rolls = monster_def_rolls(self);
+    //     self.def_rolls = self.base_def_rolls.clone();
+
+    //     Ok(())
+    // }
 
     pub fn scale_toa(&mut self) {
         if TOA_MONSTERS.contains(&self.info.name.as_str()) {
@@ -245,10 +379,15 @@ impl Monster {
 
     fn scale_toa_defence(&mut self) {
         let toa_level_bonus = 1000 + self.info.toa_level * 4;
-        for defence_type in CombatType::iter() {
-            if defence_type == CombatType::None {
-                continue;
-            }
+        for defence_type in [
+            CombatType::Stab,
+            CombatType::Slash,
+            CombatType::Crush,
+            CombatType::Light,
+            CombatType::Standard,
+            CombatType::Heavy,
+            CombatType::Magic,
+        ] {
             self.def_rolls.insert(
                 defence_type,
                 self.base_def_rolls[&defence_type] * toa_level_bonus as i32 / 1000,
@@ -424,8 +563,7 @@ impl Monster {
             return true;
         }
 
-        if IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.name.as_str())
-            && combat_type == &CombatType::Ranged
+        if IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.name.as_str()) && player.is_using_ranged()
         {
             return true;
         }
@@ -460,14 +598,14 @@ impl Monster {
         }
 
         if self.info.name.as_str() == "Fire Warrior of Lesarkus"
-            && (player.combat_type() != CombatType::Ranged || !player.is_wearing("Ice arrows"))
+            && (!player.is_using_ranged() || !player.is_wearing("Ice arrows"))
         {
             return true;
         }
 
         if self.info.name.contains("Fareed")
             && (!player.is_using_water_spell()
-                || (player.combat_type() == CombatType::Ranged
+                || (player.is_using_ranged()
                     && !player
                         .gear
                         .ammo
@@ -491,46 +629,20 @@ fn round_toa_hp(hp: u32) -> u32 {
     }
 }
 
-fn parse_attributes(attributes: Vec<&str>) -> Vec<Attribute> {
-    let mut attr_vec = Vec::new();
-    for attribute in &attributes {
-        match attribute.to_lowercase().as_str() {
-            "demon" => attr_vec.push(Attribute::Demon),
-            "dragon" | "draconic" => attr_vec.push(Attribute::Draconic),
-            "fiery" => attr_vec.push(Attribute::Fiery),
-            "golem" => attr_vec.push(Attribute::Golem),
-            "icy" => attr_vec.push(Attribute::Icy),
-            "kalphite" => attr_vec.push(Attribute::Kalphite),
-            "leafy" => attr_vec.push(Attribute::Leafy),
-            "penance" => attr_vec.push(Attribute::Penance),
-            "rat" => attr_vec.push(Attribute::Rat),
-            "shade" => attr_vec.push(Attribute::Shade),
-            "spectral" => attr_vec.push(Attribute::Spectral),
-            "undead" => attr_vec.push(Attribute::Undead),
-            "vampyre1" => attr_vec.push(Attribute::Vampyre(1)),
-            "vampyre2" => attr_vec.push(Attribute::Vampyre(2)),
-            "vampyre3" => attr_vec.push(Attribute::Vampyre(3)),
-            "xerician" => attr_vec.push(Attribute::Xerician),
-            _ => {}
-        }
-    }
-    attr_vec
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_set_info() {
-        let vorkath = Monster::new("Vorkath").unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         assert_eq!(vorkath.info.name, "Vorkath".to_string());
         assert_eq!(vorkath.info.combat_level, 732)
     }
 
     #[test]
     fn test_toa_scaling() {
-        let mut baba = Monster::new("Ba-Ba").unwrap();
+        let mut baba = Monster::new("Ba-Ba", None).unwrap();
         baba.info.toa_level = 400;
         baba.scale_toa();
         assert_eq!(baba.stats.hitpoints, 990);
@@ -539,37 +651,37 @@ mod tests {
 
     #[test]
     fn test_is_dragon() {
-        let vorkath = Monster::new("Vorkath").unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         assert!(vorkath.is_dragon());
     }
 
     #[test]
     fn test_is_demon() {
-        let kril = Monster::new("K'ril Tsutsaroth").unwrap();
+        let kril = Monster::new("K'ril Tsutsaroth", None).unwrap();
         assert!(kril.is_demon());
     }
 
     #[test]
     fn test_is_undead() {
-        let vorkath = Monster::new("Vorkath").unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         assert!(vorkath.is_undead());
     }
 
     #[test]
     fn test_is_in_wilderness() {
-        let spindel = Monster::new("Spindel").unwrap();
+        let spindel = Monster::new("Spindel", None).unwrap();
         assert!(spindel.is_in_wilderness());
     }
 
     #[test]
     fn test_is_revenant() {
-        let revenant = Monster::new("Revenant demon").unwrap();
+        let revenant = Monster::new("Revenant demon", None).unwrap();
         assert!(revenant.is_revenant());
     }
 
     #[test]
     fn test_tbow_olm() {
-        let olm = Monster::new("Great Olm (Head)").unwrap();
+        let olm = Monster::new("Great Olm", Some("Head")).unwrap();
         let (tbow_acc_bonus, tbow_dmg_bonus) = olm.tbow_bonuses();
         assert_eq!(tbow_acc_bonus, 140);
         assert_eq!(tbow_dmg_bonus, 215);

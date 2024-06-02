@@ -21,7 +21,7 @@ const REQUIRED_PRINTOUTS: [&str; 36] = [
     "Crush defence bonus",
     "Defence level",
     "Hitpoints",
-    "Image",
+    "Freeze resistance",
     "Immune to poison",
     "Immune to venom",
     "Magic Damage bonus",
@@ -63,48 +63,63 @@ struct Query {
     results: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-struct ElementalWeakness {
+#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+pub struct ElementalWeakness {
     element: String,
     severity: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Monster {
+    info: MonsterInfo,
+    stats: Stats,
+    bonuses: Bonuses,
+    immunities: Immunities,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct MonsterInfo {
     id: Option<i64>,
     name: String,
-    version: String,
-    image: String,
-    level: i64,
-    speed: i64,
-    style: Option<Vec<String>>,
+    version: Option<String>,
+    combat_level: i64,
+    attack_speed: i64,
+    attack_styles: Option<Vec<String>>,
     size: i64,
-    max_hit: i64,
-    skills: Skills,
-    offensive: Offensive,
-    defensive: Defensive,
-    attributes: Vec<String>,
+    max_hit: Option<Vec<String>>,
+    attributes: Option<Vec<String>>,
     weakness: Option<ElementalWeakness>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-struct Skills {
-    atk: i64,
-    def: i64,
-    hp: i64,
+struct Bonuses {
+    attack: Offensive,
+    defence: Defensive,
+    strength: Strength,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Immunities {
+    poison: bool,
+    venom: bool,
+    freeze: i64,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Stats {
+    attack: i64,
+    defence: i64,
+    hitpoints: i64,
     magic: i64,
     ranged: i64,
-    str: i64,
+    strength: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Offensive {
-    atk: i64,
-    magic: i64,
-    magic_str: i64,
+    melee: i64,
     ranged: i64,
-    ranged_str: i64,
-    str: i64,
+    magic: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -116,6 +131,13 @@ struct Defensive {
     light: i64,
     slash: i64,
     stab: i64,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Strength {
+    melee: i64,
+    ranged: i64,
+    magic: i64,
 }
 
 async fn get_monster_data() -> Result<serde_json::Value, Box<dyn std::error::Error>> {
@@ -221,7 +243,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let po = v.get("printouts").unwrap();
 
-        let version = k.split('#').nth(1).unwrap_or("").to_string();
+        let version = k.split('#').nth(1).map(|v| v.to_string());
 
         // if version.contains("Challenge Mode") {
         //     println!("{} is a CoX CM variant - skipping.", k);
@@ -257,126 +279,164 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         });
 
-        let monster = Monster {
-            id: get_printout_value(&po.get("NPC ID").cloned(), false).and_then(|id| id.as_i64()),
-            name: k.split('#').next().unwrap_or("").to_string(),
-            version,
-            image: get_printout_value(&po.get("Image").cloned(), false).map_or_else(
-                || "".to_string(),
-                |image| image.as_str().unwrap_or("").replace("File:", ""),
-            ),
-            level: get_printout_value(&po.get("Combat level").cloned(), false)
-                .and_then(|level| level.as_i64())
-                .unwrap_or(0),
-            speed: get_printout_value(&po.get("Attack speed").cloned(), false)
-                .and_then(|speed| speed.as_i64())
-                .unwrap_or(0),
-            style: monster_style,
-            size: get_printout_value(&po.get("Size").cloned(), false)
-                .and_then(|size| size.as_i64())
-                .unwrap_or(0),
-            max_hit: get_printout_value(&po.get("Max hit").cloned(), false)
-                .and_then(|max_hit| max_hit.as_i64())
-                .unwrap_or(0),
-            skills: Skills {
-                atk: get_printout_value(&po.get("Attack level").cloned(), false)
+        let mut monster = Monster {
+            info: MonsterInfo {
+                id: get_printout_value(&po.get("NPC ID").cloned(), false)
+                    .and_then(|id| id.as_i64()),
+                name: k.split('#').next().unwrap_or("").to_string(),
+                version,
+                combat_level: get_printout_value(&po.get("Combat level").cloned(), false)
+                    .and_then(|level| level.as_i64())
+                    .unwrap_or(0),
+                attack_speed: get_printout_value(&po.get("Attack speed").cloned(), false)
+                    .and_then(|speed| speed.as_i64())
+                    .unwrap_or(0),
+                attack_styles: monster_style,
+                size: get_printout_value(&po.get("Size").cloned(), false)
+                    .and_then(|size| size.as_i64())
+                    .unwrap_or(0),
+                max_hit: get_printout_value(&po.get("Max hit").cloned(), true).map(|hit| {
+                    hit.as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|s| s.as_str().unwrap().to_string())
+                        .collect::<Vec<_>>()
+                }),
+                weakness: get_printout_value(&po.get("Elemental weakness").cloned(), false)
+                    .map(|w| w.to_string())
+                    .map(|weakness| ElementalWeakness {
+                        element: weakness.to_lowercase().replace('\"', ""),
+                        severity: get_printout_value(
+                            &po.get("Elemental weakness percent").cloned(),
+                            false,
+                        )
+                        .map(|s| s.to_string().replace('\"', ""))
+                        .and_then(|severity| severity.parse::<i64>().ok())
+                        .unwrap_or(0),
+                    }),
+                attributes: po.get("Monster attribute").cloned().map(|attr| {
+                    attr.as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|attr| attr.as_str().unwrap().to_string())
+                        .collect::<Vec<_>>()
+                }),
+            },
+
+            stats: Stats {
+                attack: get_printout_value(&po.get("Attack level").cloned(), false)
                     .and_then(|atk| atk.as_i64())
-                    .unwrap_or(0),
-                def: get_printout_value(&po.get("Defence level").cloned(), false)
-                    .and_then(|def| def.as_i64())
-                    .unwrap_or(0),
-                hp: get_printout_value(&po.get("Hitpoints").cloned(), false)
-                    .and_then(|hp| hp.as_i64())
-                    .unwrap_or(0),
-                magic: get_printout_value(&po.get("Magic level").cloned(), false)
-                    .and_then(|magic| magic.as_i64())
                     .unwrap_or(0),
                 ranged: get_printout_value(&po.get("Ranged level").cloned(), false)
                     .and_then(|ranged| ranged.as_i64())
                     .unwrap_or(0),
-                str: get_printout_value(&po.get("Strength level").cloned(), false)
+                magic: get_printout_value(&po.get("Magic level").cloned(), false)
+                    .and_then(|magic| magic.as_i64())
+                    .unwrap_or(0),
+                defence: get_printout_value(&po.get("Defence level").cloned(), false)
+                    .and_then(|def| def.as_i64())
+                    .unwrap_or(0),
+                hitpoints: get_printout_value(&po.get("Hitpoints").cloned(), false)
+                    .and_then(|hp| hp.as_i64())
+                    .unwrap_or(0),
+                strength: get_printout_value(&po.get("Strength level").cloned(), false)
                     .and_then(|str| str.as_i64())
                     .unwrap_or(0),
             },
-            offensive: Offensive {
-                atk: get_printout_value(&po.get("Attack bonus").cloned(), false)
-                    .and_then(|atk| atk.as_i64())
-                    .unwrap_or(0),
-                magic: get_printout_value(&po.get("Magic attack bonus").cloned(), false)
-                    .and_then(|magic| magic.as_i64())
-                    .unwrap_or(0),
-                magic_str: get_printout_value(&po.get("Magic Damage bonus").cloned(), false)
-                    .and_then(|magic_str| magic_str.as_i64())
-                    .unwrap_or(0),
-                ranged: get_printout_value(&po.get("Range attack bonus").cloned(), false)
-                    .and_then(|ranged| ranged.as_i64())
-                    .unwrap_or(0),
-                ranged_str: get_printout_value(&po.get("Ranged Strength bonus").cloned(), false)
-                    .and_then(|ranged_str| ranged_str.as_i64())
-                    .unwrap_or(0),
-                str: get_printout_value(&po.get("Strength bonus").cloned(), false)
-                    .and_then(|str| str.as_i64())
-                    .unwrap_or(0),
-            },
-            defensive: Defensive {
-                crush: get_printout_value(&po.get("Crush defence bonus").cloned(), false)
-                    .and_then(|crush| crush.as_i64())
-                    .unwrap_or(0),
-                magic: get_printout_value(&po.get("Magic defence bonus").cloned(), false)
-                    .and_then(|magic| magic.as_i64())
-                    .unwrap_or(0),
-                heavy: get_printout_value(&po.get("Heavy range defence bonus").cloned(), false)
-                    .and_then(|heavy| heavy.as_i64())
-                    .unwrap_or(0),
-                light: get_printout_value(&po.get("Light range defence bonus").cloned(), false)
-                    .and_then(|light| light.as_i64())
-                    .unwrap_or(0),
-                standard: get_printout_value(
-                    &po.get("Standard range defence bonus").cloned(),
-                    false,
-                )
-                .and_then(|standard| standard.as_i64())
-                .unwrap_or(0),
-                slash: get_printout_value(&po.get("Slash defence bonus").cloned(), false)
-                    .and_then(|slash| slash.as_i64())
-                    .unwrap_or(0),
-                stab: get_printout_value(&po.get("Stab defence bonus").cloned(), false)
-                    .and_then(|stab| stab.as_i64())
-                    .unwrap_or(0),
-            },
-            attributes: po
-                .get("Monster attribute")
-                .cloned()
-                .unwrap_or_else(|| serde_json::Value::Array(Vec::new()))
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|attr| attr.as_str().unwrap().to_string())
-                .collect(),
-            weakness: get_printout_value(&po.get("Elemental weakness").cloned(), false)
-                .map(|w| w.to_string())
-                .map(|weakness| ElementalWeakness {
-                    element: weakness.to_lowercase().replace('\"', ""),
-                    severity: get_printout_value(
-                        &po.get("Elemental weakness percent").cloned(),
+            bonuses: Bonuses {
+                attack: Offensive {
+                    melee: get_printout_value(&po.get("Attack bonus").cloned(), false)
+                        .and_then(|atk| atk.as_i64())
+                        .unwrap_or(0),
+                    ranged: get_printout_value(&po.get("Range attack bonus").cloned(), false)
+                        .and_then(|ranged| ranged.as_i64())
+                        .unwrap_or(0),
+                    magic: get_printout_value(&po.get("Magic attack bonus").cloned(), false)
+                        .and_then(|magic| magic.as_i64())
+                        .unwrap_or(0),
+                },
+                defence: Defensive {
+                    crush: get_printout_value(&po.get("Crush defence bonus").cloned(), false)
+                        .and_then(|crush| crush.as_i64())
+                        .unwrap_or(0),
+                    magic: get_printout_value(&po.get("Magic defence bonus").cloned(), false)
+                        .and_then(|magic| magic.as_i64())
+                        .unwrap_or(0),
+                    heavy: get_printout_value(&po.get("Heavy range defence bonus").cloned(), false)
+                        .and_then(|heavy| heavy.as_i64())
+                        .unwrap_or(0),
+                    light: get_printout_value(&po.get("Light range defence bonus").cloned(), false)
+                        .and_then(|light| light.as_i64())
+                        .unwrap_or(0),
+                    standard: get_printout_value(
+                        &po.get("Standard range defence bonus").cloned(),
                         false,
                     )
-                    .map(|s| s.to_string().replace('\"', ""))
-                    .and_then(|severity| severity.parse::<i64>().ok())
+                    .and_then(|standard| standard.as_i64())
                     .unwrap_or(0),
-                }),
+                    slash: get_printout_value(&po.get("Slash defence bonus").cloned(), false)
+                        .and_then(|slash| slash.as_i64())
+                        .unwrap_or(0),
+                    stab: get_printout_value(&po.get("Stab defence bonus").cloned(), false)
+                        .and_then(|stab| stab.as_i64())
+                        .unwrap_or(0),
+                },
+                strength: Strength {
+                    melee: get_printout_value(&po.get("Strength bonus").cloned(), false)
+                        .and_then(|str| str.as_i64())
+                        .unwrap_or(0),
+                    ranged: get_printout_value(&po.get("Ranged Strength bonus").cloned(), false)
+                        .and_then(|ranged_str| ranged_str.as_i64())
+                        .unwrap_or(0),
+                    magic: get_printout_value(&po.get("Magic Damage bonus").cloned(), false)
+                        .and_then(|magic_str| magic_str.as_i64())
+                        .unwrap_or_default(),
+                },
+            },
+            immunities: Immunities {
+                poison: get_printout_value(&po.get("Immune to poison").cloned(), false)
+                    .and_then(|poison| poison.as_bool())
+                    .unwrap_or_default(),
+                venom: get_printout_value(&po.get("Immune to venom").cloned(), false)
+                    .and_then(|venom| venom.as_bool())
+                    .unwrap_or_default(),
+                freeze: get_printout_value(&po.get("Immune to freeze").cloned(), false)
+                    .and_then(|freeze| freeze.as_i64())
+                    .unwrap_or_default(),
+            },
         };
 
-        if monster.skills.hp == 0
-            || monster.id.is_none()
-            || monster.name.to_lowercase().contains("(historical)")
-            || monster.name.to_lowercase().contains("(pvm arena)")
+        if monster.stats.hitpoints == 0
+            || monster.info.id.is_none()
+            || monster.info.name.to_lowercase().contains("(historical)")
+            || monster.info.name.to_lowercase().contains("(pvm arena)")
             || monster
+                .info
                 .name
                 .to_lowercase()
                 .contains("(deadman: apocalypse)")
         {
             continue;
+        }
+
+        if monster.info.name.contains("Vardorvis") {
+            if let Some(version) = &monster.info.version {
+                match version.as_str() {
+                    "Post-Quest" => {
+                        monster.stats.strength = 270;
+                        monster.stats.defence = 215;
+                    }
+                    "Quest" => {
+                        monster.stats.strength = 210;
+                        monster.stats.defence = 180;
+                    }
+                    "Awakened" => {
+                        monster.stats.strength = 391;
+                        monster.stats.defence = 268;
+                    }
+                    _ => {}
+                }
+            }
         }
 
         // let image = monster.image.clone();
