@@ -506,11 +506,37 @@ impl Monster {
     }
 
     pub fn is_toa_monster(&self) -> bool {
-        TOA_MONSTERS.contains(&self.info.name.as_str())
+        for monster in TOA_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if self.info.name == name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                {
+                    return true;
+                }
+            } else if self.info.name == monster {
+                return true;
+            }
+        }
+
+        false
     }
 
     pub fn is_toa_path_monster(&self) -> bool {
-        TOA_PATH_MONSTERS.contains(&self.info.name.as_str())
+        for monster in TOA_PATH_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if self.info.name == name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                {
+                    return true;
+                }
+            } else if self.info.name == monster {
+                return true;
+            }
+        }
+
+        false
     }
 
     pub fn heal(&mut self, amount: u32) {
@@ -557,26 +583,64 @@ impl Monster {
     pub fn is_immune(&self, player: &Player) -> bool {
         let combat_type = &player.combat_type();
 
-        if IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.name.as_str())
-            && combat_type == &CombatType::Magic
-        {
-            return true;
+        for monster in IMMUNE_TO_MAGIC_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if name == self.info.name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                    && combat_type == &CombatType::Magic
+                {
+                    return true;
+                }
+            } else if monster == self.info.name && combat_type == &CombatType::Magic {
+                return true;
+            }
         }
 
-        if IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.name.as_str()) && player.is_using_ranged()
-        {
-            return true;
+        for monster in IMMUNE_TO_RANGED_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if name == self.info.name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                    && player.is_using_ranged()
+                {
+                    return true;
+                }
+            } else if monster == self.info.name && player.is_using_ranged() {
+                return true;
+            }
         }
 
-        if IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.name.as_str()) && player.is_using_melee() {
-            return true;
+        for monster in IMMUNE_TO_MELEE_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if name == self.info.name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                    && player.is_using_melee()
+                {
+                    return true;
+                }
+            } else if monster == self.info.name && player.is_using_melee() {
+                return true;
+            }
         }
 
-        if IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS.contains(&self.info.name.as_str())
-            && player.is_using_melee()
-            && !player.is_wearing_salamander()
-        {
-            return true;
+        for monster in IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS {
+            if let Some((name, version)) = monster.split_once(" (") {
+                if name == self.info.name
+                    && &version.replace(')', "")
+                        == self.info.version.as_ref().unwrap_or(&String::new())
+                    && player.is_using_melee()
+                    && !player.is_wearing_salamander()
+                {
+                    return true;
+                }
+            } else if monster == self.info.name
+                && player.is_using_melee()
+                && !player.is_wearing_salamander()
+            {
+                return true;
+            }
         }
 
         if self.vampyre_tier() == Some(3) && !player.is_wearing_ivandis_weapon() {

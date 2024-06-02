@@ -95743,7 +95743,10 @@
         "0"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 1,
@@ -95795,7 +95798,10 @@
         "6"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 21,
@@ -95847,7 +95853,10 @@
         "1"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 1,
@@ -108415,7 +108424,7 @@
       ],
       "size": 7,
       "max_hit": [
-        "148&thinsp;'\"`UNIQ--ref-00000033-QINU`\"'"
+        "148&thinsp;'\"`UNIQ--ref-0000004A-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -108468,7 +108477,7 @@
       ],
       "size": 7,
       "max_hit": [
-        "148&thinsp;'\"`UNIQ--ref-00000033-QINU`\"'"
+        "148&thinsp;'\"`UNIQ--ref-0000004A-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111144,7 +111153,7 @@
       "size": 2,
       "max_hit": [
         "96 (axes)",
-        "46-61 (Melee)'\"`UNIQ--ref-0000002E-QINU`\"'"
+        "46-61 (Melee)'\"`UNIQ--ref-00000012-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111196,7 +111205,7 @@
       ],
       "size": 2,
       "max_hit": [
-        "32-43 (Melee)'\"`UNIQ--ref-0000002D-QINU`\"'"
+        "32-43 (Melee)'\"`UNIQ--ref-00000011-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111248,7 +111257,7 @@
       ],
       "size": 2,
       "max_hit": [
-        "30-37 (Melee)'\"`UNIQ--ref-0000002F-QINU`\"'"
+        "30-37 (Melee)'\"`UNIQ--ref-00000013-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -125086,6 +125095,114 @@
         "melee": 0,
         "ranged": 0,
         "magic": 0
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 11762,
+      "name": "Tumeken's Warden",
+      "version": "Enraged",
+      "combat_level": 544,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Melee",
+        "Ranged",
+        "Magic"
+      ],
+      "size": 5,
+      "max_hit": [
+        "26"
+      ],
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 150,
+      "hitpoints": 180,
+      "magic": 150,
+      "ranged": 150,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 300,
+        "magic": 230
+      },
+      "defence": {
+        "crush": 20,
+        "magic": 20,
+        "heavy": 20,
+        "standard": 20,
+        "light": 20,
+        "slash": 40,
+        "stab": 40
+      },
+      "strength": {
+        "melee": 40,
+        "ranged": 40,
+        "magic": 40
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 11761,
+      "name": "Elidinis' Warden",
+      "version": "Enraged",
+      "combat_level": 544,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Melee",
+        "Ranged",
+        "Magic"
+      ],
+      "size": 5,
+      "max_hit": [
+        "26"
+      ],
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 150,
+      "hitpoints": 180,
+      "magic": 150,
+      "ranged": 150,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 300,
+        "magic": 230
+      },
+      "defence": {
+        "crush": 20,
+        "magic": 20,
+        "heavy": 20,
+        "standard": 20,
+        "light": 20,
+        "slash": 40,
+        "stab": 40
+      },
+      "strength": {
+        "melee": 40,
+        "ranged": 40,
+        "magic": 40
       }
     },
     "immunities": {

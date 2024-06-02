@@ -38,7 +38,7 @@ pub fn spindel() -> Monster {
 
 #[fixture]
 pub fn duke() -> Monster {
-    Monster::new("Duke Sucellus", Some("Awake")).unwrap()
+    Monster::new("Duke Sucellus", Some("Post-Quest, Awake")).unwrap()
 }
 
 #[fixture]
@@ -63,7 +63,7 @@ pub fn zebak() -> Monster {
 
 #[fixture]
 pub fn chaos_golem() -> Monster {
-    Monster::new("Chaos Golem", None).unwrap()
+    Monster::new("Chaos Golem", Some("Golem")).unwrap()
 }
 
 #[fixture]
@@ -103,7 +103,7 @@ pub fn vampyre_juvinate() -> Monster {
 
 #[fixture]
 pub fn vanstrom_klause() -> Monster {
-    Monster::new("Vanstrom Klause", None).unwrap()
+    Monster::new("Vanstrom Klause", Some("Sins of the Father")).unwrap()
 }
 
 #[fixture]
@@ -162,7 +162,7 @@ pub fn vardorvis() -> Monster {
 
 #[fixture]
 pub fn kephri_400() -> Monster {
-    let mut monster = Monster::new("Kephri", Some("Shield up")).unwrap();
+    let mut monster = Monster::new("Kephri", None).unwrap();
     monster.info.toa_level = 400;
     monster.scale_toa();
     monster
@@ -200,7 +200,7 @@ pub fn kraken() -> Monster {
 
 #[fixture]
 pub fn verzik_p1() -> Monster {
-    Monster::new("Verzik Vitur", Some("Normal mode, phase 1")).unwrap()
+    Monster::new("Verzik Vitur", Some("Normal mode, Phase 1")).unwrap()
 }
 
 #[fixture]

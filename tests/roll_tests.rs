@@ -208,8 +208,9 @@ fn test_ranged_player_rolls(
     #[case] max_hit: u32,
 ) {
     calc_player_ranged_rolls(&mut player, &monster);
-    assert_eq!(player.att_rolls[&CombatType::Ranged], att_roll);
-    assert_eq!(player.max_hits[&CombatType::Ranged], max_hit);
+    let combat_type = player.combat_type();
+    assert_eq!(player.att_rolls[&combat_type], att_roll);
+    assert_eq!(player.max_hits[&combat_type], max_hit);
 }
 
 #[rstest]

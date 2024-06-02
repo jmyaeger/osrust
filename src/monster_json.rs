@@ -446,6 +446,61 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // }
     }
 
+    for (name, id) in [("Tumeken's Warden", 11762), ("Elidinis' Warden", 11761)] {
+        data.push(Monster {
+            info: MonsterInfo {
+                id: Some(id),
+                name: name.to_string(),
+                version: Some("Enraged".to_string()),
+                combat_level: 544,
+                attack_speed: 8,
+                attack_styles: Some(vec![
+                    "Melee".to_string(),
+                    "Ranged".to_string(),
+                    "Magic".to_string(),
+                ]),
+                size: 5,
+                max_hit: Some(vec!["26".to_string()]),
+                attributes: None,
+                weakness: None,
+            },
+            stats: Stats {
+                attack: 150,
+                defence: 150,
+                hitpoints: 180,
+                magic: 150,
+                ranged: 150,
+                strength: 150,
+            },
+            bonuses: Bonuses {
+                attack: Offensive {
+                    melee: 0,
+                    ranged: 300,
+                    magic: 230,
+                },
+                defence: Defensive {
+                    crush: 20,
+                    magic: 20,
+                    heavy: 20,
+                    standard: 20,
+                    light: 20,
+                    slash: 40,
+                    stab: 40,
+                },
+                strength: Strength {
+                    melee: 40,
+                    ranged: 40,
+                    magic: 40,
+                },
+            },
+            immunities: Immunities {
+                poison: false,
+                venom: false,
+                freeze: 0,
+            },
+        });
+    }
+
     println!("Total monsters: {}", data.len());
 
     let file = File::create(FILE_NAME)?;

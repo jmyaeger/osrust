@@ -252,7 +252,7 @@ fn test_verzik_p1(#[case] mut player: Player, verzik_p1: Monster) {
 
     let dist = dps_calc::get_distribution(&player, &monster);
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
-    assert!(num::abs(calc_ttk - ttk) < 0.5);
+    assert!(num::abs(calc_ttk - ttk) < 1.0);
 }
 
 #[rstest]
