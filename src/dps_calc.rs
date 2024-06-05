@@ -94,7 +94,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
 
     if (monster.info.name.contains("Verzik")
         && monster.info.name.contains("(P1)")
-        && player.is_wearing("Dawnbringer"))
+        && player.is_wearing("Dawnbringer", None))
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
     {
@@ -103,7 +103,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
 
     hit_chance = get_normal_accuracy(player, monster);
 
-    if player.is_wearing("Osmumten's fang") && player.combat_type() == CombatType::Stab {
+    if player.is_wearing("Osmumten's fang", None) && player.combat_type() == CombatType::Stab {
         if monster.is_toa_monster() {
             hit_chance = 1.0 - (1.0 - hit_chance) * (1.0 - hit_chance);
         } else {
@@ -111,7 +111,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
         }
     }
 
-    if player.combat_type() == CombatType::Magic && player.is_wearing("Brimstone ring") {
+    if player.combat_type() == CombatType::Magic && player.is_wearing("Brimstone ring", None) {
         let mut monster_copy = monster.clone();
         let def_roll = monster.def_rolls[&CombatType::Magic] * 9 / 10;
         monster_copy.def_rolls.insert(CombatType::Magic, def_roll);
@@ -140,7 +140,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![HitDistribution::linear(acc, max_hit / 10, max_hit)]);
     }
 
-    if player.is_using_melee() && player.is_wearing("Osmumten's fang") {
+    if player.is_using_melee() && player.is_wearing("Osmumten's fang", None) {
         let min_hit = player.max_hits[&CombatType::Stab] * 3 / 20;
         dist = AttackDistribution::new(vec![HitDistribution::linear(
             acc,
@@ -149,7 +149,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         )]);
     }
 
-    if player.is_using_melee() && player.is_wearing("Gadderhammer") && monster.is_shade() {
+    if player.is_using_melee() && player.is_wearing("Gadderhammer", None) && monster.is_shade() {
         let hits1 = standard_hit_dist
             .clone()
             .scale_probability(0.95)
@@ -199,7 +199,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
-    if player.is_using_melee() && player.is_wearing("Scythe of vitur") {
+    if player.is_using_melee() && player.is_wearing_any_version("Scythe of vitur") {
         let mut hits: Vec<HitDistribution> = Vec::new();
 
         for i in 0..min(max(monster.info.size, 1), 3) {
@@ -212,7 +212,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(hits);
     }
 
-    if player.is_using_melee() && player.is_wearing("Dual macuahuitl") {
+    if player.is_using_melee() && player.is_wearing("Dual macuahuitl", None) {
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(1.0, 0, half_max);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
@@ -224,7 +224,9 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![effect_dist]);
     }
 
-    if player.is_using_melee() && player.is_wearing_any(vec!["Torag's hammers", "Sulphur blades"]) {
+    if player.is_using_melee()
+        && player.is_wearing_any(vec![("Torag's hammers", None), ("Sulphur blades", None)])
+    {
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(acc, 0, half_max);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
@@ -296,7 +298,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     }
 
     if player.is_using_ranged() && player.is_using_crossbow() {
-        let zcb = player.is_wearing("Zaryte crossbow");
+        let zcb = player.is_wearing("Zaryte crossbow", None);
         let ranged_lvl = player.live_stats.ranged;
         let kandarin = if player.boosts.kandarin_diary {
             1.1
@@ -304,7 +306,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             1.0
         };
 
-        if player.is_wearing_any(vec!["Opal bolts (e)", "Opal dragon bolts (e)"]) {
+        if player.is_wearing_any(vec![
+            ("Opal bolts (e)", None),
+            ("Opal dragon bolts (e)", None),
+        ]) {
             let chance = OPAL_PROC_CHANCE * kandarin;
             let bonus_dmg = ranged_lvl / (if zcb { 9 } else { 10 });
 
@@ -316,7 +321,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             });
         }
 
-        if player.is_wearing_any(vec!["Pearl bolts (e)", "Pearl dragon bolts (e)"]) {
+        if player.is_wearing_any(vec![
+            ("Pearl bolts (e)", None),
+            ("Pearl dragon bolts (e)", None),
+        ]) {
             let chance = PEARL_PROC_CHANCE * kandarin;
             let divisor = if monster.is_fiery() { 15 } else { 20 };
             let bonus_dmg = ranged_lvl / (if zcb { divisor - 2 } else { divisor });
@@ -329,7 +337,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             });
         }
 
-        if player.is_wearing_any(vec!["Diamond bolts (e)", "Diamond dragon bolts (e)"]) {
+        if player.is_wearing_any(vec![
+            ("Diamond bolts (e)", None),
+            ("Diamond dragon bolts (e)", None),
+        ]) {
             let chance = DIAMOND_PROC_CHANCE * kandarin;
             let effect_max = max_hit + max_hit * (if zcb { 26 } else { 15 } / 100);
 
@@ -345,8 +356,8 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         }
 
         if player.is_wearing_any(vec![
-            "Dragonstone bolts (e)",
-            "Dragonstone dragon bolts (e)",
+            ("Dragonstone bolts (e)", None),
+            ("Dragonstone dragon bolts (e)", None),
         ]) && (!monster.is_fiery() || !monster.is_dragon())
         {
             let chance = DRAGONSTONE_PROC_CHANCE * kandarin;
@@ -363,7 +374,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
-        if player.is_wearing_any(vec!["Onyx bolts (e)", "Onyx dragon bolts (e)"]) {
+        if player.is_wearing_any(vec![
+            ("Onyx bolts (e)", None),
+            ("Onyx dragon bolts (e)", None),
+        ]) {
             let chance = ONYX_PROC_CHANCE * kandarin;
             let effect_max = max_hit + ranged_lvl * (if zcb { 32 } else { 20 } / 100);
 
@@ -385,7 +399,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
 
         if player.is_using_ranged()
             && player.is_using_crossbow()
-            && player.is_wearing_any(vec!["Ruby bolts (e)", "Ruby dragon bolts (e)"])
+            && player.is_wearing_any(vec![
+                ("Ruby bolts (e)", None),
+                ("Ruby dragon bolts (e)", None),
+            ])
         {
             let chance = RUBY_PROC_CHANCE * kandarin;
             let effect_dmg = if zcb {
@@ -431,7 +448,7 @@ fn apply_limiters(
 
     if monster.info.name.contains("Verzik")
         && monster.info.name.contains("P1")
-        && !player.is_wearing("Dawnbringer")
+        && !player.is_wearing("Dawnbringer", None)
     {
         let limit = if player.is_using_melee() { 10 } else { 3 };
         dist = dist.transform(linear_min_transformer(limit, 0));
@@ -606,7 +623,10 @@ fn dist_is_current_hp_dependent(player: &Player, monster: &Monster) -> bool {
     }
 
     if player.is_using_crossbow()
-        && player.is_wearing_any(vec!["Ruby bolts (e)", "Ruby dragon bolts (e)"])
+        && player.is_wearing_any(vec![
+            ("Ruby bolts (e)", None),
+            ("Ruby dragon bolts (e)", None),
+        ])
     {
         return true;
     }
@@ -630,7 +650,10 @@ fn dist_at_hp<'a>(
 
     if player.is_using_ranged()
         && player.is_using_crossbow()
-        && player.is_wearing_any(vec!["Ruby bolts (e)", "Ruby dragon bolts (e)"])
+        && player.is_wearing_any(vec![
+            ("Ruby bolts (e)", None),
+            ("Ruby dragon bolts (e)", None),
+        ])
         && monster.live_stats.hitpoints >= 500
         && hp >= 500
     {
@@ -664,18 +687,18 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Gear {
-            head: Some(Armor::new("Torva full helm")),
-            neck: Some(Armor::new("Amulet of torture")),
-            cape: Some(Armor::new("Infernal cape")),
-            ammo: Some(Armor::new("Rada's blessing 4")),
+            head: Some(Armor::new("Torva full helm", None)),
+            neck: Some(Armor::new("Amulet of torture", None)),
+            cape: Some(Armor::new("Infernal cape", None)),
+            ammo: Some(Armor::new("Rada's blessing 4", None)),
             second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier"),
-            shield: Some(Armor::new("Avernic defender")),
-            body: Some(Armor::new("Torva platebody")),
-            legs: Some(Armor::new("Torva platelegs")),
-            hands: Some(Armor::new("Ferocious gloves")),
-            feet: Some(Armor::new("Primordial boots")),
-            ring: Some(Armor::new("Ultor ring")),
+            weapon: Weapon::new("Ghrazi rapier", None),
+            shield: Some(Armor::new("Avernic defender", None)),
+            body: Some(Armor::new("Torva platebody", None)),
+            legs: Some(Armor::new("Torva platelegs", None)),
+            hands: Some(Armor::new("Ferocious gloves", None)),
+            feet: Some(Armor::new("Primordial boots", None)),
+            ring: Some(Armor::new("Ultor ring", None)),
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
@@ -696,18 +719,18 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Gear {
-            head: Some(Armor::new("Torva full helm")),
-            neck: Some(Armor::new("Amulet of torture")),
-            cape: Some(Armor::new("Infernal cape")),
-            ammo: Some(Armor::new("Rada's blessing 4")),
+            head: Some(Armor::new("Torva full helm", None)),
+            neck: Some(Armor::new("Amulet of torture", None)),
+            cape: Some(Armor::new("Infernal cape", None)),
+            ammo: Some(Armor::new("Rada's blessing 4", None)),
             second_ammo: None,
-            weapon: Weapon::new("Dual macuahuitl"),
+            weapon: Weapon::new("Dual macuahuitl", None),
             shield: None,
-            body: Some(Armor::new("Torva platebody")),
-            legs: Some(Armor::new("Torva platelegs")),
-            hands: Some(Armor::new("Ferocious gloves")),
-            feet: Some(Armor::new("Primordial boots")),
-            ring: Some(Armor::new("Ultor ring")),
+            body: Some(Armor::new("Torva platebody", None)),
+            legs: Some(Armor::new("Torva platelegs", None)),
+            hands: Some(Armor::new("Ferocious gloves", None)),
+            feet: Some(Armor::new("Primordial boots", None)),
+            ring: Some(Armor::new("Ultor ring", None)),
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Pummel);
@@ -728,18 +751,18 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Gear {
-            head: Some(Armor::new("Torva full helm")),
-            neck: Some(Armor::new("Amulet of torture")),
-            cape: Some(Armor::new("Infernal cape")),
-            ammo: Some(Armor::new("Rada's blessing 4")),
+            head: Some(Armor::new("Torva full helm", None)),
+            neck: Some(Armor::new("Amulet of torture", None)),
+            cape: Some(Armor::new("Infernal cape", None)),
+            ammo: Some(Armor::new("Rada's blessing 4", None)),
             second_ammo: None,
-            weapon: Weapon::new("Scythe of vitur"),
+            weapon: Weapon::new("Scythe of vitur", Some("Charged")),
             shield: None,
-            body: Some(Armor::new("Torva platebody")),
-            legs: Some(Armor::new("Torva platelegs")),
-            hands: Some(Armor::new("Ferocious gloves")),
-            feet: Some(Armor::new("Primordial boots")),
-            ring: Some(Armor::new("Ultor ring")),
+            body: Some(Armor::new("Torva platebody", None)),
+            legs: Some(Armor::new("Torva platelegs", None)),
+            hands: Some(Armor::new("Ferocious gloves", None)),
+            feet: Some(Armor::new("Primordial boots", None)),
+            ring: Some(Armor::new("Ultor ring", None)),
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
@@ -760,18 +783,18 @@ mod tests {
         player.add_potion(Potion::SmellingSalts);
 
         player.gear = Gear {
-            head: Some(Armor::new("Masori mask (f)")),
-            neck: Some(Armor::new("Necklace of anguish")),
-            cape: Some(Armor::new("Dizana's quiver (charged)")),
-            ammo: Some(Armor::new("Ruby dragon bolts (e)")),
+            head: Some(Armor::new("Masori mask (f)", None)),
+            neck: Some(Armor::new("Necklace of anguish", None)),
+            cape: Some(Armor::new("Dizana's quiver", Some("Charged"))),
+            ammo: Some(Armor::new("Ruby dragon bolts (e)", None)),
             second_ammo: None,
-            weapon: Weapon::new("Zaryte crossbow"),
-            shield: Some(Armor::new("Twisted buckler")),
-            body: Some(Armor::new("Masori body (f)")),
-            legs: Some(Armor::new("Masori chaps (f)")),
-            hands: Some(Armor::new("Zaryte vambraces")),
-            feet: Some(Armor::new("Pegasian boots")),
-            ring: Some(Armor::new("Venator ring")),
+            weapon: Weapon::new("Zaryte crossbow", None),
+            shield: Some(Armor::new("Twisted buckler", None)),
+            body: Some(Armor::new("Masori body (f)", None)),
+            legs: Some(Armor::new("Masori chaps (f)", None)),
+            hands: Some(Armor::new("Zaryte vambraces", None)),
+            feet: Some(Armor::new("Pegasian boots", None)),
+            ring: Some(Armor::new("Venator ring", None)),
         };
 
         player.update_bonuses();
@@ -785,6 +808,6 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(num::abs(ttk - 225.3) < 0.1);
+        assert!(num::abs(ttk - 230.6) < 0.1);
     }
 }

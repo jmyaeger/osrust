@@ -104,8 +104,8 @@ fn test_blue_keris_kq_ttk(
 fn test_enchanted_bolt_acb_ttks(#[case] bolt_name: &str) {
     let mut player = max_ranged_zcb_player();
     let mut monster = scurrius();
-    player.equip("Armadyl crossbow");
-    player.equip(bolt_name);
+    player.equip("Armadyl crossbow", None);
+    player.equip(bolt_name, None);
     player.update_bonuses();
     calc_active_player_rolls(&mut player, &monster);
     let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
@@ -125,7 +125,7 @@ fn test_enchanted_bolt_acb_ttks(#[case] bolt_name: &str) {
 fn test_enchanted_bolt_zcb_ttks(#[case] bolt_name: &str) {
     let mut player = max_ranged_zcb_player();
     let mut monster = scurrius();
-    player.equip(bolt_name);
+    player.equip(bolt_name, None);
     player.update_bonuses();
     calc_active_player_rolls(&mut player, &monster);
     let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);

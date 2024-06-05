@@ -54,8 +54,8 @@ struct Equipment {
     speed: Option<i64>,
     category: Option<String>,
     bonuses: Bonuses,
-    prayer: i64,
     is_two_handed: Option<bool>,
+    attack_range: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -63,6 +63,7 @@ struct Bonuses {
     attack: Offensive,
     defence: Defensive,
     strength: StrengthBonuses,
+    prayer: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -260,11 +261,13 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 attack: offensive,
                 defence: defensive,
                 strength: strength_bonuses,
+                prayer: get_printout_value(&po.get("Prayer bonus").cloned())
+                    .and_then(|v| v.as_i64())
+                    .unwrap_or_default(),
             },
-            prayer: get_printout_value(&po.get("Prayer bonus").cloned())
-                .and_then(|v| v.as_i64())
-                .unwrap_or_default(),
             is_two_handed: None,
+            attack_range: get_printout_value(&po.get("Weapon attack range").cloned())
+                .and_then(|v| v.as_i64()),
         };
 
         if equipment.slot == "2h" {
@@ -276,6 +279,79 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if equipment.version == Some("Nightmare Zone".to_string()) {
             equipment.version = None;
+        }
+
+        if let Some(version) = &equipment.version.clone() {
+            if ["100", "75", "50", "25", "0"].contains(&version.as_str()) {
+                continue;
+            }
+
+            if equipment.name == "Toxic blowpipe"
+                && ["Empty", "Charged"].contains(&version.as_str())
+            {
+                continue;
+            }
+
+            if [
+                "Accursed sceptre",
+                "Accursed sceptre (a)",
+                "Corrupted tumeken's shadow",
+                "Craw's bow",
+                "Holy sanguinesti staff",
+                "Sanguinesti staff",
+                "Thammaron's sceptre",
+                "Thammaron's sceptre (a)",
+                "Trident of the seas",
+                "Trident of the seas (e)",
+                "Trident of the swamp",
+                "trident of the swamp (e)",
+                "Tumeken's shadow",
+                "Ursine chainmace",
+                "Viggora's chainmace",
+                "Warped sceptre",
+                "Webweaver bow",
+            ]
+            .contains(&equipment.name.as_str())
+                && version == "Uncharged"
+            {
+                continue;
+            }
+
+            if [
+                "Blade of saeldor",
+                "Bow of faerdhinen",
+                "Crystal body",
+                "Crystal helm",
+                "Crystal legs",
+                "Crystal shield",
+            ]
+            .contains(&equipment.name.as_str())
+                && version == "Inactive"
+            {
+                continue;
+            }
+
+            if equipment.name.contains("Black mask") {
+                if ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].contains(&version.as_str()) {
+                    continue;
+                }
+
+                if version == "Uncharged" {
+                    equipment.version = None;
+                }
+            }
+
+            if ["Locked", "Broken"].contains(&version.as_str()) {
+                continue;
+            }
+
+            if ["Normal", "Restored", "Undamaged"].contains(&version.as_str()) {
+                equipment.version = None;
+            }
+        }
+
+        if equipment.name.contains("historical") {
+            continue;
         }
 
         // let image = equipment.image.clone();
@@ -312,9 +388,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ranged: 0,
                 magic: 0.0,
             },
+            prayer: 0,
         },
-        prayer: 0,
         is_two_handed: None,
+        attack_range: None,
     });
 
     let ammo_list = HashMap::from([
@@ -357,9 +434,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ranged: *v,
                     magic: 0.0,
                 },
+                prayer: 0,
             },
-            prayer: 0,
             is_two_handed: Some(true),
+            attack_range: Some(5),
         });
     }
 

@@ -14,10 +14,6 @@ use std::io::Read;
 use std::path::PathBuf;
 
 lazy_static! {
-    static ref MONSTER_DB: PathBuf =
-        fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
-}
-lazy_static! {
     static ref MONSTER_JSON: PathBuf =
         fs::canonicalize("src/databases/monsters.json").expect("Failed to get database path");
 }
@@ -227,12 +223,6 @@ impl Default for Monster {
 }
 
 impl Monster {
-    // pub fn new(name: &str) -> Result<Self> {
-    //     let mut monster = Self::default();
-    //     monster.set_info(name)?;
-    //     Ok(monster)
-    // }
-
     pub fn new(name: &str, version: Option<&str>) -> Result<Monster, String> {
         let mut file = match fs::File::open(MONSTER_JSON.as_path()) {
             Ok(file) => file,
@@ -277,77 +267,6 @@ impl Monster {
         Ok(monster_struct)
     }
 
-    // pub fn set_info(&mut self, name: &str) -> Result<()> {
-    //     let conn = Connection::open(MONSTER_DB.as_path())?;
-    //     let mut stmt = conn.prepare("SELECT * FROM monsters WHERE name = ?")?;
-    //     let mut rows = stmt.query([&name])?;
-    //     if let Some(row) = rows.next()? {
-    //         self.set_fields_from_row(row)?;
-    //         Ok(())
-    //     } else {
-    //         Err(rusqlite::Error::QueryReturnedNoRows)
-    //     }
-    // }
-
-    // pub fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
-    //     self.info.name = row.get::<_, Option<String>>("name")?.unwrap_or_default();
-    //     self.info.version = row.get::<_, Option<String>>("version")?;
-    //     self.info.combat_level = row.get::<_, Option<u16>>("combat")?.unwrap_or_default();
-    //     self.info.size = row.get::<_, Option<u8>>("size")?.unwrap_or_default();
-    //     self.info.xpbonus = row.get::<_, Option<f32>>("xpbonus")?.unwrap_or_default();
-    //     self.info.slayer_xp = row.get::<_, Option<f32>>("slayxp")?.unwrap_or_default();
-    //     let attributes = row.get::<_, Option<String>>("attributes")?;
-    //     if let Some(attributes) = attributes {
-    //         self.info.attributes = Some(parse_attributes(attributes.split(',').collect()));
-    //     }
-    //     self.info.attack_speed = row
-    //         .get::<_, Option<u8>>("attack_speed")?
-    //         .unwrap_or_default();
-    //     self.info.aggressive = row
-    //         .get::<_, Option<bool>>("aggressive")?
-    //         .unwrap_or_default();
-    //     self.info.poisonous = row.get::<_, Option<bool>>("poisonous")?.unwrap_or_default();
-    //     self.stats.attack = row.get::<_, Option<u32>>("attack")?.unwrap_or_default();
-    //     self.stats.strength = row.get::<_, Option<u32>>("strength")?.unwrap_or_default();
-    //     self.stats.defence = row.get::<_, Option<u32>>("defence")?.unwrap_or_default();
-    //     self.stats.ranged = row.get::<_, Option<u32>>("ranged")?.unwrap_or_default();
-    //     self.stats.magic = row.get::<_, Option<u32>>("magic")?.unwrap_or_default();
-    //     self.stats.hitpoints = row.get::<_, Option<u32>>("hitpoints")?.unwrap_or_default();
-    //     self.live_stats = self.stats;
-    //     self.bonuses.attack.melee = row.get::<_, Option<i32>>("attbns")?.unwrap_or_default();
-    //     self.bonuses.attack.ranged = row.get::<_, Option<i32>>("arange")?.unwrap_or_default();
-    //     self.bonuses.attack.magic = row.get::<_, Option<i32>>("amagic")?.unwrap_or_default();
-    //     self.bonuses.strength.melee = row.get::<_, Option<i32>>("strbns")?.unwrap_or_default();
-    //     self.bonuses.strength.ranged = row.get::<_, Option<i32>>("rngbns")?.unwrap_or_default();
-    //     self.bonuses.strength.magic = row.get::<_, Option<i32>>("mbns")?.unwrap_or_default();
-    //     self.bonuses.defence.stab = row.get::<_, Option<i32>>("dstab")?.unwrap_or_default();
-    //     self.bonuses.defence.slash = row.get::<_, Option<i32>>("dslash")?.unwrap_or_default();
-    //     self.bonuses.defence.crush = row.get::<_, Option<i32>>("dcrush")?.unwrap_or_default();
-    //     self.bonuses.defence.ranged = row.get::<_, Option<i32>>("drange")?.unwrap_or_default();
-    //     self.bonuses.defence.magic = row.get::<_, Option<i32>>("dmagic")?.unwrap_or_default();
-    //     self.bonuses.flat_armour = row.get::<_, Option<u32>>("armour")?.unwrap_or_default();
-    //     self.immunities.poison = row
-    //         .get::<_, Option<bool>>("immunepoison")?
-    //         .unwrap_or_default();
-    //     self.immunities.venom = row
-    //         .get::<_, Option<bool>>("immunevenom")?
-    //         .unwrap_or_default();
-    //     self.immunities.cannon = row
-    //         .get::<_, Option<bool>>("immunecannon")?
-    //         .unwrap_or_default();
-    //     self.immunities.thrall = row
-    //         .get::<_, Option<bool>>("immunethrall")?
-    //         .unwrap_or_default();
-    //     self.immunities.freeze = row
-    //         .get::<_, Option<u8>>("freezeresistance")?
-    //         .unwrap_or_default();
-
-    //     self.base_def_rolls = monster_def_rolls(self);
-    //     self.def_rolls = self.base_def_rolls.clone();
-
-    //     Ok(())
-    // }
-
     pub fn scale_toa(&mut self) {
         if TOA_MONSTERS.contains(&self.info.name.as_str()) {
             self.scale_toa_hp();
@@ -360,16 +279,16 @@ impl Monster {
         } else {
             4
         };
-        let toa_level_bonus = 1000 + self.info.toa_level * level_factor;
+        let toa_level_bonus = 100 + (self.info.toa_level * level_factor / 10);
         let toa_path_level_bonus = if self.info.toa_path_level == 0 {
-            1000
+            100
         } else {
-            1080 + (self.info.toa_path_level - 1) * 50
+            108 + (self.info.toa_path_level - 1) * 5
         };
-        let level_scaled_hp = self.stats.hitpoints * toa_level_bonus / 1000;
+        let level_scaled_hp = self.stats.hitpoints * toa_level_bonus / 100;
 
         self.stats.hitpoints = if TOA_PATH_MONSTERS.contains(&self.info.name.as_str()) {
-            let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 1000;
+            let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
             round_toa_hp(path_scaled_hp)
         } else {
             round_toa_hp(level_scaled_hp)
@@ -662,7 +581,7 @@ impl Monster {
         }
 
         if self.info.name.as_str() == "Fire Warrior of Lesarkus"
-            && (!player.is_using_ranged() || !player.is_wearing("Ice arrows"))
+            && (!player.is_using_ranged() || !player.is_wearing("Ice arrows", None))
         {
             return true;
         }

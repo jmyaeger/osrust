@@ -31461,7 +31461,7 @@
     "stats": {
       "attack": 300,
       "defence": 100,
-      "hitpoints": 140,
+      "hitpoints": 4500,
       "magic": 190,
       "ranged": 190,
       "strength": 150
@@ -52676,7 +52676,10 @@
         "17"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 100
+      }
     },
     "stats": {
       "attack": 80,
@@ -52728,7 +52731,10 @@
         "17"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 100
+      }
     },
     "stats": {
       "attack": 80,
@@ -52832,7 +52838,10 @@
         "17"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 100
+      }
     },
     "stats": {
       "attack": 80,
@@ -52884,7 +52893,10 @@
         "17"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 100
+      }
     },
     "stats": {
       "attack": 80,
@@ -52936,7 +52948,10 @@
         "15"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 60,
@@ -52988,7 +53003,10 @@
         "17"
       ],
       "attributes": [],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 60,
@@ -58710,9 +58728,66 @@
   },
   {
     "info": {
+      "id": 11721,
+      "name": "Kephri",
+      "version": "Aggressive",
+      "combat_level": 341,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 5,
+      "max_hit": [
+        "24"
+      ],
+      "attributes": [
+        "kalphite"
+      ],
+      "weakness": {
+        "element": "fire",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 0,
+      "defence": 80,
+      "hitpoints": 80,
+      "magic": 125,
+      "ranged": 0,
+      "strength": 0
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 125
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 200,
+        "heavy": 300,
+        "standard": 300,
+        "light": 300,
+        "slash": 300,
+        "stab": 60
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 50
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
       "id": 11719,
       "name": "Kephri",
-      "version": null,
+      "version": "Shielded",
       "combat_level": 341,
       "attack_speed": 6,
       "attack_styles": [
@@ -58733,7 +58808,7 @@
     "stats": {
       "attack": 0,
       "defence": 80,
-      "hitpoints": 80,
+      "hitpoints": 150,
       "magic": 125,
       "ranged": 0,
       "strength": 0
@@ -71642,6 +71717,214 @@
         "melee": 0,
         "ranged": -30,
         "magic": 280
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 10828,
+      "name": "Nylocas Matomenos",
+      "version": "Hard Mode Maiden",
+      "combat_level": 138,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 2,
+      "max_hit": [
+        "11"
+      ],
+      "attributes": [],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 100,
+      "hitpoints": 100,
+      "magic": 100,
+      "ranged": 100,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 10862,
+      "name": "Nylocas Matomenos",
+      "version": "Hard Mode Verzik",
+      "combat_level": 138,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 2,
+      "max_hit": [
+        "11"
+      ],
+      "attributes": [],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 100,
+      "hitpoints": 200,
+      "magic": 100,
+      "ranged": 100,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 8366,
+      "name": "Nylocas Matomenos",
+      "version": "Normal Mode Maiden",
+      "combat_level": 115,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 2,
+      "max_hit": [
+        "11"
+      ],
+      "attributes": [],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 100,
+      "hitpoints": 100,
+      "magic": 100,
+      "ranged": 100,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      }
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0
+    }
+  },
+  {
+    "info": {
+      "id": 8385,
+      "name": "Nylocas Matomenos",
+      "version": "Normal Mode Verzik",
+      "combat_level": 115,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 2,
+      "max_hit": [
+        "1"
+      ],
+      "attributes": [],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 50,
+      "hitpoints": 200,
+      "magic": 50,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
       }
     },
     "immunities": {
@@ -98543,7 +98826,7 @@
       ],
       "size": 1,
       "max_hit": [
-        "115% of targeted player's max hit'\"`UNIQ--ref-00000192-QINU`\"'"
+        "115% of targeted player's max hit'\"`UNIQ--ref-000000C6-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -107159,7 +107442,7 @@
     "stats": {
       "attack": 300,
       "defence": 100,
-      "hitpoints": 140,
+      "hitpoints": 4500,
       "magic": 190,
       "ranged": 190,
       "strength": 150
@@ -108424,7 +108707,7 @@
       ],
       "size": 7,
       "max_hit": [
-        "148&thinsp;'\"`UNIQ--ref-0000004A-QINU`\"'"
+        "148&thinsp;'\"`UNIQ--ref-00000097-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -108477,7 +108760,7 @@
       ],
       "size": 7,
       "max_hit": [
-        "148&thinsp;'\"`UNIQ--ref-0000004A-QINU`\"'"
+        "148&thinsp;'\"`UNIQ--ref-00000097-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111153,7 +111436,7 @@
       "size": 2,
       "max_hit": [
         "96 (axes)",
-        "46-61 (Melee)'\"`UNIQ--ref-00000012-QINU`\"'"
+        "46-61 (Melee)'\"`UNIQ--ref-0000007C-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111205,7 +111488,7 @@
       ],
       "size": 2,
       "max_hit": [
-        "32-43 (Melee)'\"`UNIQ--ref-00000011-QINU`\"'"
+        "32-43 (Melee)'\"`UNIQ--ref-0000007B-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -111257,7 +111540,7 @@
       ],
       "size": 2,
       "max_hit": [
-        "30-37 (Melee)'\"`UNIQ--ref-00000013-QINU`\"'"
+        "30-37 (Melee)'\"`UNIQ--ref-0000007D-QINU`\"'"
       ],
       "attributes": [],
       "weakness": null
@@ -118887,7 +119170,7 @@
       ],
       "size": 5,
       "max_hit": [
-        "11"
+        "11 (50+ recoil)"
       ],
       "attributes": [],
       "weakness": null

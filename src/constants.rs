@@ -163,155 +163,156 @@ pub const IMMUNE_TO_RANGED_MONSTERS: [&str; 8] = [
 
 pub const IMMUNE_TO_MAGIC_MONSTERS: [&str; 2] = ["Dusk (First form)", "Dusk (Second form)"];
 
-pub const FULL_AHRIMS: [&str; 4] = [
-    "Ahrim's hood",
-    "Ahrim's robetop",
-    "Ahrim's robeskirt",
-    "Ahrim's staff",
+pub const FULL_AHRIMS: [(&str, Option<&str>); 4] = [
+    ("Ahrim's hood", None),
+    ("Ahrim's robetop", None),
+    ("Ahrim's robeskirt", None),
+    ("Ahrim's staff", None),
 ];
 
-pub const FULL_BLOOD_MOON: [&str; 4] = [
-    "Blood moon helm",
-    "Blood moon chestplate",
-    "Blood moon tassets",
-    "Dual macuahuitl",
+pub const FULL_BLOOD_MOON: [(&str, Option<&str>); 4] = [
+    ("Blood moon helm", None),
+    ("Blood moon chestplate", None),
+    ("Blood moon tassets", None),
+    ("Dual macuahuitl", None),
 ];
 
-pub const FULL_BLUE_MOON: [&str; 4] = [
-    "Blue moon helm",
-    "Blue moon chestplate",
-    "Blue moon tassets",
-    "Blue moon spear",
+pub const FULL_BLUE_MOON: [(&str, Option<&str>); 4] = [
+    ("Blue moon helm", None),
+    ("Blue moon chestplate", None),
+    ("Blue moon tassets", None),
+    ("Blue moon spear", None),
 ];
 
-pub const FULL_ECLIPSE_MOON: [&str; 4] = [
-    "Eclipse moon helm",
-    "Eclipse moon chestplate",
-    "Eclipse moon tassets",
-    "Eclipse atlatl",
+pub const FULL_ECLIPSE_MOON: [(&str, Option<&str>); 4] = [
+    ("Eclipse moon helm", None),
+    ("Eclipse moon chestplate", None),
+    ("Eclipse moon tassets", None),
+    ("Eclipse atlatl", None),
 ];
 
-pub const FULL_DHAROKS: [&str; 4] = [
-    "Dharok's helm",
-    "Dharok's platebody",
-    "Dharok's platelegs",
-    "Dharok's greataxe",
+pub const FULL_DHAROKS: [(&str, Option<&str>); 4] = [
+    ("Dharok's helm", None),
+    ("Dharok's platebody", None),
+    ("Dharok's platelegs", None),
+    ("Dharok's greataxe", None),
 ];
 
-pub const FULL_GUTHANS: [&str; 4] = [
-    "Guthan's helm",
-    "Guthan's platebody",
-    "Guthan's platelegs",
-    "Guthan's warspear",
+pub const FULL_GUTHANS: [(&str, Option<&str>); 4] = [
+    ("Guthan's helm", None),
+    ("Guthan's platebody", None),
+    ("Guthan's platelegs", None),
+    ("Guthan's warspear", None),
 ];
 
-pub const FULL_KARILS: [&str; 4] = [
-    "Karil's coif",
-    "Karil's leathertop",
-    "Karil's leatherskirt",
-    "Karil's crossbow",
+pub const FULL_KARILS: [(&str, Option<&str>); 4] = [
+    ("Karil's coif", None),
+    ("Karil's leathertop", None),
+    ("Karil's leatherskirt", None),
+    ("Karil's crossbow", None),
 ];
 
-pub const FULL_TORAGS: [&str; 4] = [
-    "Torag's helm",
-    "Torag's platebody",
-    "Torag's platelegs",
-    "Torag's hammers",
+pub const FULL_TORAGS: [(&str, Option<&str>); 4] = [
+    ("Torag's helm", None),
+    ("Torag's platebody", None),
+    ("Torag's platelegs", None),
+    ("Torag's hammers", None),
 ];
 
-pub const FULL_VERACS: [&str; 4] = [
-    "Verac's helm",
-    "Verac's brassard",
-    "Verac's plateskirt",
-    "Verac's flail",
+pub const FULL_VERACS: [(&str, Option<&str>); 4] = [
+    ("Verac's helm", None),
+    ("Verac's brassard", None),
+    ("Verac's plateskirt", None),
+    ("Verac's flail", None),
 ];
 
-pub const FULL_JUSTICIAR: [&str; 3] = [
-    "Justiciar faceguard",
-    "Justiciar chestguard",
-    "Justiciar legguards",
+pub const FULL_JUSTICIAR: [(&str, Option<&str>); 3] = [
+    ("Justiciar faceguard", None),
+    ("Justiciar chestguard", None),
+    ("Justiciar legguards", None),
 ];
 
-pub const FULL_INQUISITOR: [&str; 3] = [
-    "Inquisitor's great helm",
-    "Inquisitor's hauberk",
-    "Inquisitor's plateskirt",
+pub const FULL_INQUISITOR: [(&str, Option<&str>); 3] = [
+    ("Inquisitor's great helm", None),
+    ("Inquisitor's hauberk", None),
+    ("Inquisitor's plateskirt", None),
 ];
 
-pub const FULL_OBSIDIAN: [&str; 3] = [
-    "Obsidian helmet",
-    "Obsidian platebody",
-    "Obsidian platelegs",
+pub const FULL_OBSIDIAN: [(&str, Option<&str>); 3] = [
+    ("Obsidian helmet", None),
+    ("Obsidian platebody", None),
+    ("Obsidian platelegs", None),
 ];
 
-pub const FULL_VOID: [&str; 8] = [
-    "Void melee helm",
-    "Void ranger helm",
-    "Void mage helm",
-    "Void knight top",
-    "Elite void top",
-    "Elite void robe",
-    "Void knight robe",
-    "Void knight gloves",
+pub const FULL_VOID: [(&str, Option<&str>); 8] = [
+    ("Void melee helm", None),
+    ("Void ranger helm", None),
+    ("Void mage helm", None),
+    ("Void knight top", None),
+    ("Elite void top", None),
+    ("Elite void robe", None),
+    ("Void knight robe", None),
+    ("Void knight gloves", None),
 ];
 
-pub const FULL_ELITE_VOID: [&str; 6] = [
-    "Void melee helm",
-    "Void ranger helm",
-    "Void mage helm",
-    "Elite void top",
-    "Elite void robe",
-    "Void knight gloves",
+pub const FULL_ELITE_VOID: [(&str, Option<&str>); 6] = [
+    ("Void melee helm", None),
+    ("Void ranger helm", None),
+    ("Void mage helm", None),
+    ("Elite void top", None),
+    ("Elite void robe", None),
+    ("Void knight gloves", None),
 ];
 
-pub const BLOODBARK_ARMOR: [&str; 5] = [
-    "Bloodbark helm",
-    "Bloodbark body",
-    "Bloodbark legs",
-    "Bloodbark gauntlets",
-    "Bloodbark boots",
+pub const BLOODBARK_ARMOR: [(&str, Option<&str>); 5] = [
+    ("Bloodbark helm", None),
+    ("Bloodbark body", None),
+    ("Bloodbark legs", None),
+    ("Bloodbark gauntlets", None),
+    ("Bloodbark boots", None),
 ];
 
-pub const NON_BOLT_OR_ARROW_AMMO: [&str; 22] = [
-    "Toxic blowpipe (empty)",
-    "Toxic blowpipe (bronze)",
-    "Toxic blowpipe (iron)",
-    "Toxic blowpipe (steel)",
-    "Toxic blowpipe (mithril)",
-    "Toxic blowpipe (adamant)",
-    "Toxic blowpipe (rune)",
-    "Toxic blowpipe (amethyst)",
-    "Toxic blowpipe (dragon)",
-    "Craw's bow",
-    "Crystal bow",
-    "Webweaver bow",
-    "Bow of faerdhinen",
-    "Bow of faerdhinen (c)",
-    "Swamp lizard",
-    "Orange salamander",
-    "Red salamander",
-    "Black salamander",
-    "Tecu salamander",
-    "Eclipse atlatl",
-    "Light ballista",
-    "Heavy ballista",
+pub const NON_BOLT_OR_ARROW_AMMO: [(&str, Option<&str>); 21] = [
+    ("Toxic blowpipe", Some("Bronze")),
+    ("Toxic blowpipe", Some("Iron")),
+    ("Toxic blowpipe", Some("Steel")),
+    ("Toxic blowpipe", Some("Mithril")),
+    ("Toxic blowpipe", Some("Adamant")),
+    ("Toxic blowpipe", Some("Rune")),
+    ("Toxic blowpipe", Some("Amethyst")),
+    ("Toxic blowpipe", Some("Dragon")),
+    ("Craw's bow", None),
+    ("Crystal bow", None),
+    ("Webweaver bow", Some("Charged")),
+    ("Bow of faerdhinen", Some("Charged")),
+    ("Bow of faerdhinen (c)", None),
+    ("Swamp lizard", None),
+    ("Orange salamander", None),
+    ("Red salamander", None),
+    ("Black salamander", None),
+    ("Tecu salamander", None),
+    ("Eclipse atlatl", None),
+    ("Light ballista", None),
+    ("Heavy ballista", None),
 ];
 
-pub const USES_OWN_AMMO: [&str; 14] = [
-    "Toxic blowpipe (empty)",
-    "Toxic blowpipe (bronze)",
-    "Toxic blowpipe (iron)",
-    "Toxic blowpipe (steel)",
-    "Toxic blowpipe (mithril)",
-    "Toxic blowpipe (adamant)",
-    "Toxic blowpipe (rune)",
-    "Toxic blowpipe (amethyst)",
-    "Toxic blowpipe (dragon)",
-    "Craw's bow",
-    "Crystal bow",
-    "Webweaver bow",
-    "Bow of faerdhinen",
-    "Bow of faerdhinen (c)",
+pub const USES_OWN_AMMO: [(&str, Option<&str>); 16] = [
+    ("Toxic blowpipe", Some("Bronze")),
+    ("Toxic blowpipe", Some("Iron")),
+    ("Toxic blowpipe", Some("Steel")),
+    ("Toxic blowpipe", Some("Mithril")),
+    ("Toxic blowpipe", Some("Adamant")),
+    ("Toxic blowpipe", Some("Rune")),
+    ("Toxic blowpipe", Some("Amethyst")),
+    ("Toxic blowpipe", Some("Dragon")),
+    ("Craw's bow", Some("Charged")),
+    ("Crystal bow", Some("Active")),
+    ("Crystal bow (basic)", None),
+    ("Crystal bow (attuned)", None),
+    ("Crystal bow (perfected)", None),
+    ("Webweaver bow", Some("Charged")),
+    ("Bow of faerdhinen", Some("Charged")),
+    ("Bow of faerdhinen (c)", None),
 ];
 
 pub const OPAL_PROC_CHANCE: f64 = 0.05;

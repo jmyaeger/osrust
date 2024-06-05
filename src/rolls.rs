@@ -105,7 +105,8 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let obsidian_boost = obsidian_boost(player);
 
     // Dinh's bulwark bonus is applied directly to gear strength bonus
-    if player.is_wearing("Dinh's bulwark") && player.attrs.active_style == CombatStyle::Pummel {
+    if player.is_wearing("Dinh's bulwark", None) && player.attrs.active_style == CombatStyle::Pummel
+    {
         player.bonuses.strength.melee += player.bulwark_bonus();
     }
 
@@ -167,7 +168,7 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     let (att_gear_bonus, str_gear_bonus) = ranged_gear_bonus(player, monster);
 
     // Eclipse atlatl uses melee strength bonuses
-    let str_bonus = if player.is_wearing("Eclipse atlatl") {
+    let str_bonus = if player.is_wearing("Eclipse atlatl", None) {
         player.bonuses.strength.melee
     } else {
         player.bonuses.strength.ranged
@@ -207,7 +208,9 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     let mut magic_damage = (2.0 * player.bonuses.strength.magic) as u32;
 
     // Apply shadow multipliers to attack and damage bonuses, if applicable
-    if player.is_wearing("Tumeken's shadow") && player.combat_stance() != CombatStance::ManualCast {
+    if player.is_wearing("Tumeken's shadow", Some("Charged"))
+        && player.combat_stance() != CombatStance::ManualCast
+    {
         (magic_attack, magic_damage) = apply_shadow_boost(magic_attack, magic_damage, monster);
     }
 
@@ -226,7 +229,7 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     max_hit = max_hit * (200 + magic_damage) / 200;
 
     // Tome of water accuracy boost
-    if player.is_wearing("Tome of water (charged)") && player.is_using_water_spell() {
+    if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
         att_roll = att_roll * 6 / 5;
     }
 
@@ -245,11 +248,9 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     max_hit = max_hit * (100 + wilderness_boost) / 100;
 
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
-    if player.is_wearing("Tome of fire (burnt)")
-        || player.is_wearing("Tome of fire (seared)") && player.is_using_fire_spell()
-    {
+    if player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell() {
         max_hit = max_hit * 3 / 2;
-    } else if player.is_wearing("Tome of water (charged)") && player.is_using_water_spell() {
+    } else if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
         max_hit = max_hit * 6 / 5;
     }
 
@@ -299,7 +300,7 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
     let range_str_pray_boost = player.prayers.ranged_str;
 
     // Eclipse atlatl uses visible melee strength level for ranged strength
-    let str_level = if player.is_wearing("Eclipse atlatl") {
+    let str_level = if player.is_wearing("Eclipse atlatl", None) {
         player.live_stats.strength
     } else {
         player.live_stats.ranged
@@ -323,7 +324,7 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
 fn melee_gear_bonus(player: &Player, monster: &Monster) -> Fraction {
     // Avarice, salve, and slayer bonuses
 
-    if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
+    if player.is_wearing("Amulet of avarice", None) && monster.is_revenant() {
         if player.boosts.forinthry_surge {
             Fraction::new(135, 100)
         } else {
@@ -361,7 +362,7 @@ fn apply_vampyre_boost(
         if (1..=3).contains(&tier) {
             let (att_factor, max_hit_factor) = match (
                 player.gear.weapon.name.as_str(),
-                player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid"),
+                player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid", None),
                 tier,
             ) {
                 ("Blisterwood flail", _, _) => (Fraction::new(105, 100), Fraction::new(5, 4)),
@@ -410,7 +411,7 @@ fn apply_melee_weapon_boosts(
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
-        _ if player.is_wearing("Berserker necklace") && player.is_wearing_tzhaar_weapon() => {
+        _ if player.is_wearing("Berserker necklace", None) && player.is_wearing_tzhaar_weapon() => {
             (Fraction::new(1, 1), Fraction::new(6, 5)) // TODO: check implementation order
         }
         "Silverlight" | "Darklight" if monster.is_demon() => {
@@ -423,7 +424,13 @@ fn apply_melee_weapon_boosts(
         _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
     };
 
-    if player.is_wearing_any(vec!["Silverlight", "Darklight", "Arclight"]) && monster.is_demon() {
+    if player.is_wearing_any(vec![
+        ("Silverlight", Some("Dyed")),
+        ("Silverlight", Some("Normal")),
+        ("Darklight", None),
+        ("Arclight", None),
+    ]) && monster.is_demon()
+    {
         if monster.info.name.contains("Duke Sucellus") {
             att_factor *= Fraction::new(7, 10);
             max_hit_factor *= Fraction::new(7, 10);
@@ -477,7 +484,7 @@ fn crystal_bonus(player: &Player) -> u32 {
                 ("Crystal legs", 50),
             ]
             .iter()
-            .filter(|(item, _)| player.is_wearing(item))
+            .filter(|(item, _)| player.is_wearing(item, Some("Active")))
             .map(|(_, bonus)| bonus)
             .sum()
         })
@@ -490,7 +497,7 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
     let mut att_gear_bonus = Fraction::new(1, 1);
     let mut str_gear_bonus = Fraction::new(1, 1);
 
-    if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
+    if player.is_wearing("Amulet of avarice", None) && monster.is_revenant() {
         if player.boosts.forinthry_surge {
             att_gear_bonus = Fraction::new(135, 100);
             str_gear_bonus = Fraction::new(135, 100);
@@ -498,10 +505,10 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             att_gear_bonus = Fraction::new(6, 5);
             str_gear_bonus = Fraction::new(6, 5);
         }
-    } else if monster.is_undead() && player.is_wearing("Salve amulet (ei)") {
+    } else if monster.is_undead() && player.is_wearing("Salve amulet (ei)", None) {
         att_gear_bonus = Fraction::new(6, 5);
         str_gear_bonus = Fraction::new(6, 5);
-    } else if player.is_wearing("Salve amulet (i)") {
+    } else if player.is_wearing("Salve amulet (i)", None) {
         att_gear_bonus = Fraction::new(7, 6);
         str_gear_bonus = Fraction::new(7, 6);
     } else if player.boosts.on_task && player.is_wearing_imbued_black_mask() {
@@ -513,14 +520,14 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             // Wildy bow boost is applied additively with slayer helm (verified in-game)
             att_gear_bonus += Fraction::new(1, 2);
             str_gear_bonus += Fraction::new(1, 2);
-        } else if player.is_wearing("Dragon hunter crossbow") && monster.is_dragon() {
+        } else if player.is_wearing("Dragon hunter crossbow", None) && monster.is_dragon() {
             // DHCB boost is applied additively with slayer helm (verified in-game)
             att_gear_bonus += Fraction::new(3, 10);
             str_gear_bonus += Fraction::new(1, 4);
         }
     }
 
-    if player.is_wearing("Eclipse atlatl") {
+    if player.is_wearing("Eclipse atlatl", None) {
         str_gear_bonus = melee_gear_bonus(player, monster);
     }
 
@@ -542,7 +549,7 @@ fn apply_ranged_weapon_boosts(
             if monster.is_dragon()
                 && !(player.boosts.on_task && player.is_wearing_imbued_black_mask())
                 || (player.is_wearing_salve_i() && monster.is_undead())
-                || (player.is_wearing("Amulet of avarice") && monster.is_revenant()) =>
+                || (player.is_wearing("Amulet of avarice", None) && monster.is_revenant()) =>
         {
             (Fraction::new(13, 10), Fraction::new(5, 4))
         }
@@ -558,7 +565,7 @@ fn apply_ranged_weapon_boosts(
             && player.is_wearing_wildy_bow()
             && (!(player.is_wearing_imbued_black_mask() && player.boosts.on_task)
                 || (player.is_wearing_salve_i() && monster.is_undead())
-                || (player.is_wearing("Amulet of avarice") && monster.is_revenant())) =>
+                || (player.is_wearing("Amulet of avarice", None) && monster.is_revenant())) =>
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
@@ -569,7 +576,7 @@ fn apply_ranged_weapon_boosts(
     max_hit = max_hit_factor.multiply_to_int(max_hit);
 
     // Apply bone shortbow bonus additively
-    if player.is_wearing("Bone shortbow") && monster.is_rat() {
+    if player.is_wearing("Bone shortbow", None) && monster.is_rat() {
         max_hit += 10;
     }
 
@@ -678,7 +685,7 @@ fn apply_salve_and_smoke_magic_boosts(
     let mut salve_active = true;
     let mut att_roll_mod = 100;
 
-    if player.is_wearing("Amulet of avarice") && monster.is_revenant() {
+    if player.is_wearing("Amulet of avarice", None) && monster.is_revenant() {
         if player.boosts.forinthry_surge {
             att_roll_mod += 35;
             magic_damage += 70;
@@ -686,10 +693,10 @@ fn apply_salve_and_smoke_magic_boosts(
             att_roll_mod += 20;
             magic_damage += 40;
         }
-    } else if player.is_wearing("Salve amulet (ei)") && monster.is_undead() {
+    } else if player.is_wearing("Salve amulet (ei)", None) && monster.is_undead() {
         att_roll_mod += 20;
         magic_damage += 40;
-    } else if player.is_wearing("Salve amulet (i)") {
+    } else if player.is_wearing("Salve amulet (i)", None) {
         att_roll_mod += 15;
         magic_damage += 30;
     } else {
@@ -725,7 +732,7 @@ fn apply_chaos_gauntlet_boost(max_hit: u32, player: &Player) -> u32 {
     ];
 
     if let Some(Spell::Standard(standard_spell)) = player.attrs.spell {
-        if player.is_wearing("Chaos gauntlets") && bolt_spells.contains(&standard_spell) {
+        if player.is_wearing("Chaos gauntlets", None) && bolt_spells.contains(&standard_spell) {
             return max_hit + 3;
         }
     }

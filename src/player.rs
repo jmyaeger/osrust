@@ -334,7 +334,39 @@ impl Player {
         self.apply_potion_boosts();
     }
 
-    pub fn is_wearing(&self, gear_name: &str) -> bool {
+    pub fn is_wearing(&self, gear_name: &str, version: Option<&str>) -> bool {
+        let version = version.map(|v| v.to_string());
+
+        self.gear.head.as_ref().map_or(false, |armor| {
+            armor.name == gear_name && armor.version == version
+        }) || self.gear.neck.as_ref().map_or(false, |armor| {
+            armor.name == gear_name && armor.version == version
+        }) || self.gear.cape.as_ref().map_or(false, |armor| {
+            armor.name == gear_name && armor.version == version
+        }) || self.gear.ammo.as_ref().map_or(false, |armor| {
+            armor.name == gear_name && armor.version == version
+        }) || self.gear.weapon.name == gear_name && self.gear.weapon.version == version
+            || self.gear.shield.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+            || self.gear.body.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+            || self.gear.legs.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+            || self.gear.hands.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+            || self.gear.feet.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+            || self.gear.ring.as_ref().map_or(false, |armor| {
+                armor.name == gear_name && armor.version == version
+            })
+    }
+
+    pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {
         self.gear
             .head
             .as_ref()
@@ -387,27 +419,28 @@ impl Player {
                 .map_or(false, |armor| armor.name == gear_name)
     }
 
-    pub fn is_wearing_any(&self, gear_names: Vec<&str>) -> bool {
+    pub fn is_wearing_any(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
         gear_names
             .iter()
-            .any(|&gear_name| self.is_wearing(gear_name))
+            .any(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
-    pub fn is_wearing_all(&self, gear_names: Vec<&str>) -> bool {
+    pub fn is_wearing_all(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
         gear_names
             .iter()
-            .all(|&gear_name| self.is_wearing(gear_name))
+            .all(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
-    pub fn equip(&mut self, item_name: &str) {
+    pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
         let slot_name = equipment::get_slot_name(item_name)
             .unwrap_or_else(|_| panic!("Slot not found for item {}", item_name));
         match slot_name.as_str() {
-            "head" => self.gear.head = Some(Armor::new(item_name)),
-            "neck" => self.gear.neck = Some(Armor::new(item_name)),
+            "head" => self.gear.head = Some(Armor::new(item_name, version)),
+            "neck" => self.gear.neck = Some(Armor::new(item_name, version)),
             "cape" => {
-                self.gear.cape = Some(Armor::new(
-                    if item_name == "Dizana's quiver (charged)"
+                self.gear.cape = Some(Armor::new(item_name, {
+                    if item_name == "Dizana's quiver"
+                        && version == Some("charged")
                         && !(self
                             .gear
                             .ammo
@@ -415,19 +448,19 @@ impl Player {
                             .map_or(false, |ammo| ammo.is_bolt_or_arrow())
                             && self.gear.weapon.uses_bolts_or_arrows())
                     {
-                        "Dizana's quiver (uncharged)"
+                        Some("uncharged")
                     } else {
-                        item_name
-                    },
-                ));
+                        version
+                    }
+                }));
             }
             "ammo" => {
                 if self.is_wearing_any(vec![
-                    "Dizana's quiver (charged)",
-                    "Dizana's quiver (uncharged)",
+                    ("Dizana's quiver", Some("charged")),
+                    ("Dizana's quiver", Some("uncharged")),
                 ]) && self.gear.ammo.is_some()
                 {
-                    self.gear.second_ammo = Some(Armor::new(item_name));
+                    self.gear.second_ammo = Some(Armor::new(item_name, version));
                     if !self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo()
                         && self
                             .gear
@@ -437,19 +470,19 @@ impl Player {
                             .is_valid_ranged_ammo()
                         && self.is_quiver_bonus_valid()
                     {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
+                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged")));
                     }
                 } else {
-                    self.gear.ammo = Some(Armor::new(item_name));
+                    self.gear.ammo = Some(Armor::new(item_name, version));
                     if self.is_quiver_bonus_valid() {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
-                    } else if self.is_wearing("Dizana's quiver (charged)") {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
+                    } else if self.is_wearing("Dizana's quiver", Some("charged")) {
+                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
                     }
                 }
             }
             "weapon" => {
-                self.gear.weapon = Weapon::new(item_name);
+                self.gear.weapon = Weapon::new(item_name, version);
                 if self.attrs.active_style == CombatStyle::Rapid
                     && self
                         .gear
@@ -460,13 +493,13 @@ impl Player {
                     self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
                 }
                 if self.is_quiver_bonus_valid() {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
-                } else if self.is_wearing("Dizana's quiver (charged)") {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
+                } else if self.is_wearing("Dizana's quiver", Some("charged)")) {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
                 }
             }
             "2h" => {
-                self.gear.weapon = Weapon::new(item_name);
+                self.gear.weapon = Weapon::new(item_name, version);
                 self.gear.shield = None;
                 if self.attrs.active_style == CombatStyle::Rapid
                     && self
@@ -478,22 +511,22 @@ impl Player {
                     self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
                 }
                 if self.is_quiver_bonus_valid() {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver (charged)"));
-                } else if self.is_wearing("Dizana's quiver (charged)") {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver (uncharged)"));
+                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
+                } else if self.is_wearing("Dizana's quiver", Some("charged)")) {
+                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
                 }
             }
             "shield" => {
-                self.gear.shield = Some(Armor::new(item_name));
-                if self.gear.weapon.two_handed {
+                self.gear.shield = Some(Armor::new(item_name, version));
+                if self.gear.weapon.is_two_handed {
                     self.gear.weapon = Weapon::default();
                 }
             }
-            "body" => self.gear.body = Some(Armor::new(item_name)),
-            "legs" => self.gear.legs = Some(Armor::new(item_name)),
-            "hands" => self.gear.hands = Some(Armor::new(item_name)),
-            "feet" => self.gear.feet = Some(Armor::new(item_name)),
-            "ring" => self.gear.ring = Some(Armor::new(item_name)),
+            "body" => self.gear.body = Some(Armor::new(item_name, version)),
+            "legs" => self.gear.legs = Some(Armor::new(item_name, version)),
+            "hands" => self.gear.hands = Some(Armor::new(item_name, version)),
+            "feet" => self.gear.feet = Some(Armor::new(item_name, version)),
+            "ring" => self.gear.ring = Some(Armor::new(item_name, version)),
             _ => panic!("Slot not found for item {}", item_name),
         }
     }
@@ -517,7 +550,10 @@ impl Player {
         {
             self.bonuses.add_bonuses(&item.bonuses);
         }
-        if !USES_OWN_AMMO.contains(&self.gear.weapon.name.as_str()) {
+        if !USES_OWN_AMMO.contains(&(
+            self.gear.weapon.name.as_str(),
+            self.gear.weapon.version.as_deref(),
+        )) {
             for item in [&self.gear.ammo, &self.gear.second_ammo]
                 .into_iter()
                 .flatten()
@@ -550,7 +586,7 @@ impl Player {
         self.set_effects.full_elite_void = self.is_wearing_full_elite_void();
         self.set_effects.bloodbark_pieces = BLOODBARK_ARMOR
             .iter()
-            .filter(|armor| self.is_wearing(armor))
+            .filter(|armor| self.is_wearing(armor.0, armor.1))
             .count();
     }
 
@@ -621,12 +657,13 @@ impl Player {
         ]
         .contains(&stance)
         {
-            self.gear.weapon.speed =
-                if self.is_wearing("Harmonised nightmare staff") && self.is_using_standard_spell() {
-                    4
-                } else {
-                    5
-                }
+            self.gear.weapon.speed = if self.is_wearing("Harmonised nightmare staff", None)
+                && self.is_using_standard_spell()
+            {
+                4
+            } else {
+                5
+            }
         } else {
             self.gear.weapon.speed = self.gear.weapon.base_speed;
         }
@@ -634,46 +671,63 @@ impl Player {
 
     pub fn is_wearing_black_mask(&self) -> bool {
         self.is_wearing_any(vec![
-            "Black mask",
-            "Black mask (i)",
-            "Slayer helmet",
-            "Slayer helmet (i)",
+            ("Black mask", None),
+            ("Black mask (i)", None),
+            ("Slayer helmet", None),
+            ("Slayer helmet (i)", None),
         ])
     }
 
     pub fn is_wearing_imbued_black_mask(&self) -> bool {
-        self.is_wearing_any(vec!["Black mask (i)", "Slayer helmet (i)"])
+        self.is_wearing_any(vec![("Black mask (i)", None), ("Slayer helmet (i)", None)])
     }
 
     pub fn is_wearing_salve(&self) -> bool {
-        self.is_wearing_any(vec!["Salve amulet", "Salve amulet (i)"])
+        self.is_wearing_any(vec![("Salve amulet", None), ("Salve amulet (i)", None)])
     }
 
     pub fn is_wearing_salve_e(&self) -> bool {
-        self.is_wearing_any(vec!["Salve amulet (e)", "Salve amulet (ei)"])
+        self.is_wearing_any(vec![
+            ("Salve amulet (e)", None),
+            ("Salve amulet (ei)", None),
+        ])
     }
 
     pub fn is_wearing_salve_i(&self) -> bool {
-        self.is_wearing_any(vec!["Salve amulet (i)", "Salve amulet (ei)"])
+        self.is_wearing_any(vec![
+            ("Salve amulet (i)", None),
+            ("Salve amulet (ei)", None),
+        ])
     }
 
     pub fn is_wearing_wildy_mace(&self) -> bool {
-        self.is_wearing_any(vec!["Viggora's chainmace", "Ursine chainmace"])
+        self.is_wearing_any(vec![
+            ("Viggora's chainmace", Some("Charged")),
+            ("Ursine chainmace", Some("Charged")),
+        ])
     }
 
     pub fn is_wearing_wildy_bow(&self) -> bool {
-        self.is_wearing_any(vec!["Craw's bow", "Webweaver bow"])
+        self.is_wearing_any(vec![
+            ("Craw's bow", Some("Charged")),
+            ("Webweaver bow", Some("Charged")),
+        ])
     }
 
     pub fn is_wearing_wildy_staff(&self) -> bool {
-        self.is_wearing_any(vec!["Thammaron's sceptre", "Accursed sceptre"])
+        self.is_wearing_any(vec![
+            ("Thammaron's sceptre", Some("Charged")),
+            ("Accursed sceptre", Some("Charged")),
+            ("Thammaron's sceptre (a)", Some("Charged")),
+            ("Accursed sceptre (a)", Some("Charged")),
+        ])
     }
 
     pub fn is_wearing_crystal_bow(&self) -> bool {
         self.is_wearing_any(vec![
-            "Crystal bow",
-            "Bow of faerdhinen",
-            "Bow of faerdhinen (c)",
+            ("Crystal bow", Some("Active")),
+            ("Bow of faerdhinen", Some("Charged")),
+            ("Bow of faerdhinen (c)", None),
         ])
     }
 
@@ -682,89 +736,104 @@ impl Player {
     }
 
     pub fn is_wearing_salamander(&self) -> bool {
-        self.gear.weapon.name.contains("salamander") || self.is_wearing("Swamp lizard")
+        self.gear.weapon.name.contains("salamander") || self.is_wearing("Swamp lizard", None)
     }
 
     pub fn is_wearing_smoke_staff(&self) -> bool {
-        self.is_wearing_any(vec!["Smoke battlestaff", "Mystic smoke staff"])
+        self.is_wearing_any(vec![
+            ("Smoke battlestaff", None),
+            ("Mystic smoke staff", None),
+        ])
     }
 
     pub fn is_wearing_silver_weapon(&self) -> bool {
         self.is_wearing_any(vec![
-            "Blessed axe",
-            "Silver sickle",
-            "Silver sickle (b)",
-            "Emerald sickle",
-            "Emerald sickle (b)",
-            "Enchanted emerald sickle (b)",
-            "Ruby sickle (b)",
-            "Enchanted ruby sickle (b)",
-            "Silverlight",
-            "Darklight",
-            "Arclight",
-            "Rod of ivandis",
-            "Wolfbane",
-            "Blisterwood flail",
-            "Blisterwood sickle",
-            "Ivandis flail",
-        ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts"))
+            ("Blessed axe", None),
+            ("Silver sickle", None),
+            ("Silver sickle (b)", None),
+            ("Emerald sickle", None),
+            ("Emerald sickle (b)", None),
+            ("Enchanted emerald sickle (b)", None),
+            ("Ruby sickle (b)", None),
+            ("Enchanted ruby sickle (b)", None),
+            ("Silverlight", Some("Normal")),
+            ("Silverlight", Some("Dyed")),
+            ("Darklight", None),
+            ("Arclight", None),
+            ("Rod of ivandis", None),
+            ("Wolfbane", None),
+            ("Blisterwood flail", None),
+            ("Blisterwood sickle", None),
+            ("Ivandis flail", None),
+        ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
     }
 
     pub fn is_wearing_ivandis_weapon(&self) -> bool {
         self.is_wearing_any(vec![
-            "Blisterwood flail",
-            "Blisterwood sickle",
-            "Ivandis flail",
+            ("Blisterwood flail", None),
+            ("Blisterwood sickle", None),
+            ("Ivandis flail", None),
         ])
     }
 
     pub fn is_wearing_keris(&self) -> bool {
         self.is_wearing_any(vec![
-            "Keris",
-            "Keris partisan",
-            "Keris partisan of the sun",
-            "Keris partisan of corruption",
-            "Keris partisan of breaching",
+            ("Keris", None),
+            ("Keris partisan", None),
+            ("Keris partisan of the sun", None),
+            ("Keris partisan of corruption", None),
+            ("Keris partisan of breaching", None),
         ])
     }
 
     pub fn is_wearing_leaf_bladed_weapon(&self) -> bool {
         (self.is_using_melee()
             && self.is_wearing_any(vec![
-                "Leaf-bladed spear",
-                "Leaf-bladed sword",
-                "Leaf-bladed battleaxe",
+                ("Leaf-bladed spear", None),
+                ("Leaf-bladed sword", None),
+                ("Leaf-bladed battleaxe", None),
             ]))
             || (self.combat_type() == CombatType::Ranged
                 && (self.is_using_crossbow()
-                    && self.is_wearing_any(vec!["Broad bolts", "Amethyst broad bolts"])))
-            || self.is_wearing("Broad arrows")
+                    && self.is_wearing_any(vec![
+                        ("Broad bolts", None),
+                        ("Amethyst broad bolts", None),
+                    ])))
+            || self.is_wearing("Broad arrows", None)
     }
 
     pub fn is_wearing_full_void(&self) -> bool {
-        FULL_VOID.iter().filter(|x| self.is_wearing(x)).count() == 4
+        FULL_VOID
+            .iter()
+            .filter(|(x, _)| self.is_wearing(x, None))
+            .count()
+            == 4
     }
 
     pub fn is_wearing_full_elite_void(&self) -> bool {
         FULL_ELITE_VOID
             .iter()
-            .filter(|x| self.is_wearing(x))
+            .filter(|(x, _)| self.is_wearing(x, None))
             .count()
             == 4
     }
 
     pub fn is_wearing_ancient_spectre(&self) -> bool {
         self.is_wearing_any(vec![
-            "Ancient sceptre",
-            "Smoke ancient sceptre",
-            "Shadow ancient sceptre",
-            "Blood ancient sceptre",
-            "Ice ancient sceptre",
+            ("Ancient sceptre", None),
+            ("Smoke ancient sceptre", None),
+            ("Shadow ancient sceptre", None),
+            ("Blood ancient sceptre", None),
+            ("Ice ancient sceptre", None),
         ])
     }
 
     pub fn is_wearing_ratbone_weapon(&self) -> bool {
-        self.is_wearing_any(vec!["Bone mace", "Bone shortbow", "Bone staff"])
+        self.is_wearing_any(vec![
+            ("Bone mace", None),
+            ("Bone shortbow", None),
+            ("Bone staff", None),
+        ])
     }
 
     pub fn is_using_spell(&self) -> bool {
@@ -826,7 +895,7 @@ impl Player {
         match self.combat_type() {
             CombatType::Magic => true,
             CombatType::Stab => {
-                self.is_wearing("Osmumten's fang")
+                self.is_wearing("Osmumten's fang", None)
                     || weapon_name.contains("halberd")
                     || (weapon_name.contains("spear") && weapon_name.as_str() != "Blue moon spear")
             }
@@ -1044,15 +1113,15 @@ mod test {
         let mut player = Player::new();
         player.gear.head = Some(Armor::default());
         player.gear.head.as_mut().unwrap().name = "Torva full helm".to_string();
-        assert!(player.is_wearing("Torva full helm"));
+        assert!(player.is_wearing("Torva full helm", None));
     }
 
     #[test]
     fn test_equip_armor() {
         let mut player = Player::new();
-        player.equip("Torva full helm");
+        player.equip("Torva full helm", None);
         player.update_bonuses();
-        let torva_full_helm = Armor::new("Torva full helm");
+        let torva_full_helm = Armor::new("Torva full helm", None);
         assert_eq!(player.gear.head.unwrap(), torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
     }
@@ -1060,9 +1129,9 @@ mod test {
     #[test]
     fn test_equip_weapon() {
         let mut player = Player::new();
-        player.equip("Osmumten's fang");
+        player.equip("Osmumten's fang", None);
         player.update_bonuses();
-        let osmumtens_fang = Weapon::new("Osmumten's fang");
+        let osmumtens_fang = Weapon::new("Osmumten's fang", None);
         assert_eq!(player.gear.weapon, osmumtens_fang);
         assert_eq!(player.bonuses, osmumtens_fang.bonuses)
     }
@@ -1070,11 +1139,11 @@ mod test {
     #[test]
     fn test_replace_gear() {
         let mut player = Player::new();
-        player.equip("Torva full helm");
+        player.equip("Torva full helm", None);
         player.update_bonuses();
-        player.equip("Neitiznot faceguard");
+        player.equip("Neitiznot faceguard", None);
         player.update_bonuses();
-        let neitiznot_faceguard = Armor::new("Neitiznot faceguard");
+        let neitiznot_faceguard = Armor::new("Neitiznot faceguard", None);
         assert_eq!(player.gear.head.unwrap(), neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
@@ -1083,18 +1152,18 @@ mod test {
     fn test_max_melee_bonuses() {
         let mut player = Player::new();
         let max_melee_gear = Gear {
-            head: Some(Armor::new("Torva full helm")),
-            neck: Some(Armor::new("Amulet of torture")),
-            cape: Some(Armor::new("Infernal cape")),
-            ammo: Some(Armor::new("Rada's blessing 4")),
+            head: Some(Armor::new("Torva full helm", None)),
+            neck: Some(Armor::new("Amulet of torture", None)),
+            cape: Some(Armor::new("Infernal cape", None)),
+            ammo: Some(Armor::new("Rada's blessing 4", None)),
             second_ammo: None,
-            weapon: Weapon::new("Osmumten's fang"),
-            shield: Some(Armor::new("Avernic defender")),
-            body: Some(Armor::new("Torva platebody")),
-            legs: Some(Armor::new("Torva platelegs")),
-            hands: Some(Armor::new("Ferocious gloves")),
-            feet: Some(Armor::new("Primordial boots")),
-            ring: Some(Armor::new("Ultor ring")),
+            weapon: Weapon::new("Osmumten's fang", None),
+            shield: Some(Armor::new("Avernic defender", None)),
+            body: Some(Armor::new("Torva platebody", None)),
+            legs: Some(Armor::new("Torva platelegs", None)),
+            hands: Some(Armor::new("Ferocious gloves", None)),
+            feet: Some(Armor::new("Primordial boots", None)),
+            ring: Some(Armor::new("Ultor ring", None)),
         };
         player.gear = max_melee_gear;
         player.update_bonuses();

@@ -1,20 +1,20 @@
 use lazy_static::lazy_static;
 
 use crate::constants::*;
-use rusqlite::{Connection, Result, Row};
+use serde::{Deserialize, Deserializer};
+use serde_json::Value;
 use std::collections::HashMap;
-use std::env;
+use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
 use strum_macros::EnumIter;
 
 lazy_static! {
-    static ref EQUIPMENT_DB: PathBuf = {
-        let current_dir = env::current_dir().expect("Failed to get current directory");
-        current_dir.join("src/databases/equipment.db")
-    };
+    static ref EQUIPMENT_JSON: PathBuf =
+        fs::canonicalize("src/databases/equipment.json").expect("Failed to get database path");
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub enum GearSlot {
     #[default]
     None,
@@ -31,7 +31,7 @@ pub enum GearSlot {
     Cape,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize)]
 pub enum CombatType {
     None,
     Stab,
@@ -45,7 +45,7 @@ pub enum CombatType {
     Ranged,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, Deserialize)]
 pub enum CombatStance {
     None,
     #[default]
@@ -63,7 +63,7 @@ pub enum CombatStance {
     ManualCast,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub enum CombatStyle {
     Chop,
     Slash,
@@ -101,13 +101,13 @@ pub enum CombatStyle {
     Blaze,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub struct CombatOption {
     pub combat_type: CombatType,
     pub stance: CombatStance,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Default, Clone, serde::Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Clone, Deserialize)]
 pub struct StyleBonus {
     pub stab: i32,
     pub slash: i32,
@@ -126,7 +126,7 @@ impl StyleBonus {
     }
 }
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Deserialize)]
 pub struct StrengthBonus {
     pub melee: i32,
     pub ranged: i32,
@@ -141,7 +141,7 @@ impl StrengthBonus {
     }
 }
 
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Deserialize)]
 pub struct EquipmentBonuses {
     pub attack: StyleBonus,
     pub defence: StyleBonus,
@@ -159,66 +159,79 @@ impl EquipmentBonuses {
 }
 
 pub trait Equipment {
-    fn set_info(&mut self, item_name: &str) -> Result<()> {
-        let conn = Connection::open(EQUIPMENT_DB.as_path())?;
-        let mut stmt = conn.prepare("SELECT * FROM equipment WHERE name = ?")?;
-        let mut rows = stmt.query([&item_name])?;
-        if let Some(row) = rows.next()? {
-            self.set_fields_from_row(row)?;
-            Ok(())
-        } else {
-            Err(rusqlite::Error::QueryReturnedNoRows)
+    fn set_info(&mut self, item_name: &str, version: Option<&str>) -> Result<(), String> {
+        let mut file = match fs::File::open(EQUIPMENT_JSON.as_path()) {
+            Ok(file) => file,
+            Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
+        };
+        let mut contents = String::new();
+        if let Err(err) = file.read_to_string(&mut contents) {
+            return Err(format!("Failed to read JSON file: {}", err));
         }
+
+        let json: Value = match serde_json::from_str(&contents) {
+            Ok(json) => json,
+            Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
+        };
+
+        self.set_fields_from_json(&json, item_name, version)
     }
 
-    fn set_fields_from_row(&mut self, row: &Row) -> Result<()>;
+    fn set_fields_from_json(
+        &mut self,
+        json: &Value,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), String>;
+
+    // fn set_fields_from_row(&mut self, row: &Row) -> Result<()>;
 }
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Default, Deserialize)]
 pub struct Armor {
     pub name: String,
+    pub version: Option<String>,
     pub bonuses: EquipmentBonuses,
+    #[serde(deserialize_with = "parse_gear_slot")]
     pub slot: GearSlot,
 }
 
 impl Equipment for Armor {
-    fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
-        self.name = row.get("name")?;
-        self.bonuses.attack.stab = row.get::<_, i32>("astab")?;
-        self.bonuses.attack.slash = row.get::<_, i32>("aslash")?;
-        self.bonuses.attack.crush = row.get::<_, i32>("acrush")?;
-        self.bonuses.attack.ranged = row.get::<_, i32>("arange")?;
-        self.bonuses.attack.magic = row.get::<_, i32>("amagic")?;
-        self.bonuses.defence.stab = row.get::<_, i32>("dstab")?;
-        self.bonuses.defence.slash = row.get::<_, i32>("dslash")?;
-        self.bonuses.defence.crush = row.get::<_, i32>("dcrush")?;
-        self.bonuses.defence.ranged = row.get::<_, i32>("drange")?;
-        self.bonuses.defence.magic = row.get::<_, i32>("dmagic")?;
-        self.bonuses.strength.melee = row.get::<_, i32>("str")?;
-        self.bonuses.strength.ranged = row.get::<_, i32>("rstr")?;
-        self.bonuses.strength.magic = row.get::<_, f32>("mdmg")?;
-        self.bonuses.prayer = row.get::<_, i32>("prayer")?;
-        self.slot = match row.get::<_, String>("slot")?.as_str() {
-            "head" => GearSlot::Head,
-            "neck" => GearSlot::Neck,
-            "body" => GearSlot::Body,
-            "legs" => GearSlot::Legs,
-            "hands" => GearSlot::Hands,
-            "feet" => GearSlot::Feet,
-            "ring" => GearSlot::Ring,
-            "ammo" => GearSlot::Ammo,
-            "shield" => GearSlot::Shield,
-            "cape" => GearSlot::Cape,
-            _ => panic!("Invalid slot: {}", row.get::<_, String>("slot")?),
+    fn set_fields_from_json(
+        &mut self,
+        json: &Value,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), String> {
+        let armor = match json.as_array() {
+            Some(array) => array
+                .iter()
+                .find(|entry| {
+                    entry["name"].as_str() == Some(item_name)
+                        && entry["version"].as_str() == version
+                })
+                .cloned(),
+            None => return Err(format!("Item not found: {}", item_name)),
         };
+
+        let armor_struct: Armor = match armor {
+            Some(entry) => match serde_json::from_value(entry) {
+                Ok(armor) => Ok(armor),
+                Err(err) => Err(format!("Failed to deserialize armor: {}", err)),
+            },
+            None => Err(format!("Armor not found: {}", item_name)),
+        }
+        .expect("Failed to deserialize armor");
+
+        *self = armor_struct;
         Ok(())
     }
 }
 
 impl Armor {
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: &str, version: Option<&str>) -> Self {
         let mut armor = Armor::default();
-        armor.set_info(name).unwrap();
+        armor.set_info(name, version).unwrap();
         armor
     }
 
@@ -233,60 +246,111 @@ impl Armor {
     }
 }
 
-#[derive(Debug, PartialEq)]
+fn parse_gear_slot<'de, D>(deserializer: D) -> Result<GearSlot, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = String::deserialize(deserializer)?;
+
+    let trimmed = s.replace('\"', "");
+
+    match trimmed.as_str() {
+        "head" => Ok(GearSlot::Head),
+        "neck" => Ok(GearSlot::Neck),
+        "cape" => Ok(GearSlot::Cape),
+        "body" => Ok(GearSlot::Body),
+        "legs" => Ok(GearSlot::Legs),
+        "shield" => Ok(GearSlot::Shield),
+        "feet" => Ok(GearSlot::Feet),
+        "hands" => Ok(GearSlot::Hands),
+        "ring" => Ok(GearSlot::Ring),
+        "ammo" => Ok(GearSlot::Ammo),
+        "weapon" => Err(serde::de::Error::custom(
+            "Tried to create armor from a weapon name",
+        )),
+        _ => Err(serde::de::Error::custom(format!("Unknown slot: {}", s))),
+    }
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct Weapon {
     pub name: String,
+    pub version: Option<String>,
     pub bonuses: EquipmentBonuses,
+    #[serde(skip)]
     pub slot: GearSlot,
     pub speed: i32,
+    #[serde(skip)]
     pub base_speed: i32,
     pub attack_range: i8,
-    pub two_handed: bool,
+    pub is_two_handed: bool,
+    #[serde(default)]
     pub spec_cost: u8,
+    #[serde(default)]
     pub poison_severity: u8,
+    #[serde(rename(deserialize = "category"))]
+    #[serde(deserialize_with = "deserialize_combat_styles")]
     pub combat_styles: HashMap<CombatStyle, CombatOption>,
+    #[serde(default)]
     pub is_staff: bool,
 }
 
 impl Equipment for Weapon {
-    fn set_fields_from_row(&mut self, row: &Row) -> Result<()> {
-        self.name = row.get("name")?;
-        self.bonuses.attack.stab = row.get::<_, i32>("astab")?;
-        self.bonuses.attack.slash = row.get::<_, i32>("aslash")?;
-        self.bonuses.attack.crush = row.get::<_, i32>("acrush")?;
-        self.bonuses.attack.ranged = row.get::<_, i32>("arange")?;
-        self.bonuses.attack.magic = row.get::<_, i32>("amagic")?;
-        self.bonuses.defence.stab = row.get::<_, i32>("dstab")?;
-        self.bonuses.defence.slash = row.get::<_, i32>("dslash")?;
-        self.bonuses.defence.crush = row.get::<_, i32>("dcrush")?;
-        self.bonuses.defence.ranged = row.get::<_, i32>("drange")?;
-        self.bonuses.defence.magic = row.get::<_, i32>("dmagic")?;
-        self.bonuses.strength.melee = row.get::<_, i32>("str")?;
-        self.bonuses.strength.ranged = row.get::<_, i32>("rstr")?;
-        self.bonuses.strength.magic = row.get::<_, f32>("mdmg")?;
-        self.bonuses.prayer = row.get::<_, i32>("prayer")?;
-        self.slot = GearSlot::Weapon;
-        self.speed = row.get::<_, i32>("speed")?;
-        self.base_speed = self.speed;
-        self.attack_range = match row.get::<_, i8>("attackrange") {
-            Ok(range) => range,
-            Err(rusqlite::Error::InvalidColumnType(_, _, _)) => {
-                match row.get::<_, String>("attackrange")?.as_str() {
-                    "staff" => {
-                        self.is_staff = true;
-                        1
+    fn set_fields_from_json(
+        &mut self,
+        json: &Value,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), String> {
+        let weapon = match json.as_array() {
+            Some(array) => {
+                let result = array
+                    .iter()
+                    .find(|entry| {
+                        entry["name"].as_str() == Some(item_name)
+                            && entry["version"].as_str() == version
+                    })
+                    .cloned();
+
+                if result.is_none() {
+                    let no_version = array
+                        .iter()
+                        .find(|entry| entry["name"].as_str() == Some(item_name))
+                        .cloned();
+                    if no_version.is_some() {
+                        return Err(format!(
+                            "Item not found: {} (no version provided)",
+                            item_name
+                        ));
                     }
-                    _ => panic!(
-                        "Invalid attack range: {}",
-                        row.get::<_, String>("attackrange")?
-                    ),
                 }
+
+                result
             }
-            Err(e) => panic!("Error parsing attack range: {}", e),
+            None => return Err(format!("Item not found: {}", item_name)),
         };
-        self.two_handed = matches!(row.get::<_, String>("slot")?.as_str(), "2h");
-        let weapon_type = row.get::<_, String>("combatstyle")?;
-        self.combat_styles = Weapon::get_styles_from_weapon_type(weapon_type.as_str());
+
+        let mut weapon_struct: Weapon = match weapon {
+            Some(entry) => match serde_json::from_value(entry) {
+                Ok(weapon) => Ok(weapon),
+                Err(err) => Err(format!("Failed to deserialize weapon: {}", err)),
+            },
+            None => Err(format!("Weapon not found: {}", item_name)),
+        }
+        .expect("Failed to deserialize weapon");
+
+        if weapon_struct
+            .combat_styles
+            .contains_key(&CombatStyle::Spell)
+        {
+            weapon_struct.is_staff = true;
+        }
+
+        weapon_struct.base_speed = weapon_struct.speed;
+        weapon_struct.slot = GearSlot::Weapon;
+
+        *self = weapon_struct;
+
         Ok(())
     }
 }
@@ -295,12 +359,13 @@ impl Default for Weapon {
     fn default() -> Weapon {
         Weapon {
             name: String::new(),
+            version: None,
             bonuses: EquipmentBonuses::default(),
             slot: GearSlot::Weapon,
             speed: 0,
             base_speed: 0,
             attack_range: 0,
-            two_handed: false,
+            is_two_handed: false,
             spec_cost: 0,
             poison_severity: 0,
             combat_styles: Weapon::get_styles_from_weapon_type("Unarmed"),
@@ -309,15 +374,27 @@ impl Default for Weapon {
     }
 }
 
+pub fn deserialize_combat_styles<'de, D>(
+    deserializer: D,
+) -> Result<HashMap<CombatStyle, CombatOption>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let weapon_type = String::deserialize(deserializer)?;
+    Ok(Weapon::get_styles_from_weapon_type(weapon_type.as_str()))
+}
+
 impl Weapon {
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: &str, version: Option<&str>) -> Self {
         let mut weapon = Weapon::default();
-        weapon.set_info(name).unwrap();
+        weapon.set_info(name, version).unwrap();
         weapon
     }
 
     pub fn uses_bolts_or_arrows(&self) -> bool {
-        !NON_BOLT_OR_ARROW_AMMO.contains(&self.name.as_str())
+        !NON_BOLT_OR_ARROW_AMMO
+            .iter()
+            .any(|(name, _)| name == &self.name)
             && self.combat_styles.contains_key(&CombatStyle::Rapid)
     }
 
@@ -1017,14 +1094,32 @@ impl Weapon {
     }
 }
 
-pub fn get_slot_name(item_name: &str) -> Result<String> {
-    let conn = Connection::open(EQUIPMENT_DB.as_path()).unwrap();
-    let mut stmt = conn.prepare("SELECT slot FROM equipment WHERE name = ?")?;
-    let mut rows = stmt.query([&item_name])?;
-    if let Some(row) = rows.next()? {
-        Ok(row.get(0)?)
-    } else {
-        Err(rusqlite::Error::QueryReturnedNoRows)
+pub fn get_slot_name(item_name: &str) -> Result<String, String> {
+    let mut file = match fs::File::open(EQUIPMENT_JSON.as_path()) {
+        Ok(file) => file,
+        Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
+    };
+    let mut contents = String::new();
+    if let Err(err) = file.read_to_string(&mut contents) {
+        return Err(format!("Failed to read JSON file: {}", err));
+    }
+
+    let json: Value = match serde_json::from_str(&contents) {
+        Ok(json) => json,
+        Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
+    };
+
+    let item = match json.as_array() {
+        Some(array) => array
+            .iter()
+            .find(|entry| entry["name"].as_str() == Some(item_name))
+            .cloned(),
+        None => return Err(format!("Item not found: {}", item_name)),
+    };
+
+    match item {
+        Some(item) => Ok(item["slot"].as_str().unwrap().to_string()),
+        None => Err(format!("Item not found: {}", item_name)),
     }
 }
 
@@ -1040,7 +1135,7 @@ mod tests {
         assert_eq!(weapon.speed, 0);
         assert_eq!(weapon.base_speed, 0);
         assert_eq!(weapon.attack_range, 0);
-        assert!(!weapon.two_handed);
+        assert!(!weapon.is_two_handed);
         assert_eq!(weapon.spec_cost, 0);
         assert_eq!(weapon.slot, GearSlot::Weapon);
         let combat_style = weapon.combat_styles.get(&CombatStyle::Punch).unwrap();
@@ -1058,7 +1153,7 @@ mod tests {
 
     #[test]
     fn test_set_weapon_info() {
-        let weapon = Weapon::new("Abyssal whip");
+        let weapon = Weapon::new("Abyssal whip", None);
         assert_eq!(weapon.name, "Abyssal whip");
         assert_eq!(weapon.slot, GearSlot::Weapon);
         assert_eq!(weapon.bonuses.attack.slash, 82);
@@ -1066,5 +1161,22 @@ mod tests {
         let combat_style = weapon.combat_styles.get(&CombatStyle::Flick).unwrap();
         assert_eq!(combat_style.combat_type, CombatType::Slash);
         assert_eq!(combat_style.stance, CombatStance::Accurate);
+    }
+
+    #[test]
+    fn test_set_armor_info() {
+        let armor = Armor::new("Rune platebody", None);
+        assert_eq!(armor.name, "Rune platebody");
+        assert_eq!(armor.slot, GearSlot::Body);
+        assert_eq!(
+            armor.bonuses.defence,
+            StyleBonus {
+                stab: 82,
+                slash: 80,
+                crush: 72,
+                magic: -6,
+                ranged: 80,
+            }
+        );
     }
 }

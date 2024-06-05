@@ -32,7 +32,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
 
     if monster.info.name.contains("Verzik")
         && monster.info.name.contains("P1")
-        && !player.is_wearing("Dawnbringer")
+        && !player.is_wearing("Dawnbringer", None)
     {
         let limit = if player.is_using_melee() { 10 } else { 3 };
         return Some(Box::new(limiters::VerzikP1 { limit }));
@@ -127,18 +127,18 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Gear {
-            head: Some(Armor::new("Torva full helm")),
-            neck: Some(Armor::new("Amulet of torture")),
-            cape: Some(Armor::new("Infernal cape")),
-            ammo: Some(Armor::new("Rada's blessing 4")),
+            head: Some(Armor::new("Torva full helm", None)),
+            neck: Some(Armor::new("Amulet of torture", None)),
+            cape: Some(Armor::new("Infernal cape", None)),
+            ammo: Some(Armor::new("Rada's blessing 4", None)),
             second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier"),
-            shield: Some(Armor::new("Avernic defender")),
-            body: Some(Armor::new("Torva platebody")),
-            legs: Some(Armor::new("Torva platelegs")),
-            hands: Some(Armor::new("Ferocious gloves")),
-            feet: Some(Armor::new("Primordial boots")),
-            ring: Some(Armor::new("Ultor ring")),
+            weapon: Weapon::new("Ghrazi rapier", None),
+            shield: Some(Armor::new("Avernic defender", None)),
+            body: Some(Armor::new("Torva platebody", None)),
+            legs: Some(Armor::new("Torva platelegs", None)),
+            hands: Some(Armor::new("Ferocious gloves", None)),
+            feet: Some(Armor::new("Primordial boots", None)),
+            ring: Some(Armor::new("Ultor ring", None)),
         };
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);

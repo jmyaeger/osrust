@@ -29,7 +29,7 @@ pub fn standard_attack(
     };
 
     if combat_type == CombatType::Magic
-        && player.is_wearing("Brimstone ring")
+        && player.is_wearing("Brimstone ring", None)
         && rng.gen_range(0..4) == 0
     {
         max_def_roll = max_def_roll * 9 / 10;
@@ -149,7 +149,7 @@ pub fn ahrims_staff_attack(
         monster.drain_strength(5);
     }
 
-    if player.is_wearing("Amulet of the damned") && rng.gen_range(0..4) == 0 {
+    if player.is_wearing_any_version("Amulet of the damned") && rng.gen_range(0..4) == 0 {
         damage = damage * 13 / 10;
     }
 
@@ -216,7 +216,7 @@ pub fn karils_crossbow_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     if player.set_effects.full_karils
-        && player.is_wearing("Amulet of the damned")
+        && player.is_wearing_any_version("Amulet of the damned")
         && rng.gen_range(0..4) == 0
     {
         let (hit1, success) = standard_attack(player, monster, rng, limiter);
@@ -235,7 +235,7 @@ pub fn guthans_warspear_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng, limiter);
     if player.set_effects.full_guthans && rng.gen_range(0..4) == 0 {
-        if player.is_wearing("Amulet of the damned") {
+        if player.is_wearing_any_version("Amulet of the damned") {
             player.heal(damage, Some(10));
         } else {
             player.heal(damage, None);
@@ -341,7 +341,7 @@ pub fn opal_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let extra_damage = if player.is_wearing("Zaryte crossbow") {
+    let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.live_stats.ranged / 9
     } else {
         player.live_stats.ranged / 10
@@ -373,7 +373,7 @@ pub fn pearl_bolt_attack(
 
     let mut denominator = if monster.is_fiery() { 15 } else { 20 };
 
-    if player.is_wearing("Zaryte crossbow") {
+    if player.is_wearing("Zaryte crossbow", None) {
         denominator = denominator * 9 / 10;
     }
     let extra_damage = player.live_stats.ranged / denominator;
@@ -402,7 +402,7 @@ pub fn emerald_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let poison_severity = if player.is_wearing("Zaryte crossbow") {
+    let poison_severity = if player.is_wearing("Zaryte crossbow", None) {
         27
     } else {
         25
@@ -428,7 +428,7 @@ pub fn ruby_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let ruby_damage = if player.is_wearing("Zaryte crossbow") {
+    let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
         min(110, monster.live_stats.hitpoints * 22 / 100)
     } else {
         min(100, monster.live_stats.hitpoints / 5)
@@ -459,7 +459,7 @@ pub fn diamond_bolt_attack(
     }
 
     let base_max_hit = player.max_hits[&player.combat_type()];
-    let max_hit = if player.is_wearing("Zaryte crossbow") {
+    let max_hit = if player.is_wearing("Zaryte crossbow", None) {
         base_max_hit * 126 / 100
     } else {
         base_max_hit * 115 / 100
@@ -488,7 +488,7 @@ pub fn onyx_bolt_attack(
     }
 
     let base_max_hit = player.max_hits[&player.combat_type()];
-    let max_hit = if player.is_wearing("Zaryte crossbow") {
+    let max_hit = if player.is_wearing("Zaryte crossbow", None) {
         base_max_hit * 132 / 100
     } else {
         base_max_hit * 6 / 5
@@ -518,7 +518,7 @@ pub fn dragonstone_bolt_attack(
         proc_chance *= 1.1;
     }
 
-    let extra_damage = if player.is_wearing("Zaryte crossbow") {
+    let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.live_stats.ranged * 2 / 9
     } else {
         player.live_stats.ranged / 5
@@ -611,7 +611,7 @@ pub fn shadow_spell_attack(
         if monster.live_stats.attack == monster.stats.attack {
             monster.drain_attack(monster.stats.attack * drain_amount / 1000);
         }
-        if player.is_wearing("Shadow ancient sceptre") {
+        if player.is_wearing("Shadow ancient sceptre", None) {
             if monster.live_stats.strength == monster.stats.strength {
                 monster.drain_strength(monster.stats.strength * drain_amount / 1000);
             }
@@ -636,7 +636,7 @@ fn blood_spell_attack(
         250 + 20 * player.set_effects.bloodbark_pieces as u32
     };
 
-    let overheal = if player.is_wearing("Blood ancient sceptre") {
+    let overheal = if player.is_wearing("Blood ancient sceptre", None) {
         Some(player.stats.hitpoints / 10)
     } else {
         None
@@ -659,7 +659,7 @@ pub fn ice_spell_attack(
         let max_def_roll = monster.def_rolls[&CombatType::Magic];
         let max_hit = player.max_hits[&CombatType::Magic];
 
-        if player.is_wearing("Ice ancient sceptre") {
+        if player.is_wearing("Ice ancient sceptre", None) {
             max_att_roll = max_att_roll * 11 / 10;
         }
 
