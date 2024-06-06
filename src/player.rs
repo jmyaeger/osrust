@@ -453,7 +453,7 @@ impl Player {
                 if self.is_quiver_bonus_valid() {
                     self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
                     self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                } else {
+                } else if self.is_wearing_any_version("Dizana's quiver") {
                     self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
                     self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                 }
@@ -468,7 +468,7 @@ impl Player {
                     if self.is_quiver_bonus_valid() {
                         self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
                         self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                    } else {
+                    } else if self.is_wearing_any_version("Dizana's quiver") {
                         self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
                         self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                     }
@@ -477,7 +477,7 @@ impl Player {
                     if self.is_quiver_bonus_valid() {
                         self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
                         self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                    } else {
+                    } else if self.is_wearing_any_version("Dizana's quiver") {
                         self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
                         self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                     }
@@ -500,7 +500,7 @@ impl Player {
                 if self.is_quiver_bonus_valid() {
                     self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
                     self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                } else {
+                } else if self.is_wearing_any_version("Dizana's quiver") {
                     self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
                     self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                 }
