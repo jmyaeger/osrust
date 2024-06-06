@@ -31,7 +31,8 @@ pub struct PrayerBoost {
     pub defence: u32,
     pub ranged_att: u32,
     pub ranged_str: u32,
-    pub magic: u32,
+    pub magic_att: u32,
+    pub magic_str: u32,
 }
 
 impl PrayerBoost {
@@ -44,7 +45,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::ImprovedReflexes => PrayerBoost {
                 prayer_type: prayer,
@@ -53,7 +55,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::IncredibleReflexes => PrayerBoost {
                 prayer_type: prayer,
@@ -62,7 +65,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::Chivalry => PrayerBoost {
                 prayer_type: prayer,
@@ -71,7 +75,8 @@ impl PrayerBoost {
                 defence: 20,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::Piety => PrayerBoost {
                 prayer_type: prayer,
@@ -80,7 +85,8 @@ impl PrayerBoost {
                 defence: 25,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::BurstOfStrength => PrayerBoost {
                 prayer_type: prayer,
@@ -89,7 +95,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::SuperhumanStrength => PrayerBoost {
                 prayer_type: prayer,
@@ -98,7 +105,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::UltimateStrength => PrayerBoost {
                 prayer_type: prayer,
@@ -107,7 +115,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::ThickSkin => PrayerBoost {
                 prayer_type: prayer,
@@ -116,7 +125,8 @@ impl PrayerBoost {
                 defence: 5,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::RockSkin => PrayerBoost {
                 prayer_type: prayer,
@@ -125,7 +135,8 @@ impl PrayerBoost {
                 defence: 10,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::SteelSkin => PrayerBoost {
                 prayer_type: prayer,
@@ -134,7 +145,8 @@ impl PrayerBoost {
                 defence: 15,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::SharpEye => PrayerBoost {
                 prayer_type: prayer,
@@ -143,7 +155,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 5,
                 ranged_str: 5,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::HawkEye => PrayerBoost {
                 prayer_type: prayer,
@@ -152,7 +165,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 10,
                 ranged_str: 10,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::EagleEye => PrayerBoost {
                 prayer_type: prayer,
@@ -161,7 +175,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 15,
                 ranged_str: 15,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::Rigour => PrayerBoost {
                 prayer_type: prayer,
@@ -170,7 +185,8 @@ impl PrayerBoost {
                 defence: 25,
                 ranged_att: 20,
                 ranged_str: 23,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
             Prayer::MysticWill => PrayerBoost {
                 prayer_type: prayer,
@@ -179,7 +195,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 5,
+                magic_att: 5,
+                magic_str: 0,
             },
             Prayer::MysticLore => PrayerBoost {
                 prayer_type: prayer,
@@ -188,7 +205,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 10,
+                magic_att: 10,
+                magic_str: 1,
             },
             Prayer::MysticMight => PrayerBoost {
                 prayer_type: prayer,
@@ -197,7 +215,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 15,
+                magic_att: 15,
+                magic_str: 2,
             },
             Prayer::Augury => PrayerBoost {
                 prayer_type: prayer,
@@ -206,7 +225,8 @@ impl PrayerBoost {
                 defence: 25,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 25,
+                magic_att: 25,
+                magic_str: 4,
             },
             _ => PrayerBoost {
                 prayer_type: prayer,
@@ -215,7 +235,8 @@ impl PrayerBoost {
                 defence: 0,
                 ranged_att: 0,
                 ranged_str: 0,
-                magic: 0,
+                magic_att: 0,
+                magic_str: 0,
             },
         }
     }

@@ -245,20 +245,18 @@ pub fn max_melee_player() -> Player {
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
 
-    player.gear = Gear {
-        head: Some(Armor::new("Torva full helm", None)),
-        neck: Some(Armor::new("Amulet of torture", None)),
-        cape: Some(Armor::new("Infernal cape", None)),
-        ammo: Some(Armor::new("Rada's blessing 4", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Ghrazi rapier", None),
-        shield: Some(Armor::new("Avernic defender", None)),
-        body: Some(Armor::new("Torva platebody", None)),
-        legs: Some(Armor::new("Torva platelegs", None)),
-        hands: Some(Armor::new("Ferocious gloves", None)),
-        feet: Some(Armor::new("Primordial boots", None)),
-        ring: Some(Armor::new("Ultor ring", None)),
-    };
+    player.equip("Torva full helm", None);
+    player.equip("Torva platebody", None);
+    player.equip("Torva platelegs", None);
+    player.equip("Ferocious gloves", None);
+    player.equip("Primordial boots", None);
+    player.equip("Ghrazi rapier", None);
+    player.equip("Avernic defender", None);
+    player.equip("Rada's blessing 4", None);
+    player.equip("Amulet of torture", None);
+    player.equip("Infernal cape", None);
+    player.equip("Ultor ring", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lunge);
 
@@ -281,20 +279,18 @@ pub fn mid_level_melee_player() -> Player {
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
 
-    player.gear = Gear {
-        head: Some(Armor::new("Helm of neitiznot", None)),
-        neck: Some(Armor::new("Amulet of fury", None)),
-        cape: Some(Armor::new("Fire cape", None)),
-        ammo: Some(Armor::new("Rada's blessing 3", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Abyssal whip", None),
-        shield: Some(Armor::new("Dragon defender", None)),
-        body: Some(Armor::new("Fighter torso", None)),
-        legs: Some(Armor::new("Obsidian platelegs", None)),
-        hands: Some(Armor::new("Barrows gloves", None)),
-        feet: Some(Armor::new("Dragon boots", None)),
-        ring: Some(Armor::new("Berserker ring (i)", None)),
-    };
+    player.equip("Helm of neitiznot", None);
+    player.equip("Amulet of fury", None);
+    player.equip("Fire cape", None);
+    player.equip("Rada's blessing 3", None);
+    player.equip("Abyssal whip", None);
+    player.equip("Dragon defender", None);
+    player.equip("Fighter torso", None);
+    player.equip("Obsidian platelegs", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Dragon boots", None);
+    player.equip("Berserker ring (i)", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lash);
 
@@ -308,20 +304,18 @@ pub fn max_ranged_zcb_player() -> Player {
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
     player.add_potion(Potion::Ranging);
 
-    player.gear = Gear {
-        head: Some(Armor::new("Masori mask (f)", None)),
-        neck: Some(Armor::new("Necklace of anguish", None)),
-        cape: Some(Armor::new("Dizana's quiver", Some("charged"))),
-        ammo: Some(Armor::new("Dragon bolts", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Zaryte crossbow", None),
-        shield: Some(Armor::new("Twisted buckler", None)),
-        body: Some(Armor::new("Masori body (f)", None)),
-        legs: Some(Armor::new("Masori chaps (f)", None)),
-        hands: Some(Armor::new("Zaryte vambraces", None)),
-        feet: Some(Armor::new("Pegasian boots", None)),
-        ring: Some(Armor::new("Venator ring", None)),
-    };
+    player.equip("Masori mask (f)", None);
+    player.equip("Necklace of anguish", None);
+    player.equip("Dizana's quiver", Some("Charged"));
+    player.equip("Dragon bolts", Some("Unpoisoned"));
+    player.equip("Zaryte crossbow", None);
+    player.equip("Twisted buckler", None);
+    player.equip("Masori body (f)", None);
+    player.equip("Masori chaps (f)", None);
+    player.equip("Zaryte vambraces", None);
+    player.equip("Pegasian boots", None);
+    player.equip("Venator ring", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
 
@@ -344,20 +338,18 @@ pub fn mid_level_ranged_rcb_player() -> Player {
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
     player.add_potion(Potion::Ranging);
 
-    player.gear = Gear {
-        head: Some(Armor::new("Ancient coif", None)),
-        neck: Some(Armor::new("Amulet of fury", None)),
-        cape: Some(Armor::new("Ava's assembler", None)),
-        ammo: Some(Armor::new("Adamant bolts", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Rune crossbow", None),
-        shield: Some(Armor::new("Odium ward", None)),
-        body: Some(Armor::new("Ancient d'hide body", None)),
-        legs: Some(Armor::new("Ancient chaps", None)),
-        hands: Some(Armor::new("Barrows gloves", None)),
-        feet: Some(Armor::new("Ancient d'hide boots", None)),
-        ring: Some(Armor::new("Archers ring (i)", None)),
-    };
+    player.equip("Ancient coif", None);
+    player.equip("Amulet of fury", None);
+    player.equip("Ava's assembler", None);
+    player.equip("Adamant bolts", Some("Unpoisoned"));
+    player.equip("Rune crossbow", None);
+    player.equip("Odium ward", None);
+    player.equip("Ancient d'hide body", None);
+    player.equip("Ancient chaps", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Ancient d'hide boots", None);
+    player.equip("Archers ring (i)", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
 
@@ -402,7 +394,7 @@ pub fn mid_level_melee_barronite_player() -> Player {
 #[fixture]
 pub fn max_melee_ursine_chainmace_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Ursine chainmace", Some("charged"));
+    player.equip("Ursine chainmace", Some("Charged"));
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -421,7 +413,7 @@ pub fn max_melee_berserker_neck_obby_sword_player() -> Player {
 #[fixture]
 pub fn max_melee_silverlight_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Silverlight", Some("Normal"));
+    player.equip("Silverlight", None);
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -515,7 +507,7 @@ pub fn max_ranged_tbow_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player.equip("Twisted bow", None);
     player.gear.ammo = None;
-    player.equip("Dragon arrow", None);
+    player.equip("Dragon arrow", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -566,9 +558,9 @@ pub fn max_ranged_webweaver_player() -> Player {
 pub fn full_eclipse_atlatl_ranged_gear_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
+    player.equip("Eclipse moon helm", Some("New"));
+    player.equip("Eclipse moon chestplate", Some("New"));
+    player.equip("Eclipse moon tassets", Some("New"));
     player.equip("Atlatl dart", None);
     player.update_bonuses();
     player
@@ -587,9 +579,9 @@ pub fn eclipse_atlatl_ranged_gear_player() -> Player {
 pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     let mut player = max_melee_player();
     player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
+    player.equip("Eclipse moon helm", Some("New"));
+    player.equip("Eclipse moon chestplate", Some("New"));
+    player.equip("Eclipse moon tassets", Some("New"));
     player.equip("Atlatl dart", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
@@ -623,7 +615,7 @@ pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
 pub fn mid_level_ranged_bone_shortbow_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
     player.equip("Bone shortbow", None);
-    player.equip("Rune arrow", None);
+    player.equip("Rune arrow", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -631,7 +623,7 @@ pub fn mid_level_ranged_bone_shortbow_player() -> Player {
 #[fixture]
 pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
-    player.equip("Silver bolts", None);
+    player.equip("Silver bolts", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -643,20 +635,18 @@ pub fn max_mage_sang_staff_player() -> Player {
     player.prayers.add(PrayerBoost::new(Prayer::Augury));
     player.add_potion(Potion::SaturatedHeart);
 
-    player.gear = Gear {
-        head: Some(Armor::new("Ancestral hat", None)),
-        neck: Some(Armor::new("Occult necklace", None)),
-        cape: Some(Armor::new("Imbued guthix cape", None)),
-        ammo: Some(Armor::new("Rada's blessing 4", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Sanguinesti staff", Some("Charged")),
-        shield: Some(Armor::new("Elidinis' ward (f)", None)),
-        body: Some(Armor::new("Ancestral robe top", None)),
-        legs: Some(Armor::new("Ancestral robe bottom", None)),
-        hands: Some(Armor::new("Tormented bracelet", None)),
-        feet: Some(Armor::new("Eternal boots", None)),
-        ring: Some(Armor::new("Magus ring", None)),
-    };
+    player.equip("Ancestral hat", None);
+    player.equip("Occult necklace", None);
+    player.equip("Imbued guthix cape", None);
+    player.equip("Rada's blessing 4", None);
+    player.equip("Sanguinesti staff", Some("Charged"));
+    player.equip("Elidinis' ward (f)", None);
+    player.equip("Ancestral robe top", None);
+    player.equip("Ancestral robe bottom", None);
+    player.equip("Tormented bracelet", None);
+    player.equip("Eternal boots", None);
+    player.equip("Magus ring", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
 
@@ -725,20 +715,18 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
     player.calc_potion_boosts();
     player.reset_live_stats();
 
-    player.gear = Gear {
-        head: Some(Armor::new("Ahrim's hood", None)),
-        neck: Some(Armor::new("Occult necklace", None)),
-        cape: Some(Armor::new("Imbued guthix cape", None)),
-        ammo: Some(Armor::new("Rada's blessing 3", None)),
-        second_ammo: None,
-        weapon: Weapon::new("Warped sceptre", Some("Charged")),
-        shield: Some(Armor::new("Malediction ward", None)),
-        body: Some(Armor::new("Ahrim's robetop", None)),
-        legs: Some(Armor::new("Ahrim's robeskirt", None)),
-        hands: Some(Armor::new("Barrows gloves", None)),
-        feet: Some(Armor::new("Infinity boots", None)),
-        ring: Some(Armor::new("Seers ring (i)", None)),
-    };
+    player.equip("Ahrim's hood", None);
+    player.equip("Occult necklace", None);
+    player.equip("Imbued guthix cape", None);
+    player.equip("Rada's blessing 3", None);
+    player.equip("Warped sceptre", Some("Charged"));
+    player.equip("Malediction ward", None);
+    player.equip("Ahrim's robetop", None);
+    player.equip("Ahrim's robeskirt", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Infinity boots", None);
+    player.equip("Seers ring (i)", None);
+
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
 
@@ -1001,13 +989,13 @@ pub fn slayer(mut player: Player) -> Player {
 }
 
 pub fn salve_ei(mut player: Player) -> Player {
-    player.equip("Salve amulet (ei)", None);
+    player.equip("Salve amulet(ei)", None);
     player.update_bonuses();
     player
 }
 
 pub fn salve_i(mut player: Player) -> Player {
-    player.equip("Salve amulet (i)", None);
+    player.equip("Salve amulet(i)", None);
     player.update_bonuses();
     player
 }

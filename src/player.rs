@@ -94,7 +94,8 @@ pub struct PrayerBoosts {
     pub defence: u32,
     pub ranged_att: u32,
     pub ranged_str: u32,
-    pub magic: u32,
+    pub magic_att: u32,
+    pub magic_str: u32,
 }
 
 impl PrayerBoosts {
@@ -107,10 +108,12 @@ impl PrayerBoosts {
                         || (p.defence > 0 && prayer.defence > 0)
                         || (p.ranged_att > 0 && prayer.ranged_att > 0)
                         || (p.ranged_str > 0 && prayer.ranged_str > 0)
-                        || (p.magic > 0 && prayer.magic > 0))
+                        || (p.magic_att > 0 && prayer.magic_att > 0)
+                        || (p.magic_str > 0 && prayer.magic_str > 0))
                 });
                 active_prayers.push(prayer);
             }
+
             None => {
                 self.active_prayers = Some(vec![prayer]);
             }
@@ -156,12 +159,20 @@ impl PrayerBoosts {
             .map(|p| p.ranged_str)
             .max()
             .unwrap_or(0);
-        self.magic = self
+        self.magic_att = self
             .active_prayers
             .as_ref()
             .unwrap()
             .iter()
-            .map(|p| p.magic)
+            .map(|p| p.magic_att)
+            .max()
+            .unwrap_or(0);
+        self.magic_str = self
+            .active_prayers
+            .as_ref()
+            .unwrap()
+            .iter()
+            .map(|p| p.magic_str)
             .max()
             .unwrap_or(0);
     }
@@ -438,51 +449,45 @@ impl Player {
             "head" => self.gear.head = Some(Armor::new(item_name, version)),
             "neck" => self.gear.neck = Some(Armor::new(item_name, version)),
             "cape" => {
-                self.gear.cape = Some(Armor::new(item_name, {
-                    if item_name == "Dizana's quiver"
-                        && version == Some("charged")
-                        && !(self
-                            .gear
-                            .ammo
-                            .as_ref()
-                            .map_or(false, |ammo| ammo.is_bolt_or_arrow())
-                            && self.gear.weapon.uses_bolts_or_arrows())
-                    {
-                        Some("uncharged")
-                    } else {
-                        version
-                    }
-                }));
+                self.gear.cape = Some(Armor::new(item_name, version));
+                if self.is_quiver_bonus_valid() {
+                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+                } else {
+                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
+                }
             }
             "ammo" => {
                 if self.is_wearing_any(vec![
-                    ("Dizana's quiver", Some("charged")),
-                    ("Dizana's quiver", Some("uncharged")),
+                    ("Dizana's quiver", Some("Charged")),
+                    ("Dizana's quiver", Some("Uncharged")),
                 ]) && self.gear.ammo.is_some()
                 {
                     self.gear.second_ammo = Some(Armor::new(item_name, version));
-                    if !self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo()
-                        && self
-                            .gear
-                            .second_ammo
-                            .as_ref()
-                            .unwrap()
-                            .is_valid_ranged_ammo()
-                        && self.is_quiver_bonus_valid()
-                    {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged")));
+                    if self.is_quiver_bonus_valid() {
+                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+                    } else {
+                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                     }
                 } else {
                     self.gear.ammo = Some(Armor::new(item_name, version));
                     if self.is_quiver_bonus_valid() {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
-                    } else if self.is_wearing("Dizana's quiver", Some("charged")) {
-                        self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
+                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+                    } else {
+                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                     }
                 }
             }
             "weapon" => {
                 self.gear.weapon = Weapon::new(item_name, version);
+                if self.gear.weapon.is_two_handed {
+                    self.gear.shield = None;
+                }
                 if self.attrs.active_style == CombatStyle::Rapid
                     && self
                         .gear
@@ -493,27 +498,11 @@ impl Player {
                     self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
                 }
                 if self.is_quiver_bonus_valid() {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
-                } else if self.is_wearing("Dizana's quiver", Some("charged)")) {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
-                }
-            }
-            "2h" => {
-                self.gear.weapon = Weapon::new(item_name, version);
-                self.gear.shield = None;
-                if self.attrs.active_style == CombatStyle::Rapid
-                    && self
-                        .gear
-                        .weapon
-                        .combat_styles
-                        .contains_key(&CombatStyle::Rapid)
-                {
-                    self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
-                }
-                if self.is_quiver_bonus_valid() {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("charged)")));
-                } else if self.is_wearing("Dizana's quiver", Some("charged)")) {
-                    self.gear.cape = Some(Armor::new("Dizana's quiver", Some("uncharged)")));
+                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+                } else {
+                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
                 }
             }
             "shield" => {
@@ -683,21 +672,15 @@ impl Player {
     }
 
     pub fn is_wearing_salve(&self) -> bool {
-        self.is_wearing_any(vec![("Salve amulet", None), ("Salve amulet (i)", None)])
+        self.is_wearing_any(vec![("Salve amulet", None), ("Salve amulet(i)", None)])
     }
 
     pub fn is_wearing_salve_e(&self) -> bool {
-        self.is_wearing_any(vec![
-            ("Salve amulet (e)", None),
-            ("Salve amulet (ei)", None),
-        ])
+        self.is_wearing_any(vec![("Salve amulet (e)", None), ("Salve amulet(ei)", None)])
     }
 
     pub fn is_wearing_salve_i(&self) -> bool {
-        self.is_wearing_any(vec![
-            ("Salve amulet (i)", None),
-            ("Salve amulet (ei)", None),
-        ])
+        self.is_wearing_any(vec![("Salve amulet(i)", None), ("Salve amulet(ei)", None)])
     }
 
     pub fn is_wearing_wildy_mace(&self) -> bool {
@@ -756,7 +739,7 @@ impl Player {
             ("Enchanted emerald sickle (b)", None),
             ("Ruby sickle (b)", None),
             ("Enchanted ruby sickle (b)", None),
-            ("Silverlight", Some("Normal")),
+            ("Silverlight", None),
             ("Silverlight", Some("Dyed")),
             ("Darklight", None),
             ("Arclight", None),
@@ -878,6 +861,18 @@ impl Player {
         self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap())
     }
 
+    pub fn is_using_air_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_air_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_earth_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_earth_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_demonbane_spell(&self) -> bool {
+        self.is_using_spell() && spells::is_demonbane_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
     pub fn is_using_crossbow(&self) -> bool {
         self.gear.weapon.name.contains("rossbow")
             && self.combat_type() == CombatType::Heavy
@@ -968,7 +963,8 @@ impl Player {
 
     pub fn is_quiver_bonus_valid(&self) -> bool {
         self.gear.cape.as_ref().map_or(false, |cape| {
-            cape.name == "Dizana's quiver (charged)"
+            cape.name == "Dizana's quiver"
+                && cape.matches_version("Charged")
                 && self.gear.weapon.uses_bolts_or_arrows()
                 && (self
                     .gear

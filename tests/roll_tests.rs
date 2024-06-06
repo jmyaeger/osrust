@@ -214,19 +214,19 @@ fn test_ranged_player_rolls(
 }
 
 #[rstest]
-#[case(max_mage_sang_staff_player(), ammonite_crab(), 36693, 46)]
-#[case(max_mage_toxic_trident_player(), ammonite_crab(), 36693, 45)]
-#[case(max_mage_trident_player(), ammonite_crab(), 35183, 41)]
-#[case(max_mage_harm_fire_surge_player(), ammonite_crab(), 34866, 34)]
-#[case(max_mage_kodai_ice_barrage_player(), ammonite_crab(), 36654, 43)]
+#[case(max_mage_sang_staff_player(), ammonite_crab(), 36693, 47)]
+#[case(max_mage_toxic_trident_player(), ammonite_crab(), 36693, 46)]
+#[case(max_mage_trident_player(), ammonite_crab(), 35183, 42)]
+#[case(max_mage_harm_fire_surge_player(), ammonite_crab(), 34866, 35)]
+#[case(max_mage_kodai_ice_barrage_player(), ammonite_crab(), 36654, 44)]
 #[case(mid_level_magic_warped_sceptre_player(), ammonite_crab(), 20188, 21)]
 #[case(
     mid_level_mage_chaos_gauntlets_fire_bolt_player(),
     ammonite_crab(),
     19190,
-    16
+    17
 )]
-#[case(mid_level_mage_god_spell_charge_player(), ammonite_crab(), 19190, 33)]
+#[case(mid_level_mage_god_spell_charge_player(), ammonite_crab(), 19190, 34)]
 #[case(max_mage_shadow_player(), ammonite_crab(), 83956, 66)]
 #[case(
     max_mage_shadow_salts_player(),
@@ -234,53 +234,54 @@ fn test_ranged_player_rolls(
     120240,
     84
 )]
-#[case(max_mage_smoke_staff_fire_surge_player(), ammonite_crab(), 37697, 33)]
-#[case(full_virtus_kodai_ice_barrage_player(), ammonite_crab(), 36654, 45)]
+#[case(max_mage_smoke_staff_fire_surge_player(), ammonite_crab(), 37697, 34)]
+#[case(full_virtus_kodai_ice_barrage_player(), ammonite_crab(), 36654, 46)]
 #[case(full_virtus_kodai_fire_surge_player(), ammonite_crab(), 36654, 34)]
-#[case(salve_ei(max_mage_harm_fire_surge_player()), vorkath(), 39693, 37)]
-#[case(salve_ei(max_mage_shadow_player()), vorkath(), 94224, 62)]
+#[case(salve_ei(max_mage_harm_fire_surge_player()), vorkath(), 39693, 39)]
+#[case(salve_ei(max_mage_shadow_player()), vorkath(), 94224, 68)]
 #[case(
     salve_ei(mid_level_mage_chaos_gauntlets_fire_bolt_player()),
     vorkath(),
     21573,
-    18
+    19
 )]
 #[case(
     salve_ei(max_mage_smoke_staff_fire_surge_player()),
     vorkath(),
     42226,
-    36
+    37
 )]
 #[case(
     salve_ei(mid_level_mage_god_spell_charge_player()),
     vorkath(),
     21573,
-    36
+    38
 )]
-#[case(salve_ei(full_virtus_kodai_ice_barrage_player()), vorkath(), 41839, 48)]
+#[case(salve_ei(full_virtus_kodai_ice_barrage_player()), vorkath(), 41839, 50)]
 // #[case(
 //     avarice_forinthry(max_mage_sang_staff_player()),
 //     revenant_dragon(),
-//     49127,
+//     49127,salve
 //     58
 // )] // Reimplement after confirming avarice boost placement
-#[case(max_mage_accursed_sceptre_player(), vetion(), 54360, 60)]
-#[case(salve_ei(max_mage_accursed_sceptre_player()), vetion(), 61969, 64)]
+#[case(max_mage_accursed_sceptre_player(), vetion(), 54360, 61)]
+#[case(salve_ei(max_mage_accursed_sceptre_player()), vetion(), 61969, 67)]
 // #[case(avarice_forinthry(max_mage_accursed_sceptre_player()), revenant_dragon(), 72774, 73)]
-#[case(slayer(max_mage_accursed_sceptre_player()), vetion(), 61210, 66)]
-#[case(max_mage_harm_tome_of_water_surge_player(), ammonite_crab(), 38799, 36)]
-#[case(slayer(max_mage_shadow_player()), ammonite_crab(), 93944, 73)]
+#[case(slayer(max_mage_accursed_sceptre_player()), vetion(), 61210, 69)]
+// #[case(max_mage_harm_tome_of_water_surge_player(), ammonite_crab(), 38799, 37)]
+// Commented out until we know the actual currrent tome of water accuracy boost
+#[case(slayer(max_mage_shadow_player()), ammonite_crab(), 93944, 72)]
 #[case(
     slayer(mid_level_mage_chaos_gauntlets_fire_bolt_player()),
     ammonite_crab(),
     21720,
-    18
+    19
 )]
 #[case(
     slayer(mid_level_mage_god_spell_charge_player()),
     ammonite_crab(),
     21720,
-    37
+    39
 )]
 #[case(
     slayer(max_mage_smoke_staff_fire_surge_player()),
@@ -294,20 +295,20 @@ fn test_ranged_player_rolls(
     41295,
     50
 )]
-#[case(slayer(salve_ei(max_mage_sang_staff_player())), vorkath(), 40951, 49)]
-#[case(max_mage_harm_fire_surge_tome_player(), ammonite_crab(), 32333, 49)]
+#[case(slayer(salve_ei(max_mage_sang_staff_player())), vorkath(), 40951, 52)]
+#[case(max_mage_harm_fire_surge_tome_player(), ammonite_crab(), 32333, 37)]
 #[case(
     slayer(max_mage_harm_fire_surge_tome_player()),
     ammonite_crab(),
     36326,
-    55
+    40
 )]
-#[case(salve_ei(max_mage_harm_fire_surge_tome_player()), vorkath(), 36654, 54)]
+#[case(salve_ei(max_mage_harm_fire_surge_tome_player()), vorkath(), 36654, 40)]
 #[case(
     mid_level_mage_chaos_gauntlets_fire_bolt_tome_player(),
     ammonite_crab(),
     18786,
-    24
+    17
 )]
 fn test_magic_player_rolls(
     #[case] mut player: Player,

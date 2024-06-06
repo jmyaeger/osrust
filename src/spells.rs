@@ -177,7 +177,8 @@ pub fn is_arceuus_spell(spell: &Spell) -> bool {
 pub fn is_water_spell(spell: &Spell) -> bool {
     matches!(
         spell,
-        Spell::Standard(StandardSpell::WaterBolt)
+        Spell::Standard(StandardSpell::WaterStrike)
+            | Spell::Standard(StandardSpell::WaterBolt)
             | Spell::Standard(StandardSpell::WaterWave)
             | Spell::Standard(StandardSpell::WaterBlast)
             | Spell::Standard(StandardSpell::WaterSurge)
@@ -187,10 +188,32 @@ pub fn is_water_spell(spell: &Spell) -> bool {
 pub fn is_fire_spell(spell: &Spell) -> bool {
     matches!(
         spell,
-        Spell::Standard(StandardSpell::FireBolt)
+        Spell::Standard(StandardSpell::FireStrike)
+            | Spell::Standard(StandardSpell::FireBolt)
             | Spell::Standard(StandardSpell::FireWave)
             | Spell::Standard(StandardSpell::FireBlast)
             | Spell::Standard(StandardSpell::FireSurge)
+    )
+}
+
+pub fn is_air_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::WindStrike)
+            | Spell::Standard(StandardSpell::WindBolt)
+            | Spell::Standard(StandardSpell::WindWave)
+            | Spell::Standard(StandardSpell::WindBlast)
+            | Spell::Standard(StandardSpell::WindSurge)
+    )
+}
+
+pub fn is_earth_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::EarthBolt)
+            | Spell::Standard(StandardSpell::EarthWave)
+            | Spell::Standard(StandardSpell::EarthBlast)
+            | Spell::Standard(StandardSpell::EarthSurge)
     )
 }
 
@@ -231,5 +254,14 @@ pub fn is_ice_spell(spell: &Spell) -> bool {
             | Spell::Ancient(AncientSpell::IceBurst)
             | Spell::Ancient(AncientSpell::IceBlitz)
             | Spell::Ancient(AncientSpell::IceBarrage)
+    )
+}
+
+pub fn is_demonbane_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Arceuus(ArceuusSpell::InferiorDemonbane)
+            | Spell::Arceuus(ArceuusSpell::SuperiorDemonbane)
+            | Spell::Arceuus(ArceuusSpell::DarkDemonbane)
     )
 }

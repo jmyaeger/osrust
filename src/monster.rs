@@ -600,6 +600,13 @@ impl Monster {
 
         false
     }
+
+    pub fn matches_version(&self, version: &str) -> bool {
+        self.info
+            .version
+            .as_ref()
+            .map_or(false, |v| v.contains(version))
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {

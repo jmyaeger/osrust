@@ -244,6 +244,10 @@ impl Armor {
     pub fn is_bolt_or_arrow(&self) -> bool {
         self.name.contains("bolts") || self.name.contains("arrow")
     }
+
+    pub fn matches_version(&self, version: &str) -> bool {
+        self.version.as_ref().map_or(false, |v| v.contains(version))
+    }
 }
 
 fn parse_gear_slot<'de, D>(deserializer: D) -> Result<GearSlot, D::Error>
@@ -396,6 +400,10 @@ impl Weapon {
             .iter()
             .any(|(name, _)| name == &self.name)
             && self.combat_styles.contains_key(&CombatStyle::Rapid)
+    }
+
+    pub fn matches_version(&self, version: &str) -> bool {
+        self.version.as_ref().map_or(false, |v| v.contains(version))
     }
 
     pub fn get_styles_from_weapon_type(weapon_type: &str) -> HashMap<CombatStyle, CombatOption> {
@@ -957,21 +965,21 @@ impl Weapon {
                 (
                     CombatStyle::ShortFuse,
                     CombatOption {
-                        combat_type: CombatType::Light,
+                        combat_type: CombatType::Heavy,
                         stance: CombatStance::ShortFuse,
                     },
                 ),
                 (
                     CombatStyle::MediumFuse,
                     CombatOption {
-                        combat_type: CombatType::Light,
+                        combat_type: CombatType::Heavy,
                         stance: CombatStance::MediumFuse,
                     },
                 ),
                 (
                     CombatStyle::LongFuse,
                     CombatOption {
-                        combat_type: CombatType::Light,
+                        combat_type: CombatType::Heavy,
                         stance: CombatStance::LongFuse,
                     },
                 ),
@@ -1077,7 +1085,7 @@ impl Weapon {
                 (
                     CombatStyle::Flare,
                     CombatOption {
-                        combat_type: CombatType::Standard,
+                        combat_type: CombatType::Ranged,
                         stance: CombatStance::Accurate,
                     },
                 ),

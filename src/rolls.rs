@@ -2,6 +2,7 @@ use crate::constants::*;
 use crate::equipment::{CombatStance, CombatStyle, CombatType};
 use crate::monster::Monster;
 use crate::player::Player;
+use crate::prayers::Prayer;
 use crate::spells::{Spell, StandardSpell};
 use crate::utils::Fraction;
 use std::cmp::{max, min};
@@ -16,6 +17,13 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
         (CombatType::Light, monster.bonuses.defence.light),
         (CombatType::Standard, monster.bonuses.defence.standard),
         (CombatType::Heavy, monster.bonuses.defence.heavy),
+        (
+            CombatType::Ranged,
+            (monster.bonuses.defence.light
+                + monster.bonuses.defence.standard
+                + monster.bonuses.defence.heavy)
+                / 3,
+        ),
     ] {
         def_rolls.insert(
             combat_type.0,
@@ -52,7 +60,7 @@ pub fn calc_player_def_rolls(player: &mut Player) {
     };
 
     let effective_level = player.live_stats.defence * player.prayers.defence + stance_bonus;
-    let effective_magic = player.live_stats.magic * player.prayers.magic;
+    let effective_magic = player.live_stats.magic * player.prayers.magic_att;
 
     for combat_type in &[
         (CombatType::Stab, player.bonuses.defence.stab),
@@ -202,10 +210,15 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     let mut max_hit = apply_chaos_gauntlet_boost(base_max_hit, player);
     max_hit = apply_charge_boost(max_hit, player);
 
+    let elemental_weakness = get_elemental_weakness_boost(player, monster);
+
+    // Elemental weakness applies to base max hit before gear bonuses
+    let weakness_str_boost = max_hit * elemental_weakness / 100;
+
     let mut magic_attack = player.bonuses.attack.magic;
 
-    // Multiplied by 2 because it increments by 0.5%
-    let mut magic_damage = (2.0 * player.bonuses.strength.magic) as u32;
+    // Multiplied by 10 because it increments by 0.1%
+    let mut magic_damage = (10.0 * player.bonuses.strength.magic) as u32;
 
     // Apply shadow multipliers to attack and damage bonuses, if applicable
     if player.is_wearing("Tumeken's shadow", Some("Charged"))
@@ -214,8 +227,13 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         (magic_attack, magic_damage) = apply_shadow_boost(magic_attack, magic_damage, monster);
     }
 
+    magic_damage += 10 * player.prayers.magic_str;
+
     let eff_lvl = calc_eff_magic_lvl(player);
     let base_att_roll = calc_roll(eff_lvl, magic_attack);
+
+    // Assuming that accuracy increase is similar to damage in that it uses base roll
+    let weakness_att_boost = base_att_roll * elemental_weakness as i32 / 100;
 
     // Apply virtus robe boost for ancient spells
     magic_damage = apply_virtus_bonus(magic_damage, player);
@@ -226,12 +244,7 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         apply_salve_and_smoke_magic_boosts(base_att_roll, magic_damage, player, monster);
 
     // "Primary" magic damage
-    max_hit = max_hit * (200 + magic_damage) / 200;
-
-    // Tome of water accuracy boost
-    if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
-        att_roll = att_roll * 6 / 5;
-    }
+    max_hit = max_hit * (1000 + magic_damage) / 1000;
 
     // Apply slayer boost only if salve boost is not active
     let mut slayer_boost = 0u32;
@@ -241,17 +254,31 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     }
 
     // Apply wildy staff boost to attack roll and store the damage boost
-    let (att_roll, wilderness_boost) = apply_wildy_staff_boost(att_roll, player, monster);
+    let (mut att_roll, wilderness_boost) = apply_wildy_staff_boost(att_roll, player, monster);
 
     // Apply slayer and wilderness boosts
     max_hit = max_hit * (100 + slayer_boost) / 100;
     max_hit = max_hit * (100 + wilderness_boost) / 100;
 
+    // Apply demonbane/mark of darkness accuracy boost
+    if player.is_using_demonbane_spell() && monster.is_demon() {
+        if player.boosts.charge_active {
+            att_roll = att_roll * 7 / 5;
+        } else {
+            att_roll = att_roll * 6 / 5;
+        }
+    }
+
+    // Apply elemental weakness boosts
+    att_roll += weakness_att_boost;
+    max_hit += weakness_str_boost;
+
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
     if player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell() {
-        max_hit = max_hit * 3 / 2;
+        max_hit = max_hit * 11 / 10;
     } else if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
-        max_hit = max_hit * 6 / 5;
+        att_roll = att_roll * 11 / 10; //TODO: Check if this still exists
+        max_hit = max_hit * 11 / 10;
     }
 
     player.att_rolls.insert(CombatType::Magic, att_roll);
@@ -276,10 +303,25 @@ fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {
 
     let mut eff_att = player.live_stats.attack * (100 + att_pray_boost) / 100 + att_stance_bonus;
 
+    let is_using_burst_of_strength =
+        player
+            .prayers
+            .active_prayers
+            .as_ref()
+            .map_or(false, |prayers| {
+                prayers
+                    .iter()
+                    .any(|p| p.prayer_type == Prayer::BurstOfStrength)
+            });
+
     // Soulreaper stacks boost effective strength level additively
-    let mut eff_str = player.live_stats.strength * (100 + str_pray_boost) / 100
-        + soulreaper_boost
-        + str_stance_bonus;
+    let mut eff_str = if is_using_burst_of_strength && player.live_stats.strength <= 20 {
+        player.live_stats.strength + 1 + soulreaper_boost + str_stance_bonus
+    } else {
+        player.live_stats.strength * (100 + str_pray_boost) / 100
+            + soulreaper_boost
+            + str_stance_bonus
+    };
 
     // Apply void set bonuses
     if player.set_effects.full_void | player.set_effects.full_elite_void {
@@ -307,7 +349,20 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
     };
 
     let mut eff_att = player.live_stats.ranged * (100 + range_att_pray_boost) / 100 + stance_bonus;
-    let mut eff_str = str_level * (100 + range_str_pray_boost) / 100 + stance_bonus;
+
+    let is_using_sharp_eye = player
+        .prayers
+        .active_prayers
+        .as_ref()
+        .map_or(false, |prayers| {
+            prayers.iter().any(|p| p.prayer_type == Prayer::SharpEye)
+        });
+
+    let mut eff_str = if is_using_sharp_eye && str_level <= 20 {
+        str_level + 1 + stance_bonus
+    } else {
+        str_level * (100 + range_str_pray_boost) / 100 + stance_bonus
+    };
 
     // Apply void set bonuses
     if player.set_effects.full_elite_void {
@@ -426,7 +481,7 @@ fn apply_melee_weapon_boosts(
 
     if player.is_wearing_any(vec![
         ("Silverlight", Some("Dyed")),
-        ("Silverlight", Some("Normal")),
+        ("Silverlight", None),
         ("Darklight", None),
         ("Arclight", None),
     ]) && monster.is_demon()
@@ -459,19 +514,21 @@ fn apply_melee_weapon_boosts(
 }
 
 fn inquisitor_boost(player: &Player) -> u32 {
-    let inquisitor_pieces = [&player.gear.head, &player.gear.body, &player.gear.legs]
+    let mut inquisitor_pieces = [&player.gear.head, &player.gear.body, &player.gear.legs]
         .iter()
         .filter_map(|slot| slot.as_ref())
         .filter(|armor| armor.name.contains("Inquisitor"))
         .count();
 
-    let boost = if player.set_effects.full_inquisitor {
-        25
-    } else {
-        5 * inquisitor_pieces as u32
-    };
+    if player.set_effects.full_inquisitor {
+        inquisitor_pieces += 2;
+    }
 
-    1000 + boost
+    if player.is_wearing("Inquisitor's mace", None) {
+        inquisitor_pieces *= 3;
+    }
+
+    1000 + 5 * inquisitor_pieces as u32
 }
 
 fn crystal_bonus(player: &Player) -> u32 {
@@ -505,10 +562,10 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             att_gear_bonus = Fraction::new(6, 5);
             str_gear_bonus = Fraction::new(6, 5);
         }
-    } else if monster.is_undead() && player.is_wearing("Salve amulet (ei)", None) {
+    } else if monster.is_undead() && player.is_wearing("Salve amulet(ei)", None) {
         att_gear_bonus = Fraction::new(6, 5);
         str_gear_bonus = Fraction::new(6, 5);
-    } else if player.is_wearing("Salve amulet (i)", None) {
+    } else if player.is_wearing("Salve amulet(i)", None) {
         att_gear_bonus = Fraction::new(7, 6);
         str_gear_bonus = Fraction::new(7, 6);
     } else if player.boosts.on_task && player.is_wearing_imbued_black_mask() {
@@ -632,7 +689,7 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
 fn apply_shadow_boost(magic_attack: i32, magic_damage: u32, monster: &Monster) -> (i32, u32) {
     let multiplier = if monster.is_toa_monster() { 4 } else { 3 };
     let magic_attack = magic_attack * multiplier;
-    let magic_damage = min(200, magic_damage * multiplier as u32);
+    let magic_damage = min(1000, magic_damage * multiplier as u32);
 
     (magic_attack, magic_damage)
 }
@@ -644,7 +701,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
         9
     };
 
-    let magic_pray_boost = player.prayers.magic;
+    let magic_att_pray_boost = player.prayers.magic_att;
 
     let void_bonus = if player.set_effects.full_void || player.set_effects.full_elite_void {
         Fraction::new(145, 100)
@@ -654,7 +711,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
 
     let visible_magic = player.live_stats.magic;
 
-    void_bonus.multiply_to_int(visible_magic * (100 + magic_pray_boost) / 100) + stance_bonus
+    void_bonus.multiply_to_int(visible_magic * (100 + magic_att_pray_boost) / 100) + stance_bonus
 }
 
 fn apply_virtus_bonus(magic_damage: u32, player: &Player) -> u32 {
@@ -668,7 +725,7 @@ fn apply_virtus_bonus(magic_damage: u32, player: &Player) -> u32 {
             .iter()
             .filter(|slot| slot.is_some() && slot.as_ref().unwrap().name.contains("Virtus"))
             .count() as u32
-                * 6
+                * 30
     } else {
         magic_damage
     }
@@ -688,24 +745,24 @@ fn apply_salve_and_smoke_magic_boosts(
     if player.is_wearing("Amulet of avarice", None) && monster.is_revenant() {
         if player.boosts.forinthry_surge {
             att_roll_mod += 35;
-            magic_damage += 70;
+            magic_damage += 350;
         } else {
             att_roll_mod += 20;
-            magic_damage += 40;
+            magic_damage += 200;
         }
-    } else if player.is_wearing("Salve amulet (ei)", None) && monster.is_undead() {
+    } else if player.is_wearing("Salve amulet(ei)", None) && monster.is_undead() {
         att_roll_mod += 20;
-        magic_damage += 40;
-    } else if player.is_wearing("Salve amulet (i)", None) {
+        magic_damage += 200;
+    } else if player.is_wearing("Salve amulet(i)", None) {
         att_roll_mod += 15;
-        magic_damage += 30;
+        magic_damage += 150;
     } else {
         salve_active = false;
     }
 
     if player.is_wearing_smoke_staff() && player.is_using_standard_spell() {
         att_roll_mod += 10;
-        magic_damage += 20;
+        magic_damage += 100;
     }
 
     att_roll = att_roll * att_roll_mod / 100;
@@ -756,4 +813,24 @@ fn apply_charge_boost(max_hit: u32, player: &Player) -> u32 {
     }
 
     max_hit
+}
+
+fn get_elemental_weakness_boost(player: &Player, monster: &Monster) -> u32 {
+    let weakness = &monster.info.weakness;
+    let weakness_applies = match weakness {
+        Some(w) => match w.element.as_str() {
+            "Fire" if player.is_using_fire_spell() => true,
+            "Water" if player.is_using_water_spell() => true,
+            "Air" if player.is_using_air_spell() => true,
+            "Earth" if player.is_using_earth_spell() => true,
+            _ => false,
+        },
+        None => false,
+    };
+
+    if weakness_applies {
+        weakness.as_ref().unwrap().severity as u32
+    } else {
+        0
+    }
 }

@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
 use crate::hit_dist::{
     capped_reroll_transformer, division_transformer, linear_min_transformer, multiply_transformer,
-    AttackDistribution, HitDistribution, WeightedHit,
+    AttackDistribution, HitDistribution, Hitsplat, TransformOpts, WeightedHit,
 };
 use crate::monster::Monster;
 use crate::monster_scaling;
@@ -93,7 +93,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
     let mut hit_chance = 1.0;
 
     if (monster.info.name.contains("Verzik")
-        && monster.info.name.contains("(P1)")
+        && monster.matches_version("Phase 1")
         && player.is_wearing("Dawnbringer", None))
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
@@ -191,7 +191,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             .map(|h| {
                 WeightedHit::new(
                     h.probability * 0.25,
-                    vec![h.hitsplats[0], h.hitsplats[0] / 2],
+                    vec![
+                        h.hitsplats[0],
+                        Hitsplat::new(h.hitsplats[0].damage / 2, h.hitsplats[0].accurate),
+                    ],
                 )
             })
             .collect();
@@ -219,7 +222,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let double_hit = first_hit.zip(&second_hit);
 
         let mut effect_dist = double_hit.scale_probability(acc);
-        effect_dist.add_hit(WeightedHit::new(1.0 - acc, vec![0, 0]));
+        effect_dist.add_hit(WeightedHit::new(
+            1.0 - acc,
+            vec![Hitsplat::inaccurate(), Hitsplat::inaccurate()],
+        ));
 
         dist = AttackDistribution::new(vec![effect_dist]);
     }
@@ -237,7 +243,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     if player.is_using_ranged() && player.gear.weapon.name.contains("Tonalztics") {
         let three_fourths = max_hit * 3 / 4;
         let first_hit = HitDistribution::linear(acc, 0, three_fourths);
-        if player.gear.weapon.name.contains("uncharged") {
+        if player.gear.weapon.matches_version("Uncharged") {
             dist = AttackDistribution::new(vec![first_hit]);
         } else {
             let second_hit = HitDistribution::linear(acc, 0, three_fourths);
@@ -272,7 +278,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let factor = 50 + player.stats.mining + pick_bonus;
         let divisor = 150;
 
-        dist = dist.transform(multiply_transformer(factor, divisor, 0))
+        dist = dist.transform(
+            &multiply_transformer(factor, divisor, 0),
+            &TransformOpts::default(),
+        );
     }
 
     if monster.info.name.contains("Ice demon") && player.is_using_fire_spell()
@@ -313,12 +322,18 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             let chance = OPAL_PROC_CHANCE * kandarin;
             let bonus_dmg = ranged_lvl / (if zcb { 9 } else { 10 });
 
-            dist = dist.transform(|h| {
-                HitDistribution::new(vec![
-                    WeightedHit::new(chance, vec![h + bonus_dmg]),
-                    WeightedHit::new(1.0 - chance, vec![h]),
-                ])
-            });
+            dist = dist.transform(
+                &|h| {
+                    HitDistribution::new(vec![
+                        WeightedHit::new(
+                            chance,
+                            vec![Hitsplat::new(h.damage + bonus_dmg, h.accurate)],
+                        ),
+                        WeightedHit::new(1.0 - chance, vec![h]),
+                    ])
+                },
+                &TransformOpts::default(),
+            );
         }
 
         if player.is_wearing_any(vec![
@@ -329,12 +344,18 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             let divisor = if monster.is_fiery() { 15 } else { 20 };
             let bonus_dmg = ranged_lvl / (if zcb { divisor - 2 } else { divisor });
 
-            dist = dist.transform(|h| {
-                HitDistribution::new(vec![
-                    WeightedHit::new(chance, vec![h + bonus_dmg]),
-                    WeightedHit::new(1.0 - chance, vec![h]),
-                ])
-            });
+            dist = dist.transform(
+                &|h| {
+                    HitDistribution::new(vec![
+                        WeightedHit::new(
+                            chance,
+                            vec![Hitsplat::new(h.damage + bonus_dmg, h.accurate)],
+                        ),
+                        WeightedHit::new(1.0 - chance, vec![h]),
+                    ])
+                },
+                &TransformOpts::default(),
+            );
         }
 
         if player.is_wearing_any(vec![
@@ -388,13 +409,16 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             let hits2 = HitDistribution::linear(1.0, 0, effect_max)
                 .scale_probability(acc * chance)
                 .hits;
-            let hits3 = vec![WeightedHit::new((1.0 - acc) * chance, vec![0])];
+            let hits3 = vec![WeightedHit::new(
+                (1.0 - acc) * chance,
+                vec![Hitsplat::inaccurate()],
+            )];
 
             dist = dist_from_multiple_hits(vec![hits1, hits2, hits3]);
         }
 
         if monster.info.name.as_str() == "Corporeal Beast" && !player.is_using_corpbane_weapon() {
-            dist = dist.transform(division_transformer(2, 0));
+            dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
         }
 
         if player.is_using_ranged()
@@ -411,7 +435,10 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
                 min(100, monster.live_stats.hitpoints / 5)
             };
             let hits1 = dist.clone().dists[0].scale_probability(1.0 - chance).hits;
-            let hits2 = vec![WeightedHit::new(chance, vec![effect_dmg])];
+            let hits2 = vec![WeightedHit::new(
+                chance,
+                vec![Hitsplat::new(effect_dmg, true)],
+            )];
 
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
@@ -428,50 +455,54 @@ fn apply_limiters(
     if monster.is_immune(player) {
         return AttackDistribution::new(vec![HitDistribution::new(vec![WeightedHit::new(
             1.0,
-            vec![0],
+            vec![Hitsplat::inaccurate()],
         )])]);
     }
 
     let mut dist = dist;
 
     if monster.info.name.contains("Zulrah") {
-        dist = dist.transform(capped_reroll_transformer(50, 5, 45));
+        dist = dist.transform(
+            &capped_reroll_transformer(50, 5, 45),
+            &TransformOpts::default(),
+        );
     }
 
     if monster.info.name.contains("Fragment of Seren") {
-        dist = dist.transform(linear_min_transformer(2, 22));
+        dist = dist.transform(&linear_min_transformer(2, 22), &TransformOpts::default());
     }
 
     if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
-        dist = dist.transform(division_transformer(7, 1));
+        dist = dist.transform(&division_transformer(7, 1), &TransformOpts::default());
     }
 
     if monster.info.name.contains("Verzik")
-        && monster.info.name.contains("P1")
+        && monster.matches_version("Phase 1")
         && !player.is_wearing("Dawnbringer", None)
     {
         let limit = if player.is_using_melee() { 10 } else { 3 };
-        dist = dist.transform(linear_min_transformer(limit, 0));
+        dist = dist.transform(&linear_min_transformer(limit, 0), &TransformOpts::default());
     }
 
     if monster.info.name.contains("Tekton") && player.combat_type() == CombatType::Magic {
-        dist = dist.transform(division_transformer(5, 1));
+        dist = dist.transform(&division_transformer(5, 1), &TransformOpts::default());
     }
 
     if monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic {
-        dist = dist.transform(division_transformer(3, 0));
+        dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
-    if (monster.info.name.contains("(Left claw") || monster.info.name.contains("Great Olm (Head"))
+    if (monster.matches_version("Left claw")
+        || (monster.info.name.contains("Great Olm") && monster.matches_version("Head")))
         && player.combat_type() == CombatType::Magic
     {
-        dist = dist.transform(division_transformer(3, 0));
+        dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
-    if (monster.info.name.contains("(Right claw") || monster.info.name.contains("(Left claw"))
+    if (monster.matches_version("Right claw") || monster.matches_version("Left claw"))
         && player.is_using_ranged()
     {
-        dist = dist.transform(division_transformer(3, 0));
+        dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
     // TODO: Implement updated Efaritay's aid here once wiki calc does
@@ -480,16 +511,16 @@ fn apply_limiters(
         && !player.is_using_fire_spell()
         && player.attrs.spell != Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
     {
-        dist = dist.transform(division_transformer(3, 0));
+        dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
     if monster.info.name.contains("Slagilith") && !player.gear.weapon.name.contains("pickaxe") {
-        dist = dist.transform(division_transformer(3, 0));
+        dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
-            dist = dist.transform(division_transformer(2, 0));
+            dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
         } else if !player.is_using_ranged()
             || !player
                 .gear
@@ -498,7 +529,7 @@ fn apply_limiters(
                 .map_or(false, |ammo| ammo.name.contains(" brutal"))
             || !player.gear.weapon.name.contains("Comp ogre bow")
         {
-            dist = dist.transform(division_transformer(4, 0));
+            dist = dist.transform(&division_transformer(4, 0), &TransformOpts::default());
         }
     }
 
@@ -515,7 +546,7 @@ pub fn get_dps(dist: AttackDistribution, player: &Player) -> f64 {
 
 fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
     let mut dist = dist;
-    let hist = dist.as_histogram();
+    let hist = dist.as_histogram(false);
     let start_hp = monster.live_stats.hitpoints as usize;
     let max_hit = min(start_hp, dist.get_max() as usize);
     if max_hit == 0 {
@@ -585,7 +616,7 @@ pub fn get_ttk_distribution(
 
             for h in &current_dist.hits {
                 let dmg_prob = h.probability;
-                let dmg = h.hitsplats[0] as usize;
+                let dmg = h.hitsplats[0].damage as usize;
 
                 let chance_of_action = dmg_prob * hp_prob;
 

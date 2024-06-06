@@ -1,24 +1,78 @@
 use std::collections::HashMap;
 
-pub trait HitTransformer: Fn(u32) -> HitDistribution {}
+pub trait HitTransformer: Fn(Hitsplat) -> HitDistribution {}
+
+impl<F> HitTransformer for F where F: Fn(Hitsplat) -> HitDistribution {}
+
+#[derive(Debug, Clone)]
+pub struct TransformOpts {
+    pub transform_inaccurate: bool,
+}
+
+impl Default for TransformOpts {
+    fn default() -> Self {
+        Self {
+            transform_inaccurate: true,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct Hitsplat {
+    pub damage: u32,
+    pub accurate: bool,
+}
+
+impl Default for Hitsplat {
+    fn default() -> Self {
+        Self {
+            damage: 0,
+            accurate: true,
+        }
+    }
+}
+
+impl Hitsplat {
+    pub fn new(damage: u32, accurate: bool) -> Self {
+        Self { damage, accurate }
+    }
+
+    pub fn inaccurate() -> Self {
+        Self {
+            damage: 0,
+            accurate: false,
+        }
+    }
+
+    pub fn transform<F>(&self, t: &F, opts: &TransformOpts) -> HitDistribution
+    where
+        F: HitTransformer,
+    {
+        if !self.accurate && !opts.transform_inaccurate {
+            return HitDistribution::new(vec![WeightedHit::new(1.0, vec![*self])]);
+        }
+
+        t(*self)
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct WeightedHit {
     pub probability: f64,
-    pub hitsplats: Vec<u32>,
+    pub hitsplats: Vec<Hitsplat>,
 }
 
 impl Default for WeightedHit {
     fn default() -> Self {
         Self {
             probability: 1.0,
-            hitsplats: vec![0],
+            hitsplats: vec![Hitsplat::default()],
         }
     }
 }
 
 impl WeightedHit {
-    pub fn new(probability: f64, hitsplats: Vec<u32>) -> Self {
+    pub fn new(probability: f64, hitsplats: Vec<Hitsplat>) -> Self {
         Self {
             probability,
             hitsplats,
@@ -42,20 +96,24 @@ impl WeightedHit {
         (head, tail)
     }
 
-    pub fn transform<F>(&self, t: &F) -> HitDistribution
+    pub fn transform<F>(&self, t: &F, _opts: &TransformOpts) -> HitDistribution
     where
-        F: Fn(u32) -> HitDistribution,
+        F: HitTransformer,
     {
         if self.hitsplats.len() == 1 {
             return t(self.hitsplats[0]).scale_probability(self.probability);
         }
 
         let (head, tail) = self.shift();
-        head.transform(t).zip(&tail.transform(t))
+        head.transform(t, _opts).zip(&tail.transform(t, _opts))
+    }
+
+    pub fn any_accurate(&self) -> bool {
+        self.hitsplats.iter().any(|h| h.accurate)
     }
 
     pub fn get_sum(&self) -> u32 {
-        self.hitsplats.iter().sum()
+        self.hitsplats.iter().map(|h| h.damage).sum()
     }
 
     pub fn get_expected_value(&self) -> f64 {
@@ -66,7 +124,9 @@ impl WeightedHit {
         let mut acc = 0;
         for &hitsplat in &self.hitsplats {
             acc <<= 8;
-            acc |= hitsplat as u64;
+            acc |= hitsplat.damage as u64;
+            acc <<= 1;
+            acc |= if hitsplat.accurate { 1 } else { 0 };
         }
         acc
     }
@@ -96,13 +156,13 @@ impl HitDistribution {
         Self::new(hits)
     }
 
-    pub fn transform<F>(&self, t: F) -> Self
+    pub fn transform<F>(&self, t: &F, opts: &TransformOpts) -> Self
     where
-        F: Fn(u32) -> HitDistribution,
+        F: HitTransformer,
     {
-        let mut d = HitDistribution::new(Vec::new());
+        let mut d = HitDistribution::default();
         for h in &self.hits {
-            for transformed in &h.transform(&t).hits {
+            for transformed in &h.transform(&t, opts).hits {
                 d.add_hit(transformed.clone());
             }
         }
@@ -123,7 +183,12 @@ impl HitDistribution {
                 let hitsplats = h
                     .hitsplats
                     .iter()
-                    .map(|&s| (s as f64 * factor / divisor as f64) as u32)
+                    .map(|&s| {
+                        Hitsplat::new(
+                            (s.damage as f64 * factor / divisor as f64) as u32,
+                            s.accurate,
+                        )
+                    })
                     .collect();
                 WeightedHit::new(h.probability, hitsplats)
             })
@@ -134,7 +199,7 @@ impl HitDistribution {
 
     pub fn flatten(&self) -> Self {
         let mut acc: HashMap<u64, f64> = HashMap::new();
-        let mut hit_lists: HashMap<u64, Vec<u32>> = HashMap::new();
+        let mut hit_lists: HashMap<u64, Vec<Hitsplat>> = HashMap::new();
 
         for hit in &self.hits {
             let hash = hit.get_hash();
@@ -153,20 +218,21 @@ impl HitDistribution {
         Self::new(hits)
     }
 
-    pub fn cumulative(&self) -> Self {
-        let mut acc: HashMap<u32, f64> = HashMap::new();
+    pub fn cumulative(&self) -> HitDistribution {
+        let mut acc: HashMap<(u32, bool), f64> = HashMap::new();
 
         for hit in &self.hits {
-            let key = hit.get_sum();
-            let prev = acc.entry(key).or_insert(0.0);
-            *prev += hit.probability;
+            let key = (hit.get_sum(), hit.any_accurate());
+            *acc.entry(key).or_insert(0.0) += hit.probability;
         }
 
-        let hits = acc
-            .into_iter()
-            .map(|(dmg, prob)| WeightedHit::new(prob, vec![dmg]))
-            .collect();
-        Self::new(hits)
+        HitDistribution::new(
+            acc.into_iter()
+                .map(|((damage, accurate), probability)| {
+                    WeightedHit::new(probability, vec![Hitsplat { damage, accurate }])
+                })
+                .collect(),
+        )
     }
 
     pub fn expected_hit(&self) -> f64 {
@@ -182,19 +248,28 @@ impl HitDistribution {
     }
 
     pub fn linear(accuracy: f64, min: u32, max: u32) -> HitDistribution {
-        let mut d = HitDistribution::new(Vec::new());
+        let mut d = HitDistribution::default();
         let hit_prob = accuracy / (max - min + 1) as f64;
         for i in min..=max {
-            d.add_hit(WeightedHit::new(hit_prob, vec![i]));
+            d.add_hit(WeightedHit::new(hit_prob, vec![Hitsplat::new(i, true)]));
         }
-        d.add_hit(WeightedHit::new(1.0 - accuracy, vec![0]));
+        d.add_hit(WeightedHit::new(
+            1.0 - accuracy,
+            vec![Hitsplat::inaccurate()],
+        ));
         d
     }
 
     pub fn single(accuracy: f64, hit: u32) -> HitDistribution {
-        let mut d = HitDistribution::new(vec![WeightedHit::new(accuracy, vec![hit])]);
+        let mut d = HitDistribution::new(vec![WeightedHit::new(
+            accuracy,
+            vec![Hitsplat::new(hit, true)],
+        )]);
         if accuracy != 1.0 {
-            d.add_hit(WeightedHit::new(1.0 - accuracy, vec![0]));
+            d.add_hit(WeightedHit::new(
+                1.0 - accuracy,
+                vec![Hitsplat::inaccurate()],
+            ));
         }
         d
     }
@@ -230,11 +305,11 @@ impl AttackDistribution {
         self.single_hitsplat.as_ref().unwrap()
     }
 
-    pub fn transform<F>(&self, t: F) -> AttackDistribution
+    pub fn transform<F>(&self, t: &F, opts: &TransformOpts) -> AttackDistribution
     where
-        F: Fn(u32) -> HitDistribution,
+        F: HitTransformer,
     {
-        let dists = self.dists.iter().map(|d| d.transform(&t)).collect();
+        let dists = self.dists.iter().map(|d| d.transform(&t, opts)).collect();
         AttackDistribution::new(dists)
     }
 
@@ -269,12 +344,17 @@ impl AttackDistribution {
         self.dists.iter().map(|d| d.expected_hit()).sum()
     }
 
-    pub fn as_histogram(&mut self) -> Vec<ChartEntry> {
+    pub fn as_histogram(&mut self, hide_misses: bool) -> Vec<ChartEntry> {
         let dist = self.get_single_hitsplat();
 
         let mut hit_map = HashMap::new();
         for h in &dist.hits {
-            hit_map.insert(h.get_sum(), h.probability);
+            if !hide_misses || h.any_accurate() {
+                hit_map.insert(
+                    h.get_sum(),
+                    hit_map.get(&h.get_sum()).unwrap_or(&0.0) + h.probability,
+                );
+            }
         }
 
         let mut ret = Vec::new();
@@ -290,66 +370,74 @@ impl AttackDistribution {
     }
 }
 
-pub fn flat_limit_transformer(maximum: u32) -> impl Fn(u32) -> HitDistribution {
-    move |h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![h.min(maximum)])])
-}
-
-pub fn linear_min_transformer(maximum: u32, offset: u32) -> impl Fn(u32) -> HitDistribution {
+pub fn flat_limit_transformer(maximum: u32) -> impl HitTransformer {
     move |h| {
-        let mut d = HitDistribution::new(Vec::new());
-        let prob = 1.0 / (maximum + 1) as f64;
-        for i in 0..=maximum {
-            d.add_hit(WeightedHit::new(prob, vec![h.min(i + offset)]));
-        }
-        d.flatten()
+        HitDistribution::new(vec![WeightedHit::new(
+            1.0,
+            vec![Hitsplat::new(h.damage.min(maximum), h.accurate)],
+        )])
     }
 }
 
-pub fn capped_reroll_transformer(
-    limit: u32,
-    roll_max: u32,
-    offset: u32,
-) -> impl Fn(u32) -> HitDistribution {
+pub fn linear_min_transformer(maximum: u32, offset: u32) -> impl HitTransformer {
     move |h| {
-        if h <= limit {
-            return HitDistribution::single(1.0, h);
-        }
-
-        let mut d = HitDistribution::new(Vec::new());
-        let prob = 1.0 / (roll_max + 1) as f64;
-        for i in 0..=roll_max {
+        let mut d = HitDistribution::default();
+        let prob = 1.0 / (maximum + 1) as f64;
+        for i in 0..=maximum {
             d.add_hit(WeightedHit::new(
                 prob,
-                vec![if h > limit { i + offset } else { h }],
+                vec![Hitsplat::new(h.damage.min(i + offset), h.accurate)],
             ));
         }
         d.flatten()
     }
 }
 
-pub fn multiply_transformer(
-    numerator: u32,
-    divisor: u32,
-    minimum: u32,
-) -> impl Fn(u32) -> HitDistribution {
+pub fn capped_reroll_transformer(limit: u32, roll_max: u32, offset: u32) -> impl HitTransformer {
     move |h| {
-        if h == 0 {
-            HitDistribution::new(vec![WeightedHit::new(1.0, vec![0])])
-        } else {
-            HitDistribution::new(vec![WeightedHit::new(
-                1.0,
-                vec![(numerator * h / divisor).max(minimum)],
-            )])
+        if h.damage <= limit {
+            return HitDistribution::new(vec![WeightedHit::new(1.0, vec![h])]);
         }
+
+        let mut d = HitDistribution::default();
+        let prob = 1.0 / (roll_max + 1) as f64;
+        for i in 0..=roll_max {
+            d.add_hit(WeightedHit::new(
+                prob,
+                vec![if h.damage > limit {
+                    Hitsplat::new(i + offset, h.accurate)
+                } else {
+                    h
+                }],
+            ));
+        }
+        d.flatten()
     }
 }
 
-pub fn division_transformer(divisor: u32, minimum: u32) -> impl Fn(u32) -> HitDistribution {
+pub fn multiply_transformer(numerator: u32, divisor: u32, minimum: u32) -> impl HitTransformer {
+    move |h| {
+        HitDistribution::new(vec![WeightedHit::new(
+            1.0,
+            vec![Hitsplat::new(
+                (numerator * h.damage / divisor).max(minimum),
+                h.accurate,
+            )],
+        )])
+    }
+}
+
+pub fn division_transformer(divisor: u32, minimum: u32) -> impl HitTransformer {
     multiply_transformer(1, divisor, minimum)
 }
 
-pub fn flat_add_transformer(addend: u32) -> impl Fn(u32) -> HitDistribution {
-    move |h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![h + addend])])
+pub fn flat_add_transformer(addend: u32) -> impl HitTransformer {
+    move |h| {
+        HitDistribution::new(vec![WeightedHit::new(
+            1.0,
+            vec![Hitsplat::new((h.damage + addend).max(0), h.accurate)],
+        )])
+    }
 }
 
 pub struct ChartEntry {

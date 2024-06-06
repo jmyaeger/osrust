@@ -779,7 +779,7 @@ pub fn tonalztics_of_ralos_attack(
             damage1 = limiter.apply(damage1, rng);
         }
     }
-    if player.gear.weapon.name.contains("(charged)") {
+    if player.gear.weapon.matches_version("Charged") {
         let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
         if success2 {
             if let Some(limiter) = &limiter {
@@ -890,9 +890,7 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Scythe of vitur" => scythe_attack as AttackFn,
         "Soulreaper axe" => soulreaper_axe_attack as AttackFn,
         "Gadderhammer" => gadderhammer_attack as AttackFn,
-        "Tonalztics of Ralos (charged)" | "Tonalztics of Ralos (uncharged)" => {
-            tonalztics_of_ralos_attack as AttackFn
-        }
+        "Tonalztics of Ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }

@@ -65,8 +65,8 @@ struct Query {
 
 #[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
 pub struct ElementalWeakness {
-    element: String,
-    severity: i64,
+    pub element: String,
+    pub severity: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

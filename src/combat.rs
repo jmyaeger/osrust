@@ -31,7 +31,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     }
 
     if monster.info.name.contains("Verzik")
-        && monster.info.name.contains("P1")
+        && monster.matches_version("Phase 1")
         && !player.is_wearing("Dawnbringer", None)
     {
         let limit = if player.is_using_melee() { 10 } else { 3 };
@@ -43,11 +43,11 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     }
 
     if (monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic)
-        || (monster.info.name.contains("(Left claw")
-            || monster.info.name.contains("Great Olm (Head")
+        || (monster.matches_version("Left claw")
+            || (monster.info.name.contains("Great Olm") && monster.matches_version("Head"))
                 && player.combat_type() == CombatType::Magic)
-        || (monster.info.name.contains("(Right claw")
-            || monster.info.name.contains("(Left claw") && player.is_using_ranged())
+        || (monster.matches_version("Right claw")
+            || monster.matches_version("Left claw") && player.is_using_ranged())
         || (monster.info.name.contains("Ice demon")
             && !player.is_using_fire_spell()
             && player.attrs.spell != Some(Spell::Standard(StandardSpell::FlamesOfZamorak)))
@@ -126,20 +126,18 @@ mod tests {
         player.prayers.add(PrayerBoost::new(Prayer::Piety));
         player.add_potion(Potion::SuperCombat);
 
-        player.gear = Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
-            second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier", None),
-            shield: Some(Armor::new("Avernic defender", None)),
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
-        };
+        player.equip("Torva full helm", None);
+        player.equip("Amulet of torture", None);
+        player.equip("Infernal cape", None);
+        player.equip("Rada's blessing 4", None);
+        player.equip("Ghrazi rapier", None);
+        player.equip("Avernic defender", None);
+        player.equip("Torva platebody", None);
+        player.equip("Torva platelegs", None);
+        player.equip("Ferocious gloves", None);
+        player.equip("Primordial boots", None);
+        player.equip("Ultor ring", None);
+
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let mut monster = Monster::new("Ammonite Crab", None).unwrap();
