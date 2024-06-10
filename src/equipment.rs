@@ -1,17 +1,19 @@
 use lazy_static::lazy_static;
 
 use crate::constants::*;
+use rusqlite::{params, Connection, Result};
 use serde::{Deserialize, Deserializer};
-use serde_json::Value;
 use std::collections::HashMap;
 use std::fs;
-use std::io::Read;
 use std::path::PathBuf;
 use strum_macros::EnumIter;
 
 lazy_static! {
-    static ref EQUIPMENT_JSON: PathBuf =
-        fs::canonicalize("src/databases/equipment.json").expect("Failed to get database path");
+    static ref EQUIPMENT_DB: PathBuf =
+        fs::canonicalize("src/databases/equipment.db").expect("Failed to get database path");
+    static ref EQUIPMENT_FLAT_DB: PathBuf =
+        fs::canonicalize("src/databases/equipment_flattened.db")
+            .expect("Failed to get database path");
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
@@ -159,32 +161,30 @@ impl EquipmentBonuses {
 }
 
 pub trait Equipment {
-    fn set_info(&mut self, item_name: &str, version: Option<&str>) -> Result<(), String> {
-        let mut file = match fs::File::open(EQUIPMENT_JSON.as_path()) {
-            Ok(file) => file,
-            Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
-        };
-        let mut contents = String::new();
-        if let Err(err) = file.read_to_string(&mut contents) {
-            return Err(format!("Failed to read JSON file: {}", err));
-        }
-
-        let json: Value = match serde_json::from_str(&contents) {
-            Ok(json) => json,
-            Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
-        };
-
-        self.set_fields_from_json(&json, item_name, version)
-    }
-
-    fn set_fields_from_json(
+    fn set_info(
         &mut self,
-        json: &Value,
         item_name: &str,
         version: Option<&str>,
-    ) -> Result<(), String>;
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let conn = Connection::open(EQUIPMENT_DB.as_path())?;
+        let json: String = if version.is_some() {
+            conn.query_row(
+                "SELECT data FROM equipment WHERE name = ?1 AND version = ?2",
+                params![item_name, version.unwrap_or("")],
+                |row| row.get(0),
+            )?
+        } else {
+            conn.query_row(
+                "SELECT data FROM equipment WHERE name = ?",
+                params![item_name],
+                |row| row.get(0),
+            )?
+        };
 
-    // fn set_fields_from_row(&mut self, row: &Row) -> Result<()>;
+        self.set_fields_from_json(&json)
+    }
+
+    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>>;
 }
 
 #[derive(Debug, PartialEq, Default, Deserialize)]
@@ -197,33 +197,10 @@ pub struct Armor {
 }
 
 impl Equipment for Armor {
-    fn set_fields_from_json(
-        &mut self,
-        json: &Value,
-        item_name: &str,
-        version: Option<&str>,
-    ) -> Result<(), String> {
-        let armor = match json.as_array() {
-            Some(array) => array
-                .iter()
-                .find(|entry| {
-                    entry["name"].as_str() == Some(item_name)
-                        && entry["version"].as_str() == version
-                })
-                .cloned(),
-            None => return Err(format!("Item not found: {}", item_name)),
-        };
+    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let armor = serde_json::from_str(json)?;
 
-        let armor_struct: Armor = match armor {
-            Some(entry) => match serde_json::from_value(entry) {
-                Ok(armor) => Ok(armor),
-                Err(err) => Err(format!("Failed to deserialize armor: {}", err)),
-            },
-            None => Err(format!("Armor not found: {}", item_name)),
-        }
-        .expect("Failed to deserialize armor");
-
-        *self = armor_struct;
+        *self = armor;
         Ok(())
     }
 }
@@ -300,60 +277,17 @@ pub struct Weapon {
 }
 
 impl Equipment for Weapon {
-    fn set_fields_from_json(
-        &mut self,
-        json: &Value,
-        item_name: &str,
-        version: Option<&str>,
-    ) -> Result<(), String> {
-        let weapon = match json.as_array() {
-            Some(array) => {
-                let result = array
-                    .iter()
-                    .find(|entry| {
-                        entry["name"].as_str() == Some(item_name)
-                            && entry["version"].as_str() == version
-                    })
-                    .cloned();
+    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let mut weapon: Weapon = serde_json::from_str(json)?;
 
-                if result.is_none() {
-                    let no_version = array
-                        .iter()
-                        .find(|entry| entry["name"].as_str() == Some(item_name))
-                        .cloned();
-                    if no_version.is_some() {
-                        return Err(format!(
-                            "Item not found: {} (no version provided)",
-                            item_name
-                        ));
-                    }
-                }
-
-                result
-            }
-            None => return Err(format!("Item not found: {}", item_name)),
-        };
-
-        let mut weapon_struct: Weapon = match weapon {
-            Some(entry) => match serde_json::from_value(entry) {
-                Ok(weapon) => Ok(weapon),
-                Err(err) => Err(format!("Failed to deserialize weapon: {}", err)),
-            },
-            None => Err(format!("Weapon not found: {}", item_name)),
-        }
-        .expect("Failed to deserialize weapon");
-
-        if weapon_struct
-            .combat_styles
-            .contains_key(&CombatStyle::Spell)
-        {
-            weapon_struct.is_staff = true;
+        if weapon.combat_styles.contains_key(&CombatStyle::Spell) {
+            weapon.is_staff = true;
         }
 
-        weapon_struct.base_speed = weapon_struct.speed;
-        weapon_struct.slot = GearSlot::Weapon;
+        weapon.base_speed = weapon.speed;
+        weapon.slot = GearSlot::Weapon;
 
-        *self = weapon_struct;
+        *self = weapon;
 
         Ok(())
     }
@@ -1102,33 +1036,15 @@ impl Weapon {
     }
 }
 
-pub fn get_slot_name(item_name: &str) -> Result<String, String> {
-    let mut file = match fs::File::open(EQUIPMENT_JSON.as_path()) {
-        Ok(file) => file,
-        Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
-    };
-    let mut contents = String::new();
-    if let Err(err) = file.read_to_string(&mut contents) {
-        return Err(format!("Failed to read JSON file: {}", err));
-    }
+pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let conn = Connection::open(EQUIPMENT_FLAT_DB.as_path())?;
+    let slot: String = conn.query_row(
+        "SELECT slot FROM equipment WHERE name = ?",
+        params![item_name],
+        |row| row.get(0),
+    )?;
 
-    let json: Value = match serde_json::from_str(&contents) {
-        Ok(json) => json,
-        Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
-    };
-
-    let item = match json.as_array() {
-        Some(array) => array
-            .iter()
-            .find(|entry| entry["name"].as_str() == Some(item_name))
-            .cloned(),
-        None => return Err(format!("Item not found: {}", item_name)),
-    };
-
-    match item {
-        Some(item) => Ok(item["slot"].as_str().unwrap().to_string()),
-        None => Err(format!("Item not found: {}", item_name)),
-    }
+    Ok(slot)
 }
 
 #[cfg(test)]

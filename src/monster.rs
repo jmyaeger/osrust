@@ -1,21 +1,19 @@
 use lazy_static::lazy_static;
 
 use crate::equipment::CombatType;
-use crate::monster_json::ElementalWeakness;
+use crate::monster_db::ElementalWeakness;
 use crate::player::Player;
 use crate::{constants::*, rolls};
-use rusqlite::Result;
+use rusqlite::{params, Result};
 use serde::Deserialize;
-use serde_json::Value;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::fs;
-use std::io::Read;
 use std::path::PathBuf;
 
 lazy_static! {
-    static ref MONSTER_JSON: PathBuf =
-        fs::canonicalize("src/databases/monsters.json").expect("Failed to get database path");
+    static ref MONSTER_DB: PathBuf =
+        fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
 }
 
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
@@ -223,48 +221,30 @@ impl Default for Monster {
 }
 
 impl Monster {
-    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, String> {
-        let mut file = match fs::File::open(MONSTER_JSON.as_path()) {
-            Ok(file) => file,
-            Err(err) => return Err(format!("Failed to open JSON file: {}", err)),
-        };
-        let mut contents = String::new();
-        if let Err(err) = file.read_to_string(&mut contents) {
-            return Err(format!("Failed to read JSON file: {}", err));
-        }
+    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
+        let conn = rusqlite::Connection::open(MONSTER_DB.as_path())?;
 
-        let json: Value = match serde_json::from_str(&contents) {
-            Ok(json) => json,
-            Err(err) => return Err(format!("Failed to parse JSON: {}", err)),
-        };
-
-        let monster = match json.as_array() {
-            Some(array) => array
-                .iter()
-                .find(|entry| {
-                    entry["info"]["name"].as_str() == Some(name)
-                        && entry["info"]["version"].as_str() == version
-                })
-                .cloned(),
-            None => return Err("Invalid JSON structure".to_string()),
+        let row: String = if version.is_some() {
+            conn.query_row(
+                "SELECT data FROM monsters WHERE name = ?1 AND version = ?2",
+                params![name, version.unwrap()],
+                |row| row.get(0),
+            )?
+        } else {
+            conn.query_row(
+                "SELECT data FROM monsters WHERE name = ?",
+                params![name],
+                |row| row.get(0),
+            )?
         };
 
-        let mut monster_struct: Monster = match monster {
-            Some(entry) => match serde_json::from_value(entry) {
-                Ok(monster) => Ok(monster),
-                Err(err) => Err(format!("Failed to deserialize monster: {}", err)),
-            },
-            None => Err(format!(
-                "Monster not found: {} (version: {:?})",
-                name, version
-            )),
-        }
-        .expect("Failed to deserialize monster");
-        monster_struct.live_stats = monster_struct.stats;
-        monster_struct.base_def_rolls = rolls::monster_def_rolls(&monster_struct);
-        monster_struct.def_rolls = monster_struct.base_def_rolls.clone();
+        let mut monster: Monster = serde_json::from_str(row.as_str())?;
 
-        Ok(monster_struct)
+        monster.live_stats = monster.stats;
+        monster.base_def_rolls = rolls::monster_def_rolls(&monster);
+        monster.def_rolls = monster.base_def_rolls.clone();
+
+        Ok(monster)
     }
 
     pub fn scale_toa(&mut self) {
