@@ -116,17 +116,19 @@ pub struct MonsterInfo {
     pub version: Option<String>,
     pub combat_level: u32,
     pub size: u32,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_attributes")]
     pub attributes: Option<Vec<Attribute>>,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_max_hits")]
     pub max_hit: Option<Vec<MonsterMaxHit>>,
     pub attack_styles: Option<Vec<String>>,
     pub weakness: Option<ElementalWeakness>,
-    pub attack_speed: u8,
+    pub attack_speed: u32,
     #[serde(default)]
-    pub poison_severity: u8,
+    pub poison_severity: u32,
     #[serde(default)]
-    pub freeze_duration: u8,
+    pub freeze_duration: u32,
     #[serde(default)]
     pub toa_level: u32,
     #[serde(default)]

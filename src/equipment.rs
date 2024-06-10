@@ -175,7 +175,7 @@ pub trait Equipment {
             )?
         } else {
             conn.query_row(
-                "SELECT data FROM equipment WHERE name = ?",
+                "SELECT data FROM equipment WHERE name = ? AND version IS NULL",
                 params![item_name],
                 |row| row.get(0),
             )?
