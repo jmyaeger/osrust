@@ -112,9 +112,9 @@ pub fn simulate_n_fights(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::equipment::{Armor, CombatStyle, Weapon};
+    use crate::equipment::CombatStyle;
     use crate::monster::Monster;
-    use crate::player::{Gear, Player, PlayerStats};
+    use crate::player::{Player, PlayerStats};
     use crate::potions::Potion;
     use crate::prayers::{Prayer, PrayerBoost};
     use crate::rolls::calc_player_melee_rolls;

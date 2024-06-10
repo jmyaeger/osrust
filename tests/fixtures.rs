@@ -1,6 +1,6 @@
-use osrs::equipment::{Armor, CombatStyle, Weapon};
+use osrs::equipment::CombatStyle;
 use osrs::monster::Monster;
-use osrs::player::{Gear, Player, PlayerStats};
+use osrs::player::{Player, PlayerStats};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
