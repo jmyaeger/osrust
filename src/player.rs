@@ -468,7 +468,11 @@ impl Player {
                 if self.is_wearing_any(vec![
                     ("Dizana's quiver", Some("Charged")),
                     ("Dizana's quiver", Some("Uncharged")),
-                ]) && self.gear.ammo.is_some()
+                ]) && (self.gear.ammo.is_some()
+                    && !((self.gear.ammo.as_ref().unwrap().is_bolt()
+                        && item_name.contains("bolts"))
+                        || (self.gear.ammo.as_ref().unwrap().is_arrow()
+                            && item_name.contains("arrow"))))
                 {
                     self.gear.second_ammo = Some(Armor::new(item_name, version));
                     if self.is_quiver_bonus_valid() {

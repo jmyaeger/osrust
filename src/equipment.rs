@@ -219,7 +219,15 @@ impl Armor {
     }
 
     pub fn is_bolt_or_arrow(&self) -> bool {
-        self.name.contains("bolts") || self.name.contains("arrow")
+        self.is_bolt() || self.is_arrow()
+    }
+
+    pub fn is_bolt(&self) -> bool {
+        self.name.contains("bolts")
+    }
+
+    pub fn is_arrow(&self) -> bool {
+        self.name.contains("arrow")
     }
 
     pub fn matches_version(&self, version: &str) -> bool {

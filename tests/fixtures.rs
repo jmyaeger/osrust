@@ -910,7 +910,7 @@ pub fn full_karils_aotd_player() -> Player {
     player.equip("Karil's leathertop", None);
     player.equip("Karil's leatherskirt", None);
     player.equip("Karil's crossbow", None);
-    player.equip("Amulet of the damned", None);
+    player.equip("Amulet of the damned", Some("Full"));
     player.update_set_effects();
     player.update_bonuses();
     player
@@ -928,7 +928,7 @@ pub fn max_melee_torags_hammers_player() -> Player {
 #[fixture]
 pub fn max_ranged_tonalztics_charged_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Tonalztics of Ralos", Some("Charged"));
+    player.equip("Tonalztics of ralos", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -936,7 +936,7 @@ pub fn max_ranged_tonalztics_charged_player() -> Player {
 #[fixture]
 pub fn max_ranged_tonalztics_uncharged_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Tonalztics of Ralos", Some("Uncharged"));
+    player.equip("Tonalztics of ralos", Some("Uncharged"));
     player.update_bonuses();
     player
 }

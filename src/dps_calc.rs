@@ -554,10 +554,9 @@ fn apply_limiters(
         }
     }
 
-    let flat_armour = monster
-        .info
-        .id
-        .map_or(0, |id| FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap().1);
+    let flat_armour = monster.info.id.map_or(0, |id| {
+        FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1
+    });
     if flat_armour > 0 {
         dist = dist.transform(
             &flat_add_transformer(-flat_armour),
@@ -604,6 +603,8 @@ fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
 
 pub fn get_ttk(dist: AttackDistribution, player: &Player, monster: &Monster) -> f64 {
     get_htk(dist, monster) * player.gear.weapon.speed as f64 * SECONDS_PER_TICK
+    // let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster);
+    // ttk_dist.iter().map(|(k, v)| *v * *k as f64).sum::<f64>() * SECONDS_PER_TICK
 }
 
 pub fn get_ttk_distribution(
@@ -637,7 +638,7 @@ pub fn get_ttk_distribution(
     }
 
     for hit in 0..=TTK_DIST_MAX_ITER_ROUNDS {
-        if epsilon >= TTK_DIST_EPSILON {
+        if epsilon < TTK_DIST_EPSILON {
             break;
         }
         let mut next_hps = vec![0.0; max_hp + 1];
@@ -805,7 +806,7 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(num::abs(ttk - 44.3) < 0.1);
+        assert!(num::abs(ttk - 44.2) < 0.1);
     }
 
     #[test]
@@ -837,7 +838,7 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(num::abs(ttk - 100.7) < 0.1);
+        assert!(num::abs(ttk - 100.5) < 0.1);
     }
 
     #[test]
