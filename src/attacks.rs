@@ -20,10 +20,10 @@ pub fn standard_attack(
     let mut max_def_roll = monster.def_rolls[&combat_type];
     let max_hit = player.max_hits[&combat_type];
     let min_hit = if combat_type == CombatType::Magic
-        && player.boosts.sunfire_runes
+        && player.boosts.sunfire.active
         && player.is_using_fire_spell()
     {
-        max_hit / 10
+        player.boosts.sunfire.min_hit
     } else {
         0
     };
@@ -136,9 +136,9 @@ pub fn ahrims_staff_attack(
     let max_hit = player.max_hits[&combat_type];
     let min_hit = if player.combat_type() == CombatType::Magic
         && player.is_using_fire_spell()
-        && player.boosts.sunfire_runes
+        && player.boosts.sunfire.active
     {
-        max_hit / 10
+        player.boosts.sunfire.min_hit
     } else {
         0
     };

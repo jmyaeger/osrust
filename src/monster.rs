@@ -250,7 +250,7 @@ impl Monster {
     }
 
     pub fn scale_toa(&mut self) {
-        if TOA_MONSTERS.contains(&self.info.name.as_str()) {
+        if TOA_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             self.scale_toa_hp();
             self.scale_toa_defence();
         }
@@ -269,7 +269,7 @@ impl Monster {
         };
         let level_scaled_hp = self.stats.hitpoints * toa_level_bonus / 100;
 
-        self.stats.hitpoints = if TOA_PATH_MONSTERS.contains(&self.info.name.as_str()) {
+        self.stats.hitpoints = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
             round_toa_hp(path_scaled_hp)
         } else {
@@ -407,37 +407,11 @@ impl Monster {
     }
 
     pub fn is_toa_monster(&self) -> bool {
-        for monster in TOA_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if self.info.name == name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                {
-                    return true;
-                }
-            } else if self.info.name == monster {
-                return true;
-            }
-        }
-
-        false
+        TOA_MONSTERS.contains(&self.info.id.unwrap_or(0))
     }
 
     pub fn is_toa_path_monster(&self) -> bool {
-        for monster in TOA_PATH_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if self.info.name == name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                {
-                    return true;
-                }
-            } else if self.info.name == monster {
-                return true;
-            }
-        }
-
-        false
+        TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0))
     }
 
     pub fn heal(&mut self, amount: u32) {
@@ -484,64 +458,14 @@ impl Monster {
     pub fn is_immune(&self, player: &Player) -> bool {
         let combat_type = &player.combat_type();
 
-        for monster in IMMUNE_TO_MAGIC_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if name == self.info.name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                    && combat_type == &CombatType::Magic
-                {
-                    return true;
-                }
-            } else if monster == self.info.name && combat_type == &CombatType::Magic {
-                return true;
-            }
-        }
-
-        for monster in IMMUNE_TO_RANGED_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if name == self.info.name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                    && player.is_using_ranged()
-                {
-                    return true;
-                }
-            } else if monster == self.info.name && player.is_using_ranged() {
-                return true;
-            }
-        }
-
-        for monster in IMMUNE_TO_MELEE_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if name == self.info.name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                    && player.is_using_melee()
-                {
-                    return true;
-                }
-            } else if monster == self.info.name && player.is_using_melee() {
-                return true;
-            }
-        }
-
-        for monster in IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS {
-            if let Some((name, version)) = monster.split_once(" (") {
-                if name == self.info.name
-                    && &version.replace(')', "")
-                        == self.info.version.as_ref().unwrap_or(&String::new())
-                    && player.is_using_melee()
-                    && !player.is_wearing_salamander()
-                {
-                    return true;
-                }
-            } else if monster == self.info.name
-                && player.is_using_melee()
-                && !player.is_wearing_salamander()
-            {
-                return true;
-            }
+        if combat_type == &CombatType::Magic
+            && IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            || (player.is_using_ranged()
+                && IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0)))
+            || (player.is_using_melee()
+                && IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0)))
+        {
+            return true;
         }
 
         if self.vampyre_tier() == Some(3) && !player.is_wearing_ivandis_weapon() {

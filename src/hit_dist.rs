@@ -175,7 +175,7 @@ impl HitDistribution {
         Self::new(hits)
     }
 
-    pub fn scale_damage(&self, factor: f64, divisor: i32) -> Self {
+    pub fn scale_damage(&self, factor: i32, divisor: i32) -> Self {
         let hits = self
             .hits
             .iter()
@@ -184,10 +184,7 @@ impl HitDistribution {
                     .hitsplats
                     .iter()
                     .map(|&s| {
-                        Hitsplat::new(
-                            (s.damage as f64 * factor / divisor as f64) as u32,
-                            s.accurate,
-                        )
+                        Hitsplat::new((s.damage as i32 * factor / divisor) as u32, s.accurate)
                     })
                     .collect();
                 WeightedHit::new(h.probability, hitsplats)
@@ -327,7 +324,7 @@ impl AttackDistribution {
         AttackDistribution::new(dists)
     }
 
-    pub fn scale_damage(&self, factor: f64, divisor: i32) -> AttackDistribution {
+    pub fn scale_damage(&self, factor: i32, divisor: i32) -> AttackDistribution {
         let dists = self
             .dists
             .iter()
@@ -431,11 +428,14 @@ pub fn division_transformer(divisor: u32, minimum: u32) -> impl HitTransformer {
     multiply_transformer(1, divisor, minimum)
 }
 
-pub fn flat_add_transformer(addend: u32) -> impl HitTransformer {
+pub fn flat_add_transformer(addend: i32) -> impl HitTransformer {
     move |h| {
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
-            vec![Hitsplat::new((h.damage + addend).max(0), h.accurate)],
+            vec![Hitsplat::new(
+                (h.damage as i32 + addend).max(0) as u32,
+                h.accurate,
+            )],
         )])
     }
 }

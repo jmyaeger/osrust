@@ -2,69 +2,86 @@ pub const TBOW_ACC_CAP: i32 = 140;
 
 pub const TBOW_DMG_CAP: i32 = 250;
 
-pub const MAGIC_DEF_EXCEPTIONS: [&str; 15] = [
-    "Baboon Brawler (Level 56)",
-    "Baboon Brawler (Level 68)",
-    "Fragment of Seren",
-    "Rabbit",
-    "Verzik Vitur (Normal P1)",
-    "Verzik Vitur (Normal P2)",
-    "Verzik Vitur (Normal P3)",
-    "Verzik Vitur (Entry P1)",
-    "Verzik Vitur (Entry P2)",
-    "Verzik Vitur (Entry P3)",
-    "Verzik Vitur (Hard P1)",
-    "Verzik Vitur (Hard P2)",
-    "Verzik Vitur (Hard P3)",
-    "Ice demon (Normal)",
-    "Ice demon (Challenge Mode)",
+pub const ICE_DEMON_IDS: &[i32] = &[
+    7584, // reg
+    7585, // cm
 ];
 
-pub const TOA_MONSTERS: [&str; 32] = [
-    "Akkha",
-    "Akkha's Shadow",
-    "Ba-Ba",
-    "Baboon",
-    "Baboon Brawler (Level 56)",
-    "Baboon Brawler (Level 68)",
-    "Baboon Mage (Level 56)",
-    "Baboon Mage (Level 68)",
-    "Baboon Shaman",
-    "Baboon Thrall",
-    "Baboon Thrower (Level 56)",
-    "Baboon Thrower (Level 68)",
-    "Cursed Baboon",
-    "Volatile Baboon",
-    "Kephri (Shield down)",
-    "Kephri (Shield up)",
-    "Agile Scarab",
-    "Arcane Scarab",
-    "Scarab Swarm",
-    "Soldier Scarab",
-    "Spitting Scarab",
-    "Scarab",
-    "Zebak",
-    "Crocodile (Tombs of Amascut)",
-    "Obelisk",
-    "Tumeken's Warden (Active)",
-    "Tumeken's Warden (Damaged)",
-    "Tumeken's Warden (Enraged))",
-    "Elidinis' Warden (Active)",
-    "Elidinis' Warden (Damaged)",
-    "Elidinis' Warden (Enraged)",
-    "Core (Wardens)",
+pub const VERZIK_IDS: [i32; 18] = [
+    10830, 10831, 10832, // P1 Entry
+    8369, 8370, 8371, // P1 Normal
+    10847, 10848, 10849, // P1 Hard
+    10833, 10834, 10835, // verzik entry mode
+    8372, 8373, 8374, // verzik normal mode
+    10850, 10851, 10852, // verzik hard mode
 ];
 
-pub const TOA_PATH_MONSTERS: [&str; 9] = [
-    "Akkha",
-    "Akkha's Shadow",
-    "Ba-Ba",
-    "Kephri (Shield down)",
-    "Kephri (Shield up)",
-    "Arcane Scarab",
-    "Spitting Scarab",
-    "Soldier Scarab",
-    "Zebak",
+pub const MAGIC_DEF_EXCEPTIONS: [i32; 27] = [
+    7584, // Ice demon (Normal)
+    7585, // Ice demon (CM)
+    8917, 8918, 8919, 8920, // Fragment of Seren
+    10830, 10831, 10832, // P1 Entry Verzik
+    8369, 8370, 8371, // P1 Normal Verzik
+    10847, 10848, 10849, // P1 Hard Verzik
+    10833, 10834, 10835, // verzik entry mode
+    8372, 8373, 8374, // verzik normal mode
+    10850, 10851, 10852, // verzik hard mode,
+    11709, 11712, // Baboon brawler
+    9118,  // Rabbit (Prifddinas)
+];
+
+pub const AKKHA_IDS: &[i32] = &[11789, 11790, 11791, 11792, 11793, 11794, 11795, 11796];
+
+pub const AKKHA_SHADOW_IDS: &[i32] = &[11797, 11798, 11799];
+
+pub const BABA_IDS: &[i32] = &[11778, 11779, 11780];
+
+pub const KEPHRI_IDS: &[i32] = &[11719, 11721];
+
+pub const KEPHRI_OVERLORD_IDS: &[i32] = &[11724, 11725, 11726];
+
+pub const ZEBAK_IDS: &[i32] = &[11730, 11732, 11733];
+
+pub const TOA_OBELISK_IDS: &[i32] = &[11750, 11751, 11752];
+
+pub const P2_WARDEN_IDS: &[i32] = &[
+    11753, 11754, // elidinis
+    11756, 11757, // tumeken
+];
+
+pub const P3_WARDEN_IDS: &[i32] = &[
+    11761, 11763, // elidinis
+    11762, 11764, // tumeken
+];
+
+pub const TOA_WARDEN_CORE_EJECTED_IDS: &[i32] = &[
+    11755, // elidinis
+    11758, // tumeken
+];
+
+pub const TOA_MONSTERS: [i32; 35] = [
+    11789, 11790, 11791, 11792, 11793, 11794, 11795, 11796, // Akkha
+    11797, 11798, 11799, // Akkha shadows
+    11778, 11779, 11780, // Ba-Ba
+    11719, 11721, // Kephri
+    11724, 11725, 11726, // Kephri overlords
+    11730, 11732, 11733, // Zebak
+    11750, 11751, 11752, // ToA obelisk
+    11753, 11754, // Elidinis P2
+    11756, 11757, // Tumeken P2
+    11761, 11763, // Elidinis P3
+    11762, 11764, // Tumeken P3
+    11755, // Elidinis core
+    11758, // Tumeken core
+];
+
+pub const TOA_PATH_MONSTERS: [i32; 22] = [
+    11789, 11790, 11791, 11792, 11793, 11794, 11795, 11796, // Akkha
+    11797, 11798, 11799, // Akkha shadows
+    11778, 11779, 11780, // Ba-Ba
+    11719, 11721, // Kephri
+    11724, 11725, 11726, // Kephri overlords
+    11730, 11732, 11733, // Zebak
 ];
 
 pub const WILDERNESS_MONSTERS: [&str; 35] = [
@@ -105,63 +122,72 @@ pub const WILDERNESS_MONSTERS: [&str; 35] = [
     "Venenatis' Spiderling",
 ];
 
-pub const ONE_HIT_MONSTERS: [&str; 3] = [
-    "Giant rat (Scurrius)",
-    "Flower",
-    "Flower (A Night at the Theatre)",
+pub const ONE_HIT_MONSTERS: &[i32] = &[
+    7223,  // Giant rat (Scurrius)
+    8584,  // Flower
+    11193, // Flower (A Night at the Theatre)
 ];
 
-pub const IMMUNE_TO_MELEE_MONSTERS: [&str; 17] = [
-    "Kraken (Kraken)",
-    "Abyssal portal (Normal)",
-    "Abyssal portal (Challenge Mode)",
-    "TzKal-Zuk (Normal)",
-    "TzKal-Zuk (Enraged)",
-    "Jal-MejJak",
-    "Leviathan (Post-Quest)",
-    "Leviathan (Quest)",
-    "Leviathan (Awakened)",
-    "Dawn",
-    "Great Olm (Right claw)",
-    "Great Olm (Right claw (Challenge Mode))",
-    "Great Olm (Head)",
-    "Great Olm (Head (Challenge Mode))",
-    "Zulrah (Serpentine)",
-    "Zulrah (Magma)",
-    "Zulrah (Tanzanite)",
+pub const IMMUNE_TO_MELEE_MONSTERS: &[i32] = &[
+    494,  // kraken
+    7533, // Abyssal portal
+    7706, // zuk
+    7708, // Jal-MejJak
+    12214, 12215, 12219, // leviathan
+    7852, 7853, 7884, 7885, // dawn
+    7550, 7553, // Olm mage hand
+    7551, 7554, // Olm head,
+    2042, 2043, 2044, // zulrah
 ];
 
-pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: [&str; 16] = [
-    "Aviansie (Level 69)",
-    "Aviansie (Level 71)",
-    "Aviansie (Level 73)",
-    "Aviansie (Level 79 (1))",
-    "Aviansie (Level 79 (2))",
-    "Aviansie (Level 83)",
-    "Aviansie (Level 84)",
-    "Aviansie (Level 89)",
-    "Aviansie (Level 92)",
-    "Aviansie (Level 94)",
-    "Aviansie (Level 97 (1))",
-    "Aviansie (Level 97 (2))",
-    "Aviansie (Level 131)",
-    "Aviansie (Level 137)",
-    "Aviansie (Level 148)",
-    "Reanimated aviansie",
+pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: &[i32] = &[
+    3169, 3170, 3171, 3172, 3173, 3174, 3175, 3176, 3177, 3178, 3179, 3180, 3181, 3182,
+    3183, // aviansie
+    7037, // reanimated aviansie
 ];
 
-pub const IMMUNE_TO_RANGED_MONSTERS: [&str; 8] = [
-    "Tekton (Normal)",
-    "Tekton (Enraged)",
-    "Tekton (Normal (Challenge Mode))",
-    "Tekton (Enraged (Challenge Mode))",
-    "Dusk (First form)",
-    "Dusk (Second form)",
-    "Glowing crystal (Normal)",
-    "Glowing crystal (Challenge Mode)",
+pub const DUSK_IDS: &[i32] = &[
+    7851, 7854, 7855, 7882, 7883, 7886, // dusk first form
+    7887, 7888, 7889, // dusk second form
 ];
 
-pub const IMMUNE_TO_MAGIC_MONSTERS: [&str; 2] = ["Dusk (First form)", "Dusk (Second form)"];
+pub const TEKTON_IDS: &[i32] = &[
+    7540, 7543, // reg
+    7544, 7545, // cm
+];
+
+pub const IMMUNE_TO_RANGED_MONSTERS: [i32; 14] = [
+    7540, 7543, // Tekton (Normal)
+    7544, 7545, // Tekton (CM)
+    7851, 7854, 7855, 7882, 7883, 7886, // Dusk first form
+    7887, 7888, 7889, // Dusk second form
+    7568, // Glowing crystal
+];
+
+pub const ALWAYS_MAX_HIT_MELEE: &[i32] = &[
+    11710, 11713, // Baboon thrower
+    12814, // Fremennik warband archer
+];
+
+pub const ALWAYS_MAX_HIT_RANGED: &[i32] = &[
+    11711, 11714, // Baboon mage
+    12815, // Fremennik warband seer
+];
+
+pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
+    11709, 11712, // Baboon brawler
+    12816, // Fremennik warband berserker
+];
+
+pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
+
+pub const FLAT_ARMOUR: [(i32, i32); 5] = [
+    (13011, -2), // Blood moon
+    (13012, 6),  // Eclipse moon (4 in clone phase)
+    (13013, -5), // Blue moon
+    (13033, -4), // Sulphur nagua
+    (13029, -2), // Grimy lizard
+];
 
 pub const FULL_AHRIMS: [(&str, Option<&str>); 4] = [
     ("Ahrim's hood", None),

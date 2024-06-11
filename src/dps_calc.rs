@@ -1,8 +1,9 @@
 use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
 use crate::hit_dist::{
-    capped_reroll_transformer, division_transformer, linear_min_transformer, multiply_transformer,
-    AttackDistribution, HitDistribution, Hitsplat, TransformOpts, WeightedHit,
+    capped_reroll_transformer, division_transformer, flat_add_transformer, linear_min_transformer,
+    multiply_transformer, AttackDistribution, HitDistribution, Hitsplat, TransformOpts,
+    WeightedHit,
 };
 use crate::monster::Monster;
 use crate::monster_scaling;
@@ -129,15 +130,27 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     let standard_hit_dist = HitDistribution::linear(acc, 0, max_hit);
     let mut dist = AttackDistribution::new(vec![standard_hit_dist.clone()]);
 
-    if ONE_HIT_MONSTERS.contains(&monster.info.name.as_str()) {
+    if ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
         return AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             monster.stats.hitpoints,
         )]);
     }
 
-    if player.boosts.sunfire_runes && player.is_using_fire_spell() {
-        dist = AttackDistribution::new(vec![HitDistribution::linear(acc, max_hit / 10, max_hit)]);
+    if player.combat_type() == CombatType::Magic
+        && ALWAYS_MAX_HIT_MAGIC.contains(&monster.info.id.unwrap_or(0))
+        || player.is_using_melee() && ALWAYS_MAX_HIT_MELEE.contains(&monster.info.id.unwrap_or(0))
+        || player.is_using_ranged() && ALWAYS_MAX_HIT_RANGED.contains(&monster.info.id.unwrap_or(0))
+    {
+        return AttackDistribution::new(vec![HitDistribution::single(1.0, max_hit)]);
+    }
+
+    if player.boosts.sunfire.active && player.is_using_fire_spell() {
+        dist = AttackDistribution::new(vec![HitDistribution::linear(
+            acc,
+            player.boosts.sunfire.min_hit,
+            max_hit,
+        )]);
     }
 
     if player.is_using_melee() && player.is_wearing("Osmumten's fang", None) {
@@ -153,11 +166,11 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let hits1 = standard_hit_dist
             .clone()
             .scale_probability(0.95)
-            .scale_damage(5.0, 4);
+            .scale_damage(5, 4);
         let hits2 = standard_hit_dist
             .clone()
             .scale_probability(0.05)
-            .scale_damage(2.0, 1);
+            .scale_damage(2, 1);
         let mut combined_hits = Vec::new();
         combined_hits.extend(hits1.hits);
         combined_hits.extend(hits2.hits);
@@ -169,7 +182,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let full_hp = player.stats.hitpoints;
         let current_hp = player.live_stats.hitpoints;
         dist = dist.scale_damage(
-            10000.0 + (full_hp - current_hp) as f64 * full_hp as f64,
+            10000 + (full_hp - current_hp) as i32 * full_hp as i32,
             10000,
         );
     }
@@ -217,17 +230,14 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
 
     if player.is_using_melee() && player.is_wearing("Dual macuahuitl", None) {
         let half_max = max_hit / 2;
-        let first_hit = HitDistribution::linear(1.0, 0, half_max);
+        let first_hit = AttackDistribution::new(vec![HitDistribution::linear(acc, 0, half_max)]);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
-        let double_hit = first_hit.zip(&second_hit);
-
-        let mut effect_dist = double_hit.scale_probability(acc);
-        effect_dist.add_hit(WeightedHit::new(
-            1.0 - acc,
-            vec![Hitsplat::inaccurate(), Hitsplat::inaccurate()],
-        ));
-
-        dist = AttackDistribution::new(vec![effect_dist]);
+        dist = first_hit.transform(
+            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![h])]).zip(&second_hit),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
     }
 
     if player.is_using_melee()
@@ -259,7 +269,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let hits2 = standard_hit_dist
             .clone()
             .scale_probability(1.0 / 51.0)
-            .scale_damage(3.0, 1)
+            .scale_damage(3, 1)
             .hits;
 
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
@@ -287,23 +297,23 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     if monster.info.name.contains("Ice demon") && player.is_using_fire_spell()
         || player.attrs.spell == Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
     {
-        dist = dist.scale_damage(3.0, 2);
+        dist = dist.scale_damage(3, 2);
+    }
+
+    if player.boosts.mark_of_darkness && player.is_using_demonbane_spell() && monster.is_demon() {
+        dist = dist.scale_damage(5, 4);
     }
 
     if player.combat_type() == CombatType::Magic && player.set_effects.full_ahrims {
-        let hits1 = dist
-            .get_single_hitsplat()
-            .clone()
-            .scale_probability(0.75)
-            .hits;
-        let hits2 = dist
-            .get_single_hitsplat()
-            .clone()
-            .scale_probability(0.25)
-            .scale_damage(13.0, 10)
-            .hits;
-
-        dist = dist_from_multiple_hits(vec![hits1, hits2]);
+        dist = dist.transform(
+            &|h| {
+                HitDistribution::new(vec![
+                    WeightedHit::new(0.75, vec![h]),
+                    WeightedHit::new(0.25, vec![Hitsplat::new(h.damage * 13 / 10, h.accurate)]),
+                ])
+            },
+            &TransformOpts::default(),
+        );
     }
 
     if player.is_using_ranged() && player.is_using_crossbow() {
@@ -436,13 +446,24 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             };
             let hits1 = dist.clone().dists[0].scale_probability(1.0 - chance).hits;
             let hits2 = vec![WeightedHit::new(
-                chance,
+                chance * acc,
                 vec![Hitsplat::new(effect_dmg, true)],
             )];
+            let hits3 = vec![WeightedHit::new(
+                chance * (1.0 - acc),
+                vec![Hitsplat::new(effect_dmg, false)],
+            )];
 
-            dist = dist_from_multiple_hits(vec![hits1, hits2]);
+            dist = dist_from_multiple_hits(vec![hits1, hits2, hits3]);
         }
     }
+
+    dist = dist.transform(
+        &|h| HitDistribution::single(1.0, max(h.damage, 1)),
+        &TransformOpts {
+            transform_inaccurate: false,
+        },
+    );
 
     apply_limiters(dist, player, monster)
 }
@@ -531,6 +552,19 @@ fn apply_limiters(
         {
             dist = dist.transform(&division_transformer(4, 0), &TransformOpts::default());
         }
+    }
+
+    let flat_armour = monster
+        .info
+        .id
+        .map_or(0, |id| FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap().1);
+    if flat_armour > 0 {
+        dist = dist.transform(
+            &flat_add_transformer(-flat_armour),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
     }
 
     dist

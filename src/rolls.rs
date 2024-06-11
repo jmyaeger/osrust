@@ -32,7 +32,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     }
 
     // Use magic level for magic defence in most cases
-    if !MAGIC_DEF_EXCEPTIONS.contains(&monster.info.name.as_str()) {
+    if !MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
         def_rolls.insert(
             CombatType::Magic,
             calc_roll(9 + monster.live_stats.magic, monster.bonuses.defence.magic),
@@ -272,6 +272,10 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     // Apply elemental weakness boosts
     att_roll += weakness_att_boost;
     max_hit += weakness_str_boost;
+
+    if player.boosts.sunfire.active && player.is_using_fire_spell() {
+        player.boosts.sunfire.min_hit = max_hit / 10;
+    }
 
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
     if player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell() {

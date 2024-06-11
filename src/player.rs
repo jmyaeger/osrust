@@ -178,6 +178,12 @@ impl PrayerBoosts {
     }
 }
 
+#[derive(Debug, PartialEq, Default, Clone, Copy)]
+pub struct SunfireBoost {
+    pub active: bool,
+    pub min_hit: u32,
+}
+
 #[derive(Debug, PartialEq)]
 pub struct StatusBoosts {
     pub on_task: bool,
@@ -187,7 +193,7 @@ pub struct StatusBoosts {
     pub charge_active: bool,
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
-    pub sunfire_runes: bool,
+    pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
 }
 
@@ -201,7 +207,7 @@ impl Default for StatusBoosts {
             charge_active: false,
             kandarin_diary: true,
             mark_of_darkness: false,
-            sunfire_runes: false,
+            sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
         }
     }

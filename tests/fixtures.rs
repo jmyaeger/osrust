@@ -872,7 +872,7 @@ pub fn full_ahrims_aotd_player() -> Player {
 pub fn full_ahrims_aotd_sunfire_player() -> Player {
     let mut player = full_ahrims_aotd_player();
     player.set_spell(Spell::Standard(StandardSpell::FireSurge));
-    player.boosts.sunfire_runes = true;
+    player.boosts.sunfire.active = true;
     player
 }
 
