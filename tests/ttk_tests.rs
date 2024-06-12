@@ -2,6 +2,7 @@ use osrs::combat::simulate_n_fights;
 use osrs::dps_calc;
 use osrs::monster::Monster;
 use osrs::player::Player;
+use osrs::potions::Potion;
 use osrs::rolls::calc_active_player_rolls;
 use rstest::rstest;
 mod fixtures;
@@ -341,4 +342,20 @@ fn test_zogre_ttk(#[case] mut player: Player, zogre: Monster) {
     let dist = dps_calc::get_distribution(&player, &monster);
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
     assert!(num::abs(calc_ttk - ttk) < 0.1);
+}
+
+#[rstest]
+fn test_ruby_bolts_zcb_zebak_500(max_ranged_zcb_ruby_player: Player, zebak: Monster) {
+    let mut player = max_ranged_zcb_ruby_player;
+    player.add_potion(Potion::SmellingSalts);
+
+    let mut monster = zebak;
+    monster.info.toa_level = 500;
+    monster.scale_toa();
+    calc_active_player_rolls(&mut player, &monster);
+    let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
+
+    let dist = dps_calc::get_distribution(&player, &monster);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    assert!(num::abs(calc_ttk - ttk) < 0.2);
 }

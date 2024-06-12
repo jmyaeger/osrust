@@ -36,14 +36,10 @@ pub fn standard_attack(
     }
 
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
-    if success {
-        if monster.bonuses.flat_armour > 0 {
-            damage = max(1, damage - monster.bonuses.flat_armour);
-        }
 
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+    if success {
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
     (damage, success)
@@ -113,9 +109,7 @@ pub fn fang_attack(
     };
 
     if success {
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
     (damage, success)
@@ -154,9 +148,8 @@ pub fn ahrims_staff_attack(
     }
 
     if success {
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
     (damage, success)
@@ -183,9 +176,8 @@ pub fn dharoks_axe_attack(
     }
 
     if success {
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
     (damage, success)
@@ -200,9 +192,7 @@ pub fn veracs_flail_attack(
     let combat_type = player.combat_type();
     if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
         let mut damage = 1 + damage_roll(1, player.max_hits[&combat_type] + 1, rng);
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -262,15 +252,13 @@ pub fn torags_hammers_attack(
     let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit2, rng);
 
     if success1 {
-        if let Some(limiter) = &limiter {
-            damage1 = limiter.apply(damage1, rng);
-        }
+        damage1 = max(damage1, 1);
+        damage1 = apply_flat_armour_and_limiters(damage1, monster, rng, limiter);
     }
 
     if success2 {
-        if let Some(limiter) = &limiter {
-            damage2 = limiter.apply(damage2, rng);
-        }
+        damage2 = max(damage2, 1);
+        damage2 = apply_flat_armour_and_limiters(damage2, monster, rng, limiter);
     }
 
     (damage1 + damage2, success1 || success2)
@@ -307,7 +295,7 @@ pub fn yellow_keris_attack(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut ThreadRng,
-    _: &Option<Box<dyn Limiter>>,
+    limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     let combat_type = player.combat_type();
     let max_hit = player.max_hits[&combat_type];
@@ -320,11 +308,16 @@ pub fn yellow_keris_attack(
         max_att_roll = max_att_roll * 5 / 4;
     }
 
-    let (damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
+    let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
     if monster.live_stats.hitpoints.saturating_sub(damage) == 0 {
         player.heal(12, Some(player.stats.hitpoints / 5));
         player.live_stats.prayer = player.live_stats.prayer.saturating_sub(5);
+    }
+
+    if success {
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
     (damage, success)
@@ -351,9 +344,8 @@ pub fn opal_bolt_attack(
 
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -382,9 +374,8 @@ pub fn pearl_bolt_attack(
 
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -429,18 +420,23 @@ pub fn ruby_bolt_attack(
     }
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
-        min(110, monster.live_stats.hitpoints * 22 / 100)
+        min(110, max(1, monster.live_stats.hitpoints * 22 / 100))
     } else {
-        min(100, monster.live_stats.hitpoints / 5)
+        min(100, max(1, monster.live_stats.hitpoints / 5))
     };
 
     if rng.gen::<f64>() <= proc_chance {
         player.take_damage(player.live_stats.hitpoints / 10);
-        let damage = if let Some(limiter) = &limiter {
+        let mut damage = if let Some(limiter) = &limiter {
             limiter.apply(ruby_damage, rng)
         } else {
             ruby_damage
         };
+
+        if monster.bonuses.flat_armour > 0 {
+            damage = max(1, damage.saturating_sub(monster.bonuses.flat_armour));
+        }
+
         (damage, true)
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -467,9 +463,8 @@ pub fn diamond_bolt_attack(
 
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng);
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -498,9 +493,8 @@ pub fn onyx_bolt_attack(
 
     if success && !monster.is_undead() && rng.gen::<f64>() <= proc_chance {
         damage = damage_roll(0, max_hit, rng);
-        if let Some(limiter) = &limiter {
-            damage = limiter.apply(damage, rng);
-        }
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         player.heal(damage / 4, None);
     }
 
@@ -535,9 +529,8 @@ pub fn dragonstone_bolt_attack(
         damage += extra_damage;
     }
 
-    if let Some(limiter) = &limiter {
-        damage = limiter.apply(damage, rng);
-    }
+    damage = max(damage, 1);
+    damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
 
     (damage, success)
 }
@@ -677,9 +670,8 @@ pub fn ice_spell_attack(
                     (false, Some(Spell::Ancient(AncientSpell::IceBarrage))) => 32,
                     _ => 0,
                 };
-            if let Some(limiter) = &limiter {
-                damage = limiter.apply(damage, rng);
-            }
+            damage = max(damage, 1);
+            damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         }
 
         (damage, success)
@@ -706,9 +698,8 @@ pub fn scythe_attack(
 
     let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit / 2, rng);
     if success2 {
-        if let Some(limiter) = &limiter {
-            damage2 = limiter.apply(damage2, rng);
-        }
+        damage2 = max(damage2, 1);
+        damage2 = apply_flat_armour_and_limiters(damage2, monster, rng, limiter);
     }
     if monster.info.size == 2 {
         return (damage1 + damage2, success1 | success2);
@@ -716,9 +707,8 @@ pub fn scythe_attack(
 
     let (mut damage3, success3) = base_attack(max_att_roll, max_def_roll, 0, max_hit / 4, rng);
     if success3 {
-        if let Some(limiter) = &limiter {
-            damage3 = limiter.apply(damage3, rng);
-        }
+        damage3 = max(damage3, 1);
+        damage3 = apply_flat_armour_and_limiters(damage3, monster, rng, limiter);
     }
     (
         damage1 + damage2 + damage3,
@@ -775,16 +765,14 @@ pub fn tonalztics_of_ralos_attack(
 
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
     if success1 {
-        if let Some(limiter) = &limiter {
-            damage1 = limiter.apply(damage1, rng);
-        }
+        damage1 = max(damage1, 1);
+        damage1 = apply_flat_armour_and_limiters(damage1, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
         let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
         if success2 {
-            if let Some(limiter) = &limiter {
-                damage2 = limiter.apply(damage2, rng);
-            }
+            damage2 = max(damage2, 1);
+            damage2 = apply_flat_armour_and_limiters(damage2, monster, rng, limiter);
         }
         return (damage1 + damage2, success1 || success2);
     }
@@ -810,9 +798,8 @@ pub fn dual_macuahuitl_attack(
     let max_hit2 = max_hit - max_hit1;
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit1, rng);
     if success1 {
-        if let Some(limiter) = &limiter {
-            damage1 = limiter.apply(damage1, rng);
-        }
+        damage1 = max(damage1, 1);
+        damage1 = apply_flat_armour_and_limiters(damage1, monster, rng, limiter);
     }
     let (mut damage2, success2) = if success1 {
         base_attack(max_att_roll, max_def_roll, 0, max_hit2, rng)
@@ -821,9 +808,8 @@ pub fn dual_macuahuitl_attack(
     };
 
     if success2 {
-        if let Some(limiter) = &limiter {
-            damage2 = limiter.apply(damage2, rng);
-        }
+        damage2 = max(damage2, 1);
+        damage2 = apply_flat_armour_and_limiters(damage2, monster, rng, limiter);
     }
 
     // Roll for next attack to be one tick faster
@@ -894,4 +880,23 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }
+}
+
+fn apply_flat_armour_and_limiters(
+    damage: u32,
+    monster: &Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> u32 {
+    let mut damage = damage;
+
+    if monster.bonuses.flat_armour > 0 {
+        damage = max(1, damage.saturating_sub(monster.bonuses.flat_armour));
+    }
+
+    if let Some(limiter) = limiter {
+        damage = limiter.apply(damage, rng);
+    }
+
+    damage
 }

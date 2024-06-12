@@ -101,7 +101,9 @@ impl WeightedHit {
         F: HitTransformer,
     {
         if self.hitsplats.len() == 1 {
-            return t(self.hitsplats[0]).scale_probability(self.probability);
+            return self.hitsplats[0]
+                .transform(t, _opts)
+                .scale_probability(self.probability);
         }
 
         let (head, tail) = self.shift();

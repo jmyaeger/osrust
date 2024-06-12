@@ -352,7 +352,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         ]) {
             let chance = PEARL_PROC_CHANCE * kandarin;
             let divisor = if monster.is_fiery() { 15 } else { 20 };
-            let bonus_dmg = ranged_lvl / (if zcb { divisor - 2 } else { divisor });
+            let bonus_dmg = ranged_lvl / (if zcb { divisor * 9 / 10 } else { divisor });
 
             dist = dist.transform(
                 &|h| {
@@ -373,7 +373,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             ("Diamond dragon bolts (e)", None),
         ]) {
             let chance = DIAMOND_PROC_CHANCE * kandarin;
-            let effect_max = max_hit + max_hit * (if zcb { 26 } else { 15 } / 100);
+            let effect_max = max_hit + max_hit * (if zcb { 26 } else { 15 }) / 100;
 
             let hits1 = standard_hit_dist
                 .clone()
@@ -410,7 +410,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             ("Onyx dragon bolts (e)", None),
         ]) {
             let chance = ONYX_PROC_CHANCE * kandarin;
-            let effect_max = max_hit + ranged_lvl * (if zcb { 32 } else { 20 } / 100);
+            let effect_max = max_hit + ranged_lvl * (if zcb { 32 } else { 20 }) / 100;
 
             let hits1 = standard_hit_dist
                 .clone()
@@ -602,9 +602,16 @@ fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
 }
 
 pub fn get_ttk(dist: AttackDistribution, player: &Player, monster: &Monster) -> f64 {
-    get_htk(dist, monster) * player.gear.weapon.speed as f64 * SECONDS_PER_TICK
-    // let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster);
-    // ttk_dist.iter().map(|(k, v)| *v * *k as f64).sum::<f64>() * SECONDS_PER_TICK
+    if dist_is_current_hp_dependent(player, monster) {
+        let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster);
+        ttk_dist
+            .iter()
+            .map(|(ticks, prob)| *prob * *ticks as f64)
+            .sum::<f64>()
+            * SECONDS_PER_TICK
+    } else {
+        get_htk(dist, monster) * player.gear.weapon.speed as f64 * SECONDS_PER_TICK
+    }
 }
 
 pub fn get_ttk_distribution(
@@ -661,7 +668,7 @@ pub fn get_ttk_distribution(
 
                 let new_hp = hp as i32 - dmg as i32;
                 if new_hp <= 0 {
-                    let tick = hit * speed + 1;
+                    let tick = (hit + 1) * speed;
                     ttks.insert(tick, ttks.get(&tick).unwrap_or(&0.0) + chance_of_action);
                     epsilon -= chance_of_action;
                 } else {
@@ -728,6 +735,7 @@ fn dist_at_hp<'a>(
     }
 
     let mut monster_copy = monster.clone();
+    monster_copy.live_stats.hitpoints = hp as u32;
 
     monster_scaling::scale_monster_hp_only(&mut monster_copy);
 
@@ -752,20 +760,18 @@ mod tests {
         player.prayers.add(PrayerBoost::new(Prayer::Piety));
         player.add_potion(Potion::SuperCombat);
 
-        player.gear = Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
-            second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier", None),
-            shield: Some(Armor::new("Avernic defender", None)),
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
-        };
+        player.equip("Torva full helm", None);
+        player.equip("Amulet of torture", None);
+        player.equip("Infernal cape", None);
+        player.equip("Rada's blessing 4", None);
+        player.equip("Ghrazi rapier", None);
+        player.equip("Avernic defender", None);
+        player.equip("Torva platebody", None);
+        player.equip("Torva platelegs", None);
+        player.equip("Ferocious gloves", None);
+        player.equip("Primordial boots", None);
+        player.equip("Ultor ring", None);
+
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();
@@ -784,20 +790,17 @@ mod tests {
         player.prayers.add(PrayerBoost::new(Prayer::Piety));
         player.add_potion(Potion::SuperCombat);
 
-        player.gear = Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
-            second_ammo: None,
-            weapon: Weapon::new("Dual macuahuitl", None),
-            shield: None,
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
-        };
+        player.equip("Torva full helm", None);
+        player.equip("Amulet of torture", None);
+        player.equip("Infernal cape", None);
+        player.equip("Rada's blessing 4", None);
+        player.equip("Dual macuahuitl", None);
+        player.equip("Torva platebody", None);
+        player.equip("Torva platelegs", None);
+        player.equip("Ferocious gloves", None);
+        player.equip("Primordial boots", None);
+        player.equip("Ultor ring", None);
+
         player.update_bonuses();
         player.set_active_style(CombatStyle::Pummel);
 
@@ -816,20 +819,17 @@ mod tests {
         player.prayers.add(PrayerBoost::new(Prayer::Piety));
         player.add_potion(Potion::SuperCombat);
 
-        player.gear = Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
-            second_ammo: None,
-            weapon: Weapon::new("Scythe of vitur", Some("Charged")),
-            shield: None,
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
-        };
+        player.equip("Torva full helm", None);
+        player.equip("Amulet of torture", None);
+        player.equip("Infernal cape", None);
+        player.equip("Rada's blessing 4", None);
+        player.equip("Scythe of vitur", Some("Charged"));
+        player.equip("Torva platebody", None);
+        player.equip("Torva platelegs", None);
+        player.equip("Ferocious gloves", None);
+        player.equip("Primordial boots", None);
+        player.equip("Ultor ring", None);
+
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
 
@@ -848,20 +848,17 @@ mod tests {
         player.prayers.add(PrayerBoost::new(Prayer::Rigour));
         player.add_potion(Potion::SmellingSalts);
 
-        player.gear = Gear {
-            head: Some(Armor::new("Masori mask (f)", None)),
-            neck: Some(Armor::new("Necklace of anguish", None)),
-            cape: Some(Armor::new("Dizana's quiver", Some("Charged"))),
-            ammo: Some(Armor::new("Ruby dragon bolts (e)", None)),
-            second_ammo: None,
-            weapon: Weapon::new("Zaryte crossbow", None),
-            shield: Some(Armor::new("Twisted buckler", None)),
-            body: Some(Armor::new("Masori body (f)", None)),
-            legs: Some(Armor::new("Masori chaps (f)", None)),
-            hands: Some(Armor::new("Zaryte vambraces", None)),
-            feet: Some(Armor::new("Pegasian boots", None)),
-            ring: Some(Armor::new("Venator ring", None)),
-        };
+        player.equip("Masori mask (f)", None);
+        player.equip("Necklace of anguish", None);
+        player.equip("Dizana's quiver", Some("Charged"));
+        player.equip("Ruby dragon bolts (e)", None);
+        player.equip("Zaryte crossbow", None);
+        player.equip("Twisted buckler", None);
+        player.equip("Masori body (f)", None);
+        player.equip("Masori chaps (f)", None);
+        player.equip("Zaryte vambraces", None);
+        player.equip("Pegasian boots", None);
+        player.equip("Venator ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
@@ -874,6 +871,6 @@ mod tests {
         let dist = get_distribution(&player, &monster);
         let ttk = get_ttk(dist, &player, &monster);
 
-        assert!(num::abs(ttk - 230.6) < 0.1);
+        assert!(num::abs(ttk - 225.2) < 0.1);
     }
 }
