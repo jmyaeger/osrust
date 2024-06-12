@@ -335,10 +335,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist.transform(
                 &|h| {
                     HitDistribution::new(vec![
-                        WeightedHit::new(
-                            chance,
-                            vec![Hitsplat::new(h.damage + bonus_dmg, h.accurate)],
-                        ),
+                        WeightedHit::new(chance, vec![Hitsplat::new(h.damage + bonus_dmg, true)]),
                         WeightedHit::new(1.0 - chance, vec![h]),
                     ])
                 },
@@ -357,10 +354,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist.transform(
                 &|h| {
                     HitDistribution::new(vec![
-                        WeightedHit::new(
-                            chance,
-                            vec![Hitsplat::new(h.damage + bonus_dmg, h.accurate)],
-                        ),
+                        WeightedHit::new(chance, vec![Hitsplat::new(h.damage + bonus_dmg, true)]),
                         WeightedHit::new(1.0 - chance, vec![h]),
                     ])
                 },
@@ -410,7 +404,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             ("Onyx dragon bolts (e)", None),
         ]) {
             let chance = ONYX_PROC_CHANCE * kandarin;
-            let effect_max = max_hit + ranged_lvl * (if zcb { 32 } else { 20 }) / 100;
+            let effect_max = max_hit + max_hit * (if zcb { 32 } else { 20 }) / 100;
 
             let hits1 = standard_hit_dist
                 .clone()

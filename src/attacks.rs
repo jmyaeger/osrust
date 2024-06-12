@@ -525,12 +525,14 @@ pub fn dragonstone_bolt_attack(
 
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
-    if rng.gen::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
-        damage += extra_damage;
-    }
+    if success {
+        if rng.gen::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
+            damage += extra_damage;
+        }
 
-    damage = max(damage, 1);
-    damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
+        damage = max(damage, 1);
+        damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
+    }
 
     (damage, success)
 }

@@ -37,7 +37,7 @@ pub fn simulate_fight(
     let monster_freeze_resistance = monster.immunities.freeze;
     let player_attack = player.attack;
 
-    while monster.live_stats.hitpoints > 0 && player.live_stats.hitpoints > 0 {
+    while monster.live_stats.hitpoints > 0 {
         if tick_counter == attack_tick {
             let (damage, success) = player_attack(player, monster, rng, limiter);
             monster.take_damage(damage);
