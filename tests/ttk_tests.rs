@@ -109,7 +109,7 @@ fn test_enchanted_bolt_acb_ttks(#[case] bolt_name: &str) {
     player.equip(bolt_name, None);
     player.update_bonuses();
     calc_active_player_rolls(&mut player, &monster);
-    let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
+    let (ttk, _, hit_dist) = simulate_n_fights(&mut player, &mut monster, 100000);
 
     let dist = dps_calc::get_distribution(&player, &monster);
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);

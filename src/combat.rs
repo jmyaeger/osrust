@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::attacks::get_attack_functions;
 use crate::equipment::CombatType;
 use crate::limiters;
@@ -77,7 +79,7 @@ pub fn simulate_n_fights(
     player: &mut Player,
     monster: &mut Monster,
     n: u32,
-) -> (f64, f64, Vec<Vec<u32>>) {
+) -> (f64, f64, HashMap<u32, f64>) {
     if monster.is_immune(player) {
         panic!("{} is immune to this setup", monster.info.name);
     }
@@ -96,7 +98,7 @@ pub fn simulate_n_fights(
         ttks.push(result.ttk);
         hit_counts.push(result.hit_count);
         hit_attempt_counts.push(result.hit_attempts);
-        hit_amounts.push(result.hit_amounts);
+        hit_amounts.extend(result.hit_amounts);
         monster.reset();
         player.reset_live_stats();
     }
@@ -106,7 +108,18 @@ pub fn simulate_n_fights(
         / hit_attempt_counts.iter().sum::<u32>() as f64
         * 100.0;
 
-    (avg_ttk, avg_accuracy, hit_amounts)
+    let hit_counts: HashMap<u32, u32> =
+        hit_amounts.iter().fold(HashMap::new(), |mut acc, &value| {
+            *acc.entry(value).or_insert(0) += 1;
+            acc
+        });
+
+    let hit_dist = hit_counts
+        .iter()
+        .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
+        .collect();
+
+    (avg_ttk, avg_accuracy, hit_dist)
 }
 
 #[cfg(test)]
