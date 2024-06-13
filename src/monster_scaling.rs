@@ -8,27 +8,27 @@ pub fn scale_monster_hp_only(monster: &mut Monster) {
 
 fn apply_vard_scaling(monster: &mut Monster) {
     let vard_ranges = VardNumbers::get(monster);
-    let current_hp = monster.live_stats.hitpoints;
+    let current_hp = monster.live_stats.hitpoints as i32;
     monster.live_stats.strength = lerp(
         current_hp,
         vard_ranges.max_hp,
         0,
         vard_ranges.str[0],
         vard_ranges.str[1],
-    );
+    ) as u32;
     monster.live_stats.defence = lerp(
         current_hp,
         vard_ranges.max_hp,
         0,
         vard_ranges.def[0],
         vard_ranges.def[1],
-    );
+    ) as u32;
 }
 
 struct VardNumbers {
-    pub max_hp: u32,
-    pub str: [u32; 2],
-    pub def: [u32; 2],
+    pub max_hp: i32,
+    pub str: [i32; 2],
+    pub def: [i32; 2],
 }
 
 impl VardNumbers {
@@ -54,12 +54,12 @@ impl VardNumbers {
 }
 
 fn lerp(
-    current: u32,
-    source_start: u32,
-    source_end: u32,
-    target_start: u32,
-    target_end: u32,
-) -> u32 {
+    current: i32,
+    source_start: i32,
+    source_end: i32,
+    target_start: i32,
+    target_end: i32,
+) -> i32 {
     target_start
         + (current - source_start) * (target_end - target_start) / (source_end - source_start)
 }

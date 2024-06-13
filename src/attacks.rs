@@ -278,6 +278,18 @@ pub fn sang_staff_attack(
     (damage, success)
 }
 
+pub fn dawnbringer_attack(
+    player: &mut Player,
+    _: &mut Monster,
+    rng: &mut ThreadRng,
+    _: &Option<Box<dyn Limiter>>,
+) -> (u32, bool) {
+    let max_hit = player.max_hits[&player.combat_type()];
+    let mut damage = damage_roll(0, max_hit, rng);
+    damage = max(1, damage);
+    (damage, true)
+}
+
 pub fn keris_attack(
     player: &mut Player,
     monster: &mut Monster,
@@ -880,6 +892,7 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Guthan's warspear" => guthans_warspear_attack as AttackFn,
         "Torag's hammers" => torags_hammers_attack as AttackFn,
         "Sanguinesti staff" => sang_staff_attack as AttackFn,
+        "Dawnbringer" => dawnbringer_attack as AttackFn,
         "Keris"
         | "Keris partisan"
         | "Keris partisan of corruption"
@@ -888,7 +901,7 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Scythe of vitur" => scythe_attack as AttackFn,
         "Soulreaper axe" => soulreaper_axe_attack as AttackFn,
         "Gadderhammer" => gadderhammer_attack as AttackFn,
-        "Tonalztics of Ralos" => tonalztics_of_ralos_attack as AttackFn,
+        "Tonalztics of ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }

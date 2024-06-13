@@ -508,6 +508,10 @@ impl Monster {
             return true;
         }
 
+        if !self.info.name.contains("Verzik") && player.is_wearing("Dawnbringer", None) {
+            return true;
+        }
+
         false
     }
 

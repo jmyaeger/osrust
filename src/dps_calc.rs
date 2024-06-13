@@ -488,7 +488,12 @@ fn apply_limiters(
     }
 
     if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
-        dist = dist.transform(&division_transformer(7, 1), &TransformOpts::default());
+        dist = dist.transform(
+            &division_transformer(7, 1),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
     }
 
     if monster.info.name.contains("Verzik")
@@ -500,7 +505,12 @@ fn apply_limiters(
     }
 
     if monster.info.name.contains("Tekton") && player.combat_type() == CombatType::Magic {
-        dist = dist.transform(&division_transformer(5, 1), &TransformOpts::default());
+        dist = dist.transform(
+            &division_transformer(5, 1),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
     }
 
     if monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic {
@@ -741,9 +751,9 @@ fn dist_at_hp<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::equipment::{Armor, CombatStyle, Weapon};
+    use crate::equipment::CombatStyle;
     use crate::monster::Monster;
-    use crate::player::{Gear, Player, PlayerStats};
+    use crate::player::{Player, PlayerStats};
     use crate::potions::Potion;
     use crate::prayers::{Prayer, PrayerBoost};
     use crate::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
