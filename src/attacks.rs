@@ -355,12 +355,7 @@ pub fn opal_bolt_attack(
     let max_hit = player.max_hits[&player.combat_type()];
 
     if rng.gen::<f64>() <= proc_chance {
-        let max_att_roll = player.att_rolls[&player.combat_type()];
-        let max_def_roll = monster.def_rolls[&player.combat_type()];
-        let min_hit = 0;
-
-        let (mut damage, _) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
-        damage += extra_damage;
+        let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
@@ -390,12 +385,7 @@ pub fn pearl_bolt_attack(
     let max_hit = player.max_hits[&player.combat_type()];
 
     if rng.gen::<f64>() <= proc_chance {
-        let max_att_roll = player.att_rolls[&player.combat_type()];
-        let max_def_roll = monster.def_rolls[&player.combat_type()];
-        let min_hit = 0;
-
-        let (mut damage, _) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
-        damage += extra_damage;
+        let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)

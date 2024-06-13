@@ -332,15 +332,14 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             let chance = OPAL_PROC_CHANCE * kandarin;
             let bonus_dmg = ranged_lvl / (if zcb { 9 } else { 10 });
 
-            dist = dist.transform(
-                &|h| {
-                    HitDistribution::new(vec![
-                        WeightedHit::new(chance, vec![Hitsplat::new(h.damage + bonus_dmg, true)]),
-                        WeightedHit::new(1.0 - chance, vec![h]),
-                    ])
-                },
-                &TransformOpts::default(),
-            );
+            let hits1 = HitDistribution::linear(1.0, bonus_dmg, max_hit + bonus_dmg)
+                .scale_probability(chance)
+                .hits;
+            let hits2 = standard_hit_dist
+                .clone()
+                .scale_probability(1.0 - chance)
+                .hits;
+            dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
         if player.is_wearing_any(vec![
@@ -351,15 +350,14 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             let divisor = if monster.is_fiery() { 15 } else { 20 };
             let bonus_dmg = ranged_lvl / (if zcb { divisor * 9 / 10 } else { divisor });
 
-            dist = dist.transform(
-                &|h| {
-                    HitDistribution::new(vec![
-                        WeightedHit::new(chance, vec![Hitsplat::new(h.damage + bonus_dmg, true)]),
-                        WeightedHit::new(1.0 - chance, vec![h]),
-                    ])
-                },
-                &TransformOpts::default(),
-            );
+            let hits1 = HitDistribution::linear(1.0, bonus_dmg, max_hit + bonus_dmg)
+                .scale_probability(chance)
+                .hits;
+            let hits2 = standard_hit_dist
+                .clone()
+                .scale_probability(1.0 - chance)
+                .hits;
+            dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
         if player.is_wearing_any(vec![
