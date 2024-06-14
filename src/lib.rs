@@ -2,6 +2,7 @@ pub mod attacks;
 pub mod combat;
 pub mod constants;
 pub mod dps_calc;
+pub mod effects;
 pub mod equipment;
 pub mod equipment_db;
 pub mod equipment_json;

@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 
+use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
 use crate::monster_db::ElementalWeakness;
 use crate::player::Player;
@@ -197,6 +198,8 @@ pub struct Monster {
     pub def_rolls: HashMap<CombatType, i32>,
     #[serde(skip)]
     pub base_def_rolls: HashMap<CombatType, i32>,
+    #[serde(skip)]
+    pub active_effects: Vec<CombatEffect>,
 }
 
 impl Default for Monster {
@@ -218,6 +221,7 @@ impl Default for Monster {
             immunities: Immunities::default(),
             def_rolls: def_rolls.clone(),
             base_def_rolls: def_rolls.clone(),
+            active_effects: Vec::new(),
         }
     }
 }
@@ -520,6 +524,24 @@ impl Monster {
             .version
             .as_ref()
             .map_or(false, |v| v.contains(version))
+    }
+
+    pub fn add_burn_stack(&mut self) {
+        match self
+            .active_effects
+            .iter_mut()
+            .find(|effect| matches!(effect, CombatEffect::Burn { .. }))
+        {
+            Some(CombatEffect::Burn { stacks, .. }) => {
+                if stacks.len() < 5 {
+                    stacks.push(10);
+                }
+            }
+            _ => self.active_effects.push(CombatEffect::Burn {
+                tick_counter: Some(0),
+                stacks: vec![10],
+            }),
+        }
     }
 }
 

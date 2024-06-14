@@ -836,7 +836,18 @@ pub fn dual_macuahuitl_attack(
     (damage1 + damage2, success1)
 }
 
-// TODO: Implement eclipse atlatl set effect
+pub fn atlatl_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+) -> (u32, bool) {
+    let (damage, success) = standard_attack(player, monster, rng, &None);
+    if success && player.set_effects.full_eclipse_moon && rng.gen_range(0..5) == 0 {
+        monster.add_burn_stack();
+    }
+
+    (damage, success)
+}
 
 // TODO: Implement blue moon spear
 
