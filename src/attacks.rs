@@ -840,8 +840,9 @@ pub fn atlatl_attack(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
-    let (damage, success) = standard_attack(player, monster, rng, &None);
+    let (damage, success) = standard_attack(player, monster, rng, limiter);
     if success && player.set_effects.full_eclipse_moon && rng.gen_range(0..5) == 0 {
         monster.add_burn_stack();
     }
@@ -904,6 +905,7 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Gadderhammer" => gadderhammer_attack as AttackFn,
         "Tonalztics of ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
+        "Eclipse atlatl" => atlatl_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }
 }

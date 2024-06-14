@@ -11,6 +11,7 @@ use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::hash::Hash;
 
+// Base stats of the player - should not be modified
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerStats {
     pub hitpoints: u32,
@@ -26,6 +27,7 @@ pub struct PlayerStats {
 impl Default for PlayerStats {
     fn default() -> Self {
         Self {
+            // Assume max stats as default case
             hitpoints: 99,
             attack: 99,
             strength: 99,
@@ -44,6 +46,7 @@ impl PlayerStats {
     }
 }
 
+// Live stats of the player during combat, including boosts - can be modified
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct PlayerLiveStats {
     pub hitpoints: u32,
@@ -77,6 +80,7 @@ impl PlayerLiveStats {
     }
 }
 
+// Collection of active potion boosts, separated by combat type
 #[derive(Debug, Default, PartialEq)]
 pub struct PotionBoosts {
     pub attack: Option<PotionBoost>,
@@ -86,6 +90,7 @@ pub struct PotionBoosts {
     pub magic: Option<PotionBoost>,
 }
 
+// Collection of active prayers and their cumulative boosts
 #[derive(Debug, Default, PartialEq)]
 pub struct PrayerBoosts {
     pub active_prayers: Option<Vec<PrayerBoost>>,
@@ -102,88 +107,54 @@ impl PrayerBoosts {
     pub fn add(&mut self, prayer: PrayerBoost) {
         match &mut self.active_prayers {
             Some(active_prayers) => {
-                active_prayers.retain(|p| {
-                    !(p.attack > 0 && prayer.attack > 0
-                        || (p.strength > 0 && prayer.strength > 0)
-                        || (p.defence > 0 && prayer.defence > 0)
-                        || (p.ranged_att > 0 && prayer.ranged_att > 0)
-                        || (p.ranged_str > 0 && prayer.ranged_str > 0)
-                        || (p.magic_att > 0 && prayer.magic_att > 0)
-                        || (p.magic_str > 0 && prayer.magic_str > 0))
-                });
+                // Remove any conflicting prayer boosts first
+                active_prayers.retain(|p| !conflicts_with(p, &prayer));
                 active_prayers.push(prayer);
             }
-
             None => {
                 self.active_prayers = Some(vec![prayer]);
             }
         }
 
-        self.attack = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.attack)
-            .max()
-            .unwrap_or(0);
-        self.strength = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.strength)
-            .max()
-            .unwrap_or(0);
-        self.defence = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.defence)
-            .max()
-            .unwrap_or(0);
-        self.ranged_att = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.ranged_att)
-            .max()
-            .unwrap_or(0);
-        self.ranged_str = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.ranged_str)
-            .max()
-            .unwrap_or(0);
-        self.magic_att = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.magic_att)
-            .max()
-            .unwrap_or(0);
-        self.magic_str = self
-            .active_prayers
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| p.magic_str)
-            .max()
-            .unwrap_or(0);
+        // Set boosts to the highest value provided by active prayers
+        self.attack = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.attack);
+        self.strength = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.strength);
+        self.defence = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.defence);
+        self.ranged_att =
+            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_att);
+        self.ranged_str =
+            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_str);
+        self.magic_att =
+            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_att);
+        self.magic_str =
+            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_str);
     }
 }
 
+fn conflicts_with(p1: &PrayerBoost, p2: &PrayerBoost) -> bool {
+    // Check if two prayer boosts conflict on any stats
+    p1.attack > 0 && p2.attack > 0
+        || p1.strength > 0 && p2.strength > 0
+        || p1.defence > 0 && p2.defence > 0
+        || p1.ranged_att > 0 && p2.ranged_att > 0
+        || p1.ranged_str > 0 && p2.ranged_str > 0
+        || p1.magic_att > 0 && p2.magic_att > 0
+        || p1.magic_str > 0 && p2.magic_str > 0
+}
+
+fn update_prayer_boost(prayers: &[PrayerBoost], stat: fn(&PrayerBoost) -> u32) -> u32 {
+    // Search through active prayers and returns the highest boost value for a stat
+    prayers.iter().map(stat).max().unwrap_or(0)
+}
+
+// Struct for holding sunfire rune min hit value
 #[derive(Debug, PartialEq, Default, Clone, Copy)]
 pub struct SunfireBoost {
     pub active: bool,
     pub min_hit: u32,
 }
 
+// Collection of effects that provide a damage boost in some cases
 #[derive(Debug, PartialEq)]
 pub struct StatusBoosts {
     pub on_task: bool,
@@ -200,6 +171,7 @@ pub struct StatusBoosts {
 impl Default for StatusBoosts {
     fn default() -> Self {
         Self {
+            // Assume on task, not in wildy, and Kandarin Hard Diary unlocked
             on_task: true,
             in_wilderness: false,
             in_multi: false,
@@ -213,6 +185,7 @@ impl Default for StatusBoosts {
     }
 }
 
+// Poison and venom effects - will likely rework this in the future
 #[derive(Default, Debug, PartialEq)]
 pub struct StatusEffects {
     pub poisoned: bool,
@@ -222,6 +195,7 @@ pub struct StatusEffects {
     pub poison_severity: u8,
 }
 
+// Holds set effect data to avoid iterating through gear many times
 #[derive(Default, Debug, PartialEq)]
 pub struct SetEffects {
     pub full_void: bool,
@@ -248,7 +222,7 @@ pub struct Gear {
     pub cape: Option<Armor>,
     pub ammo: Option<Armor>,
     pub second_ammo: Option<Armor>,
-    pub weapon: Weapon,
+    pub weapon: Weapon, // Default to unarmed, which is still a weapon
     pub shield: Option<Armor>,
     pub body: Option<Armor>,
     pub legs: Option<Armor>,
@@ -257,6 +231,7 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
+// Misc other player info - may restructure if there's a better place for these
 #[derive(Debug, Default)]
 pub struct PlayerAttrs {
     pub name: Option<String>,
@@ -283,30 +258,39 @@ pub struct Player {
 
 impl Default for Player {
     fn default() -> Self {
-        let mut att_rolls = HashMap::new();
-        att_rolls.insert(CombatType::Stab, 0);
-        att_rolls.insert(CombatType::Slash, 0);
-        att_rolls.insert(CombatType::Crush, 0);
-        att_rolls.insert(CombatType::Light, 0);
-        att_rolls.insert(CombatType::Standard, 0);
-        att_rolls.insert(CombatType::Heavy, 0);
-        att_rolls.insert(CombatType::Magic, 0);
+        let att_rolls = vec![
+            (CombatType::Stab, 0),
+            (CombatType::Slash, 0),
+            (CombatType::Crush, 0),
+            (CombatType::Light, 0),
+            (CombatType::Standard, 0),
+            (CombatType::Heavy, 0),
+            (CombatType::Magic, 0),
+        ]
+        .into_iter()
+        .collect();
 
-        let mut max_hits = HashMap::new();
-        max_hits.insert(CombatType::Stab, 0);
-        max_hits.insert(CombatType::Slash, 0);
-        max_hits.insert(CombatType::Crush, 0);
-        max_hits.insert(CombatType::Light, 0);
-        max_hits.insert(CombatType::Standard, 0);
-        max_hits.insert(CombatType::Heavy, 0);
-        max_hits.insert(CombatType::Magic, 0);
+        let max_hits = vec![
+            (CombatType::Stab, 0),
+            (CombatType::Slash, 0),
+            (CombatType::Crush, 0),
+            (CombatType::Light, 0),
+            (CombatType::Standard, 0),
+            (CombatType::Heavy, 0),
+            (CombatType::Magic, 0),
+        ]
+        .into_iter()
+        .collect();
 
-        let mut def_rolls = HashMap::new();
-        def_rolls.insert(CombatType::Stab, 0);
-        def_rolls.insert(CombatType::Slash, 0);
-        def_rolls.insert(CombatType::Crush, 0);
-        def_rolls.insert(CombatType::Ranged, 0);
-        def_rolls.insert(CombatType::Magic, 0);
+        let def_rolls = vec![
+            (CombatType::Stab, 0),
+            (CombatType::Slash, 0),
+            (CombatType::Crush, 0),
+            (CombatType::Ranged, 0),
+            (CombatType::Magic, 0),
+        ]
+        .into_iter()
+        .collect();
 
         Self {
             stats: PlayerStats::default(),
@@ -333,12 +317,14 @@ impl Player {
     }
 
     pub fn lookup_stats(&mut self, rsn: &str) {
+        // Fetch stats from OSRS hiscores and set the corresponding fields
         let stats = fetch_player_data(rsn).expect("Failed to fetch player data");
         self.stats = parse_player_data(stats);
         self.attrs.name = Some(rsn.to_string());
     }
 
     pub fn reset_live_stats(&mut self) {
+        // Restore to base stats, full spec energy, and reapply potion boosts
         self.live_stats.attack = self.stats.attack;
         self.live_stats.strength = self.stats.strength;
         self.live_stats.defence = self.stats.defence;
@@ -352,6 +338,7 @@ impl Player {
     }
 
     pub fn is_wearing(&self, gear_name: &str, version: Option<&str>) -> bool {
+        // Check if the player is wearing the specified piece of gear
         let version = version.map(|v| v.to_string());
 
         self.gear.head.as_ref().map_or(false, |armor| {
@@ -384,6 +371,7 @@ impl Player {
     }
 
     pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {
+        // Same as is_wearing() but allows for any version to match
         self.gear
             .head
             .as_ref()
@@ -437,34 +425,36 @@ impl Player {
     }
 
     pub fn is_wearing_any(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
+        // Check if the player is wearing any item in the provided Vec
         gear_names
             .iter()
             .any(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
     pub fn is_wearing_all(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
+        // Check if the player is wearing all items in the provided Vec
         gear_names
             .iter()
             .all(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
     pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
+        // Equip the specified item in the correct slot
         let slot_name = equipment::get_slot_name(item_name)
             .unwrap_or_else(|_| panic!("Slot not found for item {}", item_name));
+
         match slot_name.as_str() {
             "head" => self.gear.head = Some(Armor::new(item_name, version)),
             "neck" => self.gear.neck = Some(Armor::new(item_name, version)),
             "cape" => {
                 self.gear.cape = Some(Armor::new(item_name, version));
-                if self.is_quiver_bonus_valid() {
-                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                } else if self.is_wearing_any_version("Dizana's quiver") {
-                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
-                }
+
+                // For the quiver, apply extra +10 accuracy and +1 strength if applicable
+                self.set_quiver_bonuses();
             }
             "ammo" => {
+                // If quiver is equipped and the ammo slot is already full with a different ammo type,
+                // equip the new ammo in the second_ammo slot
                 if self.is_wearing_any(vec![
                     ("Dizana's quiver", Some("Charged")),
                     ("Dizana's quiver", Some("Uncharged")),
@@ -475,29 +465,23 @@ impl Player {
                             && item_name.contains("arrow"))))
                 {
                     self.gear.second_ammo = Some(Armor::new(item_name, version));
-                    if self.is_quiver_bonus_valid() {
-                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                    } else if self.is_wearing_any_version("Dizana's quiver") {
-                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
-                    }
+
+                    self.set_quiver_bonuses();
                 } else {
                     self.gear.ammo = Some(Armor::new(item_name, version));
-                    if self.is_quiver_bonus_valid() {
-                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                    } else if self.is_wearing_any_version("Dizana's quiver") {
-                        self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-                        self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
-                    }
+
+                    self.set_quiver_bonuses();
                 }
             }
             "weapon" => {
                 self.gear.weapon = Weapon::new(item_name, version);
+
+                // Unequip shield if weapon is two handed
                 if self.gear.weapon.is_two_handed {
                     self.gear.shield = None;
                 }
+
+                // Modify attack speed if weapon is on rapid
                 if self.attrs.active_style == CombatStyle::Rapid
                     && self
                         .gear
@@ -507,16 +491,13 @@ impl Player {
                 {
                     self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
                 }
-                if self.is_quiver_bonus_valid() {
-                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-                } else if self.is_wearing_any_version("Dizana's quiver") {
-                    self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-                    self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
-                }
+
+                self.set_quiver_bonuses();
             }
             "shield" => {
                 self.gear.shield = Some(Armor::new(item_name, version));
+
+                // Unequip weapon if it is two handed
                 if self.gear.weapon.is_two_handed {
                     self.gear.weapon = Weapon::default();
                 }
@@ -530,7 +511,19 @@ impl Player {
         }
     }
 
+    fn set_quiver_bonuses(&mut self) {
+        // Apply extra +10 accuracy and +1 strength to quiver if applicable
+        if self.is_quiver_bonus_valid() {
+            self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+            self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+        } else if self.is_wearing_any_version("Dizana's quiver") {
+            self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+            self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
+        }
+    }
+
     pub fn update_bonuses(&mut self) {
+        // Update equipment bonuses based on the equipped items
         self.bonuses = EquipmentBonuses::default();
 
         for item in [
@@ -549,6 +542,8 @@ impl Player {
         {
             self.bonuses.add_bonuses(&item.bonuses);
         }
+
+        // Don't add ammo bonuses if the weapon uses its own ammo
         if !USES_OWN_AMMO.contains(&(
             self.gear.weapon.name.as_str(),
             self.gear.weapon.version.as_deref(),
@@ -570,6 +565,7 @@ impl Player {
     }
 
     pub fn update_set_effects(&mut self) {
+        // Update status of all set effects at once
         self.set_effects.full_ahrims = self.is_wearing_all(Vec::from(FULL_AHRIMS));
         self.set_effects.full_blood_moon = self.is_wearing_all(Vec::from(FULL_BLOOD_MOON));
         self.set_effects.full_blue_moon = self.is_wearing_all(Vec::from(FULL_BLUE_MOON));
@@ -590,6 +586,7 @@ impl Player {
     }
 
     pub fn calc_potion_boosts(&mut self) {
+        // Calculate all of the selected potion boosts
         if let Some(potion) = &mut self.potions.attack {
             potion.calc_boost(self.stats.attack)
         }
@@ -608,6 +605,7 @@ impl Player {
     }
 
     fn apply_potion_boosts(&mut self) {
+        // Apply all of the selected potion boosts to the player's live stats
         if let Some(potion) = &self.potions.attack {
             self.live_stats.attack += potion.boost;
         }
@@ -626,27 +624,34 @@ impl Player {
     }
 
     pub fn combat_stance(&self) -> CombatStance {
+        // Get combat stance (accurate, aggressive, etc.)
         self.gear.weapon.combat_styles[&self.attrs.active_style].stance
     }
 
     pub fn combat_type(&self) -> CombatType {
+        // Get combat type (stab, slash, ranged, etc.)
         self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type
     }
 
     pub fn is_using_melee(&self) -> bool {
+        // Check if the player is using any melee style
         let melee_types = [CombatType::Stab, CombatType::Slash, CombatType::Crush];
         melee_types.contains(&self.combat_type())
     }
 
     pub fn is_using_ranged(&self) -> bool {
+        // Check if the player is using any ranged style
         let ranged_types = [CombatType::Light, CombatType::Standard, CombatType::Heavy];
         ranged_types.contains(&self.combat_type())
     }
 
     pub fn set_active_style(&mut self, style: CombatStyle) {
+        // Set the active combat style and make any necessary attack speed adjustments
         self.attrs.active_style = style;
 
         let stance = self.combat_stance();
+
+        // Reduce attack speed by 1 on rapid
         if stance == CombatStance::Rapid {
             self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
         } else if [
@@ -656,6 +661,7 @@ impl Player {
         ]
         .contains(&stance)
         {
+            // Prevent staff speed from being set to its melee attack speed if player is casting spells
             self.gear.weapon.speed = if self.is_wearing("Harmonised nightmare staff", None)
                 && self.is_using_standard_spell()
             {
