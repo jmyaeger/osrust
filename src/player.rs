@@ -258,39 +258,10 @@ pub struct Player {
 
 impl Default for Player {
     fn default() -> Self {
-        let att_rolls = vec![
-            (CombatType::Stab, 0),
-            (CombatType::Slash, 0),
-            (CombatType::Crush, 0),
-            (CombatType::Light, 0),
-            (CombatType::Standard, 0),
-            (CombatType::Heavy, 0),
-            (CombatType::Magic, 0),
-        ]
-        .into_iter()
-        .collect();
-
-        let max_hits = vec![
-            (CombatType::Stab, 0),
-            (CombatType::Slash, 0),
-            (CombatType::Crush, 0),
-            (CombatType::Light, 0),
-            (CombatType::Standard, 0),
-            (CombatType::Heavy, 0),
-            (CombatType::Magic, 0),
-        ]
-        .into_iter()
-        .collect();
-
-        let def_rolls = vec![
-            (CombatType::Stab, 0),
-            (CombatType::Slash, 0),
-            (CombatType::Crush, 0),
-            (CombatType::Ranged, 0),
-            (CombatType::Magic, 0),
-        ]
-        .into_iter()
-        .collect();
+        // Set all roll values to zero by default
+        let att_rolls = Vec::from(DEFAULT_ATTACK_ROLLS).into_iter().collect();
+        let max_hits = Vec::from(DEFAULT_MAX_HITS).into_iter().collect();
+        let def_rolls = Vec::from(DEFAULT_DEF_ROLLS).into_iter().collect();
 
         Self {
             stats: PlayerStats::default(),

@@ -1,3 +1,5 @@
+use crate::equipment::CombatType;
+
 pub const TBOW_ACC_CAP: i32 = 140;
 
 pub const TBOW_DMG_CAP: i32 = 250;
@@ -375,3 +377,31 @@ pub const SECONDS_PER_TICK: f64 = 0.6;
 pub const TTK_DIST_MAX_ITER_ROUNDS: usize = 1000;
 
 pub const TTK_DIST_EPSILON: f64 = 0.0001;
+
+pub const DEFAULT_ATTACK_ROLLS: [(CombatType, i32); 7] = [
+    (CombatType::Stab, 0),
+    (CombatType::Slash, 0),
+    (CombatType::Crush, 0),
+    (CombatType::Light, 0),
+    (CombatType::Standard, 0),
+    (CombatType::Heavy, 0),
+    (CombatType::Magic, 0),
+];
+
+pub const DEFAULT_MAX_HITS: [(CombatType, u32); 7] = [
+    (CombatType::Stab, 0),
+    (CombatType::Slash, 0),
+    (CombatType::Crush, 0),
+    (CombatType::Light, 0),
+    (CombatType::Standard, 0),
+    (CombatType::Heavy, 0),
+    (CombatType::Magic, 0),
+];
+
+pub const DEFAULT_DEF_ROLLS: [(CombatType, i32); 5] = [
+    (CombatType::Stab, 0),
+    (CombatType::Slash, 0),
+    (CombatType::Crush, 0),
+    (CombatType::Ranged, 0),
+    (CombatType::Magic, 0),
+];
