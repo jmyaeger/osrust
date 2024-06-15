@@ -248,7 +248,7 @@ impl Monster {
 
         monster.live_stats = monster.stats;
         monster.base_def_rolls = rolls::monster_def_rolls(&monster);
-        monster.def_rolls = monster.base_def_rolls.clone();
+        monster.def_rolls.clone_from(&monster.base_def_rolls);
 
         monster.bonuses.flat_armour = monster.info.id.map_or(0, |id| {
             FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1 as u32

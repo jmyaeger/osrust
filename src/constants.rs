@@ -372,6 +372,26 @@ pub const PICKAXE_BONUSES: [(&str, u32); 10] = [
     ("Crystal pickaxe", 61),
 ];
 
+pub const SILVER_WEAPONS: [(&str, Option<&str>); 17] = [
+    ("Blessed axe", None),
+    ("Silver sickle", None),
+    ("Silver sickle (b)", None),
+    ("Emerald sickle", None),
+    ("Emerald sickle (b)", None),
+    ("Enchanted emerald sickle (b)", None),
+    ("Ruby sickle (b)", None),
+    ("Enchanted ruby sickle (b)", None),
+    ("Silverlight", None),
+    ("Silverlight", Some("Dyed")),
+    ("Darklight", None),
+    ("Arclight", None),
+    ("Rod of ivandis", None),
+    ("Wolfbane", None),
+    ("Blisterwood flail", None),
+    ("Blisterwood sickle", None),
+    ("Ivandis flail", None),
+];
+
 pub const SECONDS_PER_TICK: f64 = 0.6;
 
 pub const TTK_DIST_MAX_ITER_ROUNDS: usize = 1000;

@@ -1,3 +1,5 @@
+// Port of the OSRS Wiki DPS calc - credit to the wiki team
+
 use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
 use crate::hit_dist::{
@@ -218,7 +220,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     if player.is_using_melee() && player.is_wearing_any_version("Scythe of vitur") {
         let mut hits: Vec<HitDistribution> = Vec::new();
 
-        for i in 0..min(max(monster.info.size, 1), 3) {
+        for i in 0..monster.info.size.clamp(1, 3) {
             hits.push(HitDistribution::linear(
                 acc,
                 0,

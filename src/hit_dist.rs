@@ -1,3 +1,5 @@
+// Port of OSRS Wiki DPS calc's hit distribution code - credit to the wiki team
+
 use std::collections::HashMap;
 
 pub trait HitTransformer: Fn(Hitsplat) -> HitDistribution {}
