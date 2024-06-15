@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 // Base stats of the player - should not be modified
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 pub struct PlayerStats {
     pub hitpoints: u32,
     pub attack: u32,
@@ -44,10 +44,36 @@ impl PlayerStats {
     pub fn new() -> Self {
         Self::default()
     }
+
+    pub fn min_stats() -> Self {
+        Self {
+            hitpoints: 10,
+            attack: 1,
+            strength: 1,
+            defence: 1,
+            ranged: 1,
+            magic: 1,
+            prayer: 1,
+            mining: 1,
+        }
+    }
+
+    pub fn from(stats_map: &HashMap<&str, u32>) -> Self {
+        Self {
+            hitpoints: *stats_map.get("hitpoints").unwrap_or(&99),
+            attack: *stats_map.get("attack").unwrap_or(&99),
+            strength: *stats_map.get("strength").unwrap_or(&99),
+            defence: *stats_map.get("defence").unwrap_or(&99),
+            ranged: *stats_map.get("ranged").unwrap_or(&99),
+            magic: *stats_map.get("magic").unwrap_or(&99),
+            prayer: *stats_map.get("prayer").unwrap_or(&99),
+            mining: *stats_map.get("mining").unwrap_or(&99),
+        }
+    }
 }
 
 // Live stats of the player during combat, including boosts - can be modified
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 pub struct PlayerLiveStats {
     pub hitpoints: u32,
     pub attack: u32,
@@ -77,6 +103,19 @@ impl Default for PlayerLiveStats {
 impl PlayerLiveStats {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn from_base_stats(base_stats: &PlayerStats) -> Self {
+        Self {
+            hitpoints: base_stats.hitpoints,
+            attack: base_stats.attack,
+            strength: base_stats.strength,
+            defence: base_stats.defence,
+            ranged: base_stats.ranged,
+            magic: base_stats.magic,
+            prayer: base_stats.prayer,
+            special_attack: 100,
+        }
     }
 }
 
@@ -325,15 +364,7 @@ impl Player {
 
     pub fn reset_live_stats(&mut self) {
         // Restore to base stats, full spec energy, and reapply potion boosts
-        self.live_stats.attack = self.stats.attack;
-        self.live_stats.strength = self.stats.strength;
-        self.live_stats.defence = self.stats.defence;
-        self.live_stats.ranged = self.stats.ranged;
-        self.live_stats.magic = self.stats.magic;
-        self.live_stats.prayer = self.stats.prayer;
-        self.live_stats.hitpoints = self.stats.hitpoints;
-        self.live_stats.special_attack = 100;
-
+        self.live_stats = PlayerLiveStats::from_base_stats(&self.stats);
         self.apply_potion_boosts();
     }
 
@@ -675,6 +706,7 @@ impl Player {
     }
 
     pub fn is_wearing_black_mask(&self) -> bool {
+        // Check if the player is wearing any type of black mask or slayer helmet
         self.is_wearing_any(vec![
             ("Black mask", None),
             ("Black mask (i)", None),
@@ -684,22 +716,27 @@ impl Player {
     }
 
     pub fn is_wearing_imbued_black_mask(&self) -> bool {
+        // Check if the player is wearing an imbued black mask or slayer helmet
         self.is_wearing_any(vec![("Black mask (i)", None), ("Slayer helmet (i)", None)])
     }
 
     pub fn is_wearing_salve(&self) -> bool {
+        // Check if the player is wearing an unenchanted salve amulet
         self.is_wearing_any(vec![("Salve amulet", None), ("Salve amulet(i)", None)])
     }
 
     pub fn is_wearing_salve_e(&self) -> bool {
+        // Check if the player is wearing an enchanted salve amulet
         self.is_wearing_any(vec![("Salve amulet (e)", None), ("Salve amulet(ei)", None)])
     }
 
     pub fn is_wearing_salve_i(&self) -> bool {
+        // Check if the player is wearing an imbued salve amulet
         self.is_wearing_any(vec![("Salve amulet(i)", None), ("Salve amulet(ei)", None)])
     }
 
     pub fn is_wearing_wildy_mace(&self) -> bool {
+        // Check if the player is wearing either type of wilderness mace
         self.is_wearing_any(vec![
             ("Viggora's chainmace", Some("Charged")),
             ("Ursine chainmace", Some("Charged")),
@@ -707,6 +744,7 @@ impl Player {
     }
 
     pub fn is_wearing_wildy_bow(&self) -> bool {
+        // Check if the player is wearing either type of wilderness bow
         self.is_wearing_any(vec![
             ("Craw's bow", Some("Charged")),
             ("Webweaver bow", Some("Charged")),
@@ -714,6 +752,7 @@ impl Player {
     }
 
     pub fn is_wearing_wildy_staff(&self) -> bool {
+        // Check if the player is wearing any form of wilderness staff
         self.is_wearing_any(vec![
             ("Thammaron's sceptre", Some("Charged")),
             ("Accursed sceptre", Some("Charged")),
@@ -723,6 +762,7 @@ impl Player {
     }
 
     pub fn is_wearing_crystal_bow(&self) -> bool {
+        // Check if the player is wearing a crystal bow or bowfa
         self.is_wearing_any(vec![
             ("Crystal bow", Some("Active")),
             ("Bow of faerdhinen", Some("Charged")),
@@ -731,14 +771,17 @@ impl Player {
     }
 
     pub fn is_wearing_tzhaar_weapon(&self) -> bool {
+        // Check if the player is wearing an obsidan melee weapon
         self.gear.weapon.name.contains("Tzhaar") || self.gear.weapon.name.contains("Toktz")
     }
 
     pub fn is_wearing_salamander(&self) -> bool {
+        // Check if the player is wearing a salamander or swamp lizard
         self.gear.weapon.name.contains("salamander") || self.is_wearing("Swamp lizard", None)
     }
 
     pub fn is_wearing_smoke_staff(&self) -> bool {
+        // Check if the player is wearing either type of smoke staff
         self.is_wearing_any(vec![
             ("Smoke battlestaff", None),
             ("Mystic smoke staff", None),
@@ -746,28 +789,13 @@ impl Player {
     }
 
     pub fn is_wearing_silver_weapon(&self) -> bool {
-        self.is_wearing_any(vec![
-            ("Blessed axe", None),
-            ("Silver sickle", None),
-            ("Silver sickle (b)", None),
-            ("Emerald sickle", None),
-            ("Emerald sickle (b)", None),
-            ("Enchanted emerald sickle (b)", None),
-            ("Ruby sickle (b)", None),
-            ("Enchanted ruby sickle (b)", None),
-            ("Silverlight", None),
-            ("Silverlight", Some("Dyed")),
-            ("Darklight", None),
-            ("Arclight", None),
-            ("Rod of ivandis", None),
-            ("Wolfbane", None),
-            ("Blisterwood flail", None),
-            ("Blisterwood sickle", None),
-            ("Ivandis flail", None),
-        ]) || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
+        // Check if the player is wearing any type of silver weapon
+        self.is_wearing_any(Vec::from(SILVER_WEAPONS))
+            || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
     }
 
     pub fn is_wearing_ivandis_weapon(&self) -> bool {
+        // Check if the player is wearing one of the weapons that can harm T3 vampyres
         self.is_wearing_any(vec![
             ("Blisterwood flail", None),
             ("Blisterwood sickle", None),
@@ -776,6 +804,7 @@ impl Player {
     }
 
     pub fn is_wearing_keris(&self) -> bool {
+        // Check if the player is wearing any type of keris
         self.is_wearing_any(vec![
             ("Keris", None),
             ("Keris partisan", None),
@@ -786,6 +815,7 @@ impl Player {
     }
 
     pub fn is_wearing_leaf_bladed_weapon(&self) -> bool {
+        // Check if the player is wearing any type of leaf-bladed weapon or broad bolts
         (self.is_using_melee()
             && self.is_wearing_any(vec![
                 ("Leaf-bladed spear", None),
@@ -802,6 +832,7 @@ impl Player {
     }
 
     pub fn is_wearing_full_void(&self) -> bool {
+        // Check if the player is wearing a full void set
         FULL_VOID
             .iter()
             .filter(|(x, _)| self.is_wearing(x, None))
@@ -810,6 +841,7 @@ impl Player {
     }
 
     pub fn is_wearing_full_elite_void(&self) -> bool {
+        // Check if the player is wearing a full elite void set
         FULL_ELITE_VOID
             .iter()
             .filter(|(x, _)| self.is_wearing(x, None))
@@ -818,6 +850,7 @@ impl Player {
     }
 
     pub fn is_wearing_ancient_spectre(&self) -> bool {
+        // Check if the player is wearing any type of ancient spectre
         self.is_wearing_any(vec![
             ("Ancient sceptre", None),
             ("Smoke ancient sceptre", None),
@@ -828,6 +861,7 @@ impl Player {
     }
 
     pub fn is_wearing_ratbone_weapon(&self) -> bool {
+        // Check if the player is wearing any type of ratbone weapon
         self.is_wearing_any(vec![
             ("Bone mace", None),
             ("Bone shortbow", None),
@@ -836,6 +870,7 @@ impl Player {
     }
 
     pub fn is_using_spell(&self) -> bool {
+        // Check if the player is casting a spell
         self.attrs.spell.is_some()
             && [
                 CombatStance::Autocast,
@@ -846,50 +881,62 @@ impl Player {
     }
 
     pub fn is_using_standard_spell(&self) -> bool {
+        // Check if the player is casting a spell on the standard spellbook
         self.is_using_spell() && spells::is_standard_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_water_spell(&self) -> bool {
+        // Water strike/bolt/blast/wave/surge
         self.is_using_spell() && spells::is_water_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_ancient_spell(&self) -> bool {
+        // Check if the player is casting a spell on the ancient spellbook
         self.is_using_spell() && spells::is_ancient_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_smoke_spell(&self) -> bool {
+        // Smoke rush/burst/blitz/barrage
         self.is_using_spell() && spells::is_smoke_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_shadow_spell(&self) -> bool {
+        // Shadow rush/burst/blitz/barrage
         self.is_using_spell() && spells::is_shadow_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_blood_spell(&self) -> bool {
+        // Blood rush/burst/blitz/barrage
         self.is_using_spell() && spells::is_blood_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_ice_spell(&self) -> bool {
+        // Ice rush/burst/blitz/barrage
         self.is_using_spell() && spells::is_ice_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_fire_spell(&self) -> bool {
+        // Fire strike/bolt/blast/wave/surge
         self.is_using_spell() && spells::is_fire_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_air_spell(&self) -> bool {
+        // Air strike/bolt/blast/wave/surge
         self.is_using_spell() && spells::is_air_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_earth_spell(&self) -> bool {
+        // Earth strike/bolt/blast/wave/surge
         self.is_using_spell() && spells::is_earth_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_demonbane_spell(&self) -> bool {
+        // Inferior/Superior/Dark demonbane
         self.is_using_spell() && spells::is_demonbane_spell(self.attrs.spell.as_ref().unwrap())
     }
 
     pub fn is_using_crossbow(&self) -> bool {
+        // Check if the player is using any type of crossbow and wielding bolts
         self.gear.weapon.name.contains("rossbow")
             && self.combat_type() == CombatType::Heavy
             && self
@@ -902,6 +949,7 @@ impl Player {
     }
 
     pub fn is_using_corpbane_weapon(&self) -> bool {
+        // Check if the player's weapon does full damage to Corp
         let weapon_name = &self.gear.weapon.name;
         match self.combat_type() {
             CombatType::Magic => true,
@@ -919,6 +967,7 @@ impl Player {
     }
 
     pub fn add_potion(&mut self, potion: Potion) {
+        // Add a potion to the correct slot, calc boosts, and reset live stats
         match potion {
             Potion::Attack | Potion::SuperAttack | Potion::ZamorakBrewAtt => {
                 self.potions.attack = Some(PotionBoost::new(&potion));
@@ -965,6 +1014,7 @@ impl Player {
     }
 
     pub fn bulwark_bonus(&self) -> i32 {
+        // Calculate additional melee strength bonus from bulwark passive
         max(
             0,
             (self.bonuses.defence.stab
@@ -978,6 +1028,7 @@ impl Player {
     }
 
     pub fn is_quiver_bonus_valid(&self) -> bool {
+        // Check if the player is wearing a quiver and using a weapon with bolts or arrows
         self.gear.cape.as_ref().map_or(false, |cape| {
             cape.name == "Dizana's quiver"
                 && cape.matches_version("Charged")
@@ -996,6 +1047,7 @@ impl Player {
     }
 
     pub fn heal(&mut self, amount: u32, overheal_hp: Option<u32>) {
+        // Heals the player by the specified amount (with optional maximum overheal)
         let max_hp = match overheal_hp {
             Some(overheal_hp) => self.stats.hitpoints + overheal_hp,
             None => self.stats.hitpoints,
@@ -1004,11 +1056,13 @@ impl Player {
     }
 
     pub fn take_damage(&mut self, amount: u32) {
+        // Takes damage, capping at 0 HP
         self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
     }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, Error> {
+    // Fetches player data from the OSRS hiscores
     let url = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws";
     let params = [("player", rsn)];
     let client = reqwest::blocking::Client::new();
@@ -1018,6 +1072,7 @@ fn fetch_player_data(rsn: &str) -> Result<String, Error> {
 }
 
 fn parse_player_data(data: String) -> PlayerStats {
+    // Parses player data and creates a PlayerStats struct from it
     let skills = [
         "attack",
         "defence",
