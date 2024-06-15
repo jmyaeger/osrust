@@ -7,7 +7,7 @@ use crate::rolls::calc_player_melee_rolls;
 use crate::spells::{AncientSpell, Spell};
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use std::cmp::{max, min};
+use std::cmp::max;
 
 pub fn standard_attack(
     player: &mut Player,
@@ -15,6 +15,9 @@ pub fn standard_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
+    // Default attack method for most weapons
+
+    // Determine max attack, defense, and damage rolls
     let combat_type = player.combat_type();
     let max_att_roll = player.att_rolls[&combat_type];
     let mut max_def_roll = monster.def_rolls[&combat_type];
@@ -28,6 +31,7 @@ pub fn standard_attack(
         0
     };
 
+    // Roll for brimstone ring effect if applicable
     if combat_type == CombatType::Magic
         && player.is_wearing("Brimstone ring", None)
         && rng.gen_range(0..4) == 0
@@ -38,6 +42,7 @@ pub fn standard_attack(
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
 
     if success {
+        // Transform any accurate zeros into 1s, then apply post-roll transforms
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
@@ -55,7 +60,10 @@ fn base_attack(
     let att_roll = accuracy_roll(max_att_roll, rng);
     let def_roll = defence_roll(max_def_roll, rng);
 
+    // Roll for accuracy
     let success = att_roll > def_roll;
+
+    // Roll for damage if successful
     let mut damage = 0;
     if success {
         damage = damage_roll(min_hit, max_hit, rng);
@@ -86,6 +94,8 @@ pub fn fang_attack(
     let max_att_roll = player.att_rolls[&combat_type];
     let max_def_roll = monster.def_rolls[&combat_type];
     let true_max_hit = player.max_hits[&combat_type];
+
+    // Fang rolls from 15% of max hit to max_hit - 15%
     let min_hit = true_max_hit * 15 / 100;
     let max_hit = true_max_hit - min_hit;
 
@@ -93,9 +103,12 @@ pub fn fang_attack(
     let def_roll1 = defence_roll(max_def_roll, rng);
 
     let (mut damage, success) = if att_roll1 > def_roll1 {
+        // Skip second roll if first roll was successful
         (damage_roll(min_hit, max_hit, rng), true)
     } else {
         let att_roll2 = accuracy_roll(max_att_roll, rng);
+
+        // Only re-roll defense if in ToA
         let def_roll2 = if monster.is_toa_monster() {
             defence_roll(max_def_roll, rng)
         } else {
@@ -109,6 +122,7 @@ pub fn fang_attack(
     };
 
     if success {
+        // No accurate zeros, so no need to do anything before applying post-roll transforms
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
@@ -121,6 +135,8 @@ pub fn ahrims_staff_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     let combat_type = player.combat_type();
+
+    // Do a standard attack if not using magic or the full ahrim's set
     if combat_type != CombatType::Magic || !player.set_effects.full_ahrims {
         return standard_attack(player, monster, rng, limiter);
     }
@@ -140,15 +156,18 @@ pub fn ahrims_staff_attack(
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
 
     if success && rng.gen_range(0..4) == 0 {
+        // Base set effect rolls a 25% chance to reduce strength by 5
         monster.drain_strength(5);
     }
 
     if player.is_wearing_any_version("Amulet of the damned") && rng.gen_range(0..4) == 0 {
+        // With amulet of the damned, 25% chance to increase damage 30% post-roll
         damage = damage * 13 / 10;
     }
 
     if success {
         damage = max(damage, 1);
+        // Unconfirmed if the post-roll multiplier comes before or after limiters
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
 
@@ -432,9 +451,9 @@ pub fn ruby_bolt_attack(
     }
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
-        min(110, max(1, monster.live_stats.hitpoints * 22 / 100))
+        (monster.live_stats.hitpoints * 22 / 100).clamp(1, 110)
     } else {
-        min(100, max(1, monster.live_stats.hitpoints / 5))
+        (monster.live_stats.hitpoints / 5).clamp(1, 100)
     };
 
     if rng.gen::<f64>() <= proc_chance {
@@ -631,7 +650,7 @@ pub fn shadow_spell_attack(
     (damage, success)
 }
 
-fn blood_spell_attack(
+pub fn blood_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut ThreadRng,
