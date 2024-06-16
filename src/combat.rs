@@ -8,6 +8,7 @@ use crate::player::Player;
 use crate::sims::single_way;
 use crate::spells::{Spell, StandardSpell};
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct FightResult {
     pub ttk: f64,
     pub hit_attempts: u32,
@@ -20,6 +21,7 @@ pub trait Simulation {
 }
 
 pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limiters::Limiter>> {
+    // Dispatch post-roll transform based on monster name
     if monster.info.name.contains("Zulrah") {
         return Some(Box::new(limiters::Zulrah {}));
     }
@@ -80,20 +82,24 @@ pub fn simulate_n_fights(
     monster: &mut Monster,
     n: u32,
 ) -> (f64, f64, HashMap<u32, f64>) {
+    // Check if the monster is immune before running simulations
     if monster.is_immune(player) {
         panic!("{} is immune to this setup", monster.info.name);
     }
 
+    // Set up result variables (probably will make a struct for this)
     let mut ttks = Vec::new();
     let mut hit_counts = Vec::new();
     let mut hit_attempt_counts = Vec::new();
     let mut hit_amounts = Vec::new();
     let mut rng = rand::thread_rng();
 
+    // Retrieve attack function and limiter
     let limiter = assign_limiter(player, monster);
     player.attack = get_attack_functions(player);
 
     for _ in 0..n {
+        // Run a single fight simulation and update the result variables
         let result = single_way::simulate_fight(player, monster, &mut rng, &limiter);
         ttks.push(result.ttk);
         hit_counts.push(result.hit_count);
@@ -103,17 +109,20 @@ pub fn simulate_n_fights(
         player.reset_live_stats();
     }
 
+    // Calculate average ttk and accuracy
     let avg_ttk = ttks.iter().sum::<f64>() / n as f64;
     let avg_accuracy = hit_counts.iter().sum::<u32>() as f64
         / hit_attempt_counts.iter().sum::<u32>() as f64
         * 100.0;
 
+    // Convert hit amount Vecs to a HashMap counting the number of times each amount appears
     let hit_counts: HashMap<u32, u32> =
         hit_amounts.iter().fold(HashMap::new(), |mut acc, &value| {
             *acc.entry(value).or_insert(0) += 1;
             acc
         });
 
+    // Convert hit counts into a probability distribution
     let hit_dist = hit_counts
         .iter()
         .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))

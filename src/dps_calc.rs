@@ -15,6 +15,7 @@ use std::cmp::{max, min};
 use std::collections::HashMap;
 
 fn get_normal_accuracy(player: &Player, monster: &Monster) -> f64 {
+    // Calculate theoretical hit chance for most weapons
     let combat_type = player.combat_type();
     let mut max_att_roll = player.att_rolls[&combat_type];
     let mut def_roll = monster.def_rolls[&combat_type];
@@ -44,6 +45,7 @@ fn get_normal_accuracy(player: &Player, monster: &Monster) -> f64 {
 }
 
 fn get_fang_accuracy(player: &Player, monster: &Monster) -> f64 {
+    // Calculate theoretical hit chance for Osmumten's fang outside of ToA
     let combat_type = player.combat_type();
     let mut max_att_roll = player.att_rolls[&combat_type];
     let mut def_roll = monster.def_rolls[&combat_type];
@@ -95,6 +97,7 @@ fn get_fang_accuracy(player: &Player, monster: &Monster) -> f64 {
 fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
     let mut hit_chance = 1.0;
 
+    // Always accurate in these cases
     if (monster.info.name.contains("Verzik")
         && monster.matches_version("Phase 1")
         && player.is_wearing("Dawnbringer", None))
@@ -125,6 +128,7 @@ fn get_hit_chance(player: &Player, monster: &Monster) -> f64 {
 }
 
 pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistribution {
+    // Get the attack distribution for the given player and monster
     let acc = get_hit_chance(player, monster);
     let combat_type = player.combat_type();
     let max_hit = player.max_hits[&combat_type];

@@ -188,6 +188,7 @@ pub fn dharoks_axe_attack(
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
     if success && player.set_effects.full_dharoks {
+        // Set effect damage increase is applied post-roll
         let max_hp = player.stats.hitpoints;
         let current_hp = player.live_stats.hitpoints;
         let dmg_mod = 10000 + (max_hp.saturating_sub(current_hp)) * max_hp;
@@ -210,6 +211,7 @@ pub fn veracs_flail_attack(
 ) -> (u32, bool) {
     let combat_type = player.combat_type();
     if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
+        // Set effect rolls 25% chance to guarantee hit (minimum 1 damage)
         let mut damage = 1 + damage_roll(1, player.max_hits[&combat_type] + 1, rng);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
@@ -228,6 +230,7 @@ pub fn karils_crossbow_attack(
         && player.is_wearing_any_version("Amulet of the damned")
         && rng.gen_range(0..4) == 0
     {
+        // Set effect rolls 25% chance to hit an additional time for half the first hit's damage
         let (hit1, success) = standard_attack(player, monster, rng, limiter);
         let hit2 = hit1 / 2;
         (hit1 + hit2, success)
@@ -244,7 +247,9 @@ pub fn guthans_warspear_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng, limiter);
     if player.set_effects.full_guthans && rng.gen_range(0..4) == 0 {
+        // Set effect rolls 25% chance to heal by the damage dealt
         if player.is_wearing_any_version("Amulet of the damned") {
+            // Amulet of the damned allows up to 10 HP of overheal
             player.heal(damage, Some(10));
         } else {
             player.heal(damage, None);
@@ -267,8 +272,12 @@ pub fn torags_hammers_attack(
     let max_att_roll = player.att_rolls[&combat_type];
     let max_def_roll = monster.def_rolls[&combat_type];
 
+    // Hammers attack with two independently rolled hits (tested in-game)
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit1, rng);
     let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit2, rng);
+
+    // Not implementing the normal set effect because it only applies in PvP
+    // Amulet of the damned effect gets implemented in roll calcs
 
     if success1 {
         damage1 = max(damage1, 1);
@@ -291,7 +300,8 @@ pub fn sang_staff_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng, limiter);
     if rng.gen_range(0..6) == 0 {
-        player.heal(damage, None)
+        // 1/6 chance to heal by half of the damage dealt
+        player.heal(damage / 2, None)
     }
 
     (damage, success)
@@ -304,6 +314,8 @@ pub fn dawnbringer_attack(
     _: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     let max_hit = player.max_hits[&player.combat_type()];
+
+    // Guaranteed to hit because it can only be used on Verzik
     let mut damage = damage_roll(0, max_hit, rng);
     damage = max(1, damage);
     (damage, true)
@@ -316,6 +328,8 @@ pub fn keris_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     let (mut damage, success) = standard_attack(player, monster, rng, limiter);
+
+    // 1/51 chance to deal triple damage (post-roll)
     if monster.is_kalphite() && rng.gen_range(0..51) == 0 {
         damage *= 3;
     }
@@ -336,12 +350,14 @@ pub fn yellow_keris_attack(
     if (monster.live_stats.hitpoints as f32) / (monster.stats.hitpoints as f32) < 0.25
         && monster.is_toa_monster()
     {
+        // In ToA, accuracy is boosted by 25% when monster is below 25% health
         max_att_roll = max_att_roll * 5 / 4;
     }
 
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
-    if monster.live_stats.hitpoints.saturating_sub(damage) == 0 {
+    if monster.live_stats.hitpoints.saturating_sub(damage) == 0 && monster.is_toa_monster() {
+        // Killing a ToA monster heals the player by 12 and costs 5 prayer points
         player.heal(12, Some(player.stats.hitpoints / 5));
         player.live_stats.prayer = player.live_stats.prayer.saturating_sub(5);
     }
@@ -373,9 +389,11 @@ pub fn opal_bolt_attack(
 
     let max_hit = player.max_hits[&player.combat_type()];
 
+    // Guaranteed hit if the bolt effect procs (verified in-game)
     if rng.gen::<f64>() <= proc_chance {
+        // Bolt effect adds on flat damage based on visible ranged level
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
-        damage = max(damage, 1);
+        damage = max(damage, 1); // Probably not necessary but just in case
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
         (damage, true)
     } else {
@@ -394,6 +412,7 @@ pub fn pearl_bolt_attack(
         proc_chance *= 1.1;
     }
 
+    // Bolt effect is extra effective against fiery monsters
     let mut denominator = if monster.is_fiery() { 15 } else { 20 };
 
     if player.is_wearing("Zaryte crossbow", None) {
@@ -403,6 +422,7 @@ pub fn pearl_bolt_attack(
 
     let max_hit = player.max_hits[&player.combat_type()];
 
+    // Same implementation as opal bolts (accurate hit on procs, flat damage added)
     if rng.gen::<f64>() <= proc_chance {
         let mut damage = damage_roll(0, max_hit, rng) + extra_damage;
         damage = max(damage, 1);
@@ -433,6 +453,7 @@ pub fn emerald_bolt_attack(
     let (damage, success) = standard_attack(player, monster, rng, limiter);
 
     if success && rng.gen::<f64>() <= proc_chance {
+        // TODO: Change this to use a CombatEffect
         monster.info.poison_severity = poison_severity;
     }
 
@@ -451,12 +472,14 @@ pub fn ruby_bolt_attack(
     }
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
+        // Verified to be 22/100, not 2/9
         (monster.live_stats.hitpoints * 22 / 100).clamp(1, 110)
     } else {
         (monster.live_stats.hitpoints / 5).clamp(1, 100)
     };
 
     if rng.gen::<f64>() <= proc_chance {
+        // Bolt proc ignores defense and deals fixed amount of damage
         player.take_damage(player.live_stats.hitpoints / 10);
         let mut damage = if let Some(limiter) = &limiter {
             limiter.apply(ruby_damage, rng)
@@ -464,6 +487,7 @@ pub fn ruby_bolt_attack(
             ruby_damage
         };
 
+        // TODO: Test how this interacts with flat armour
         if monster.bonuses.flat_armour > 0 {
             damage = max(1, damage.saturating_sub(monster.bonuses.flat_armour));
         }
@@ -493,6 +517,7 @@ pub fn diamond_bolt_attack(
     };
 
     if rng.gen::<f64>() <= proc_chance {
+        // Bolt proc ignores defense and boosts max hit
         let mut damage = damage_roll(0, max_hit, rng);
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
@@ -523,9 +548,12 @@ pub fn onyx_bolt_attack(
     let (mut damage, success) = standard_attack(player, monster, rng, limiter);
 
     if success && !monster.is_undead() && rng.gen::<f64>() <= proc_chance {
+        // Bolt proc boosts max hit but does not ignore defense
         damage = damage_roll(0, max_hit, rng);
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
+
+        // Heal the player by 1/4 of the damage
         player.heal(damage / 4, None);
     }
 
@@ -557,6 +585,8 @@ pub fn dragonstone_bolt_attack(
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
 
     if success {
+        // Only dragons that are also "fiery" are immune
+        // Bolt proc requires accurate hit and adds flat damage
         if rng.gen::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
             damage += extra_damage;
         }
@@ -574,29 +604,33 @@ pub fn smoke_spell_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
-    monster.info.poison_severity = match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
-        (
-            true,
-            Some(Spell::Ancient(AncientSpell::SmokeRush))
-            | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
-        ) => 11,
-        (
-            true,
-            Some(Spell::Ancient(AncientSpell::SmokeBlitz))
-            | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
-        ) => 22,
-        (
-            false,
-            Some(Spell::Ancient(AncientSpell::SmokeRush))
-            | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
-        ) => 10,
-        (
-            false,
-            Some(Spell::Ancient(AncientSpell::SmokeBlitz))
-            | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
-        ) => 20,
-        _ => 0,
-    };
+    // Assuming that it always applies poison if the monster is not immune
+    if !monster.immunities.poison {
+        monster.info.poison_severity =
+            match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
+                (
+                    true,
+                    Some(Spell::Ancient(AncientSpell::SmokeRush))
+                    | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+                ) => 11,
+                (
+                    true,
+                    Some(Spell::Ancient(AncientSpell::SmokeBlitz))
+                    | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+                ) => 22,
+                (
+                    false,
+                    Some(Spell::Ancient(AncientSpell::SmokeRush))
+                    | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+                ) => 10,
+                (
+                    false,
+                    Some(Spell::Ancient(AncientSpell::SmokeBlitz))
+                    | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+                ) => 20,
+                _ => 0,
+            };
+    }
 
     standard_attack(player, monster, rng, limiter)
 }
@@ -607,6 +641,7 @@ pub fn shadow_spell_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
+    // Drain amounts are the percentages multiplied by 1000 to avoid floating point math
     let drain_amount = match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
         (
             true,
@@ -634,10 +669,12 @@ pub fn shadow_spell_attack(
     let (damage, success) = standard_attack(player, monster, rng, limiter);
 
     if success {
+        // Only drains attack if it hasn't been drained already
         if monster.live_stats.attack == monster.stats.attack {
             monster.drain_attack(monster.stats.attack * drain_amount / 1000);
         }
         if player.is_wearing("Shadow ancient sceptre", None) {
+            // Shadow ancient sceptre also drains strength and defense if not drained previously
             if monster.live_stats.strength == monster.stats.strength {
                 monster.drain_strength(monster.stats.strength * drain_amount / 1000);
             }
@@ -656,13 +693,16 @@ pub fn blood_spell_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
+    // Heal factor is (percentage of damage) * 1000
     let heal_factor = if player.is_wearing_ancient_spectre() {
+        // Bloodbark pieces add 2% healing per piece
         275 + 20 * player.set_effects.bloodbark_pieces as u32
     } else {
         250 + 20 * player.set_effects.bloodbark_pieces as u32
     };
 
     let overheal = if player.is_wearing("Blood ancient sceptre", None) {
+        // Blood ancient sceptre allows 10% overheal
         Some(player.stats.hitpoints / 10)
     } else {
         None
@@ -681,11 +721,13 @@ pub fn ice_spell_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> (u32, bool) {
     if monster.is_freezable() {
+        // Monster is freezable if not immune and not currently frozen or on cooldown
         let mut max_att_roll = player.att_rolls[&CombatType::Magic];
         let max_def_roll = monster.def_rolls[&CombatType::Magic];
         let max_hit = player.max_hits[&CombatType::Magic];
 
         if player.is_wearing("Ice ancient sceptre", None) {
+            // Ice ancient sceptre is 10% more accurate on unfrozen, freezable targets
             max_att_roll = max_att_roll * 11 / 10;
         }
 
@@ -726,6 +768,7 @@ pub fn scythe_attack(
 
     let (damage1, success1) = standard_attack(player, monster, rng, limiter);
     if monster.info.size == 1 {
+        // standard_attack already applies post-roll transforms, so it's not needed here
         return (damage1, success1);
     }
 
@@ -758,8 +801,11 @@ pub fn soulreaper_axe_attack(
     let (damage, success) = standard_attack(player, monster, rng, limiter);
 
     if player.boosts.soulreaper_stacks < 5 && player.live_stats.hitpoints > 8 {
+        // Add a soulreaper stack if the player has less than 5 stacks and can survive the self-damage
         player.take_damage(SOULREAPER_STACK_DAMAGE);
         player.boosts.soulreaper_stacks += 1;
+
+        // Recalculate melee rolls with stack boost added
         calc_player_melee_rolls(player, monster);
     }
 
@@ -775,6 +821,7 @@ pub fn gadderhammer_attack(
     let (mut damage, success) = standard_attack(player, monster, rng, limiter);
 
     if success && monster.is_shade() {
+        // 25% damage boost with 5% chance to double unboosted damage on shades (all post-roll)
         if rng.gen_range(0..20) == 0 {
             damage *= 2;
         } else {
@@ -794,6 +841,8 @@ pub fn tonalztics_of_ralos_attack(
     let combat_type = player.combat_type();
     let max_att_roll = player.att_rolls[&combat_type];
     let max_def_roll = monster.def_rolls[&combat_type];
+
+    // Rolls up to 3/4 of the "true" max hit for each hit
     let max_hit = player.max_hits[&combat_type] * 3 / 4;
 
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
@@ -802,6 +851,7 @@ pub fn tonalztics_of_ralos_attack(
         damage1 = apply_flat_armour_and_limiters(damage1, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
+        // Only the charged version does a second attack
         let (mut damage2, success2) = base_attack(max_att_roll, max_def_roll, 0, max_hit, rng);
         if success2 {
             damage2 = max(damage2, 1);
@@ -829,12 +879,15 @@ pub fn dual_macuahuitl_attack(
 
     let max_hit1 = max_hit / 2;
     let max_hit2 = max_hit - max_hit1;
+
+    // Roll two separate hits
     let (mut damage1, success1) = base_attack(max_att_roll, max_def_roll, 0, max_hit1, rng);
     if success1 {
         damage1 = max(damage1, 1);
         damage1 = apply_flat_armour_and_limiters(damage1, monster, rng, limiter);
     }
     let (mut damage2, success2) = if success1 {
+        // Only roll the second hit if the first hit was accurate
         base_attack(max_att_roll, max_def_roll, 0, max_hit2, rng)
     } else {
         (0, false)
@@ -845,7 +898,7 @@ pub fn dual_macuahuitl_attack(
         damage2 = apply_flat_armour_and_limiters(damage2, monster, rng, limiter);
     }
 
-    // Roll for next attack to be one tick faster
+    // Roll 33% chance for next attack to be one tick faster if the full set is equipped
     if player.set_effects.full_blood_moon
         && ((success1 && rng.gen_range(0..3) == 0) || (success2 && rng.gen_range(0..3) == 0))
     {
@@ -863,18 +916,21 @@ pub fn atlatl_attack(
 ) -> (u32, bool) {
     let (damage, success) = standard_attack(player, monster, rng, limiter);
     if success && player.set_effects.full_eclipse_moon && rng.gen_range(0..5) == 0 {
+        // Roll 20% chance to add a burn stack if full set is equipped
         monster.add_burn_stack();
     }
 
     (damage, success)
 }
 
-// TODO: Implement blue moon spear
+// TODO: Implement blue moon spear attack
 
 pub type AttackFn =
     fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> (u32, bool);
 
 pub fn get_attack_functions(player: &Player) -> AttackFn {
+    // Dispatch attack function based on player's weapon
+
     if player.is_using_smoke_spell() {
         return smoke_spell_attack as AttackFn;
     } else if player.is_using_shadow_spell() {
@@ -937,10 +993,12 @@ fn apply_flat_armour_and_limiters(
 ) -> u32 {
     let mut damage = damage;
 
+    // Subtract flat armour from damage, post-roll (clamping at 1 damage)
     if monster.bonuses.flat_armour > 0 {
         damage = max(1, damage.saturating_sub(monster.bonuses.flat_armour));
     }
 
+    // Apply a post-roll transform if there is one
     if let Some(limiter) = limiter {
         damage = limiter.apply(damage, rng);
     }
