@@ -74,6 +74,11 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
             return Some(Box::new(limiters::Zogre {}));
         }
     }
+
+    if monster.info.name.contains("Corporeal Beast") && !player.is_using_corpbane_weapon() {
+        return Some(Box::new(limiters::CorporealBeast {}));
+    }
+
     None
 }
 

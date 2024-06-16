@@ -136,6 +136,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     let standard_hit_dist = HitDistribution::linear(acc, 0, max_hit);
     let mut dist = AttackDistribution::new(vec![standard_hit_dist.clone()]);
 
+    // Check if the monster always dies in one hit
     if ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
         return AttackDistribution::new(vec![HitDistribution::single(
             1.0,
@@ -143,6 +144,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         )]);
     }
 
+    // Check if the monster always takes the maximum hit for the current combat type
     if player.combat_type() == CombatType::Magic
         && ALWAYS_MAX_HIT_MAGIC.contains(&monster.info.id.unwrap_or(0))
         || player.is_using_melee() && ALWAYS_MAX_HIT_MELEE.contains(&monster.info.id.unwrap_or(0))
@@ -151,6 +153,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         return AttackDistribution::new(vec![HitDistribution::single(1.0, max_hit)]);
     }
 
+    // Add a minimum hit if the player is using sunfire runes and a fire spell
     if player.boosts.sunfire.active && player.is_using_fire_spell() {
         dist = AttackDistribution::new(vec![HitDistribution::linear(
             acc,
@@ -159,6 +162,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         )]);
     }
 
+    // Clamp damage range between 15-85% if using fang
     if player.is_using_melee() && player.is_wearing("Osmumten's fang", None) {
         let min_hit = player.max_hits[&CombatType::Stab] * 3 / 20;
         dist = AttackDistribution::new(vec![HitDistribution::linear(
@@ -168,6 +172,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         )]);
     }
 
+    // Gadderhammer/shade distribution
     if player.is_using_melee() && player.is_wearing("Gadderhammer", None) && monster.is_shade() {
         let hits1 = standard_hit_dist
             .clone()
@@ -184,6 +189,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![HitDistribution::new(combined_hits)]);
     }
 
+    // Dharok's set effect distribution
     if player.is_using_melee() && player.set_effects.full_dharoks {
         let full_hp = player.stats.hitpoints;
         let current_hp = player.live_stats.hitpoints;
@@ -193,6 +199,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         );
     }
 
+    // Verac's set effect distribution
     if player.is_using_melee() && player.set_effects.full_veracs {
         let hits1 = standard_hit_dist.clone().scale_probability(0.75).hits;
         let hits2 = HitDistribution::linear(1.0, 1, max_hit + 1)
@@ -202,7 +209,11 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
-    if player.is_using_ranged() && player.set_effects.full_karils {
+    // Karil's set effect + amulet of the damned distribution
+    if player.is_using_ranged()
+        && player.set_effects.full_karils
+        && player.is_wearing_any_version("Amulet of the damned")
+    {
         let hits1 = standard_hit_dist.clone().scale_probability(0.75).hits;
         let hits2 = standard_hit_dist.clone().hits;
         let hits2 = hits2
@@ -221,6 +232,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
+    // Scythe distribution
     if player.is_using_melee() && player.is_wearing_any_version("Scythe of vitur") {
         let mut hits: Vec<HitDistribution> = Vec::new();
 
@@ -234,6 +246,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(hits);
     }
 
+    // Dual macuahuitl distribution (without set effect)
     if player.is_using_melee() && player.is_wearing("Dual macuahuitl", None) {
         let half_max = max_hit / 2;
         let first_hit = AttackDistribution::new(vec![HitDistribution::linear(acc, 0, half_max)]);
@@ -246,6 +259,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         );
     }
 
+    // Double-hitting weapon distribution (Torag's hammers/sulphur blades)
     if player.is_using_melee()
         && player.is_wearing_any(vec![("Torag's hammers", None), ("Sulphur blades", None)])
     {
@@ -256,6 +270,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![first_hit, second_hit]);
     }
 
+    // Tonalztics distribution
     if player.is_using_ranged() && player.gear.weapon.name.contains("Tonalztics") {
         let three_fourths = max_hit * 3 / 4;
         let first_hit = HitDistribution::linear(acc, 0, three_fourths);
@@ -267,6 +282,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         }
     }
 
+    // Keris distribution against kalphites
     if player.is_using_melee() && player.is_wearing_keris() && monster.is_kalphite() {
         let hits1 = standard_hit_dist
             .clone()
@@ -281,6 +297,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
+    // Guardians (CoX) distribution
     if player.is_using_melee()
         && monster.info.name.contains("Guardian (Chambers")
         && player.gear.weapon.name.contains("pickaxe")
@@ -300,17 +317,23 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         );
     }
 
+    // Fire spell against ice demon distribution
     if monster.info.name.contains("Ice demon") && player.is_using_fire_spell()
         || player.attrs.spell == Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
     {
         dist = dist.scale_damage(3, 2);
     }
 
+    // Mark of darkness + demonbane distribution
     if player.boosts.mark_of_darkness && player.is_using_demonbane_spell() && monster.is_demon() {
         dist = dist.scale_damage(5, 4);
     }
 
-    if player.combat_type() == CombatType::Magic && player.set_effects.full_ahrims {
+    // Full Ahrim's + amulet of the damned distribution
+    if player.combat_type() == CombatType::Magic
+        && player.set_effects.full_ahrims
+        && player.is_wearing_any_version("Amulet of the damned")
+    {
         dist = dist.transform(
             &|h| {
                 HitDistribution::new(vec![
@@ -322,6 +345,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         );
     }
 
+    // Enchanted bolt distributions
     if player.is_using_ranged() && player.is_using_crossbow() {
         let zcb = player.is_wearing("Zaryte crossbow", None);
         let ranged_lvl = player.live_stats.ranged;
@@ -331,6 +355,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             1.0
         };
 
+        // Opal bolts
         if player.is_wearing_any(vec![
             ("Opal bolts (e)", None),
             ("Opal dragon bolts (e)", None),
@@ -348,6 +373,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
+        // Pearl bolts
         if player.is_wearing_any(vec![
             ("Pearl bolts (e)", None),
             ("Pearl dragon bolts (e)", None),
@@ -366,6 +392,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
+        // Diamond bolts
         if player.is_wearing_any(vec![
             ("Diamond bolts (e)", None),
             ("Diamond dragon bolts (e)", None),
@@ -384,6 +411,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
+        // Dragonstone bolts
         if player.is_wearing_any(vec![
             ("Dragonstone bolts (e)", None),
             ("Dragonstone dragon bolts (e)", None),
@@ -403,6 +431,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             dist = dist_from_multiple_hits(vec![hits1, hits2]);
         }
 
+        // Onyx bolts
         if player.is_wearing_any(vec![
             ("Onyx bolts (e)", None),
             ("Onyx dragon bolts (e)", None),
@@ -424,44 +453,51 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
 
             dist = dist_from_multiple_hits(vec![hits1, hits2, hits3]);
         }
-
-        if monster.info.name.as_str() == "Corporeal Beast" && !player.is_using_corpbane_weapon() {
-            dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
-        }
-
-        if player.is_using_ranged()
-            && player.is_using_crossbow()
-            && player.is_wearing_any(vec![
-                ("Ruby bolts (e)", None),
-                ("Ruby dragon bolts (e)", None),
-            ])
-        {
-            let chance = RUBY_PROC_CHANCE * kandarin;
-            let effect_dmg = if zcb {
-                min(110, monster.live_stats.hitpoints * 22 / 100)
-            } else {
-                min(100, monster.live_stats.hitpoints / 5)
-            };
-            let hits1 = dist.clone().dists[0].scale_probability(1.0 - chance).hits;
-            let hits2 = vec![WeightedHit::new(
-                chance * acc,
-                vec![Hitsplat::new(effect_dmg, true)],
-            )];
-            let hits3 = vec![WeightedHit::new(
-                chance * (1.0 - acc),
-                vec![Hitsplat::new(effect_dmg, false)],
-            )];
-
-            dist = dist_from_multiple_hits(vec![hits1, hits2, hits3]);
-        }
     }
 
-    dist = dist.transform(
-        &|h| HitDistribution::single(1.0, max(h.damage, 1)),
-        &TransformOpts {
-            transform_inaccurate: false,
-        },
-    );
+    // Apply corp transform before ruby bolt procs
+    if monster.info.name.as_str() == "Corporeal Beast" && !player.is_using_corpbane_weapon() {
+        dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
+    }
+
+    if player.is_using_ranged()
+        && player.is_using_crossbow()
+        && player.is_wearing_any(vec![
+            ("Ruby bolts (e)", None),
+            ("Ruby dragon bolts (e)", None),
+        ])
+    {
+        let zcb = player.is_wearing("Zaryte crossbow", None);
+        let kandarin = if player.boosts.kandarin_diary {
+            1.1
+        } else {
+            1.0
+        };
+
+        let chance = RUBY_PROC_CHANCE * kandarin;
+        let effect_dmg = if zcb {
+            min(110, monster.live_stats.hitpoints * 22 / 100)
+        } else {
+            min(100, monster.live_stats.hitpoints / 5)
+        };
+        let hits1 = dist.clone().dists[0].scale_probability(1.0 - chance).hits;
+        let hits2 = vec![WeightedHit::new(
+            chance,
+            vec![Hitsplat::new(effect_dmg, true)],
+        )];
+
+        dist = dist_from_multiple_hits(vec![hits1, hits2]);
+    }
+
+    // TODO: Check if this is actually correct or if you can hit 1s against corp with non-corpbane
+    if monster.info.name.as_str() != "Corporeal Beast" || player.is_using_corpbane_weapon() {
+        dist = dist.transform(
+            &|h| HitDistribution::single(1.0, max(h.damage, 1)),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
+    }
 
     apply_limiters(dist, player, monster)
 }

@@ -41,4 +41,6 @@ Limiter tests:
 - Crumble Undead against zogres
 - Comp ogre bow + rune brutal arrows against zogres
 - Max melee against zogres
-
+- ACB and ZCB + rubies against Corp
+- Corpbane weapons against Corp
+- Non-corpbane weapons against Corp

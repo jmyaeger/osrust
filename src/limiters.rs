@@ -88,3 +88,11 @@ impl Limiter for ZogreCrumbleUndead {
         damage / 2
     }
 }
+
+pub struct CorporealBeast {}
+
+impl Limiter for CorporealBeast {
+    fn apply(&self, damage: u32, _: &mut ThreadRng) -> u32 {
+        damage / 2
+    }
+}

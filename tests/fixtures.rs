@@ -239,6 +239,11 @@ pub fn zogre() -> Monster {
 }
 
 #[fixture]
+pub fn corp() -> Monster {
+    Monster::new("Corporeal Beast", None).unwrap()
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();

@@ -358,3 +358,17 @@ fn test_ruby_bolts_zcb_zebak_500(max_ranged_zcb_ruby_player: Player, zebak: Mons
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
     assert!(num::abs(calc_ttk - ttk) < 0.2);
 }
+
+#[rstest]
+#[case(max_ranged_zcb_ruby_player())]
+#[case(max_melee_fang_player())]
+#[case(max_melee_player())]
+fn test_corp_limiters(#[case] mut player: Player, corp: Monster) {
+    let mut monster = corp;
+    calc_active_player_rolls(&mut player, &monster);
+    let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
+
+    let dist = dps_calc::get_distribution(&player, &monster);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    assert!(num::abs(calc_ttk - ttk) < 0.5);
+}
