@@ -1,3 +1,4 @@
+// All types of potions or combat level boosting items
 #[derive(Debug, Default, PartialEq, Copy, Clone)]
 pub enum Potion {
     #[default]
@@ -27,6 +28,7 @@ pub enum Potion {
     SaturatedHeart,
 }
 
+// Contains the type of potion, the boost calc formula, and the calced boost
 #[derive(Debug, Default, PartialEq)]
 pub struct PotionBoost {
     pub potion_type: Potion,
@@ -42,7 +44,7 @@ impl PotionBoost {
                 potion_type: *potion,
                 factor: 10,
                 constant: 3,
-                boost: 0,
+                boost: 0, // All boosts initialized to 0, calculated based on player stats
             },
             Potion::Ranging => PotionBoost {
                 potion_type: *potion,
@@ -148,6 +150,7 @@ impl PotionBoost {
     }
 
     pub fn calc_boost(&mut self, level: u32) {
+        // Calculate the level boost based on the player's base level
         self.boost = self.factor * level / 100 + self.constant;
     }
 
@@ -158,6 +161,7 @@ impl PotionBoost {
         ranged_level: u32,
         magic_level: u32,
     ) {
+        // DBA boost gets its own function
         let stats = [att_level, def_level, ranged_level, magic_level];
         let sum: u32 = stats.iter().map(|&n| n / 10).sum();
         self.boost = 10 + (sum / 4);

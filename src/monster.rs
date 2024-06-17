@@ -17,6 +17,7 @@ lazy_static! {
         fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
 }
 
+// Enum for monster attributes
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub enum Attribute {
     Demon,
@@ -31,10 +32,11 @@ pub enum Attribute {
     Shade,
     Spectral,
     Undead,
-    Vampyre(u8),
+    Vampyre(u8), // Value is the vampyre tier (1, 2, 3)
     Xerician,
 }
 
+// Base stats of a monster
 #[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Deserialize)]
 pub struct MonsterStats {
     pub hitpoints: u32,
@@ -58,6 +60,7 @@ impl Default for MonsterStats {
     }
 }
 
+// Offensive bonus for a each primary combat style
 #[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
 pub struct AttackBonus {
     pub melee: i32,
@@ -65,6 +68,7 @@ pub struct AttackBonus {
     pub magic: i32,
 }
 
+// Defensive bonuses for all combat styles
 #[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
 pub struct MonsterDefBonuses {
     pub stab: i32,
@@ -76,19 +80,22 @@ pub struct MonsterDefBonuses {
     pub magic: i32,
 }
 
-type MonsterStrengthBonus = AttackBonus;
+type MonsterStrengthBonus = AttackBonus; // Uses the same fields as AttackBonus
 
+// All offensive and defensive bonuses for a monster
 #[derive(Debug, PartialEq, Default, Clone, Deserialize)]
 pub struct MonsterBonuses {
     pub attack: AttackBonus,
     pub strength: MonsterStrengthBonus,
     pub defence: MonsterDefBonuses,
     #[serde(default)]
-    pub flat_armour: u32,
+    pub flat_armour: u32, // Defaults to 0 during deserialization
 }
 
+// Damage sources from which the monster is immune
 #[derive(Debug, Eq, PartialEq, Hash, Default, Clone, Deserialize)]
 pub struct Immunities {
+    // Only poison and venom are in the database right now
     pub poison: bool,
     pub venom: bool,
     #[serde(default)]
@@ -104,12 +111,14 @@ pub struct Immunities {
     pub magic: bool,
 }
 
+// Maximum hit value for a given style
 #[derive(Debug, Eq, PartialEq, Hash, Default, Clone)]
 pub struct MonsterMaxHit {
     pub value: u32,
-    pub style: String,
+    pub style: String, // Will probably make this an enum later
 }
 
+// Contains a variety of information about a monster - may separate into multiple structs later
 #[derive(Debug, PartialEq, Default, Clone, Deserialize)]
 pub struct MonsterInfo {
     pub id: Option<i32>,
@@ -127,7 +136,7 @@ pub struct MonsterInfo {
     pub weakness: Option<ElementalWeakness>,
     pub attack_speed: u32,
     #[serde(default)]
-    pub poison_severity: u32,
+    pub poison_severity: u32, // Will likely rework this to use CombatEffects
     #[serde(default)]
     pub freeze_duration: u32,
     #[serde(default)]
@@ -140,6 +149,7 @@ fn deserialize_attributes<'de, D>(deserializer: D) -> Result<Option<Vec<Attribut
 where
     D: serde::Deserializer<'de>,
 {
+    // Translate attributes from strings into equivalent enums
     let attributes: Option<Vec<String>> = Option::deserialize(deserializer)?;
     let parsed_attributes = attributes.map(|attrs| {
         attrs
@@ -172,6 +182,7 @@ fn deserialize_max_hits<'de, D>(deserializer: D) -> Result<Option<Vec<MonsterMax
 where
     D: serde::Deserializer<'de>,
 {
+    // Parse max hit strings into values and styles
     let max_hits: Option<Vec<String>> = Option::deserialize(deserializer)?;
     let parsed_max_hits = max_hits.map(|hits| {
         hits.into_iter()
@@ -186,6 +197,7 @@ where
     Ok(parsed_max_hits)
 }
 
+// Overall monster struct
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Monster {
     pub info: MonsterInfo,
@@ -199,11 +211,12 @@ pub struct Monster {
     #[serde(skip)]
     pub base_def_rolls: HashMap<CombatType, i32>,
     #[serde(skip)]
-    pub active_effects: Vec<CombatEffect>,
+    pub active_effects: Vec<CombatEffect>, // Will move poison/venom here
 }
 
 impl Default for Monster {
     fn default() -> Self {
+        // Default to zero for all combat rolls
         let mut def_rolls = HashMap::new();
         def_rolls.insert(CombatType::Stab, 0);
         def_rolls.insert(CombatType::Slash, 0);
@@ -228,8 +241,10 @@ impl Default for Monster {
 
 impl Monster {
     pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
-        let conn = rusqlite::Connection::open(MONSTER_DB.as_path())?;
+        // Create a monster by name and version (optional) via a SQL query and deserialization
 
+        // Get the monster's data in JSON form from the SQLite database
+        let conn = rusqlite::Connection::open(MONSTER_DB.as_path())?;
         let row: String = if version.is_some() {
             conn.query_row(
                 "SELECT data FROM monsters WHERE name = ?1 AND version = ?2",
@@ -244,12 +259,17 @@ impl Monster {
             )?
         };
 
+        // Deserialize the JSON data into a Monster struct
         let mut monster: Monster = serde_json::from_str(row.as_str())?;
 
+        // Initialize the live stats to the base stats
         monster.live_stats = monster.stats;
+
+        // Calculate base defence rolls and copy to live defence rolls
         monster.base_def_rolls = rolls::monster_def_rolls(&monster);
         monster.def_rolls.clone_from(&monster.base_def_rolls);
 
+        // Set the flat armour bonus if applicable
         monster.bonuses.flat_armour = monster.info.id.map_or(0, |id| {
             FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1 as u32
         });
@@ -258,35 +278,47 @@ impl Monster {
     }
 
     pub fn scale_toa(&mut self) {
+        // Scale the HP and defence rolls based on the toa_level field of the monster
         if TOA_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             self.scale_toa_hp();
             self.scale_toa_defence();
         }
     }
     fn scale_toa_hp(&mut self) {
+        // Scale the HP based on the toa_level field of the monster
         let level_factor = if self.info.name.as_str() == "Core (Wardens)" {
-            1
+            1 // Core's HP scaling is 75% lower than other monsters in ToA
         } else {
             4
         };
+
+        // Every 5 levels increases the HP by 2% (0.4% per level), or 0.5% (0.1%) for Core
         let toa_level_bonus = 100 + (self.info.toa_level * level_factor / 10);
+
+        // First path level increases the HP by 8%, then 5% per path level
         let toa_path_level_bonus = if self.info.toa_path_level == 0 {
             100
         } else {
             108 + (self.info.toa_path_level - 1) * 5
         };
+
+        // Apply level scaling
         let level_scaled_hp = self.stats.hitpoints * toa_level_bonus / 100;
 
+        // If the NPC is affected by path scaling, apply it
         self.stats.hitpoints = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
             round_toa_hp(path_scaled_hp)
         } else {
             round_toa_hp(level_scaled_hp)
         };
+
+        // Set the live HP to the scaled base HP
         self.live_stats.hitpoints = self.stats.hitpoints;
     }
 
     fn scale_toa_defence(&mut self) {
+        // Every 5 levels increases the defence rolls by 2% (0.4% per level)
         let toa_level_bonus = 1000 + self.info.toa_level * 4;
         for defence_type in [
             CombatType::Stab,
@@ -305,21 +337,25 @@ impl Monster {
     }
 
     pub fn tbow_bonuses(&self) -> (i32, i32) {
+        // Calculate twisted bow attack and damage multipliers
         let magic_limit = if self
             .info
             .attributes
             .as_ref()
             .map_or(false, |attrs| attrs.contains(&Attribute::Xerician))
         {
-            350
+            350 // Inside CoX
         } else {
-            250
+            250 // Outside CoX
         };
+
+        // Take the higher of the magic level and magic attack bonus, capped at the limit
         let highest_magic = min(
             magic_limit,
             max(self.stats.magic as i32, self.bonuses.attack.magic),
         );
-        let tbow_m = highest_magic * 3 / 10;
+
+        let tbow_m = highest_magic * 3 / 10; // Intermediate value
         let acc_bonus = min(
             TBOW_ACC_CAP,
             TBOW_ACC_CAP + (tbow_m * 10 - 10) / 100 - (tbow_m - 100).pow(2) / 100,
@@ -457,6 +493,7 @@ impl Monster {
     }
 
     pub fn reset(&mut self) {
+        // Reset live stats, status effects, and defence rolls
         self.live_stats = self.stats;
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
@@ -464,6 +501,7 @@ impl Monster {
     }
 
     pub fn is_immune(&self, player: &Player) -> bool {
+        // Determine if the monster is immune to the player's current attacks
         let combat_type = &player.combat_type();
 
         if combat_type == &CombatType::Magic
@@ -500,6 +538,7 @@ impl Monster {
             return true;
         }
 
+        // Fareed can only take damage from water spells or any ranged weapon that fires arrows
         if self.info.name.contains("Fareed")
             && (!player.is_using_water_spell()
                 || (player.is_using_ranged()
@@ -513,6 +552,7 @@ impl Monster {
         }
 
         if !self.info.name.contains("Verzik") && player.is_wearing("Dawnbringer", None) {
+            // Dawnbringer is only usable inside the Verzik room (should check if usable on crabs)
             return true;
         }
 
@@ -527,6 +567,7 @@ impl Monster {
     }
 
     pub fn add_burn_stack(&mut self) {
+        // Add one burn effect stack, up to a maximum of 5 concurrent stacks
         match self
             .active_effects
             .iter_mut()
@@ -534,7 +575,7 @@ impl Monster {
         {
             Some(CombatEffect::Burn { stacks, .. }) => {
                 if stacks.len() < 5 {
-                    stacks.push(10);
+                    stacks.push(10); // 10 hits per stack
                 }
             }
             _ => self.active_effects.push(CombatEffect::Burn {
@@ -547,10 +588,13 @@ impl Monster {
 
 fn round_toa_hp(hp: u32) -> u32 {
     if hp < 100 {
+        // Unrounded if scaled HP is below 100 HP
         hp
     } else if hp < 300 {
+        // Scaled hp between 100 and 300 HP is rounded to nearest multiple of 5
         (hp + 2) / 5 * 5
     } else {
+        // Scaled hp above 300 HP is rounded to nearest multiple of 10
         (hp + 5) / 10 * 10
     }
 }

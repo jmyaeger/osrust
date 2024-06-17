@@ -1,4 +1,4 @@
-// Port of the OSRS Wiki DPS calc - credit to the wiki team
+// Adapted from the wiki DPS calc - credit to the wiki team
 
 use crate::constants::*;
 use crate::equipment::{CombatStance, CombatType};
@@ -307,11 +307,11 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
             .unwrap_or_else(|| panic!("No pickaxe bonus for {}", player.gear.weapon.name))
             .1;
 
-        let factor = 50 + player.stats.mining + pick_bonus;
-        let divisor = 150;
+        let numerator = 50 + player.stats.mining + pick_bonus;
+        let denominator = 150;
 
         dist = dist.transform(
-            &multiply_transformer(factor, divisor, 0),
+            &multiply_transformer(Fraction::new(numerator as i32, denominator), 0),
             &TransformOpts::default(),
         );
     }

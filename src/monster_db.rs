@@ -1,3 +1,5 @@
+// Adapted from the wiki DPS calc - credit to the wiki team
+
 use reqwest;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};

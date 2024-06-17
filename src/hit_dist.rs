@@ -1,4 +1,4 @@
-// Port of OSRS Wiki DPS calc's hit distribution code - credit to the wiki team
+// Adapted from the wiki DPS calc - credit to the wiki team
 
 use std::cmp::min;
 use std::collections::HashMap;
@@ -269,15 +269,19 @@ impl HitDistribution {
     }
 
     pub fn get_max(&self) -> u32 {
+        // Get the max hit in the distribution, combining multi-hits
         self.hits.iter().map(|h| h.get_sum()).max().unwrap_or(0)
     }
 
     pub fn linear(accuracy: f64, min: u32, max: u32) -> HitDistribution {
+        // Create a linear hit distribution between two bounds with equal probabilities for all hits
         let mut d = HitDistribution::default();
         let hit_prob = accuracy / (max - min + 1) as f64;
         for i in min..=max {
             d.add_hit(WeightedHit::new(hit_prob, vec![Hitsplat::new(i, true)]));
         }
+
+        // Add an inaccurate hit if the accuracy is not 1.0
         d.add_hit(WeightedHit::new(
             1.0 - accuracy,
             vec![Hitsplat::inaccurate()],
@@ -286,10 +290,13 @@ impl HitDistribution {
     }
 
     pub fn single(accuracy: f64, hit: u32) -> HitDistribution {
+        // Create a distribution with one possible hit
         let mut d = HitDistribution::new(vec![WeightedHit::new(
             accuracy,
             vec![Hitsplat::new(hit, true)],
         )]);
+
+        // Add an inaccurate hit if the accuracy is not 1.0
         if accuracy != 1.0 {
             d.add_hit(WeightedHit::new(
                 1.0 - accuracy,
@@ -300,10 +307,11 @@ impl HitDistribution {
     }
 }
 
+// Distibution for a single attack, allowing for multiple hits with their own hit distributions
 #[derive(Debug, Clone)]
 pub struct AttackDistribution {
     pub dists: Vec<HitDistribution>,
-    single_hitsplat: Option<HitDistribution>,
+    single_hitsplat: Option<HitDistribution>, // property accessed through getter method
 }
 
 impl AttackDistribution {
@@ -316,10 +324,13 @@ impl AttackDistribution {
 
     pub fn add_dist(&mut self, d: HitDistribution) {
         self.dists.push(d);
+
+        // Reset single hitsplat so it gets recalculated when needed
         self.single_hitsplat = None;
     }
 
     pub fn get_single_hitsplat(&mut self) -> &HitDistribution {
+        // Zips together all hit distributions and returns one hit distribution with cumulative hitsplats
         if self.single_hitsplat.is_none() {
             let mut dist = self.dists[0].clone();
             for d in &self.dists[1..] {
@@ -334,16 +345,19 @@ impl AttackDistribution {
     where
         F: HitTransformer,
     {
+        // Apply a transform to all hit distributions
         let dists = self.dists.iter().map(|d| d.transform(&t, opts)).collect();
         AttackDistribution::new(dists)
     }
 
     pub fn flatten(&self) -> AttackDistribution {
+        // Flatten all hit distributions
         let dists = self.dists.iter().map(|d| d.flatten()).collect();
         AttackDistribution::new(dists)
     }
 
     pub fn scale_probability(&self, factor: f64) -> AttackDistribution {
+        // Scale probabilities of all hit distributions by a factor
         let dists = self
             .dists
             .iter()
@@ -353,6 +367,7 @@ impl AttackDistribution {
     }
 
     pub fn scale_damage(&self, factor: Fraction) -> AttackDistribution {
+        // Scale damage of all hit distributions by a fractional factor
         let dists = self.dists.iter().map(|d| d.scale_damage(factor)).collect();
         AttackDistribution::new(dists)
     }
@@ -366,6 +381,7 @@ impl AttackDistribution {
     }
 
     pub fn as_histogram(&mut self, hide_misses: bool) -> Vec<ChartEntry> {
+        // Not really used now, but may be useful when a GUI is added
         let dist = self.get_single_hitsplat();
 
         let mut hit_map = HashMap::new();
@@ -392,6 +408,7 @@ impl AttackDistribution {
 }
 
 pub fn flat_limit_transformer(maximum: u32) -> impl HitTransformer {
+    // Hard cap the damage to a maximum value
     move |h| {
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
@@ -401,6 +418,7 @@ pub fn flat_limit_transformer(maximum: u32) -> impl HitTransformer {
 }
 
 pub fn linear_min_transformer(maximum: u32, offset: u32) -> impl HitTransformer {
+    // Roll damage within a range and take the minimum of that damage and the original damage roll
     move |h| {
         let mut d = HitDistribution::default();
         let prob = 1.0 / (maximum + 1) as f64;
@@ -415,6 +433,7 @@ pub fn linear_min_transformer(maximum: u32, offset: u32) -> impl HitTransformer 
 }
 
 pub fn capped_reroll_transformer(limit: u32, roll_max: u32, offset: u32) -> impl HitTransformer {
+    // Reroll damage within a specified range if it exceeds the limit value
     move |h| {
         if h.damage <= limit {
             return HitDistribution::new(vec![WeightedHit::new(1.0, vec![h])]);
@@ -436,12 +455,13 @@ pub fn capped_reroll_transformer(limit: u32, roll_max: u32, offset: u32) -> impl
     }
 }
 
-pub fn multiply_transformer(numerator: u32, divisor: u32, minimum: u32) -> impl HitTransformer {
+pub fn multiply_transformer(factor: Fraction, minimum: u32) -> impl HitTransformer {
     move |h| {
+        // Multiply each hit's damage by a fractional factor and clamp it to a minimum value
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
             vec![Hitsplat::new(
-                min(h.damage, (numerator * h.damage / divisor).max(minimum)),
+                min(h.damage, factor.multiply_to_int(h.damage)).max(minimum),
                 h.accurate,
             )],
         )])
@@ -449,10 +469,12 @@ pub fn multiply_transformer(numerator: u32, divisor: u32, minimum: u32) -> impl 
 }
 
 pub fn division_transformer(divisor: u32, minimum: u32) -> impl HitTransformer {
-    multiply_transformer(1, divisor, minimum)
+    // Divide each hit's damage by a divisor and clamp it to a minimum value
+    multiply_transformer(Fraction::new(1, divisor as i32), minimum)
 }
 
 pub fn flat_add_transformer(addend: i32, minimum: i32) -> impl HitTransformer {
+    // Add a value to each hit's damage and clamp it to a minimum value
     move |h| {
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
@@ -464,6 +486,8 @@ pub fn flat_add_transformer(addend: i32, minimum: i32) -> impl HitTransformer {
     }
 }
 
+// Struct for storing histogram data (to be used in the future)
+#[derive(Debug, PartialEq, Clone)]
 pub struct ChartEntry {
     pub name: String,
     pub value: f64,

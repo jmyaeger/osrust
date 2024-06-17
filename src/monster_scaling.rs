@@ -1,12 +1,16 @@
+// Adapted from the wiki DPS calc - credit to the wiki team
+
 use crate::monster::Monster;
 
 pub fn scale_monster_hp_only(monster: &mut Monster) {
+    // Currently only used for Vardorvis, but this allows for future expansion
     if monster.info.name.contains("Vardorvis") {
         apply_vard_scaling(monster);
     }
 }
 
 fn apply_vard_scaling(monster: &mut Monster) {
+    // Scale Vardorvis' strength and defence based on current hp
     let vard_ranges = VardNumbers::get(monster);
     let current_hp = monster.live_stats.hitpoints as i32;
     monster.live_stats.strength = lerp(
@@ -27,6 +31,7 @@ fn apply_vard_scaling(monster: &mut Monster) {
 
 struct VardNumbers {
     pub max_hp: i32,
+    // Strength and defence bounds for a given version of Vardorvis
     pub str: [i32; 2],
     pub def: [i32; 2],
 }
@@ -60,6 +65,7 @@ fn lerp(
     target_start: i32,
     target_end: i32,
 ) -> i32 {
+    // Linear interpolation function
     target_start
         + (current - source_start) * (target_end - target_start) / (source_end - source_start)
 }
