@@ -16,6 +16,7 @@ lazy_static! {
             .expect("Failed to get database path");
 }
 
+// Slots in which a player can equip gear
 #[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub enum GearSlot {
     #[default]
@@ -33,13 +34,14 @@ pub enum GearSlot {
     Cape,
 }
 
+// Combat types, e.g., stab, slash, crush, magic, etc.
 #[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize)]
 pub enum CombatType {
     None,
     Stab,
     Slash,
     #[default]
-    Crush,
+    Crush, // Default because unarmed (punch) uses crush
     Light,
     Standard,
     Heavy,
@@ -47,11 +49,12 @@ pub enum CombatType {
     Ranged,
 }
 
+// Combat stance (determines stance bonus)
 #[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, Deserialize)]
 pub enum CombatStance {
     None,
     #[default]
-    Accurate,
+    Accurate, // Default because punch uses accurate stance
     Aggressive,
     Defensive,
     Controlled,
@@ -65,6 +68,7 @@ pub enum CombatStance {
     ManualCast,
 }
 
+// Name of the combat style as seen in the weapon interface
 #[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub enum CombatStyle {
     Chop,
@@ -103,12 +107,14 @@ pub enum CombatStyle {
     Blaze,
 }
 
+// Contains the type and stance, to be associated with a CombatStyle
 #[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
 pub struct CombatOption {
     pub combat_type: CombatType,
     pub stance: CombatStance,
 }
 
+// Equipment stat bonuses for each combat style (generally used for accuracy/defense bonuses)
 #[derive(Debug, PartialEq, Eq, Hash, Default, Clone, Deserialize)]
 pub struct StyleBonus {
     pub stab: i32,
@@ -120,6 +126,7 @@ pub struct StyleBonus {
 
 impl StyleBonus {
     pub fn add_bonuses(&mut self, other: &StyleBonus) {
+        // Add another set of bonuses to the totals
         self.stab += other.stab;
         self.slash += other.slash;
         self.crush += other.crush;
@@ -128,6 +135,7 @@ impl StyleBonus {
     }
 }
 
+// Equipment strength bonuses for each primary style
 #[derive(Debug, PartialEq, Default, Deserialize)]
 pub struct StrengthBonus {
     pub melee: i32,
@@ -137,12 +145,14 @@ pub struct StrengthBonus {
 
 impl StrengthBonus {
     pub fn add_bonuses(&mut self, other: &StrengthBonus) {
+        // Add another set of bonuses to the totals
         self.melee += other.melee;
         self.ranged += other.ranged;
         self.magic += other.magic;
     }
 }
 
+// Collection of all equipment bonuses for an item
 #[derive(Debug, Default, PartialEq, Deserialize)]
 pub struct EquipmentBonuses {
     pub attack: StyleBonus,
@@ -153,6 +163,7 @@ pub struct EquipmentBonuses {
 
 impl EquipmentBonuses {
     pub fn add_bonuses(&mut self, other: &EquipmentBonuses) {
+        // Add another set of bonuses to the totals of each type of bonus
         self.attack.add_bonuses(&other.attack);
         self.defence.add_bonuses(&other.defence);
         self.strength.add_bonuses(&other.strength);
@@ -160,12 +171,14 @@ impl EquipmentBonuses {
     }
 }
 
+// Equipment trait to provide common method for Armor and Weapon structs
 pub trait Equipment {
     fn set_info(
         &mut self,
         item_name: &str,
         version: Option<&str>,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        // Retrieve item data from the SQLite database in a JSON format
         let conn = Connection::open(EQUIPMENT_DB.as_path())?;
         let json: String = if version.is_some() {
             conn.query_row(
@@ -181,12 +194,14 @@ pub trait Equipment {
             )?
         };
 
+        // Pass it to the set_fields_from_json method to set the item stats
         self.set_fields_from_json(&json)
     }
 
     fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>>;
 }
 
+// Any equippable item that is not a weapon
 #[derive(Debug, PartialEq, Default, Deserialize)]
 pub struct Armor {
     pub name: String,
@@ -198,6 +213,7 @@ pub struct Armor {
 
 impl Equipment for Armor {
     fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
+        // Can deserialize directly into an Armor struct from JSON data
         let armor = serde_json::from_str(json)?;
 
         *self = armor;
@@ -207,15 +223,18 @@ impl Equipment for Armor {
 
 impl Armor {
     pub fn new(name: &str, version: Option<&str>) -> Self {
+        // Create a new Armor struct from item name and version (optional)
         let mut armor = Armor::default();
         armor.set_info(name, version).unwrap();
         armor
     }
 
     pub fn is_valid_ranged_ammo(&self) -> bool {
+        // Check if an ammo slot item can be used as ranged ammo
         !self.name.contains("blessing")
             && !["Ghommal's lucky penny", "Mith grapple", "Hallowed grapple"]
                 .contains(&self.name.as_str())
+            && self.slot != GearSlot::Ammo
     }
 
     pub fn is_bolt_or_arrow(&self) -> bool {
@@ -239,6 +258,8 @@ fn parse_gear_slot<'de, D>(deserializer: D) -> Result<GearSlot, D::Error>
 where
     D: Deserializer<'de>,
 {
+    // Translate a gear slot string into an enum
+
     let s: String = String::deserialize(deserializer)?;
 
     let trimmed = s.replace('\"', "");
@@ -261,37 +282,41 @@ where
     }
 }
 
+// Needs to be a separate struct from Armor because of additional fields
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Weapon {
     pub name: String,
     pub version: Option<String>,
     pub bonuses: EquipmentBonuses,
     #[serde(skip)]
-    pub slot: GearSlot,
+    pub slot: GearSlot, // Can skip deserializing because it's always a weapon
     pub speed: i32,
     #[serde(skip)]
-    pub base_speed: i32,
+    pub base_speed: i32, // Will be set during new() method
     pub attack_range: i8,
     pub is_two_handed: bool,
     #[serde(default)]
-    pub spec_cost: u8,
+    pub spec_cost: u8, // Not implemented for anything yet
     #[serde(default)]
-    pub poison_severity: u8,
+    pub poison_severity: u8, // May be restructured to use Poison/Venom struct, or removed
     #[serde(rename(deserialize = "category"))]
     #[serde(deserialize_with = "deserialize_combat_styles")]
     pub combat_styles: HashMap<CombatStyle, CombatOption>,
     #[serde(default)]
-    pub is_staff: bool,
+    pub is_staff: bool, // Will be set in new() method
 }
 
 impl Equipment for Weapon {
     fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
+        // Deserialize the JSON data into a Weapon struct
         let mut weapon: Weapon = serde_json::from_str(json)?;
 
+        // Check if the item is a staff that can cast spells
         if weapon.combat_styles.contains_key(&CombatStyle::Spell) {
             weapon.is_staff = true;
         }
 
+        // Set base speed and item slot
         weapon.base_speed = weapon.speed;
         weapon.slot = GearSlot::Weapon;
 
@@ -303,6 +328,7 @@ impl Equipment for Weapon {
 
 impl Default for Weapon {
     fn default() -> Weapon {
+        // Default case is unarmed
         Weapon {
             name: String::new(),
             version: None,
@@ -338,6 +364,7 @@ impl Weapon {
     }
 
     pub fn uses_bolts_or_arrows(&self) -> bool {
+        // Check if the weapon fires bolts or arrows (used for determining quiver bonuses)
         !NON_BOLT_OR_ARROW_AMMO
             .iter()
             .any(|(name, _)| name == &self.name)
@@ -349,6 +376,7 @@ impl Weapon {
     }
 
     pub fn get_styles_from_weapon_type(weapon_type: &str) -> HashMap<CombatStyle, CombatOption> {
+        // Translate a weapon type string into a set of combat styles that it can use
         match weapon_type {
             "2h Sword" => HashMap::from([
                 (
@@ -1045,6 +1073,7 @@ impl Weapon {
 }
 
 pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Error>> {
+    // Get the name of the slot for an item (by name)
     let conn = Connection::open(EQUIPMENT_FLAT_DB.as_path())?;
     let slot: String = conn.query_row(
         "SELECT slot FROM equipment WHERE name = ?",

@@ -8,9 +8,7 @@ use url::Url;
 
 const FILE_NAME: &str = "src/databases/equipment.db";
 const FLAT_FILE_NAME: &str = "src/databases/equipment_flattened.db";
-// const WIKI_BASE: &str = "https://oldschool.runescape.wiki";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
-// const IMG_PATH: &str = "src/images/equipment/";
 
 const REQUIRED_PRINTOUTS: [&str; 20] = [
     "Crush attack bonus",
@@ -163,20 +161,6 @@ fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<serde_json::Va
         }
     })
 }
-
-// fn get_magic_damage_value(prop: &Option<serde_json::Value>) -> Option<i64> {
-//     prop.as_ref().and_then(|values| {
-//         if let Some(array) = values.as_array() {
-//             if array.is_empty() {
-//                 None
-//             } else {
-//                 array[0].as_f64().map(|v| (v * 10.0) as i64)
-//             }
-//         } else {
-//             values.as_f64().map(|v| (v * 10.0) as i64)
-//         }
-//     })
-// }
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {

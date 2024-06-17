@@ -1,13 +1,16 @@
 // Port of OSRS Wiki DPS calc's hit distribution code - credit to the wiki team
 
+use std::cmp::min;
 use std::collections::HashMap;
 
 pub trait HitTransformer: Fn(Hitsplat) -> HitDistribution {}
 
 impl<F> HitTransformer for F where F: Fn(Hitsplat) -> HitDistribution {}
 
+// Options for distribution transforms (only one option currently)
 #[derive(Debug, Clone)]
 pub struct TransformOpts {
+    // Determines whether to apply transform to inaccurate hits (0s/splashes)
     pub transform_inaccurate: bool,
 }
 
@@ -19,6 +22,7 @@ impl Default for TransformOpts {
     }
 }
 
+// Single hitsplat with damage dealt and whether it passed the accuracy check
 #[derive(Debug, Clone, Copy)]
 pub struct Hitsplat {
     pub damage: u32,
@@ -40,6 +44,7 @@ impl Hitsplat {
     }
 
     pub fn inaccurate() -> Self {
+        // Construct an inaccurate Hitsplat
         Self {
             damage: 0,
             accurate: false,
@@ -50,6 +55,9 @@ impl Hitsplat {
     where
         F: HitTransformer,
     {
+        // Apply a generic transform function to the hitsplat and return a HitDistribution
+
+        // Don't apply the transform if the hitsplat is inaccurate and the transform option is disabled
         if !self.accurate && !opts.transform_inaccurate {
             return HitDistribution::new(vec![WeightedHit::new(1.0, vec![*self])]);
         }
@@ -58,10 +66,11 @@ impl Hitsplat {
     }
 }
 
+// Allows for cases where there are multiple hits with different probabilities to occur on an attack
 #[derive(Debug, Clone)]
 pub struct WeightedHit {
-    pub probability: f64,
-    pub hitsplats: Vec<Hitsplat>,
+    pub probability: f64,         // The probability that this hit will occur
+    pub hitsplats: Vec<Hitsplat>, // Allows for multi-hitsplat attacks
 }
 
 impl Default for WeightedHit {
@@ -82,10 +91,12 @@ impl WeightedHit {
     }
 
     pub fn scale(&self, factor: f64) -> Self {
+        // Scale a hit's proability by a factor
         Self::new(self.probability * factor, self.hitsplats.clone())
     }
 
     pub fn zip(&self, other: &Self) -> Self {
+        // Zip two hits together into a single WeightedHit, combining the probabilities
         let mut hitsplats = self.hitsplats.clone();
         hitsplats.extend(other.hitsplats.iter().cloned());
 
@@ -93,6 +104,7 @@ impl WeightedHit {
     }
 
     pub fn shift(&self) -> (Self, Self) {
+        // Split a WeightedHit into a single hitsplat head and a tail containing all other hitsplats
         let head = Self::new(self.probability, vec![self.hitsplats[0]]);
         let tail = Self::new(1.0, self.hitsplats[1..].to_vec());
         (head, tail)
@@ -421,7 +433,7 @@ pub fn multiply_transformer(numerator: u32, divisor: u32, minimum: u32) -> impl 
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
             vec![Hitsplat::new(
-                (numerator * h.damage / divisor).max(minimum),
+                min(h.damage, (numerator * h.damage / divisor).max(minimum)),
                 h.accurate,
             )],
         )])
@@ -432,12 +444,12 @@ pub fn division_transformer(divisor: u32, minimum: u32) -> impl HitTransformer {
     multiply_transformer(1, divisor, minimum)
 }
 
-pub fn flat_add_transformer(addend: i32) -> impl HitTransformer {
+pub fn flat_add_transformer(addend: i32, minimum: i32) -> impl HitTransformer {
     move |h| {
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
             vec![Hitsplat::new(
-                (h.damage as i32 + addend).max(0) as u32,
+                (h.damage as i32 + addend).max(minimum) as u32,
                 h.accurate,
             )],
         )])

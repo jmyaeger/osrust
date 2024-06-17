@@ -460,6 +460,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
     }
 
+    // Ruby bolts
     if player.is_using_ranged()
         && player.is_using_crossbow()
         && player.is_wearing_any(vec![
@@ -489,7 +490,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
     }
 
-    // TODO: Check if this is actually correct or if you can hit 1s against corp with non-corpbane
+    // Accurate 0 -> 1 is either overwritten by ruby bolts or divided back down to 0
     if monster.info.name.as_str() != "Corporeal Beast" || player.is_using_corpbane_weapon() {
         dist = dist.transform(
             &|h| HitDistribution::single(1.0, max(h.damage, 1)),
@@ -516,6 +517,7 @@ fn apply_limiters(
 
     let mut dist = dist;
 
+    // Any hit over 50 is rerolled between 45 and 50 at Zulrah
     if monster.info.name.contains("Zulrah") {
         dist = dist.transform(
             &capped_reroll_transformer(50, 5, 45),
@@ -523,10 +525,12 @@ fn apply_limiters(
         );
     }
 
+    // Seren rolls a number between 22-24 and takes the lower of that and the original damage roll
     if monster.info.name.contains("Fragment of Seren") {
         dist = dist.transform(&linear_min_transformer(2, 22), &TransformOpts::default());
     }
 
+    // Kraken divides all ranged damage by 7
     if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
         dist = dist.transform(
             &division_transformer(7, 1),
@@ -536,6 +540,7 @@ fn apply_limiters(
         );
     }
 
+    // Verzik rolls a number between 0-10 (melee) or 0-3 (other styles) and takes the lower of that and the original damage roll
     if monster.info.name.contains("Verzik")
         && monster.matches_version("Phase 1")
         && !player.is_wearing("Dawnbringer", None)
@@ -544,6 +549,7 @@ fn apply_limiters(
         dist = dist.transform(&linear_min_transformer(limit, 0), &TransformOpts::default());
     }
 
+    // Tekton divides all magic damage by 5, with a minimum accurate hit of 1
     if monster.info.name.contains("Tekton") && player.combat_type() == CombatType::Magic {
         dist = dist.transform(
             &division_transformer(5, 1),
@@ -553,10 +559,12 @@ fn apply_limiters(
         );
     }
 
+    // Vasa crystal takes 1/3 magic damage
     if monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
+    // Olm melee hand or head takes 1/3 magic damage
     if (monster.matches_version("Left claw")
         || (monster.info.name.contains("Great Olm") && monster.matches_version("Head")))
         && player.combat_type() == CombatType::Magic
@@ -564,6 +572,7 @@ fn apply_limiters(
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
+    // Olm melee hand or mage hand takes 1/3 ranged damage
     if (monster.matches_version("Right claw") || monster.matches_version("Left claw"))
         && player.is_using_ranged()
     {
@@ -572,17 +581,17 @@ fn apply_limiters(
 
     // TODO: Implement updated Efaritay's aid here once wiki calc does
 
-    if monster.info.name.contains("Ice demon")
-        && !player.is_using_fire_spell()
-        && player.attrs.spell != Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
-    {
+    // Ice demon takes 1/3 unless using a fire spell
+    if monster.info.name.contains("Ice demon") && !player.is_using_fire_spell() {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
+    // Slagilith takes 1/3 unless using a pickaxe
     if monster.info.name.contains("Slagilith") && !player.gear.weapon.name.contains("pickaxe") {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
+    // Zogres take 1/2 damage from Crumble Undead and 1/4 damage from anything other than ranged with brutal arrows
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
@@ -598,12 +607,13 @@ fn apply_limiters(
         }
     }
 
+    // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
     let flat_armour = monster.info.id.map_or(0, |id| {
         FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1
     });
     if flat_armour > 0 {
         dist = dist.transform(
-            &flat_add_transformer(-flat_armour),
+            &flat_add_transformer(-flat_armour, 1),
             &TransformOpts {
                 transform_inaccurate: false,
             },
@@ -613,14 +623,17 @@ fn apply_limiters(
     dist
 }
 
+// Get the average damage per tick
 fn get_dpt(dist: AttackDistribution, player: &Player) -> f64 {
     dist.get_expected_damage() / player.gear.weapon.speed as f64
 }
 
+// Get the average damage per second
 pub fn get_dps(dist: AttackDistribution, player: &Player) -> f64 {
     get_dpt(dist, player) / SECONDS_PER_TICK
 }
 
+// Get the expected number of hits per kill
 fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
     let mut dist = dist;
     let hist = dist.as_histogram(false);
@@ -645,9 +658,13 @@ fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
     htk[start_hp]
 }
 
+// Get the expected time to kill
 pub fn get_ttk(dist: AttackDistribution, player: &Player, monster: &Monster) -> f64 {
     if dist_is_current_hp_dependent(player, monster) {
+        // More expensive than get_htk, so only use this if the hit dist changes during the fight
         let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster);
+
+        // Find the expected value of the ttk distribution
         ttk_dist
             .iter()
             .map(|(ticks, prob)| *prob * *ticks as f64)
@@ -658,6 +675,7 @@ pub fn get_ttk(dist: AttackDistribution, player: &Player, monster: &Monster) -> 
     }
 }
 
+// Get the full ttk distribution
 pub fn get_ttk_distribution(
     dist: &mut AttackDistribution,
     player: &Player,
@@ -665,20 +683,25 @@ pub fn get_ttk_distribution(
 ) -> HashMap<usize, f64> {
     let speed = player.gear.weapon.speed as usize;
     let max_hp = monster.stats.hitpoints as usize;
-    let mut dist_temp = dist.clone();
-    let dist_single = dist_temp.get_single_hitsplat();
+    let mut dist_copy = dist.clone();
+    let dist_single = dist_copy.get_single_hitsplat();
 
+    // Return empty distribution if the expected damage is 0
     if dist_single.expected_hit() == 0.0 {
         return HashMap::new();
     }
 
+    // Probability distribution of hp values at current iteration
     let mut hps = vec![0.0; max_hp + 1];
     hps[max_hp] = 1.0;
 
+    // Output map of ttk values and their probabilities
     let mut ttks: HashMap<usize, f64> = HashMap::new();
 
+    // Sum of non-zero hp probabilities
     let mut epsilon = 1.0;
 
+    // If the dist is based on current hp, recalculate it at each hp and cache results
     let recalc_dist_on_hp = dist_is_current_hp_dependent(player, monster);
     let mut hp_hit_dists = HashMap::new();
     hp_hit_dists.insert(max_hp, dist_single.clone());
@@ -688,45 +711,60 @@ pub fn get_ttk_distribution(
         }
     }
 
+    // Loop until the number of non-zero hp probabilities is less than TTK_DIST_EPSILON
+    // or the number of iterations exceeds TTK_DIST_MAX_ITER_ROUNDS
     for hit in 0..=TTK_DIST_MAX_ITER_ROUNDS {
         if epsilon < TTK_DIST_EPSILON {
             break;
         }
+
+        // Initialize the updated hp probability distribution
         let mut next_hps = vec![0.0; max_hp + 1];
+
+        // For each possible hp value
         for (hp, hp_prob) in hps.iter().enumerate() {
+            // Get the current hit distribution (the original or cached one based on current hp)
             let current_dist = if recalc_dist_on_hp {
                 hp_hit_dists.get(&hp).unwrap()
             } else {
                 dist_single
             };
 
+            // For each possible damage amount
             for h in &current_dist.hits {
                 let dmg_prob = h.probability;
-                let dmg = h.hitsplats[0].damage as usize;
+                let dmg = h.hitsplats[0].damage as usize; // Single hitsplat, so guaranteed to be length 1
 
+                // Chance of this path being reached is the previous chance of landing here * the chance of hitting this amount
                 let chance_of_action = dmg_prob * hp_prob;
-
                 if chance_of_action == 0.0 {
                     continue;
                 }
 
                 let new_hp = hp as i32 - dmg as i32;
+
+                // If the hp we are about to arrive at is <= 0, the NPC is killed, the iteration count is the number of hits done,
+                // and we add this probability path into the delta
                 if new_hp <= 0 {
                     let tick = (hit + 1) * speed;
                     ttks.insert(tick, ttks.get(&tick).unwrap_or(&0.0) + chance_of_action);
                     epsilon -= chance_of_action;
                 } else {
+                    // Otherwise, we add the chance of this path to the next iteration's hp value
                     next_hps[new_hp as usize] += chance_of_action;
                 }
             }
         }
 
+        // Update counters and repeat
         hps = next_hps;
     }
 
     ttks
 }
+
 fn dist_from_multiple_hits(hits_vec: Vec<Vec<WeightedHit>>) -> AttackDistribution {
+    // Create an AttackDistribution from multiple WeightedHits
     let mut combined_hits = Vec::new();
     for hits in hits_vec {
         combined_hits.extend(hits);
@@ -735,6 +773,7 @@ fn dist_from_multiple_hits(hits_vec: Vec<Vec<WeightedHit>>) -> AttackDistributio
 }
 
 fn dist_is_current_hp_dependent(player: &Player, monster: &Monster) -> bool {
+    // Check if the hit distribution depends on the monster's current hp (currently just rubies and Vardorvis)
     if monster.info.name.contains("Vardorvis") {
         return true;
     }
@@ -758,33 +797,33 @@ fn dist_at_hp<'a>(
     monster: &'a Monster,
     hp_hit_dists: &'a mut HashMap<usize, HitDistribution>,
 ) {
+    // Calculate the hit distribution at a specific hp
+
+    // Return the original distribution if applicable to save some computation
+    // (rubies above 500 hp, hp = max hp, or no hp scaling at all)
     let no_scaling = dist.get_single_hitsplat();
-    if !dist_is_current_hp_dependent(player, monster) || hp == monster.live_stats.hitpoints as usize
+    if !dist_is_current_hp_dependent(player, monster)
+        || hp == monster.live_stats.hitpoints as usize
+        || (player.is_using_ranged()
+            && player.is_using_crossbow()
+            && player.is_wearing_any(vec![
+                ("Ruby bolts (e)", None),
+                ("Ruby dragon bolts (e)", None),
+            ])
+            && monster.live_stats.hitpoints >= 500
+            && hp >= 500)
     {
         hp_hit_dists.insert(hp, no_scaling.clone());
         return;
     }
 
-    if player.is_using_ranged()
-        && player.is_using_crossbow()
-        && player.is_wearing_any(vec![
-            ("Ruby bolts (e)", None),
-            ("Ruby dragon bolts (e)", None),
-        ])
-        && monster.live_stats.hitpoints >= 500
-        && hp >= 500
-    {
-        hp_hit_dists.insert(hp, no_scaling.clone());
-        return;
-    }
-
+    // Scale monster's stats based on current hp (only applies to Vardorvis currently)
     let mut monster_copy = monster.clone();
     monster_copy.live_stats.hitpoints = hp as u32;
-
     monster_scaling::scale_monster_hp_only(&mut monster_copy);
 
+    // Return the new hp-scaled distribution
     let mut new_dist = get_distribution(player, &monster_copy);
-
     hp_hit_dists.insert(hp, new_dist.get_single_hitsplat().clone());
 }
 

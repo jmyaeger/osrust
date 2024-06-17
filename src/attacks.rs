@@ -42,7 +42,7 @@ pub fn standard_attack(
     let (mut damage, success) = base_attack(max_att_roll, max_def_roll, min_hit, max_hit, rng);
 
     if success {
-        // Transform any accurate zeros into 1s, then apply post-roll transforms (TODO: verify this order)
+        // Transform any accurate zeros into 1s, then apply post-roll transforms
         damage = max(damage, 1);
         damage = apply_flat_armour_and_limiters(damage, monster, rng, limiter);
     }
