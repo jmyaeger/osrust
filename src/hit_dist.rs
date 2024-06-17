@@ -3,6 +3,8 @@
 use std::cmp::min;
 use std::collections::HashMap;
 
+use crate::utils::Fraction;
+
 pub trait HitTransformer: Fn(Hitsplat) -> HitDistribution {}
 
 impl<F> HitTransformer for F where F: Fn(Hitsplat) -> HitDistribution {}
@@ -66,7 +68,7 @@ impl Hitsplat {
     }
 }
 
-// Allows for cases where there are multiple hits with different probabilities to occur on an attack
+// One hit with one or more total hitsplats and the overall probability for that hit
 #[derive(Debug, Clone)]
 pub struct WeightedHit {
     pub probability: f64,         // The probability that this hit will occur
@@ -114,12 +116,14 @@ impl WeightedHit {
     where
         F: HitTransformer,
     {
+        // Apply a transform function to each hitsplat in the WeightedHit and return a HitDistribution
         if self.hitsplats.len() == 1 {
             return self.hitsplats[0]
                 .transform(t, _opts)
                 .scale_probability(self.probability);
         }
 
+        // Recursively zip first hitsplat with remaining hitsplats
         let (head, tail) = self.shift();
         head.transform(t, _opts).zip(&tail.transform(t, _opts))
     }
@@ -148,6 +152,7 @@ impl WeightedHit {
     }
 }
 
+// Distribution of weighted hits
 #[derive(Debug, Clone, Default)]
 pub struct HitDistribution {
     pub hits: Vec<WeightedHit>,
@@ -163,6 +168,7 @@ impl HitDistribution {
     }
 
     pub fn zip(&self, other: &Self) -> Self {
+        // Zip two HitDistributions together
         let hits = self
             .hits
             .iter()
@@ -176,6 +182,7 @@ impl HitDistribution {
     where
         F: HitTransformer,
     {
+        // Apply a transform function to each hit in the distribution
         let mut d = HitDistribution::default();
         for h in &self.hits {
             for transformed in &h.transform(&t, opts).hits {
@@ -186,12 +193,14 @@ impl HitDistribution {
     }
 
     pub fn scale_probability(&self, factor: f64) -> Self {
+        // Scale the probability of each hit in the distribution by a factor
         let hits = self.hits.iter().map(|h| h.scale(factor)).collect();
 
         Self::new(hits)
     }
 
-    pub fn scale_damage(&self, factor: i32, divisor: i32) -> Self {
+    pub fn scale_damage(&self, factor: Fraction) -> Self {
+        // Scale the damage of the entire distribution by a fractional factor
         let hits = self
             .hits
             .iter()
@@ -200,7 +209,7 @@ impl HitDistribution {
                     .hitsplats
                     .iter()
                     .map(|&s| {
-                        Hitsplat::new((s.damage as i32 * factor / divisor) as u32, s.accurate)
+                        Hitsplat::new((factor.multiply_to_int(s.damage as i32)) as u32, s.accurate)
                     })
                     .collect();
                 WeightedHit::new(h.probability, hitsplats)
@@ -211,6 +220,7 @@ impl HitDistribution {
     }
 
     pub fn flatten(&self) -> Self {
+        // Combine all hits with the same hash into single weighted hits with summed probability
         let mut acc: HashMap<u64, f64> = HashMap::new();
         let mut hit_lists: HashMap<u64, Vec<Hitsplat>> = HashMap::new();
 
@@ -232,8 +242,10 @@ impl HitDistribution {
     }
 
     pub fn cumulative(&self) -> HitDistribution {
+        // Convert multi-hits into a single cumulative damage total
         let mut acc: HashMap<(u32, bool), f64> = HashMap::new();
 
+        // if 1 hitsplat is accurate, treat the whole hit as accurate
         for hit in &self.hits {
             let key = (hit.get_sum(), hit.any_accurate());
             *acc.entry(key).or_insert(0.0) += hit.probability;
@@ -340,12 +352,8 @@ impl AttackDistribution {
         AttackDistribution::new(dists)
     }
 
-    pub fn scale_damage(&self, factor: i32, divisor: i32) -> AttackDistribution {
-        let dists = self
-            .dists
-            .iter()
-            .map(|d| d.scale_damage(factor, divisor))
-            .collect();
+    pub fn scale_damage(&self, factor: Fraction) -> AttackDistribution {
+        let dists = self.dists.iter().map(|d| d.scale_damage(factor)).collect();
         AttackDistribution::new(dists)
     }
 

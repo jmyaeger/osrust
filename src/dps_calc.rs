@@ -11,6 +11,7 @@ use crate::monster::Monster;
 use crate::monster_scaling;
 use crate::player::Player;
 use crate::spells::{Spell, StandardSpell};
+use crate::utils::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -177,11 +178,11 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let hits1 = standard_hit_dist
             .clone()
             .scale_probability(0.95)
-            .scale_damage(5, 4);
+            .scale_damage(Fraction::new(5, 4));
         let hits2 = standard_hit_dist
             .clone()
             .scale_probability(0.05)
-            .scale_damage(2, 1);
+            .scale_damage(Fraction::from_integer(2));
         let mut combined_hits = Vec::new();
         combined_hits.extend(hits1.hits);
         combined_hits.extend(hits2.hits);
@@ -193,10 +194,8 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     if player.is_using_melee() && player.set_effects.full_dharoks {
         let full_hp = player.stats.hitpoints;
         let current_hp = player.live_stats.hitpoints;
-        dist = dist.scale_damage(
-            10000 + (full_hp - current_hp) as i32 * full_hp as i32,
-            10000,
-        );
+        let numerator = 10000 + (full_hp - current_hp) as i32 * full_hp as i32;
+        dist = dist.scale_damage(Fraction::new(numerator, 10000));
     }
 
     // Verac's set effect distribution
@@ -291,7 +290,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let hits2 = standard_hit_dist
             .clone()
             .scale_probability(1.0 / 51.0)
-            .scale_damage(3, 1)
+            .scale_damage(Fraction::from_integer(3))
             .hits;
 
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
@@ -321,12 +320,12 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
     if monster.info.name.contains("Ice demon") && player.is_using_fire_spell()
         || player.attrs.spell == Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
     {
-        dist = dist.scale_damage(3, 2);
+        dist = dist.scale_damage(Fraction::new(3, 2));
     }
 
     // Mark of darkness + demonbane distribution
     if player.boosts.mark_of_darkness && player.is_using_demonbane_spell() && monster.is_demon() {
-        dist = dist.scale_damage(5, 4);
+        dist = dist.scale_damage(Fraction::new(5, 4));
     }
 
     // Full Ahrim's + amulet of the damned distribution
