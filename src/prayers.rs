@@ -1,5 +1,5 @@
 // Most combat-related prayers (excluding protection prayers)
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub enum Prayer {
     #[default]
     None,
@@ -25,7 +25,7 @@ pub enum Prayer {
 }
 
 // Contains the type of prayer, and the percentage boost to each style
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct PrayerBoost {
     pub prayer_type: Prayer,
     pub attack: u32,

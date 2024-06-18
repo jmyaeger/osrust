@@ -120,7 +120,7 @@ impl PlayerLiveStats {
 }
 
 // Collection of active potion boosts, separated by combat type
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct PotionBoosts {
     pub attack: Option<PotionBoost>,
     pub strength: Option<PotionBoost>,
@@ -130,7 +130,7 @@ pub struct PotionBoosts {
 }
 
 // Collection of active prayers and their cumulative boosts
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct PrayerBoosts {
     pub active_prayers: Option<Vec<PrayerBoost>>,
     pub attack: u32,
@@ -194,7 +194,7 @@ pub struct SunfireBoost {
 }
 
 // Collection of effects that provide a damage boost in some cases
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct StatusBoosts {
     pub on_task: bool,
     pub in_wilderness: bool,
@@ -225,7 +225,7 @@ impl Default for StatusBoosts {
 }
 
 // Poison and venom effects - will likely rework this in the future
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct StatusEffects {
     pub poisoned: bool,
     pub venomed: bool,
@@ -235,7 +235,7 @@ pub struct StatusEffects {
 }
 
 // Holds set effect data to avoid iterating through gear many times
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct SetEffects {
     pub full_void: bool,
     pub full_elite_void: bool,
@@ -254,7 +254,7 @@ pub struct SetEffects {
     pub bloodbark_pieces: usize,
 }
 
-#[derive(Default, PartialEq, Debug)]
+#[derive(Default, PartialEq, Debug, Clone)]
 pub struct Gear {
     pub head: Option<Armor>,
     pub neck: Option<Armor>,
@@ -271,13 +271,14 @@ pub struct Gear {
 }
 
 // Misc other player info - may restructure if there's a better place for these
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct PlayerAttrs {
     pub name: Option<String>,
     pub active_style: CombatStyle,
     pub spell: Option<spells::Spell>,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,
     pub live_stats: PlayerLiveStats,

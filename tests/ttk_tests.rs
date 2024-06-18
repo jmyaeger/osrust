@@ -1,5 +1,6 @@
 use osrs::combat::simulate_n_fights;
 use osrs::dps_calc;
+use osrs::equipment::CombatStyle;
 use osrs::monster::Monster;
 use osrs::player::Player;
 use osrs::potions::Potion;
@@ -371,4 +372,22 @@ fn test_corp_limiters(#[case] mut player: Player, corp: Monster) {
     let dist = dps_calc::get_distribution(&player, &monster);
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
     assert!(num::abs(calc_ttk - ttk) < 0.5);
+}
+
+#[rstest]
+fn test_blood_moon_set(full_blood_moon_player: Player, baba_300: Monster) {
+    let mut player1 = full_blood_moon_player;
+    let mut monster = baba_300;
+
+    player1.set_active_style(CombatStyle::Spike);
+
+    let mut player2 = player1.clone();
+    player2.set_effects.full_blood_moon = false;
+
+    calc_active_player_rolls(&mut player1, &monster);
+    calc_active_player_rolls(&mut player2, &monster);
+    let (ttk1, _, _) = simulate_n_fights(&mut player1, &mut monster, 100000);
+    let (ttk2, _, _) = simulate_n_fights(&mut player2, &mut monster, 100000);
+
+    assert!(ttk1 < ttk2);
 }

@@ -346,6 +346,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 continue;
             }
 
+            if ["New", "Used"].contains(&version.as_str()) {
+                equipment.version = None;
+            }
+
             if equipment.name == "Toxic blowpipe"
                 && ["Empty", "Charged"].contains(&version.as_str())
             {

@@ -29,7 +29,7 @@ pub enum Potion {
 }
 
 // Contains the type of potion, the boost calc formula, and the calced boost
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct PotionBoost {
     pub potion_type: Potion,
     pub factor: u32,

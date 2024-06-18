@@ -244,6 +244,14 @@ pub fn corp() -> Monster {
 }
 
 #[fixture]
+pub fn baba_300() -> Monster {
+    let mut monster = Monster::new("Ba-Ba", None).unwrap();
+    monster.info.toa_level = 300;
+    monster.scale_toa();
+    monster
+}
+
+#[fixture]
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
@@ -984,6 +992,17 @@ pub fn max_range_comp_ogre_bow_player() -> Player {
     player.equip("Comp ogre bow", None);
     player.equip("Rune brutal", None);
     player.update_bonuses();
+    player
+}
+
+#[fixture]
+pub fn full_blood_moon_player() -> Player {
+    let mut player = max_melee_macuahuitl_player();
+    player.equip("Blood moon helm", Some("New"));
+    player.equip("Blood moon chestplate", Some("New"));
+    player.equip("Blood moon tassets", Some("New"));
+    player.update_bonuses();
+    player.update_set_effects();
     player
 }
 

@@ -17,7 +17,7 @@ lazy_static! {
 }
 
 // Slots in which a player can equip gear
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone)]
 pub enum GearSlot {
     #[default]
     None,
@@ -69,7 +69,7 @@ pub enum CombatStance {
 }
 
 // Name of the combat style as seen in the weapon interface
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone)]
 pub enum CombatStyle {
     Chop,
     Slash,
@@ -108,7 +108,7 @@ pub enum CombatStyle {
 }
 
 // Contains the type and stance, to be associated with a CombatStyle
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone)]
 pub struct CombatOption {
     pub combat_type: CombatType,
     pub stance: CombatStance,
@@ -136,7 +136,7 @@ impl StyleBonus {
 }
 
 // Equipment strength bonuses for each primary style
-#[derive(Debug, PartialEq, Default, Deserialize)]
+#[derive(Debug, PartialEq, Default, Deserialize, Clone)]
 pub struct StrengthBonus {
     pub melee: i32,
     pub ranged: i32,
@@ -153,7 +153,7 @@ impl StrengthBonus {
 }
 
 // Collection of all equipment bonuses for an item
-#[derive(Debug, Default, PartialEq, Deserialize)]
+#[derive(Debug, Default, PartialEq, Deserialize, Clone)]
 pub struct EquipmentBonuses {
     pub attack: StyleBonus,
     pub defence: StyleBonus,
@@ -202,7 +202,7 @@ pub trait Equipment {
 }
 
 // Any equippable item that is not a weapon
-#[derive(Debug, PartialEq, Default, Deserialize)]
+#[derive(Debug, PartialEq, Default, Deserialize, Clone)]
 pub struct Armor {
     pub name: String,
     pub version: Option<String>,
@@ -283,7 +283,7 @@ where
 }
 
 // Needs to be a separate struct from Armor because of additional fields
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, Deserialize, Clone)]
 pub struct Weapon {
     pub name: String,
     pub version: Option<String>,
