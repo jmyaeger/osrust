@@ -199,7 +199,7 @@ pub const FULL_AHRIMS: [(&str, Option<&str>); 4] = [
 ];
 
 pub const FULL_BLOOD_MOON: [(&str, Option<&str>); 4] = [
-    ("Blood moon helm", Some("New")),
+    ("Blood moon helm", None),
     ("Blood moon chestplate", None),
     ("Blood moon tassets", None),
     ("Dual macuahuitl", None),

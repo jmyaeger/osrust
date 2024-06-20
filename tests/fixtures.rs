@@ -571,10 +571,11 @@ pub fn max_ranged_webweaver_player() -> Player {
 pub fn full_eclipse_atlatl_ranged_gear_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", Some("New"));
-    player.equip("Eclipse moon chestplate", Some("New"));
-    player.equip("Eclipse moon tassets", Some("New"));
+    player.equip("Eclipse moon helm", None);
+    player.equip("Eclipse moon chestplate", None);
+    player.equip("Eclipse moon tassets", None);
     player.equip("Atlatl dart", None);
+    player.update_set_effects();
     player.update_bonuses();
     player
 }
@@ -592,11 +593,12 @@ pub fn eclipse_atlatl_ranged_gear_player() -> Player {
 pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     let mut player = max_melee_player();
     player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", Some("New"));
-    player.equip("Eclipse moon chestplate", Some("New"));
-    player.equip("Eclipse moon tassets", Some("New"));
+    player.equip("Eclipse moon helm", None);
+    player.equip("Eclipse moon chestplate", None);
+    player.equip("Eclipse moon tassets", None);
     player.equip("Atlatl dart", None);
     player.update_bonuses();
+    player.update_set_effects();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::Rigour));
     player.add_potion(Potion::Ranging);
@@ -998,9 +1000,9 @@ pub fn max_range_comp_ogre_bow_player() -> Player {
 #[fixture]
 pub fn full_blood_moon_player() -> Player {
     let mut player = max_melee_macuahuitl_player();
-    player.equip("Blood moon helm", Some("New"));
-    player.equip("Blood moon chestplate", Some("New"));
-    player.equip("Blood moon tassets", Some("New"));
+    player.equip("Blood moon helm", None);
+    player.equip("Blood moon chestplate", None);
+    player.equip("Blood moon tassets", None);
     player.update_bonuses();
     player.update_set_effects();
     player
