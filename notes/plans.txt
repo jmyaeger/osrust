@@ -1,6 +1,5 @@
 Next steps:
 
-- Implement the eclipse moon and blue moon set effects
 - Implement updated Efaritay's aid mechanics in both simulator and calc
 - Implement silver bolts against vampyres
 - Do a refactoring and commenting pass

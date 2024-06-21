@@ -52,6 +52,9 @@ pub enum StandardSpell {
     FireSurge,
     IbanBlast,
     MagicDart,
+    Bind,
+    Snare,
+    Entangle,
 }
 
 impl StandardSpell {
@@ -263,5 +266,25 @@ pub fn is_demonbane_spell(spell: &Spell) -> bool {
         Spell::Arceuus(ArceuusSpell::InferiorDemonbane)
             | Spell::Arceuus(ArceuusSpell::SuperiorDemonbane)
             | Spell::Arceuus(ArceuusSpell::DarkDemonbane)
+    )
+}
+
+pub fn is_bind_spell(spell: &Spell) -> bool {
+    is_ice_spell(spell)
+        || is_grasp_spell(spell)
+        || matches!(
+            spell,
+            Spell::Standard(StandardSpell::Bind)
+                | Spell::Standard(StandardSpell::Snare)
+                | Spell::Standard(StandardSpell::Entangle)
+        )
+}
+
+pub fn is_grasp_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Arceuus(ArceuusSpell::GhostlyGrasp)
+            | Spell::Arceuus(ArceuusSpell::SkeletalGrasp)
+            | Spell::Arceuus(ArceuusSpell::UndeadGrasp)
     )
 }

@@ -907,6 +907,16 @@ impl Player {
         self.is_using_spell() && spells::is_demonbane_spell(self.attrs.spell.as_ref().unwrap())
     }
 
+    pub fn is_using_bind_spell(&self) -> bool {
+        // All bind spells, including grasp spells
+        self.is_using_spell() && spells::is_bind_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
+    pub fn is_using_grasp_spell(&self) -> bool {
+        // Grasp spells on the Arceuus spellbook
+        self.is_using_spell() && spells::is_grasp_spell(self.attrs.spell.as_ref().unwrap())
+    }
+
     pub fn is_using_crossbow(&self) -> bool {
         // Check if the player is using any type of crossbow and wielding bolts
         self.gear.weapon.name.contains("rossbow")

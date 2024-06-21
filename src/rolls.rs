@@ -96,6 +96,14 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
         }
         CombatType::Magic => {
             calc_player_magic_rolls(player, monster);
+
+            // Calc melee rolls if it's needed for the blue moon effect
+            if player.set_effects.full_blue_moon {
+                let current_style = player.attrs.active_style.clone();
+                player.set_active_style(CombatStyle::Swipe);
+                calc_player_melee_rolls(player, monster);
+                player.set_active_style(current_style);
+            }
         }
         _ => {}
     };

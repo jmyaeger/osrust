@@ -13,6 +13,10 @@ pub enum CombatEffect {
         tick_counter: Option<i32>,
         stacks: Vec<u32>,
     },
+    DelayedAttack {
+        tick_delay: Option<i32>,
+        damage: u32,
+    },
 }
 
 impl CombatEffect {
@@ -30,14 +34,7 @@ impl CombatEffect {
                 ref mut tick_counter,
                 ref mut stacks,
             } => apply_burn(tick_counter, stacks),
-        }
-    }
-
-    pub fn tick_counter(&self) -> Option<i32> {
-        match self {
-            Self::Poison { tick_counter, .. } => *tick_counter,
-            Self::Venom { tick_counter, .. } => *tick_counter,
-            Self::Burn { tick_counter, .. } => *tick_counter,
+            Self::DelayedAttack { tick_delay, damage } => apply_delayed_attack(tick_delay, damage),
         }
     }
 }
@@ -122,4 +119,18 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
         stacks.retain(|s| *s > 0);
     };
     damage
+}
+
+fn apply_delayed_attack(tick_delay: &mut Option<i32>, damage: &mut u32) -> u32 {
+    if let Some(delay) = tick_delay {
+        if *delay == 0 {
+            *tick_delay = None;
+            *damage
+        } else {
+            *delay -= 1;
+            0
+        }
+    } else {
+        0
+    }
 }

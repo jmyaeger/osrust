@@ -1,5 +1,6 @@
 use crate::constants::*;
-use crate::equipment::CombatType;
+use crate::effects::CombatEffect;
+use crate::equipment::{CombatStyle, CombatType};
 use crate::limiters::Limiter;
 use crate::monster::Monster;
 use crate::player::Player;
@@ -923,7 +924,39 @@ pub fn atlatl_attack(
     (damage, success)
 }
 
-// TODO: Implement blue moon spear attack
+pub fn blue_moon_spear_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> (u32, bool) {
+    let (damage, success) = standard_attack(player, monster, rng, limiter);
+
+    // Bind spells have a chance to perform a melee attack on the next tick
+    if success && player.set_effects.full_blue_moon && player.is_using_bind_spell() {
+        // Store current combat style
+        let current_style = player.attrs.active_style.clone();
+
+        // Grasp spells have 50% chance while other binds have 20% chance
+        let range_max = if player.is_using_grasp_spell() { 2 } else { 5 };
+        if rng.gen_range(0..range_max) == 0 {
+            player.set_active_style(CombatStyle::Swipe); // Specific melee style unknown, assuming aggressive
+            let (melee_damage, melee_success) = standard_attack(player, monster, rng, limiter);
+            if melee_success {
+                // No point pushing an empty effect if it misses
+                monster.active_effects.push(CombatEffect::DelayedAttack {
+                    tick_delay: Some(1),
+                    damage: melee_damage,
+                });
+            }
+
+            // Reset combat style to original
+            player.set_active_style(current_style);
+        }
+    }
+
+    (damage, success)
+}
 
 pub type AttackFn =
     fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> (u32, bool);
