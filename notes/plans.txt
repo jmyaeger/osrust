@@ -1,6 +1,5 @@
 Next steps:
 
-- Implement updated Efaritay's aid mechanics in both simulator and calc
 - Implement silver bolts against vampyres
 - Do a refactoring and commenting pass
 - Write all of the special attack methods

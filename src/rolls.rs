@@ -427,22 +427,34 @@ fn apply_vampyre_boost(
 ) -> (i32, u32) {
     if let Some(tier) = monster.vampyre_tier() {
         if (1..=3).contains(&tier) {
-            let (att_factor, max_hit_factor) = match (
+            let (mut att_factor, max_hit_factor) = match (
                 player.gear.weapon.name.as_str(),
-                player.is_wearing_silver_weapon() || player.is_wearing("Efaritay's aid", None),
+                player.is_wearing_silver_weapon(),
+                player.is_wearing("Efaritay's aid", None),
                 tier,
             ) {
-                ("Blisterwood flail", _, _) => (Fraction::new(105, 100), Fraction::new(5, 4)),
-                ("Blisterwood sickle", _, _) => (Fraction::new(105, 100), Fraction::new(115, 100)),
-                ("Ivandis flail", _, _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
+                ("Blisterwood flail", _, _, _) => (Fraction::new(105, 100), Fraction::new(5, 4)),
+                ("Blisterwood sickle", _, _, _) => {
+                    (Fraction::new(105, 100), Fraction::new(115, 100))
+                }
+                ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
                 // Other silver weapons against tier 1
-                (_, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
-                (_, false, 1) => (Fraction::new(1, 1), Fraction::new(1, 1)),
+                (_, true, _, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
+                // Non-silver weapons with Efaritay's aid boost damage by 10% against tier 1 (TODO: verify this is still true)
+                (_, false, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
                 // Other silver weapons against tier 2
-                (_, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
+                (_, true, _, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
+                // Non-silver weapons with Efaritay's aid deal half damage against tier 2
+                (_, false, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 2)),
                 // Any other weapon against tier 3 or any non-silver weapon against any tier will return (0, 0)
-                (_, _, _) => (Fraction::new(0, 1), Fraction::new(0, 1)),
+                (_, _, _, _) => (Fraction::new(0, 1), Fraction::new(0, 1)),
             };
+
+            // Efaritay's aid now gives silver weapons a 15% accuracy boost
+            if player.is_wearing_silver_weapon() && player.is_wearing("Efaritay's aid", None) {
+                att_factor *= Fraction::new(115, 100);
+            }
+
             return (
                 att_factor.multiply_to_int(att_roll),
                 max_hit_factor.multiply_to_int(max_hit),
