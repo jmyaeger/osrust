@@ -1,7 +1,5 @@
 Next steps:
 
-- Implement silver bolts against vampyres
-- Do a refactoring and commenting pass
 - Write all of the special attack methods
 - Figure out how I'm going to implement special attacks
     - Likely want to have some form of raw DPS (assuming the spec is a normal attack)

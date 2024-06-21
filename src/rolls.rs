@@ -204,6 +204,9 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     // Apply DHCB (if not on task), twisted bow, etc, if applicable
     (att_roll, max_hit) = apply_ranged_weapon_boosts(att_roll, max_hit, player, monster);
 
+    // TODO: Find out when vampyre boosts are applied
+    (att_roll, max_hit) = apply_silver_bolts_bonus(att_roll, max_hit, player, monster);
+
     for &combat_type in &[CombatType::Light, CombatType::Standard, CombatType::Heavy] {
         player.att_rolls.insert(combat_type, att_roll);
         player.max_hits.insert(combat_type, max_hit);
@@ -613,6 +616,35 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
     }
 
     (att_gear_bonus, str_gear_bonus)
+}
+
+fn apply_silver_bolts_bonus(
+    att_roll: i32,
+    max_hit: u32,
+    player: &Player,
+    monster: &Monster,
+) -> (i32, u32) {
+    let mut att_roll = att_roll;
+    let mut max_hit = max_hit;
+    let vampyre_tier = monster.vampyre_tier();
+    if player.is_wearing("Silver bolts", None)
+        && player.is_using_crossbow()
+        && vampyre_tier.is_some()
+    {
+        if player.is_wearing("Efaritay's aid", None) {
+            att_roll = att_roll * 115 / 100;
+        }
+        match vampyre_tier {
+            Some(1) => max_hit = max_hit * 11 / 10,
+            Some(3) => {
+                att_roll = 0;
+                max_hit = 0;
+            }
+            _ => {}
+        }
+    }
+
+    (att_roll, max_hit)
 }
 
 fn apply_ranged_weapon_boosts(
