@@ -32,6 +32,14 @@ impl CombatEffect {
             } => apply_burn(tick_counter, stacks),
         }
     }
+
+    pub fn tick_counter(&self) -> Option<i32> {
+        match self {
+            Self::Poison { tick_counter, .. } => *tick_counter,
+            Self::Venom { tick_counter, .. } => *tick_counter,
+            Self::Burn { tick_counter, .. } => *tick_counter,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -98,6 +106,7 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
             // Burn effect has ended if there are no stacks
             if stacks.is_empty() {
                 *tick_counter = None;
+                return damage;
             }
         }
         *tick_counter = Some(tick_counter.unwrap_or(0) + 1);

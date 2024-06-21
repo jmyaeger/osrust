@@ -25,42 +25,42 @@ fn main() {
 fn simulate() {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
     player.add_potion(Potion::SuperCombat);
-
-    player.equip("Blood moon helm", None);
-    player.equip("Blood moon chestplate", None);
-    player.equip("Blood moon tassets", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Dragon boots", None);
-    player.equip("Dual macuahuitl", None);
-    player.equip("Rada's blessing 4", None);
-    player.equip("Amulet of fury", None);
-    player.equip("Fire cape", None);
-    player.equip("Berserker ring (i)", None);
+    player.add_potion(Potion::Ranging);
 
     // player.equip("Blood moon helm", None);
     // player.equip("Blood moon chestplate", None);
     // player.equip("Blood moon tassets", None);
-    // player.equip("Barrows gloves", None);
-    // player.equip("Dragon boots", None);
-    // player.equip("Zamorakian hasta", None);
-    // player.equip("Dragon defender", None);
+    // player.equip("Ferocious gloves", None);
+    // player.equip("Primordial boots", None);
+    // player.equip("Dual macuahuitl", None);
     // player.equip("Rada's blessing 4", None);
-    // player.equip("Amulet of fury", None);
-    // player.equip("Fire cape", None);
-    // player.equip("Berserker ring (i)", None);
+    // player.equip("Amulet of torture", None);
+    // player.equip("Infernal cape", None);
+    // player.equip("Ultor ring", None);
+
+    player.equip("Eclipse moon helm", None);
+    player.equip("Eclipse moon chestplate", None);
+    player.equip("Eclipse moon tassets", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Primordial boots", None);
+    player.equip("Eclipse atlatl", None);
+    player.equip("Atlatl dart", None);
+    player.equip("Amulet of fury", None);
+    player.equip("Ava's assembler", None);
+    player.equip("Ultor ring", None);
 
     player.update_bonuses();
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Lunge);
-    player.set_active_style(CombatStyle::Spike);
-    let mut monster = Monster::new("Ba-Ba", None).unwrap();
-    monster.info.toa_level = 300;
-    monster.scale_toa();
+    player.set_active_style(CombatStyle::Rapid);
+    let mut monster = Monster::new("Kephri", Some("Shielded")).unwrap();
+    // monster.info.toa_level = 300;
+    // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
-    let (ttk, acc, _) = simulate_n_fights(&mut player, &mut monster, 100000);
+    let (ttk, acc, _hit_dist) = simulate_n_fights(&mut player, &mut monster, 1000000);
 
     println!("Ttk: {}", ttk);
     println!("Acc: {}", acc);

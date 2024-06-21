@@ -498,6 +498,7 @@ impl Monster {
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         rolls::monster_def_rolls(self);
+        self.active_effects = Vec::new();
     }
 
     pub fn is_immune(&self, player: &Player) -> bool {
@@ -583,6 +584,14 @@ impl Monster {
                 stacks: vec![10],
             }),
         }
+    }
+
+    pub fn clear_inactive_effects(&mut self) {
+        self.active_effects.retain(|event| match event {
+            CombatEffect::Poison { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
+        })
     }
 }
 

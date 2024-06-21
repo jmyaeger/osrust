@@ -193,6 +193,19 @@ fn test_macuahuitl_no_set_effect_ttk(max_melee_macuahuitl_player: Player, scurri
 }
 
 #[rstest]
+fn test_macuahuitl_no_set_effect_baba_ttk(max_melee_macuahuitl_player: Player, baba_300: Monster) {
+    let mut player = max_melee_macuahuitl_player;
+    player.set_active_style(CombatStyle::Spike);
+    let mut monster = baba_300;
+    calc_active_player_rolls(&mut player, &monster);
+    let (ttk, _, _) = simulate_n_fights(&mut player, &mut monster, 100000);
+
+    let dist = dps_calc::get_distribution(&player, &monster);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    assert!(num::abs(calc_ttk - ttk) < 0.1);
+}
+
+#[rstest]
 #[case(max_ranged_tbow_player())]
 #[case(max_ranged_zcb_ruby_player())]
 fn test_max_range_zulrah(#[case] mut player: Player, zulrah_tanzanite: Monster) {

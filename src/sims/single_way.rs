@@ -32,7 +32,6 @@ pub fn simulate_fight(
     let mut hit_count = 0;
     let mut hit_amounts = Vec::new();
     let mut attack_tick = 0;
-    let mut poison_tick = -1;
     let mut freeze_immunity = 0;
     let monster_freeze_resistance = monster.immunities.freeze;
     let player_attack = player.attack;
@@ -47,6 +46,14 @@ pub fn simulate_fight(
             attack_tick += player.gear.weapon.speed;
         }
 
+        let mut effect_damage = 0;
+        for effect in &mut monster.active_effects {
+            effect_damage += effect.apply();
+        }
+
+        monster.take_damage(effect_damage);
+        monster.clear_inactive_effects();
+
         if monster.info.freeze_duration > 0 {
             monster.info.freeze_duration -= 1;
             if monster.info.freeze_duration == 0 {
@@ -59,19 +66,6 @@ pub fn simulate_fight(
             freeze_immunity -= 1;
             if freeze_immunity == 0 {
                 monster.immunities.freeze = monster_freeze_resistance;
-            }
-        }
-
-        if monster.info.poison_severity > 0 && poison_tick < 0 {
-            poison_tick = tick_counter;
-        }
-
-        if poison_tick >= 0 && (tick_counter - poison_tick) % 30 == 0 && !monster.immunities.poison
-        {
-            monster.live_stats.hitpoints -= utils::poison_damage(monster.info.poison_severity);
-            monster.info.poison_severity = monster.info.poison_severity.saturating_sub(1);
-            if monster.info.poison_severity == 0 {
-                poison_tick = -1;
             }
         }
 
