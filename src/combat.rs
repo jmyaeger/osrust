@@ -62,7 +62,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
 
     if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
-            return Some(Box::new(limiters::ZogreCrumbleUndead {}));
+            return Some(Box::new(limiters::HalfDamage {}));
         } else if !player.is_using_ranged()
             || !player
                 .gear
@@ -76,7 +76,11 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     }
 
     if monster.info.name.contains("Corporeal Beast") && !player.is_using_corpbane_weapon() {
-        return Some(Box::new(limiters::CorporealBeast {}));
+        return Some(Box::new(limiters::HalfDamage {}));
+    }
+
+    if player.is_wearing("Efaritay's aid", None) && monster.vampyre_tier() == Some(2) {
+        return Some(Box::new(limiters::HalfDamage {}));
     }
 
     None

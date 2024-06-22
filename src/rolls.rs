@@ -443,12 +443,10 @@ fn apply_vampyre_boost(
                 ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
                 // Other silver weapons against tier 1
                 (_, true, _, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
-                // Non-silver weapons with Efaritay's aid boost damage by 10% against tier 1 (TODO: verify this is still true)
+                // Non-silver weapons with Efaritay's aid boost damage by 10% against tier 1
                 (_, false, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
-                // Other silver weapons against tier 2
-                (_, true, _, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
-                // Non-silver weapons with Efaritay's aid deal half damage against tier 2
-                (_, false, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 2)),
+                // Efaritay's aid or silver weapon -> no damage reduction (damage halved post-roll for Efaritay's + non-silver weapon)
+                (_, _, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
                 // Any other weapon against tier 3 or any non-silver weapon against any tier will return (0, 0)
                 (_, _, _, _) => (Fraction::new(0, 1), Fraction::new(0, 1)),
             };

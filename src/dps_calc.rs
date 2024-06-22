@@ -606,6 +606,11 @@ fn apply_limiters(
         }
     }
 
+    // Efaritay's aid with non-silver weapons against T2 vampyres deals 50% damage, applied post-roll
+    if player.is_wearing("Efaritay's aid", None) && monster.vampyre_tier() == Some(2) {
+        dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
+    }
+
     // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
     let flat_armour = monster.info.id.map_or(0, |id| {
         FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1

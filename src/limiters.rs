@@ -90,20 +90,10 @@ impl Limiter for Zogre {
     }
 }
 
-pub struct ZogreCrumbleUndead {}
+pub struct HalfDamage {}
 
-impl Limiter for ZogreCrumbleUndead {
+impl Limiter for HalfDamage {
     fn apply(&self, damage: u32, _: &mut ThreadRng) -> u32 {
-        // Zogres take half damage from Crumble Undead
-        damage / 2
-    }
-}
-
-pub struct CorporealBeast {}
-
-impl Limiter for CorporealBeast {
-    fn apply(&self, damage: u32, _: &mut ThreadRng) -> u32 {
-        // Corp takes half damage from most weapons
         damage / 2
     }
 }
