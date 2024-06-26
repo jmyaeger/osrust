@@ -1,6 +1,6 @@
 use crate::combat::{FightResult, Simulation};
 use crate::limiters::Limiter;
-use crate::{monster::Monster, player::Player, utils};
+use crate::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
 
 pub struct SingleWayFight<'a> {
@@ -38,11 +38,11 @@ pub fn simulate_fight(
 
     while monster.live_stats.hitpoints > 0 {
         if tick_counter == attack_tick {
-            let (damage, success) = player_attack(player, monster, rng, limiter);
-            monster.take_damage(damage);
+            let hit = player_attack(player, monster, rng, limiter);
+            monster.take_damage(hit.damage);
             hit_attempts += 1;
-            hit_count += if success { 1 } else { 0 };
-            hit_amounts.push(damage);
+            hit_count += if hit.success { 1 } else { 0 };
+            hit_amounts.push(hit.damage);
             attack_tick += player.gear.weapon.speed;
         }
 
