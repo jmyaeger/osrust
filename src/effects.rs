@@ -17,6 +17,10 @@ pub enum CombatEffect {
         tick_delay: Option<i32>,
         damage: u32,
     },
+    DelayedHeal {
+        tick_delay: Option<i32>,
+        heal: u32,
+    },
 }
 
 impl CombatEffect {
@@ -35,6 +39,7 @@ impl CombatEffect {
                 ref mut stacks,
             } => apply_burn(tick_counter, stacks),
             Self::DelayedAttack { tick_delay, damage } => apply_delayed_attack(tick_delay, damage),
+            Self::DelayedHeal { tick_delay, heal } => apply_delayed_heal(tick_delay, heal),
         }
     }
 }
@@ -126,6 +131,20 @@ fn apply_delayed_attack(tick_delay: &mut Option<i32>, damage: &mut u32) -> u32 {
         if *delay == 0 {
             *tick_delay = None;
             *damage
+        } else {
+            *delay -= 1;
+            0
+        }
+    } else {
+        0
+    }
+}
+
+fn apply_delayed_heal(tick_delay: &mut Option<i32>, heal: &mut u32) -> u32 {
+    if let Some(delay) = tick_delay {
+        if *delay == 0 {
+            *tick_delay = None;
+            *heal
         } else {
             *delay -= 1;
             0

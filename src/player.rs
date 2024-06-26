@@ -1,5 +1,6 @@
 use crate::attacks::{standard_attack, AttackFn};
 use crate::constants::*;
+use crate::effects::CombatEffect;
 use crate::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
 };
@@ -287,7 +288,7 @@ pub struct Player {
     pub potions: PotionBoosts,
     pub prayers: PrayerBoosts,
     pub boosts: StatusBoosts,
-    pub effects: StatusEffects,
+    pub active_effects: Vec<CombatEffect>,
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
     pub att_rolls: HashMap<CombatType, i32>,
@@ -311,7 +312,7 @@ impl Default for Player {
             potions: PotionBoosts::default(),
             prayers: PrayerBoosts::default(),
             boosts: StatusBoosts::default(),
-            effects: StatusEffects::default(),
+            active_effects: Vec::new(),
             set_effects: SetEffects::default(),
             attrs: PlayerAttrs::default(),
             att_rolls,
@@ -1041,6 +1042,16 @@ impl Player {
         // Takes damage, capping at 0 HP
         self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
     }
+
+    pub fn clear_inactive_effects(&mut self) {
+        self.active_effects.retain(|event| match event {
+            CombatEffect::Poison { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
+            CombatEffect::DelayedHeal { tick_delay, .. } => tick_delay.is_some(),
+        })
+    }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, Error> {
@@ -1134,7 +1145,7 @@ mod test {
         assert_eq!(player.potions, PotionBoosts::default());
         assert_eq!(player.prayers, PrayerBoosts::default());
         assert_eq!(player.boosts, StatusBoosts::default());
-        assert_eq!(player.effects, StatusEffects::default());
+        assert_eq!(player.active_effects, Vec::new());
         assert_eq!(player.set_effects, SetEffects::default());
         assert_eq!(player.att_rolls, att_rolls);
         assert_eq!(player.max_hits, max_hits);

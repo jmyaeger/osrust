@@ -90,7 +90,7 @@ impl Hit {
         }
     }
 
-    fn apply_limiters(&mut self, rng: &mut ThreadRng, limiter: &Option<Box<dyn Limiter>>) {
+    pub fn apply_limiters(&mut self, rng: &mut ThreadRng, limiter: &Option<Box<dyn Limiter>>) {
         // Apply a post-roll transform if there is one
         if let Some(limiter) = limiter {
             self.damage = limiter.apply(self.damage, rng);
@@ -122,7 +122,7 @@ pub fn standard_attack(
     hit
 }
 
-fn base_attack(att_info: &AttackInfo, rng: &mut ThreadRng) -> Hit {
+pub fn base_attack(att_info: &AttackInfo, rng: &mut ThreadRng) -> Hit {
     let att_roll = accuracy_roll(att_info.max_att_roll, rng);
     let def_roll = defence_roll(att_info.max_def_roll, rng);
 
@@ -146,7 +146,7 @@ fn defence_roll(max_def_roll: i32, rng: &mut ThreadRng) -> i32 {
     rng.gen_range(0..=max_def_roll)
 }
 
-fn damage_roll(min_hit: u32, max_hit: u32, rng: &mut ThreadRng) -> u32 {
+pub fn damage_roll(min_hit: u32, max_hit: u32, rng: &mut ThreadRng) -> u32 {
     rng.gen_range(min_hit..=max_hit)
 }
 

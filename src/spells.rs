@@ -1,4 +1,5 @@
 use crate::player::Player;
+use std::cmp::min;
 
 // pub trait Spell: std::fmt::Debug {
 //     fn max_hit(&self, player: &Player) -> u32;
@@ -10,6 +11,7 @@ pub enum Spell {
     Standard(StandardSpell),
     Ancient(AncientSpell),
     Arceuus(ArceuusSpell),
+    Special(SpecialSpell),
 }
 
 impl Spell {
@@ -18,6 +20,7 @@ impl Spell {
             Spell::Standard(spell) => spell.max_hit(player),
             Spell::Ancient(spell) => spell.max_hit(),
             Spell::Arceuus(spell) => spell.max_hit(),
+            Spell::Special(spell) => spell.max_hit(player),
         }
     }
 }
@@ -153,6 +156,21 @@ impl ArceuusSpell {
             ArceuusSpell::InferiorDemonbane => 16,
             ArceuusSpell::SuperiorDemonbane => 23,
             ArceuusSpell::DarkDemonbane => 30,
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum SpecialSpell {
+    Invocate,
+    Immolate,
+}
+
+impl SpecialSpell {
+    pub fn max_hit(&self, player: &Player) -> u32 {
+        match self {
+            SpecialSpell::Invocate => min(1 + player.live_stats.magic * 44 / 99, 44),
+            SpecialSpell::Immolate => min(1 + player.live_stats.magic * 58 / 99, 58),
         }
     }
 }

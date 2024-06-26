@@ -15,5 +15,6 @@ pub mod potions;
 pub mod prayers;
 pub mod rolls;
 pub mod sims;
+pub mod specs;
 pub mod spells;
 pub mod utils;
