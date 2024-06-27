@@ -7,7 +7,7 @@ use crate::player::Player;
 use crate::rolls::calc_player_magic_rolls;
 use crate::spells::{SpecialSpell, Spell};
 use rand::rngs::ThreadRng;
-use std::cmp::min;
+use std::cmp::{max, min};
 
 pub type SpecialAttackFn =
     fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
@@ -101,6 +101,9 @@ pub fn ancient_gs_spec(
     info.max_att_roll *= 2;
     info.max_hit = info.max_hit * 11 / 10;
 
+    // Spec always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
@@ -148,6 +151,88 @@ pub fn eldritch_staff_spec(
     }
 
     calc_player_magic_rolls(player, monster);
+
+    hit
+}
+
+pub fn blowpipe_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 100% and max hit by 50%
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 3 / 2;
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_limiters(rng, limiter);
+
+        // Heal the player for half of the damage
+        player.heal(hit.damage / 2, None);
+    }
+
+    hit
+}
+
+pub fn sgs_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 100% and max hit by 10%
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 11 / 10;
+
+    // Spec always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_limiters(rng, limiter);
+
+        // Heal player by half the damage (10 minimum) and restore prayer by 1/4 the damage (5 minimum)
+        player.heal(max(10, hit.damage / 2), None);
+        let prayer_restore = max(5, hit.damage / 4);
+        player.live_stats.prayer = min(
+            player.stats.prayer,
+            player.live_stats.prayer + prayer_restore,
+        );
+    }
+
+    hit
+}
+
+pub fn bgs_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 100% and max hit by 21%
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 121 / 100;
+
+    // Spec always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_limiters(rng, limiter);
+    }
+
+    // TODO: Implement draining multiple stats in order
 
     hit
 }
