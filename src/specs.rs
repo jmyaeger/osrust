@@ -35,7 +35,7 @@ pub fn fang_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
     }
 
     hit
@@ -56,7 +56,7 @@ pub fn dragon_crossbow_spec(
 
     // Hit is always successful
     let mut hit = Hit::accurate(damage);
-    hit.apply_limiters(rng, limiter);
+    hit.apply_transforms(monster, rng, limiter);
 
     hit
 }
@@ -75,7 +75,7 @@ pub fn arclight_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
 
         // Drains are twice as effective on demons
         let demon_mod = if monster.is_demon() { 2 } else { 1 };
@@ -108,7 +108,7 @@ pub fn ancient_gs_spec(
 
     if hit.success {
         // Add delayed attack and heal if the hit is successful
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
         monster.active_effects.push(CombatEffect::DelayedAttack {
             tick_delay: Some(9),
             damage: 25,
@@ -138,7 +138,7 @@ pub fn eldritch_staff_spec(
     // Perform an accurate hit
     let info = AttackInfo::new(player, monster);
     let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-    hit.apply_limiters(rng, limiter);
+    hit.apply_transforms(monster, rng, limiter);
 
     // Restore prayer by half the damage, up to 120 prayer points
     player.live_stats.prayer = min(120, player.live_stats.prayer + hit.damage / 2);
@@ -170,7 +170,7 @@ pub fn blowpipe_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
 
         // Heal the player for half of the damage
         player.heal(hit.damage / 2, None);
@@ -197,7 +197,7 @@ pub fn sgs_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
 
         // Heal player by half the damage (10 minimum) and restore prayer by 1/4 the damage (5 minimum)
         player.heal(max(10, hit.damage / 2), None);
@@ -229,7 +229,7 @@ pub fn bgs_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_limiters(rng, limiter);
+        hit.apply_transforms(monster, rng, limiter);
     }
 
     // TODO: Implement draining multiple stats in order

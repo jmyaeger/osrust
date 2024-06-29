@@ -447,8 +447,9 @@ fn apply_vampyre_boost(
                 (_, false, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
                 // Efaritay's aid or silver weapon -> no damage reduction (damage halved post-roll for Efaritay's + non-silver weapon)
                 (_, _, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
-                // Any other weapon against tier 3 or any non-silver weapon against any tier will return (0, 0)
-                (_, _, _, _) => (Fraction::new(0, 1), Fraction::new(0, 1)),
+                // Any other weapon against tier 3 or any non-silver weapon against tier 2 will return (0, 0)
+                (_, _, _, 2 | 3) => (Fraction::new(0, 1), Fraction::new(0, 1)),
+                _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
             };
 
             // Efaritay's aid now gives silver weapons a 15% accuracy boost
