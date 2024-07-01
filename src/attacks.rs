@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::effects::CombatEffect;
 use crate::equipment::{CombatStyle, CombatType};
 use crate::limiters::Limiter;
-use crate::monster::Monster;
+use crate::monster::{CombatStat, Monster};
 use crate::player::Player;
 use crate::rolls::calc_player_melee_rolls;
 use crate::spells::{AncientSpell, Spell};
@@ -217,7 +217,7 @@ pub fn ahrims_staff_attack(
 
     if hit.success && rng.gen_range(0..4) == 0 {
         // Base set effect rolls a 25% chance to reduce strength by 5
-        monster.drain_strength(5);
+        monster.drain_stat(CombatStat::Strength, 5, None);
     }
 
     if player.is_wearing_any_version("Amulet of the damned") && rng.gen_range(0..4) == 0 {
@@ -708,15 +708,27 @@ pub fn shadow_spell_attack(
     if hit.success {
         // Only drains attack if it hasn't been drained already
         if monster.live_stats.attack == monster.stats.attack {
-            monster.drain_attack(monster.stats.attack * drain_amount / 1000);
+            monster.drain_stat(
+                CombatStat::Attack,
+                monster.stats.attack * drain_amount / 1000,
+                None,
+            );
         }
         if player.is_wearing("Shadow ancient sceptre", None) {
             // Shadow ancient sceptre also drains strength and defense if not drained previously
             if monster.live_stats.strength == monster.stats.strength {
-                monster.drain_strength(monster.stats.strength * drain_amount / 1000);
+                monster.drain_stat(
+                    CombatStat::Strength,
+                    monster.stats.strength * drain_amount / 1000,
+                    None,
+                );
             }
             if monster.live_stats.defence == monster.stats.defence {
-                monster.drain_defence(monster.stats.defence * drain_amount / 1000);
+                monster.drain_stat(
+                    CombatStat::Defence,
+                    monster.stats.defence * drain_amount / 1000,
+                    None,
+                );
             }
         }
     }

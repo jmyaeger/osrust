@@ -17,6 +17,29 @@ lazy_static! {
         fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
 }
 
+// Enum for combat stats
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
+pub enum CombatStat {
+    Attack,
+    Strength,
+    Defence,
+    Ranged,
+    Magic,
+}
+
+// Struct for stat drain
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
+pub struct StatDrain {
+    pub stat: CombatStat,
+    pub cap: Option<u32>,
+}
+
+impl StatDrain {
+    pub fn new(stat: CombatStat, cap: Option<u32>) -> StatDrain {
+        StatDrain { stat, cap }
+    }
+}
+
 // Enum for monster attributes
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub enum Attribute {
@@ -470,26 +493,70 @@ impl Monster {
         self.immunities.freeze != 100 && !self.info.freeze_duration == 0
     }
 
-    pub fn drain_defence(&mut self, amount: u32) {
-        self.live_stats.defence = self.live_stats.defence.saturating_sub(amount);
-        rolls::monster_def_rolls(self);
+    pub fn drain_stat(&mut self, stat: CombatStat, amount: u32, cap: Option<u32>) -> u32 {
+        let mut amount = amount;
+        let mut remainder = 0;
+
+        if let Some(cap) = cap {
+            amount = min(cap, amount);
+        }
+        match stat {
+            CombatStat::Attack => {
+                if self.live_stats.attack < amount {
+                    remainder = amount - self.live_stats.attack;
+                    self.live_stats.attack = 0;
+                } else {
+                    self.live_stats.attack -= amount;
+                }
+            }
+            CombatStat::Strength => {
+                if self.live_stats.strength < amount {
+                    remainder = amount - self.live_stats.strength;
+                    self.live_stats.strength = 0;
+                } else {
+                    self.live_stats.strength -= amount;
+                }
+            }
+            CombatStat::Magic => {
+                if self.live_stats.magic < amount {
+                    remainder = amount - self.live_stats.magic;
+                    self.live_stats.magic = 0;
+                } else {
+                    self.live_stats.magic -= amount;
+                }
+                rolls::monster_def_rolls(self);
+            }
+            CombatStat::Ranged => {
+                if self.live_stats.ranged < amount {
+                    remainder = amount - self.live_stats.ranged;
+                    self.live_stats.ranged = 0;
+                } else {
+                    self.live_stats.ranged -= amount;
+                }
+            }
+            CombatStat::Defence => {
+                if self.live_stats.defence < amount {
+                    remainder = amount - self.live_stats.defence;
+                    self.live_stats.defence = 0;
+                } else {
+                    self.live_stats.defence -= amount;
+                }
+                rolls::monster_def_rolls(self);
+            }
+        }
+
+        remainder
     }
 
-    pub fn drain_strength(&mut self, amount: u32) {
-        self.live_stats.strength = self.live_stats.strength.saturating_sub(amount);
-    }
+    pub fn drain_stats_in_order(&mut self, total_amount: u32, drain_order: Vec<StatDrain>) {
+        let mut amount = total_amount;
+        for drain in drain_order {
+            if amount == 0 {
+                break;
+            }
 
-    pub fn drain_magic(&mut self, amount: u32) {
-        self.live_stats.magic = self.live_stats.magic.saturating_sub(amount);
-        rolls::monster_def_rolls(self);
-    }
-
-    pub fn drain_ranged(&mut self, amount: u32) {
-        self.live_stats.ranged = self.live_stats.ranged.saturating_sub(amount);
-    }
-
-    pub fn drain_attack(&mut self, amount: u32) {
-        self.live_stats.attack = self.live_stats.attack.saturating_sub(amount);
+            amount = self.drain_stat(drain.stat, amount, drain.cap);
+        }
     }
 
     pub fn reset(&mut self) {

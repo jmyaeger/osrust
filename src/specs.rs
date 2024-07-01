@@ -2,7 +2,7 @@ use crate::attacks::{base_attack, damage_roll, AttackInfo, Hit};
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
 use crate::limiters::Limiter;
-use crate::monster::Monster;
+use crate::monster::{CombatStat, Monster, StatDrain};
 use crate::player::Player;
 use crate::rolls::calc_player_magic_rolls;
 use crate::spells::{SpecialSpell, Spell};
@@ -81,9 +81,21 @@ pub fn arclight_spec(
         let demon_mod = if monster.is_demon() { 2 } else { 1 };
 
         // Drain stats by 1 + 5% or 10%
-        monster.drain_attack(monster.live_stats.attack * demon_mod / 20 + 1);
-        monster.drain_strength(monster.live_stats.strength * demon_mod / 20 + 1);
-        monster.drain_defence(monster.live_stats.defence * demon_mod / 20 + 1);
+        monster.drain_stat(
+            CombatStat::Attack,
+            monster.live_stats.attack * demon_mod / 20 + 1,
+            None,
+        );
+        monster.drain_stat(
+            CombatStat::Strength,
+            monster.live_stats.strength * demon_mod / 20 + 1,
+            None,
+        );
+        monster.drain_stat(
+            CombatStat::Defence,
+            monster.live_stats.defence * demon_mod / 20 + 1,
+            None,
+        );
     }
 
     hit
@@ -232,7 +244,98 @@ pub fn bgs_spec(
         hit.apply_transforms(monster, rng, limiter);
     }
 
-    // TODO: Implement draining multiple stats in order
+    let cap = if monster.info.name.contains("Tekton") && !hit.success {
+        Some(10)
+    } else {
+        None
+    };
+
+    let stat_order = vec![
+        StatDrain::new(CombatStat::Defence, cap),
+        StatDrain::new(CombatStat::Strength, cap),
+        StatDrain::new(CombatStat::Attack, cap),
+        StatDrain::new(CombatStat::Magic, cap),
+        StatDrain::new(CombatStat::Ranged, cap),
+    ];
+
+    monster.drain_stats_in_order(hit.damage, stat_order);
+
+    hit
+}
+
+pub fn bulwark_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 20%
+    info.max_att_roll = info.max_att_roll * 6 / 5;
+
+    // Spec always rolls against crush
+    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    // Second hit and stat drains only occur in multi
+    if player.boosts.in_multi {
+        let mut hit2 = base_attack(&info, rng);
+        if hit2.success {
+            hit2.apply_transforms(monster, rng, limiter);
+        }
+        hit.combine(&hit2);
+
+        // Reverse order of priority so that attack gets set to highest if it's equal to the other highest stat(s)
+        let stats = vec![
+            CombatStat::Magic,
+            CombatStat::Ranged,
+            CombatStat::Strength,
+            CombatStat::Attack,
+        ];
+
+        // Find the highest stat of the monster
+        let mut highest_stat = (CombatStat::Attack, 0);
+        for stat in stats {
+            match stat {
+                CombatStat::Attack => {
+                    if player.live_stats.attack > highest_stat.1 {
+                        highest_stat = (stat, player.live_stats.attack);
+                    }
+                }
+                CombatStat::Strength => {
+                    if player.live_stats.strength > highest_stat.1 {
+                        highest_stat = (stat, player.live_stats.strength);
+                    }
+                }
+                CombatStat::Ranged => {
+                    if player.live_stats.ranged > highest_stat.1 {
+                        highest_stat = (stat, player.live_stats.ranged);
+                    }
+                }
+                CombatStat::Magic => {
+                    if player.live_stats.magic > highest_stat.1 {
+                        highest_stat = (stat, player.live_stats.magic);
+                    }
+                }
+                _ => unreachable!(),
+            }
+        }
+
+        // If either attack or strength is the highest stat, drain both of them by 5%
+        if highest_stat.0 == CombatStat::Attack || highest_stat.0 == CombatStat::Strength {
+            monster.drain_stat(CombatStat::Attack, monster.live_stats.attack / 20, None);
+            monster.drain_stat(CombatStat::Strength, monster.live_stats.strength / 20, None);
+        } else {
+            // Otherwise, drain the highest stat by 5%
+            monster.drain_stat(highest_stat.0, highest_stat.1 / 20, None);
+        }
+    }
 
     hit
 }
