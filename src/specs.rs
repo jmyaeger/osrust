@@ -1,4 +1,4 @@
-use crate::attacks::{base_attack, damage_roll, AttackInfo, Hit};
+use crate::attacks::{self, base_attack, damage_roll, AttackInfo, Hit};
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
 use crate::limiters::Limiter;
@@ -639,5 +639,48 @@ pub fn acb_spec(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut info = AttackInfo::new(player, monster);
+    // Store base attack roll to restore afterwards
+    let old_att_roll = player.att_rolls[&CombatType::Ranged];
+    player.boosts.acb_spec = true;
+
+    // Double accuracy
+    player
+        .att_rolls
+        .insert(CombatType::Ranged, old_att_roll * 2);
+
+    // Get the attack function corresponding to the bolt type being used
+    let attack_fn = attacks::get_attack_functions(player);
+    let hit = attack_fn(player, monster, rng, limiter);
+
+    // Restore base attack roll
+    player.att_rolls.insert(CombatType::Ranged, old_att_roll);
+    player.boosts.acb_spec = false;
+
+    hit
+}
+
+pub fn zcb_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Store base attack roll to restore afterwards
+    let old_att_roll = player.att_rolls[&CombatType::Ranged];
+    player.boosts.zcb_spec = true;
+
+    // Double accuracy
+    player
+        .att_rolls
+        .insert(CombatType::Ranged, old_att_roll * 2);
+
+    // Get the attack function corresponding to the bolt type being used
+    let attack_fn = attacks::get_attack_functions(player);
+    let hit = attack_fn(player, monster, rng, limiter);
+
+    // Restore base attack roll
+    player.att_rolls.insert(CombatType::Ranged, old_att_roll);
+    player.boosts.zcb_spec = false;
+
+    hit
 }
