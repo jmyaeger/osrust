@@ -204,6 +204,7 @@ pub struct StatusBoosts {
     pub charge_active: bool,
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
+    pub first_attack: bool,
     pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
 }
@@ -219,6 +220,7 @@ impl Default for StatusBoosts {
             charge_active: false,
             kandarin_diary: true,
             mark_of_darkness: false,
+            first_attack: true,
             sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
         }
@@ -1051,6 +1053,22 @@ impl Player {
             CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
             CombatEffect::DelayedHeal { tick_delay, .. } => tick_delay.is_some(),
         })
+    }
+
+    pub fn restore_prayer(&mut self, amount: u32, max_level: Option<u32>) {
+        let cap = max_level.unwrap_or(self.stats.prayer);
+        self.live_stats.prayer = min(cap, self.live_stats.prayer + amount);
+    }
+
+    pub fn seercull_spec_max(&self) -> u32 {
+        // Calculate the max hit for Seercull, MSB, etc.
+        let str_bonus = self
+            .gear
+            .ammo
+            .as_ref()
+            .map_or(0, |ammo| ammo.bonuses.strength.ranged);
+
+        1 + (self.live_stats.ranged + 10) * (str_bonus + 64) as u32 / 1280
     }
 }
 

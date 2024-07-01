@@ -39,6 +39,7 @@ pub fn simulate_fight(
     while monster.live_stats.hitpoints > 0 {
         if tick_counter == attack_tick {
             let hit = player_attack(player, monster, rng, limiter);
+            player.boosts.first_attack = false;
             monster.take_damage(hit.damage);
             hit_attempts += 1;
             hit_count += if hit.success { 1 } else { 0 };

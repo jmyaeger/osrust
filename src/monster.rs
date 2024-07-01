@@ -502,42 +502,43 @@ impl Monster {
         }
         match stat {
             CombatStat::Attack => {
-                if self.live_stats.attack < amount {
-                    remainder = amount - self.live_stats.attack;
-                    self.live_stats.attack = 0;
+                // Mod Ash tweet indicates that stats drain down to 1, not 0
+                if self.live_stats.attack - amount < 1 {
+                    remainder = amount - self.live_stats.attack + 1;
+                    self.live_stats.attack = 1;
                 } else {
                     self.live_stats.attack -= amount;
                 }
             }
             CombatStat::Strength => {
-                if self.live_stats.strength < amount {
-                    remainder = amount - self.live_stats.strength;
-                    self.live_stats.strength = 0;
+                if self.live_stats.strength - amount < 1 {
+                    remainder = amount - self.live_stats.strength + 1;
+                    self.live_stats.strength = 1;
                 } else {
                     self.live_stats.strength -= amount;
                 }
             }
             CombatStat::Magic => {
-                if self.live_stats.magic < amount {
-                    remainder = amount - self.live_stats.magic;
-                    self.live_stats.magic = 0;
+                if self.live_stats.magic - amount < 1 {
+                    remainder = amount - self.live_stats.magic + 1;
+                    self.live_stats.magic = 1;
                 } else {
                     self.live_stats.magic -= amount;
                 }
                 rolls::monster_def_rolls(self);
             }
             CombatStat::Ranged => {
-                if self.live_stats.ranged < amount {
-                    remainder = amount - self.live_stats.ranged;
-                    self.live_stats.ranged = 0;
+                if self.live_stats.ranged - amount < 1 {
+                    remainder = amount - self.live_stats.ranged + 1;
+                    self.live_stats.ranged = 1;
                 } else {
                     self.live_stats.ranged -= amount;
                 }
             }
             CombatStat::Defence => {
-                if self.live_stats.defence < amount {
-                    remainder = amount - self.live_stats.defence;
-                    self.live_stats.defence = 0;
+                if self.live_stats.defence - amount < 1 {
+                    remainder = amount - self.live_stats.defence + 1;
+                    self.live_stats.defence = 1;
                 } else {
                     self.live_stats.defence -= amount;
                 }

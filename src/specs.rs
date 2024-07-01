@@ -7,7 +7,7 @@ use crate::player::Player;
 use crate::rolls::calc_player_magic_rolls;
 use crate::spells::{SpecialSpell, Spell};
 use rand::rngs::ThreadRng;
-use std::cmp::{max, min};
+use std::cmp::max;
 
 pub type SpecialAttackFn =
     fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
@@ -153,7 +153,7 @@ pub fn eldritch_staff_spec(
     hit.apply_transforms(monster, rng, limiter);
 
     // Restore prayer by half the damage, up to 120 prayer points
-    player.live_stats.prayer = min(120, player.live_stats.prayer + hit.damage / 2);
+    player.restore_prayer(hit.damage / 2, Some(120));
 
     // Restore previous spell and recalculate max hit
     if let Some(spell) = previous_spell {
@@ -214,10 +214,7 @@ pub fn sgs_spec(
         // Heal player by half the damage (10 minimum) and restore prayer by 1/4 the damage (5 minimum)
         player.heal(max(10, hit.damage / 2), None);
         let prayer_restore = max(5, hit.damage / 4);
-        player.live_stats.prayer = min(
-            player.stats.prayer,
-            player.live_stats.prayer + prayer_restore,
-        );
+        player.restore_prayer(prayer_restore, None);
     }
 
     hit
@@ -423,5 +420,215 @@ pub fn accursed_sceptre_spec(
             monster.drain_stat(CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
         }
     }
+    hit
+}
+
+pub fn webweaver_bow_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Accuracy is doubled, and each of the 4 hits does up to 40% of max hit
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 2 / 5;
+
+    let mut total_hit = Hit::default();
+
+    // Hits 4 times, independently rolled
+    for _ in 0..4 {
+        let mut hit = base_attack(&info, rng);
+        if hit.success {
+            hit.apply_transforms(monster, rng, limiter);
+        }
+        total_hit = total_hit.combine(&hit);
+    }
+
+    total_hit
+}
+
+pub fn ancient_mace_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Always rolls against crush
+    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+        player.restore_prayer(hit.damage, None);
+    }
+
+    hit
+}
+
+pub fn barrelchest_anchor_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 11 / 10;
+
+    let mut hit = base_attack(&info, rng);
+
+    // Stat drains happen before transforms, according to Mod Ash
+    let drain_order = vec![
+        StatDrain::new(CombatStat::Defence, None),
+        StatDrain::new(CombatStat::Strength, None),
+        StatDrain::new(CombatStat::Attack, None),
+        StatDrain::new(CombatStat::Magic, None),
+        StatDrain::new(CombatStat::Ranged, None),
+    ];
+    monster.drain_stats_in_order(hit.damage / 10, drain_order);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn dorgeshuun_weapon_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let info = AttackInfo::new(player, monster);
+
+    // Always hits accurately if it's the first attack
+    let mut hit = if player.boosts.first_attack {
+        Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng))
+    } else {
+        base_attack(&info, rng)
+    };
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+
+        // Drains defence by damage, but only if it hasn't been drained already
+        if monster.live_stats.defence == monster.stats.defence {
+            monster.drain_stat(CombatStat::Defence, hit.damage, None);
+        }
+    }
+
+    hit
+}
+
+pub fn dragon_scimitar_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 25%
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+
+    // Always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn dragon_warhammer_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost damage by 50%
+    info.max_hit = info.max_hit * 3 / 2;
+
+    // Store defence drain amount (30% of current level)
+    let def_drain = monster.live_stats.defence * 3 / 10;
+
+    if monster.info.name.contains("Tekton") {
+        // DWH spec always hits on first attack on Tekton
+        if player.boosts.first_attack {
+            let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
+            hit.apply_transforms(monster, rng, limiter);
+            monster.drain_stat(CombatStat::Defence, def_drain, None);
+
+            hit
+        } else {
+            let mut hit = base_attack(&info, rng);
+            if hit.success {
+                hit.apply_transforms(monster, rng, limiter);
+                monster.drain_stat(CombatStat::Defence, def_drain, None);
+            } else {
+                // DWH spec still drains 5% of Tekton's defence on a miss
+                monster.drain_stat(CombatStat::Defence, monster.live_stats.defence / 20, None);
+            }
+
+            hit
+        }
+    } else {
+        let mut hit = base_attack(&info, rng);
+        if hit.success {
+            hit.apply_transforms(monster, rng, limiter);
+            monster.drain_stat(CombatStat::Defence, def_drain, None);
+        }
+
+        hit
+    }
+}
+
+pub fn seercull_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Uses special max hit calc that only accounts for ranged ammo strength
+    info.max_hit = player.seercull_spec_max();
+
+    // Spec always hits and drains magic by amount of damage dealt
+    let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
+    hit.apply_transforms(monster, rng, limiter);
+
+    // TODO: Test whether the drain happens before or after transforms
+    monster.drain_stat(CombatStat::Magic, hit.damage, None);
+
+    hit
+}
+
+pub fn abyssal_bludgeon_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 0.5% per missing prayer point
+    let damage_mod = 1000 + 5 * (player.stats.prayer - player.live_stats.prayer);
+    info.max_hit = info.max_hit * damage_mod / 1000;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
     hit
 }
