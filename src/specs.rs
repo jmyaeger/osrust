@@ -339,3 +339,89 @@ pub fn bulwark_spec(
 
     hit
 }
+
+pub fn crystal_halberd_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost damage by 10%
+    info.max_hit = info.max_hit * 11 / 10;
+
+    // Spec always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    // Hits twice on monsters larger than 1x1
+    if monster.info.size > 1 {
+        // Second hit is 25% less accurate
+        info.max_att_roll = info.max_att_roll * 3 / 4;
+
+        let mut hit2 = base_attack(&info, rng);
+        if hit2.success {
+            hit2.apply_transforms(monster, rng, limiter);
+        }
+        hit.combine(&hit2);
+    }
+
+    hit
+}
+
+pub fn abyssal_whip_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 25%
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+    hit
+}
+
+pub fn accursed_sceptre_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost damage and accuracy by 50%
+    info.max_hit = info.max_hit * 3 / 2;
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+
+        // Drain magic and defence by up to 15% of base levels (less if already drained)
+        let def_level_cap = monster.stats.defence - monster.stats.defence * 15 / 100;
+        let magic_level_cap = monster.stats.magic - monster.stats.magic * 15 / 100;
+
+        if monster.live_stats.defence > def_level_cap {
+            let def_drain_cap = monster.live_stats.defence - def_level_cap;
+            monster.drain_stat(CombatStat::Defence, def_drain_cap, Some(def_level_cap));
+        }
+
+        if monster.live_stats.magic > magic_level_cap {
+            let magic_drain_cap = monster.live_stats.magic - magic_level_cap;
+            monster.drain_stat(CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
+        }
+    }
+    hit
+}
