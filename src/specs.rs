@@ -632,3 +632,12 @@ pub fn abyssal_bludgeon_spec(
 
     hit
 }
+
+pub fn acb_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+}

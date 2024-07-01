@@ -205,6 +205,8 @@ pub struct StatusBoosts {
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
     pub first_attack: bool,
+    pub acb_spec: bool,
+    pub zcb_spec: bool,
     pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
 }
@@ -221,6 +223,8 @@ impl Default for StatusBoosts {
             kandarin_diary: true,
             mark_of_darkness: false,
             first_attack: true,
+            acb_spec: false,
+            zcb_spec: false,
             sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
         }
@@ -1069,6 +1073,24 @@ impl Player {
             .map_or(0, |ammo| ammo.bonuses.strength.ranged);
 
         1 + (self.live_stats.ranged + 10) * (str_bonus + 64) as u32 / 1280
+    }
+
+    pub fn bolt_proc_chance(&self, base_chance: f64) -> f64 {
+        if self.boosts.zcb_spec {
+            return 1.0;
+        }
+
+        let mut proc_chance = base_chance;
+
+        if self.boosts.kandarin_diary {
+            proc_chance += 0.1 * base_chance;
+        }
+
+        if self.boosts.acb_spec {
+            proc_chance += base_chance;
+        }
+
+        proc_chance
     }
 }
 

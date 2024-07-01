@@ -423,10 +423,7 @@ pub fn opal_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = OPAL_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(OPAL_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.live_stats.ranged / 9
@@ -453,10 +450,7 @@ pub fn pearl_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = PEARL_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(PEARL_PROC_CHANCE);
 
     // Bolt effect is extra effective against fiery monsters
     let mut denominator = if monster.is_fiery() { 15 } else { 20 };
@@ -484,10 +478,7 @@ pub fn emerald_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = EMERALD_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(EMERALD_PROC_CHANCE);
 
     let poison_severity = if player.is_wearing("Zaryte crossbow", None) {
         27
@@ -511,10 +502,7 @@ pub fn ruby_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = RUBY_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(RUBY_PROC_CHANCE);
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
         // Verified to be 22/100, not 2/9
@@ -547,10 +535,7 @@ pub fn diamond_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = DIAMOND_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(DIAMOND_PROC_CHANCE);
 
     let base_max_hit = player.max_hits[&player.combat_type()];
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
@@ -575,10 +560,7 @@ pub fn onyx_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = ONYX_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(ONYX_PROC_CHANCE);
 
     let base_max_hit = player.max_hits[&player.combat_type()];
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
@@ -607,10 +589,7 @@ pub fn dragonstone_bolt_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut proc_chance = DRAGONSTONE_PROC_CHANCE;
-    if player.boosts.kandarin_diary {
-        proc_chance *= 1.1;
-    }
+    let proc_chance = player.bolt_proc_chance(DRAGONSTONE_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.live_stats.ranged * 2 / 9
