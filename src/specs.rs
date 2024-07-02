@@ -1,4 +1,5 @@
 use crate::attacks::{self, base_attack, damage_roll, AttackInfo, Hit};
+use crate::constants::VERZIK_IDS;
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
 use crate::limiters::Limiter;
@@ -6,7 +7,9 @@ use crate::monster::{CombatStat, Monster, StatDrain};
 use crate::player::Player;
 use crate::rolls::calc_player_magic_rolls;
 use crate::spells::{SpecialSpell, Spell};
+use num::clamp;
 use rand::rngs::ThreadRng;
+use rand::Rng;
 use std::cmp::max;
 
 pub type SpecialAttackFn =
@@ -681,6 +684,539 @@ pub fn zcb_spec(
     // Restore base attack roll
     player.att_rolls.insert(CombatType::Ranged, old_att_roll);
     player.boosts.zcb_spec = false;
+
+    hit
+}
+
+pub fn ags_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 37.5% and accuracy by 100%
+    info.max_hit = info.max_hit * 1375 / 1000;
+    info.max_att_roll *= 2;
+
+    // Always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn dawnbringer_spec(
+    _player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    _limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Rolls 75-150 damage regardless of bonuses or levels, but only on Verzik P1
+    if VERZIK_IDS.contains(&monster.info.id.unwrap_or(0)) {
+        Hit::accurate(damage_roll(75, 150, rng))
+    } else {
+        Hit::inaccurate()
+    }
+}
+
+pub fn dragon_longsword_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 25%
+    info.max_hit = info.max_hit * 5 / 4;
+
+    // Always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn dragon_mace_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 25% and max hit by 50%
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+    info.max_hit = info.max_hit * 3 / 2;
+
+    // Always rolls against crush
+    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn dragon_sword_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 25% and max hit by 25%
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+    info.max_hit = info.max_hit * 5 / 4;
+
+    // Always rolls against stab
+    info.max_def_roll = monster.def_rolls[&CombatType::Stab];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn granite_hammer_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 50%
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+
+    let mut hit = base_attack(&info, rng);
+
+    // Add 5 damage in all cases, even if not originally successful
+    hit.damage += 5;
+    hit.success = true;
+
+    hit.apply_transforms(monster, rng, limiter);
+
+    hit
+}
+
+pub fn ballista_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy and max hit by 25%
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+    info.max_hit = info.max_hit * 5 / 4;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn magic_longbow_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Uses the same max hit calc as the seercull spec (only ammo ranged str is used)
+    let max_hit = player.seercull_spec_max();
+
+    // Always accurate
+    let mut hit = Hit::accurate(damage_roll(0, max_hit, rng));
+
+    hit.apply_transforms(monster, rng, limiter);
+
+    hit
+}
+
+pub fn sara_blessed_sword_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 25%
+    info.max_hit = info.max_hit * 5 / 4;
+
+    // Rolls against magic
+    info.max_def_roll = monster.def_rolls[&CombatType::Magic];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn voidwaker_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Rolls between 50-150% of max hit, always accurate
+    let min_hit = player.max_hits[&CombatType::Stab] / 2;
+    let max_hit = player.max_hits[&CombatType::Stab] * 3 / 2;
+
+    let mut hit = Hit::accurate(damage_roll(min_hit, max_hit, rng));
+    hit.apply_transforms(monster, rng, limiter);
+
+    hit
+}
+
+pub fn volatile_staff_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Store previous spell if there is one
+    let previous_spell = player.attrs.spell;
+
+    // Set spell to Immolate and recalculate max hit
+    player.set_spell(Spell::Special(SpecialSpell::Immolate));
+    calc_player_magic_rolls(player, monster);
+
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 50%
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    // Restore previous spell and recalculate max hit
+    if let Some(spell) = previous_spell {
+        player.set_spell(spell);
+    } else {
+        player.attrs.spell = None;
+    }
+
+    calc_player_magic_rolls(player, monster);
+
+    hit
+}
+
+pub fn abyssal_dagger_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Decreases max hit by 15% but boosts accuracy by 25%
+    info.max_hit = info.max_hit * 85 / 100;
+    info.max_att_roll = info.max_att_roll * 5 / 4;
+
+    // Rolls against stab
+    info.max_def_roll = monster.def_rolls[&CombatType::Stab];
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+
+        // Only one accuracy roll, so if the first hit succeeds, the second hit is always accurate
+        let mut hit2 = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
+        hit2.apply_transforms(monster, rng, limiter);
+        hit = hit.combine(&hit2);
+    }
+
+    hit
+}
+
+pub fn dark_bow_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Increase max hit by 50% if using dragon arrows and 30% otherwise
+    let damage_mod = if player.is_wearing("Dragon arrow", None) {
+        15
+    } else {
+        13
+    };
+
+    info.max_hit = info.max_hit * damage_mod / 10;
+
+    // Clamp minimum hit to 8 if using dragon arrows and 5 otherwise
+    let clamp_min = if player.is_wearing("Dragon arrow", None) {
+        8
+    } else {
+        5
+    };
+
+    // Clamp max hit to 48
+    let clamp_max = 48;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.damage = clamp(hit.damage, clamp_min, clamp_max);
+        hit.apply_transforms(monster, rng, limiter);
+    }
+    let mut hit2 = base_attack(&info, rng);
+    if hit2.success {
+        hit2.damage = clamp(hit2.damage, clamp_min, clamp_max);
+        hit2.apply_transforms(monster, rng, limiter);
+    }
+    hit = hit.combine(&hit2);
+
+    hit
+}
+
+pub fn dragon_claw_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    // Up to four accuracy rolls are performed, with the first successful one determining damage rolls
+
+    // First accuracy roll
+    if base_attack(&info, rng).success {
+        // 4-2-1-1: Second hit is half of first hit, third hit is half of second hit, fourth hit is equal to third hit + 1
+        let mut hit1 = Hit::accurate(damage_roll(info.max_hit / 2, info.max_hit - 1, rng));
+        let mut hit2 = Hit::accurate(hit1.damage / 2);
+        let mut hit3 = Hit::accurate(hit2.damage / 2);
+        let mut hit4 = Hit::accurate(hit3.damage + 1);
+
+        hit1.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(monster, rng, limiter);
+        hit3.apply_transforms(monster, rng, limiter);
+        hit4.apply_transforms(monster, rng, limiter);
+
+        return hit1.combine(&hit2).combine(&hit3).combine(&hit4);
+    }
+
+    // Second accuracy roll
+    if base_attack(&info, rng).success {
+        // 0-4-2-2: First hit misses, third is half of second hit, fourth is third hit + 1
+        let mut hit1 = Hit::accurate(damage_roll(info.max_hit * 3 / 8, info.max_hit * 7 / 8, rng));
+        let mut hit2 = Hit::accurate(hit1.damage / 2);
+        let mut hit3 = Hit::accurate(hit2.damage + 1);
+
+        hit1.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(monster, rng, limiter);
+        hit3.apply_transforms(monster, rng, limiter);
+
+        return hit1.combine(&hit2).combine(&hit3);
+    }
+
+    // Third accuracy roll
+    if base_attack(&info, rng).success {
+        // 0-0-3-3: First and second hit miss, fourth hit is equal to third hit + 1
+        let mut hit1 = Hit::accurate(damage_roll(info.max_hit / 4, info.max_hit * 3 / 4, rng));
+        let mut hit2 = Hit::accurate(hit1.damage + 1);
+
+        hit1.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(monster, rng, limiter);
+
+        return hit1.combine(&hit2);
+    }
+
+    // Fourth accuracy roll
+    if base_attack(&info, rng).success {
+        // 0-0-0-5: First three hits miss, fourth rolls between 25-125% of max hit
+        return Hit::accurate(damage_roll(info.max_hit / 4, info.max_hit * 5 / 4, rng));
+    }
+
+    // If all accuracy rolls fail
+    if rng.gen_range(0..2) == 0 {
+        // 50% chance of 0-0-1-1
+        let mut hit = Hit::accurate(2);
+        hit.apply_transforms(monster, rng, limiter);
+
+        hit
+    } else {
+        // 50% chance of 0-0-0-0
+        Hit::inaccurate()
+    }
+}
+
+pub fn dragon_dagger_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy and max hit by 15%
+    info.max_hit = info.max_hit * 115 / 100;
+    info.max_att_roll = info.max_att_roll * 115 / 100;
+
+    // Rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    // Rolls two independent hits
+    let mut hit1 = base_attack(&info, rng);
+    let mut hit2 = base_attack(&info, rng);
+
+    hit1.apply_transforms(monster, rng, limiter);
+    hit2.apply_transforms(monster, rng, limiter);
+
+    hit1.combine(&hit2)
+}
+
+pub fn dragon_knife_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let info = AttackInfo::new(player, monster);
+
+    // Rolls two independent hits with no boosts
+    let mut hit1 = base_attack(&info, rng);
+    let mut hit2 = base_attack(&info, rng);
+
+    hit1.apply_transforms(monster, rng, limiter);
+    hit2.apply_transforms(monster, rng, limiter);
+
+    hit1.combine(&hit2)
+}
+
+pub fn magic_shortbow_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Uses same max hit as seercull spec and magic longbow
+    let max_hit = player.seercull_spec_max();
+
+    // Boost accuracy by 43%
+    let mut info = AttackInfo::new(player, monster);
+    info.max_att_roll = info.max_att_roll * 10 / 7;
+    info.max_hit = max_hit;
+
+    // Rolls two independent hits
+    let mut hit1 = base_attack(&info, rng);
+    let mut hit2 = base_attack(&info, rng);
+
+    hit1.apply_transforms(monster, rng, limiter);
+    hit2.apply_transforms(monster, rng, limiter);
+
+    hit1.combine(&hit2)
+}
+
+pub fn sara_sword_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 15%
+    info.max_hit = info.max_hit * 115 / 100;
+
+    // Rolls against magic but uses player's slash accuracy
+    info.max_def_roll = monster.def_rolls[&CombatType::Magic];
+    info.max_att_roll = player.att_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        // Add a random amount between 1 and 16 to damage
+        hit.damage += rng.gen_range(1..=16);
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn zgs_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Double accuracy and increase max hit by 10%
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 11 / 10;
+
+    // Rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+
+        // If the monster is freezable, freeze it for 32 ticks (minus freeze resistance)
+        if monster.is_freezable() {
+            monster.freeze(32);
+        }
+    }
+
+    hit
+}
+
+pub fn ursine_chainmace_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Double accuracy
+    info.max_att_roll *= 2;
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+
+        // Apply a DoT effect for 20 damage over 10 ticks (4 every 2 ticks)
+        monster.active_effects.push(CombatEffect::DamageOverTime {
+            tick_counter: Some(0),
+            tick_interval: 2,
+            damage_per_hit: 4,
+            total_hits: 5,
+            apply_on_hit: false,
+        })
+    }
 
     hit
 }

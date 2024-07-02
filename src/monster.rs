@@ -655,13 +655,20 @@ impl Monster {
     }
 
     pub fn clear_inactive_effects(&mut self) {
+        // Clear all combat effects that are no longer active
         self.active_effects.retain(|event| match event {
             CombatEffect::Poison { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
             CombatEffect::DelayedHeal { tick_delay, .. } => tick_delay.is_some(),
+            CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
         })
+    }
+
+    pub fn freeze(&mut self, duration: u32) {
+        // Freeze the monster for the specified duration, reduced by freeze resistance
+        self.info.freeze_duration = duration - duration * self.immunities.freeze / 100;
     }
 }
 

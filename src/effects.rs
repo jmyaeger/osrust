@@ -21,6 +21,13 @@ pub enum CombatEffect {
         tick_delay: Option<i32>,
         heal: u32,
     },
+    DamageOverTime {
+        tick_counter: Option<i32>,
+        tick_interval: i32,
+        damage_per_hit: u32,
+        total_hits: i32,
+        apply_on_hit: bool,
+    },
 }
 
 impl CombatEffect {
@@ -40,6 +47,19 @@ impl CombatEffect {
             } => apply_burn(tick_counter, stacks),
             Self::DelayedAttack { tick_delay, damage } => apply_delayed_attack(tick_delay, damage),
             Self::DelayedHeal { tick_delay, heal } => apply_delayed_heal(tick_delay, heal),
+            Self::DamageOverTime {
+                tick_counter,
+                tick_interval,
+                damage_per_hit,
+                total_hits,
+                apply_on_hit,
+            } => apply_damage_over_time(
+                tick_counter,
+                tick_interval,
+                damage_per_hit,
+                total_hits,
+                apply_on_hit,
+            ),
         }
     }
 }
@@ -151,5 +171,52 @@ fn apply_delayed_heal(tick_delay: &mut Option<i32>, heal: &mut u32) -> u32 {
         }
     } else {
         0
+    }
+}
+
+fn apply_damage_over_time(
+    tick_counter: &mut Option<i32>,
+    tick_interval: &mut i32,
+    damage_per_hit: &mut u32,
+    total_hits: &mut i32,
+    apply_on_hit: &mut bool,
+) -> u32 {
+    if let Some(tick) = tick_counter {
+        // Increment tick counter
+        *tick += 1;
+
+        if *tick == *tick_interval {
+            // Reset tick counter
+            *tick = 0;
+
+            // Decrement total hits left
+            *total_hits -= 1;
+
+            if *total_hits == 0 {
+                // If total hits is 0, damage over time effect has ended
+                *tick_counter = None;
+            }
+
+            *damage_per_hit
+        } else {
+            0
+        }
+    } else {
+        // If tick counter is None, damage over time has just been inflicted
+        *tick_counter = Some(0);
+
+        // Only apply damage on the first tick if specified
+        if *apply_on_hit {
+            *total_hits -= 1;
+
+            // Shouldn't need this check but just in case
+            if *total_hits == 0 {
+                *tick_counter = None;
+            }
+
+            *damage_per_hit
+        } else {
+            0
+        }
     }
 }
