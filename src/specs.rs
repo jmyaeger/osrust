@@ -5,7 +5,7 @@ use crate::equipment::CombatType;
 use crate::limiters::Limiter;
 use crate::monster::{CombatStat, Monster, StatDrain};
 use crate::player::Player;
-use crate::rolls::calc_player_magic_rolls;
+use crate::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
 use crate::spells::{SpecialSpell, Spell};
 use num::clamp;
 use rand::rngs::ThreadRng;
@@ -1216,6 +1216,153 @@ pub fn ursine_chainmace_spec(
             total_hits: 5,
             apply_on_hit: false,
         })
+    }
+
+    hit
+}
+
+pub fn soulreaper_axe_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Store the number of soulreaper stacks for later
+    let current_stacks = player.boosts.soulreaper_stacks;
+
+    // Reset the number of stacks and recalculate rolls
+    player.boosts.soulreaper_stacks = 0;
+    calc_player_melee_rolls(player, monster);
+
+    let mut info = AttackInfo::new(player, monster);
+
+    // Increase max hit and accuracy by 6% per stack
+    info.max_hit = info.max_hit * (100 + 6 * current_stacks) / 100;
+    info.max_att_roll = info.max_att_roll * (100 + 6 * current_stacks as i32) / 100;
+
+    let mut hit = base_attack(&info, rng);
+
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
+    }
+
+    // Restore HP lost while accumulating the stacks (8 per stack)
+    player.heal(current_stacks * 8, None);
+
+    hit
+}
+
+pub fn tonalztics_of_ralos_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Rolls up to 3/4 of the "true" max hit for each hit
+    info.max_hit = info.max_hit * 3 / 4;
+
+    let drain_cap = Some(monster.stats.defence / 2);
+    let drain_amount = monster.live_stats.magic / 10;
+
+    let mut hit1 = base_attack(&info, rng);
+    if hit1.success {
+        hit1.apply_transforms(monster, rng, limiter);
+        monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+    }
+    if player.gear.weapon.matches_version("Charged") {
+        // Only the charged version does a second attack
+        let mut hit2 = base_attack(&info, rng);
+        if hit2.success {
+            hit2.apply_transforms(monster, rng, limiter);
+            monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+        }
+        return hit1.combine(&hit2);
+    }
+
+    hit1
+}
+
+pub fn dual_macuahuitl_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Only works if the player has full blood moon equipped
+    if !player.set_effects.full_blood_moon {
+        return (player.attack)(player, monster, rng, limiter);
+    }
+
+    let mut info1 = AttackInfo::new(player, monster);
+    let mut info2 = info1.clone();
+
+    // Boost max hit and min hit by 25%
+    let max_hit = info1.max_hit * 5 / 4;
+    let min_hit = info1.max_hit / 4;
+    info1.max_hit = max_hit / 2;
+    info2.max_hit = max_hit - max_hit / 2;
+    info1.min_hit = min_hit / 2;
+    info2.min_hit = min_hit - min_hit / 2;
+
+    // Take damage equal to 25% of current HP
+    let damage = player.live_stats.hitpoints / 4;
+    player.take_damage(damage);
+
+    // Roll two separate hits
+    let mut hit1 = base_attack(&info1, rng);
+    if hit1.success {
+        hit1.apply_transforms(monster, rng, limiter);
+    }
+    let mut hit2 = if hit1.success {
+        // Only roll the second hit if the first hit was accurate
+        base_attack(&info2, rng)
+    } else {
+        Hit::inaccurate()
+    };
+
+    if hit2.success {
+        hit2.apply_transforms(monster, rng, limiter);
+    }
+
+    // Next attack is guaranteed to be 3 ticks
+    player.gear.weapon.speed = 3;
+
+    hit1.combine(&hit2)
+}
+
+pub fn atlatl_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    // Only works if the player has full eclipse moon equipped
+    if !player.set_effects.full_eclipse_moon {
+        return (player.attack)(player, monster, rng, limiter);
+    }
+
+    let mut stack_damage = 0;
+
+    for effect in monster.active_effects.iter() {
+        match effect {
+            CombatEffect::Burn { stacks, .. } => {
+                stack_damage += stacks.iter().sum::<u32>();
+                break;
+            }
+            _ => continue,
+        }
+    }
+
+    let mut info = AttackInfo::new(player, monster);
+    info.max_hit += stack_damage;
+    info.min_hit = stack_damage / 2;
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(monster, rng, limiter);
     }
 
     hit
