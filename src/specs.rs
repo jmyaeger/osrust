@@ -1007,46 +1007,52 @@ pub fn dragon_claw_spec(
     // Rolls against slash
     info.max_def_roll = monster.def_rolls[&CombatType::Slash];
 
-    // Up to four accuracy rolls are performed, with the first successful one determining damage rolls
+    let modified_max_hit = info.max_hit - 1;
 
     // First accuracy roll
     if base_attack(&info, rng).success {
-        // 4-2-1-1: Second hit is half of first hit, third hit is half of second hit, fourth hit is equal to third hit + 1
-        let mut hit1 = Hit::accurate(damage_roll(info.max_hit / 2, info.max_hit - 1, rng));
-        let mut hit2 = Hit::accurate(hit1.damage / 2);
-        let mut hit3 = Hit::accurate(hit2.damage / 2);
+        // Case 1: Deal between max hit and max hit * 2 - 1 (100 to ~200% damage) split over 4 hits
+        let total_damage = damage_roll(info.max_hit, info.max_hit + modified_max_hit, rng);
+        let mut hit1 = Hit::accurate(total_damage / 2);
+        let mut hit2 = Hit::accurate(total_damage / 4);
+        let mut hit3 = Hit::accurate(total_damage / 8);
         let mut hit4 = Hit::accurate(hit3.damage + 1);
 
-        hit1.apply_transforms(monster, rng, limiter);
-        hit2.apply_transforms(monster, rng, limiter);
-        hit3.apply_transforms(monster, rng, limiter);
-        hit4.apply_transforms(monster, rng, limiter);
+        // In-game tests indicate accurate zeros are not transformed to 1s
+        hit1.apply_limiters(rng, limiter);
+        hit2.apply_limiters(rng, limiter);
+        hit3.apply_limiters(rng, limiter);
+        hit4.apply_limiters(rng, limiter);
 
         return hit1.combine(&hit2).combine(&hit3).combine(&hit4);
     }
 
     // Second accuracy roll
     if base_attack(&info, rng).success {
-        // 0-4-2-2: First hit misses, third is half of second hit, fourth is third hit + 1
-        let mut hit1 = Hit::accurate(damage_roll(info.max_hit * 3 / 8, info.max_hit * 7 / 8, rng));
-        let mut hit2 = Hit::accurate(hit1.damage / 2);
+        // Case 2: Deal between 75-175% damage split over 3 hits
+        let min_hit = info.max_hit * 3 / 4;
+        let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
+        let mut hit1 = Hit::accurate(total_damage / 2);
+        let mut hit2 = Hit::accurate(total_damage / 4);
         let mut hit3 = Hit::accurate(hit2.damage + 1);
 
-        hit1.apply_transforms(monster, rng, limiter);
-        hit2.apply_transforms(monster, rng, limiter);
-        hit3.apply_transforms(monster, rng, limiter);
+        hit1.apply_limiters(rng, limiter);
+        hit2.apply_limiters(rng, limiter);
+        hit3.apply_limiters(rng, limiter);
 
         return hit1.combine(&hit2).combine(&hit3);
     }
 
     // Third accuracy roll
     if base_attack(&info, rng).success {
-        // 0-0-3-3: First and second hit miss, fourth hit is equal to third hit + 1
-        let mut hit1 = Hit::accurate(damage_roll(info.max_hit / 4, info.max_hit * 3 / 4, rng));
+        // Case 3: Deal between 50-150% damage split over 2 hits
+        let min_hit = info.max_hit / 2;
+        let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
+        let mut hit1 = Hit::accurate(total_damage / 2);
         let mut hit2 = Hit::accurate(hit1.damage + 1);
 
-        hit1.apply_transforms(monster, rng, limiter);
-        hit2.apply_transforms(monster, rng, limiter);
+        hit1.apply_limiters(rng, limiter);
+        hit2.apply_limiters(rng, limiter);
 
         return hit1.combine(&hit2);
     }
@@ -1054,18 +1060,24 @@ pub fn dragon_claw_spec(
     // Fourth accuracy roll
     if base_attack(&info, rng).success {
         // 0-0-0-5: First three hits miss, fourth rolls between 25-125% of max hit
-        return Hit::accurate(damage_roll(info.max_hit / 4, info.max_hit * 5 / 4, rng));
+        let min_hit = info.max_hit / 4;
+        let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
+        let mut hit = Hit::accurate(total_damage + 1);
+
+        hit.apply_limiters(rng, limiter);
+
+        return hit;
     }
 
     // If all accuracy rolls fail
-    if rng.gen_range(0..2) == 0 {
-        // 50% chance of 0-0-1-1
+    if rng.gen_range(0..3) > 0 {
+        // ~2/3 chance of 0-0-1-1 (NOTE: 2/3 comes from the wiki/GeChallengeM, and in-game testing is close enough)
         let mut hit = Hit::accurate(2);
         hit.apply_transforms(monster, rng, limiter);
 
         hit
     } else {
-        // 50% chance of 0-0-0-0
+        // ~1/3 chance of 0-0-0-0
         Hit::inaccurate()
     }
 }
@@ -1089,8 +1101,12 @@ pub fn dragon_dagger_spec(
     let mut hit1 = base_attack(&info, rng);
     let mut hit2 = base_attack(&info, rng);
 
-    hit1.apply_transforms(monster, rng, limiter);
-    hit2.apply_transforms(monster, rng, limiter);
+    if hit1.success {
+        hit1.apply_transforms(monster, rng, limiter);
+    }
+    if hit2.success {
+        hit2.apply_transforms(monster, rng, limiter);
+    }
 
     hit1.combine(&hit2)
 }
@@ -1366,4 +1382,60 @@ pub fn atlatl_spec(
     }
 
     hit
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::combat::assign_limiter;
+    use crate::equipment::CombatStyle;
+    use crate::loadouts::*;
+    use crate::monster::Monster;
+    use crate::rolls::calc_active_player_rolls;
+
+    #[test]
+    fn test_dragon_dagger() {
+        let mut player = max_melee_player();
+        player.equip("Dragon dagger", Some("Unpoisoned"));
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Lunge);
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        calc_active_player_rolls(&mut player, &monster);
+        let limiter = assign_limiter(&player, &monster);
+        let mut rng = rand::thread_rng();
+        let mut total_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let hit = dragon_dagger_spec(&mut player, &mut monster, &mut rng, &limiter);
+            total_damage += hit.damage;
+        }
+
+        let dps = total_damage as f32 / (n as f32 * 2.4);
+
+        assert!(dps - 7.963 < 0.1);
+    }
+
+    #[test]
+    fn test_dragon_claws() {
+        let mut player = max_melee_player();
+        player.equip("Dragon claws", None);
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Slash);
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        calc_active_player_rolls(&mut player, &monster);
+        let limiter = assign_limiter(&player, &monster);
+        let mut rng = rand::thread_rng();
+        let mut total_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let hit = dragon_claw_spec(&mut player, &mut monster, &mut rng, &limiter);
+            total_damage += hit.damage;
+        }
+
+        let dps = total_damage as f32 / (n as f32 * 2.4);
+
+        assert!(dps - 17.914 < 0.1);
+    }
 }

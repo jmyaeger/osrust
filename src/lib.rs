@@ -7,6 +7,7 @@ pub mod equipment;
 pub mod equipment_db;
 pub mod hit_dist;
 pub mod limiters;
+pub mod loadouts;
 pub mod monster;
 pub mod monster_db;
 pub mod monster_scaling;
