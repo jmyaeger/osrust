@@ -53,22 +53,30 @@ impl GraardorFight {
         let mut mage_attack_tick = 1;
         let mut melee_attack_tick = 5;
         let player_attack = self.player.attack;
+        let mut skip_next_attack = false;
+        let mut current_tile = 1;
+        // let mut player_dead = false;
 
         while self.graardor.live_stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
-                // Process player attack
-                let hit = player_attack(
-                    &mut self.player,
-                    &mut self.graardor,
-                    &mut self.rng,
-                    &self.limiter,
-                );
-                self.player.boosts.first_attack = false;
-                self.graardor.take_damage(hit.damage);
-                vars.hit_attempts += 1;
-                vars.hit_count += if hit.success { 1 } else { 0 };
-                vars.hit_amounts.push(hit.damage);
-                vars.attack_tick += self.player.gear.weapon.speed;
+                if skip_next_attack {
+                    skip_next_attack = false;
+                    vars.attack_tick += self.player.gear.weapon.speed;
+                } else {
+                    // Process player attack
+                    let hit = player_attack(
+                        &mut self.player,
+                        &mut self.graardor,
+                        &mut self.rng,
+                        &self.limiter,
+                    );
+                    self.player.boosts.first_attack = false;
+                    self.graardor.take_damage(hit.damage);
+                    vars.hit_attempts += 1;
+                    vars.hit_count += if hit.success { 1 } else { 0 };
+                    vars.hit_amounts.push(hit.damage);
+                    vars.attack_tick += self.player.gear.weapon.speed;
+                }
             }
 
             // Process effects and apply damage
@@ -110,18 +118,33 @@ impl GraardorFight {
                 }
             }
 
-            // Eat if below the provided threshold
-            // TODO: only allow this on hits where it wouldn't break the cycle
-            if self.player.live_stats.hitpoints < self.config.eat_hp {
+            // if self.player.live_stats.hitpoints == 0 {
+            //     player_dead = true;
+            //     break;
+            // }
+
+            // Eat if below the provided threshold and force the player to skip the next attack
+            if self.player.live_stats.hitpoints < self.config.eat_hp
+                && [5, 6, 13, 14].contains(&current_tile)
+            {
                 self.player.heal(self.config.heal_amount, None);
+                skip_next_attack = true;
             }
 
             // Increment tick counter
             vars.tick_counter += 1;
+
+            // Update tile position and reset if it's at the end of a cycle
+            if current_tile == 16 {
+                current_tile = 0;
+            } else {
+                current_tile += 1;
+            }
         }
 
         let ttk = vars.tick_counter as f64 * 0.6;
 
+        // TODO: Figure out how to handle simulations where the player died
         FightResult {
             ttk,
             hit_attempts: vars.hit_attempts,

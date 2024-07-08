@@ -230,8 +230,17 @@ where
         hits.into_iter()
             .map(|hit| {
                 let mut parts = hit.split('(');
-                let value = parts.next().unwrap().parse().unwrap_or_default();
-                let style = parts.next().unwrap_or_default().to_string();
+                let value = parts
+                    .next()
+                    .unwrap()
+                    .trim()
+                    .parse::<u32>()
+                    .unwrap_or_default();
+                let style = parts
+                    .next()
+                    .unwrap_or_default()
+                    .to_string()
+                    .replace(')', "");
                 match style.to_lowercase().as_str() {
                     "stab" => MonsterMaxHit {
                         value,
@@ -389,6 +398,8 @@ impl Monster {
         monster.def_rolls.clone_from(&monster.base_def_rolls);
 
         // Calculate base attack rolls and copy to live attack rolls
+        monster.base_att_rolls = rolls::monster_att_rolls(&monster);
+        monster.att_rolls.clone_from(&monster.base_att_rolls);
 
         // Set the flat armour bonus if applicable
         monster.bonuses.flat_armour = monster.info.id.map_or(0, |id| {
@@ -401,24 +412,25 @@ impl Monster {
                 && monster.info.attack_styles.as_ref().unwrap().len() == 1
             {
                 max_hits[0].style = monster.info.attack_styles.as_ref().unwrap()[0];
-            }
-            for hit in max_hits.iter_mut() {
-                if hit.style == AttackType::Melee && monster.info.attack_styles.is_some() {
-                    let melee_style =
-                        monster
-                            .info
-                            .attack_styles
-                            .as_ref()
-                            .unwrap()
-                            .iter()
-                            .find(|x| {
-                                *x == &AttackType::Stab
-                                    || *x == &AttackType::Slash
-                                    || *x == &AttackType::Crush
-                            });
+            } else {
+                for hit in max_hits.iter_mut() {
+                    if hit.style == AttackType::Melee && monster.info.attack_styles.is_some() {
+                        let melee_style =
+                            monster
+                                .info
+                                .attack_styles
+                                .as_ref()
+                                .unwrap()
+                                .iter()
+                                .find(|x| {
+                                    *x == &AttackType::Stab
+                                        || *x == &AttackType::Slash
+                                        || *x == &AttackType::Crush
+                                });
 
-                    if let Some(melee_style) = melee_style {
-                        hit.style = *melee_style;
+                        if let Some(melee_style) = melee_style {
+                            hit.style = *melee_style;
+                        }
                     }
                 }
             }
