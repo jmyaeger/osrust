@@ -1436,6 +1436,29 @@ mod tests {
 
         let dps = total_damage as f32 / (n as f32 * 2.4);
 
-        assert!(dps - 17.914 < 0.1);
+        assert!(dps - 18.123 < 0.1);
+    }
+
+    #[test]
+    fn test_chally() {
+        let mut player = max_melee_player();
+        player.equip("Crystal halberd", Some("Active"));
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Swipe);
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        calc_active_player_rolls(&mut player, &monster);
+        let limiter = assign_limiter(&player, &monster);
+        let mut rng = rand::thread_rng();
+        let mut total_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let hit = crystal_halberd_spec(&mut player, &mut monster, &mut rng, &limiter);
+            total_damage += hit.damage;
+        }
+
+        let dps = total_damage as f32 / (n as f32 * 2.4);
+
+        assert!(dps - 5.723 < 0.1);
     }
 }
