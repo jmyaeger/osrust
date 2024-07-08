@@ -231,9 +231,9 @@ pub fn bgs_spec(
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
 
-    // Boost accuracy by 100% and max hit by 21%
+    // Boost accuracy by 100% and max hit by 21% (multiplies by 11/10 twice)
     info.max_att_roll *= 2;
-    info.max_hit = info.max_hit * 121 / 100;
+    info.max_hit = (info.max_hit * 11 / 10) * 11 / 10;
 
     // Spec always rolls against slash
     info.max_def_roll = monster.def_rolls[&CombatType::Slash];
@@ -436,7 +436,10 @@ pub fn webweaver_bow_spec(
 
     // Accuracy is doubled, and each of the 4 hits does up to 40% of max hit
     info.max_att_roll *= 2;
-    info.max_hit = info.max_hit * 2 / 5;
+
+    // 40% is rounded up by subtracting 60% floored
+    let reduction = info.max_hit * 6 / 10;
+    info.max_hit = info.max_hit - reduction;
 
     let mut total_hit = Hit::default();
 
@@ -696,8 +699,8 @@ pub fn ags_spec(
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
 
-    // Boost max hit by 37.5% and accuracy by 100%
-    info.max_hit = info.max_hit * 1375 / 1000;
+    // Boost max hit by 37.5% (10% then 25%) and accuracy by 100%
+    info.max_hit = (info.max_hit * 11 / 10) * 5 / 4;
     info.max_att_roll *= 2;
 
     // Always rolls against slash
