@@ -75,6 +75,7 @@ struct Monster {
     stats: Stats,
     bonuses: Bonuses,
     immunities: Immunities,
+    max_hit: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -86,7 +87,6 @@ struct MonsterInfo {
     attack_speed: i64,
     attack_styles: Option<Vec<String>>,
     size: i64,
-    max_hit: Option<Vec<String>>,
     attributes: Option<Vec<String>>,
     weakness: Option<ElementalWeakness>,
 }
@@ -356,13 +356,6 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 size: get_printout_value(&po.get("Size").cloned(), false)
                     .and_then(|size| size.as_i64())
                     .unwrap_or(0),
-                max_hit: get_printout_value(&po.get("Max hit").cloned(), true).map(|hit| {
-                    hit.as_array()
-                        .unwrap()
-                        .iter()
-                        .map(|s| s.as_str().unwrap().to_string())
-                        .collect::<Vec<_>>()
-                }),
                 weakness: get_printout_value(&po.get("Elemental weakness").cloned(), false)
                     .map(|w| w.to_string())
                     .map(|weakness| ElementalWeakness {
@@ -465,6 +458,13 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .and_then(|freeze| freeze.as_i64())
                     .unwrap_or_default(),
             },
+            max_hit: get_printout_value(&po.get("Max hit").cloned(), true).map(|hit| {
+                hit.as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|s| s.as_str().unwrap().to_string())
+                    .collect::<Vec<_>>()
+            }),
         };
 
         if monster.stats.hitpoints == 0
@@ -514,7 +514,6 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.info.attack_speed,
             serde_json::to_string(&monster_style).unwrap_or_default(),
             monster.info.size,
-            serde_json::to_string(&monster.info.max_hit).unwrap_or_default(),
             serde_json::to_string(&monster.info.attributes).unwrap_or_default(),
             monster.info.weakness.as_ref().map(|w| w.element.clone()),
             monster.info.weakness.as_ref().map(|w| w.severity),
@@ -540,6 +539,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
+            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
         ])?;
     }
 
@@ -558,7 +558,6 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 attack_speed: 8,
                 attack_styles: monster_style.clone(),
                 size: 5,
-                max_hit: Some(vec!["26".to_string()]),
                 attributes: None,
                 weakness: None,
             },
@@ -596,6 +595,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 venom: false,
                 freeze: 0,
             },
+            max_hit: Some(vec!["26".to_string()]),
         };
 
         stmt.execute(params![
@@ -612,7 +612,6 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.info.attack_speed,
             serde_json::to_string(&monster_style).unwrap_or_default(),
             monster.info.size,
-            serde_json::to_string(&monster.info.max_hit).unwrap_or_default(),
             serde_json::to_string(&monster.info.attributes).unwrap_or_default(),
             monster.info.weakness.as_ref().map(|w| w.element.clone()),
             monster.info.weakness.as_ref().map(|w| w.severity),
@@ -638,6 +637,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
+            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
         ])?;
 
         // conn.execute("CREATE INDEX idx_monsters_name ON monsters (name)", [])?;

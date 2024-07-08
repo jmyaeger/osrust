@@ -50,6 +50,42 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     def_rolls
 }
 
+pub fn monster_att_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
+    let mut att_rolls = HashMap::new();
+    let stance_bonus = 9;
+    for combat_type in &[
+        (
+            CombatType::Stab,
+            monster.live_stats.attack,
+            monster.bonuses.attack.melee,
+        ),
+        (
+            CombatType::Slash,
+            monster.live_stats.attack,
+            monster.bonuses.attack.melee,
+        ),
+        (
+            CombatType::Crush,
+            monster.live_stats.attack,
+            monster.bonuses.attack.melee,
+        ),
+        (
+            CombatType::Ranged,
+            monster.live_stats.ranged,
+            monster.bonuses.attack.ranged,
+        ),
+        (
+            CombatType::Magic,
+            monster.live_stats.magic,
+            monster.bonuses.attack.magic,
+        ),
+    ] {
+        let effective_level = combat_type.1 + stance_bonus;
+        att_rolls.insert(combat_type.0, calc_roll(effective_level, combat_type.2));
+    }
+    att_rolls
+}
+
 pub fn calc_player_def_rolls(player: &mut Player) {
     let mut def_rolls = HashMap::new();
 

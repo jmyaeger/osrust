@@ -1,14 +1,12 @@
 use std::collections::HashMap;
 
-use crate::attacks::get_attack_functions;
 use crate::equipment::CombatType;
 use crate::limiters;
 use crate::monster::Monster;
 use crate::player::Player;
-use crate::sims::single_way;
 use crate::spells::{Spell, StandardSpell};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 pub struct FightResult {
     pub ttk: f64,
     pub hit_attempts: u32,
@@ -16,8 +14,96 @@ pub struct FightResult {
     pub hit_amounts: Vec<u32>,
 }
 
+impl FightResult {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+#[derive(Debug, PartialEq, Clone, Default)]
+pub struct CumulativeResults {
+    pub ttks: Vec<f64>,
+    pub hit_attempt_counts: Vec<u32>,
+    pub hit_counts: Vec<u32>,
+    pub hit_amounts: Vec<u32>,
+}
+
+impl CumulativeResults {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn push(&mut self, result: &FightResult) {
+        self.hit_attempt_counts.push(result.hit_attempts);
+        self.hit_counts.push(result.hit_count);
+        self.hit_amounts.extend(&result.hit_amounts);
+        self.ttks.push(result.ttk);
+    }
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct SimulationStats {
+    pub ttk: f64,
+    pub accuracy: f64,
+    pub hit_dist: HashMap<u32, f64>,
+}
+
+impl SimulationStats {
+    pub fn new(results: &CumulativeResults) -> Self {
+        // Calculate average ttk and accuracy
+        let ttk = results.ttks.iter().sum::<f64>() / results.ttks.len() as f64;
+        let accuracy = results.hit_counts.iter().sum::<u32>() as f64
+            / results.hit_attempt_counts.iter().sum::<u32>() as f64
+            * 100.0;
+
+        // Convert hit amount Vecs to a HashMap counting the number of times each amount appears
+        let hit_counts: HashMap<u32, u32> =
+            results
+                .hit_amounts
+                .iter()
+                .fold(HashMap::new(), |mut acc, &value| {
+                    *acc.entry(value).or_insert(0) += 1;
+                    acc
+                });
+
+        // Convert hit counts into a probability distribution
+        let hit_dist = hit_counts
+            .iter()
+            .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
+            .collect();
+
+        Self {
+            ttk,
+            accuracy,
+            hit_dist,
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Clone, Default)]
+pub struct FightVars {
+    pub tick_counter: i32,
+    pub hit_attempts: u32,
+    pub hit_count: u32,
+    pub hit_amounts: Vec<u32>,
+    pub attack_tick: i32,
+    pub freeze_immunity: i32,
+    pub freeze_resistance: u32,
+}
+
+impl FightVars {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
 pub trait Simulation {
     fn simulate(&mut self) -> FightResult;
+    fn is_immune(&self) -> bool;
+    fn player(&self) -> &Player;
+    fn monster(&self) -> &Monster;
+    fn set_attack_function(&mut self);
+    fn reset(&mut self);
 }
 
 pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limiters::Limiter>> {
@@ -86,58 +172,27 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     None
 }
 
-pub fn simulate_n_fights(
-    player: &mut Player,
-    monster: &mut Monster,
-    n: u32,
-) -> (f64, f64, HashMap<u32, f64>) {
+pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> SimulationStats {
     // Check if the monster is immune before running simulations
-    if monster.is_immune(player) {
-        panic!("{} is immune to this setup", monster.info.name);
+    if simulation.is_immune() {
+        panic!("The monster is immune to the player in this setup");
     }
 
-    // Set up result variables (probably will make a struct for this)
-    let mut ttks = Vec::new();
-    let mut hit_counts = Vec::new();
-    let mut hit_attempt_counts = Vec::new();
-    let mut hit_amounts = Vec::new();
-    let mut rng = rand::thread_rng();
+    // Set up result variables
+    let mut results = CumulativeResults::new();
 
     // Retrieve attack function and limiter
-    let limiter = assign_limiter(player, monster);
-    player.attack = get_attack_functions(player);
+    simulation.set_attack_function();
 
     for _ in 0..n {
         // Run a single fight simulation and update the result variables
-        let result = single_way::simulate_fight(player, monster, &mut rng, &limiter);
-        ttks.push(result.ttk);
-        hit_counts.push(result.hit_count);
-        hit_attempt_counts.push(result.hit_attempts);
-        hit_amounts.extend(result.hit_amounts);
-        monster.reset();
-        player.reset_live_stats();
+        let result = simulation.simulate();
+        results.push(&result);
+        simulation.reset();
     }
 
-    // Calculate average ttk and accuracy
-    let avg_ttk = ttks.iter().sum::<f64>() / n as f64;
-    let avg_accuracy = hit_counts.iter().sum::<u32>() as f64
-        / hit_attempt_counts.iter().sum::<u32>() as f64
-        * 100.0;
-
-    // Convert hit amount Vecs to a HashMap counting the number of times each amount appears
-    let hit_counts: HashMap<u32, u32> =
-        hit_amounts.iter().fold(HashMap::new(), |mut acc, &value| {
-            *acc.entry(value).or_insert(0) += 1;
-            acc
-        });
-
-    // Convert hit counts into a probability distribution
-    let hit_dist = hit_counts
-        .iter()
-        .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
-        .collect();
-
-    (avg_ttk, avg_accuracy, hit_dist)
+    // Return a struct with average ttk, average accuracy, and hit distribution
+    SimulationStats::new(&results)
 }
 
 #[cfg(test)]
@@ -149,6 +204,7 @@ mod tests {
     use crate::potions::Potion;
     use crate::prayers::{Prayer, PrayerBoost};
     use crate::rolls::calc_player_melee_rolls;
+    use crate::sims::single_way::SingleWayFight;
 
     #[test]
     fn test_simulate_n_fights() {
@@ -171,12 +227,12 @@ mod tests {
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let mut monster = Monster::new("Ammonite Crab", None).unwrap();
+        let monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
-        let (ttk, accuracy, all_hits) = simulate_n_fights(&mut player, &mut monster, 100000);
+        let simulation = SingleWayFight::new(player, monster);
+        let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-        assert!(num::abs(ttk - 10.2) < 0.1);
-        assert!(num::abs(accuracy - 99.04) < 0.1);
-        assert_eq!(all_hits.len(), 100000);
+        assert!(num::abs(stats.ttk - 10.2) < 0.1);
+        assert!(num::abs(stats.accuracy - 99.04) < 0.1);
     }
 }
