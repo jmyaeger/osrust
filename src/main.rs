@@ -3,22 +3,22 @@ use osrs::equipment::CombatStyle;
 // use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::monster::Monster;
+use osrs::monster_db;
 use osrs::rolls::calc_active_player_rolls;
 use osrs::sims::single_way::SingleWayFight;
-// use osrs::monster_db;
 
 fn main() {
-    // match monster_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match monster_db::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
     // match equipment_db::main() {
     //     Ok(_) => {}
     //     Err(e) => println!("{}", e),
     // }
 
-    simulate();
+    // simulate();
 }
 
 fn simulate() {

@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+dyn-clone = "1.0.17"
 gcd = "2.3.0"
 lazy_static = "1.4.0"
 num = "0.4.2"
@@ -21,4 +22,4 @@ tokio = { version = "1.37.0", features = ["full"]}
 url = "2.5.0"
 
 [profile.test]
-opt-level = 2
+opt-level = 0

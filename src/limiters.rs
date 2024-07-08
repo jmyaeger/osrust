@@ -1,11 +1,15 @@
+use dyn_clone::DynClone;
 use rand::{rngs::ThreadRng, Rng};
 use std::cmp::{max, min};
 
 // Trait for any post-roll damage transforms applied by the opponent
-pub trait Limiter {
+pub trait Limiter: DynClone {
     fn apply(&self, damage: u32, rng: &mut ThreadRng) -> u32;
 }
 
+dyn_clone::clone_trait_object!(Limiter);
+
+#[derive(Clone)]
 pub struct Zulrah {}
 
 impl Limiter for Zulrah {
@@ -19,6 +23,7 @@ impl Limiter for Zulrah {
     }
 }
 
+#[derive(Clone)]
 pub struct Seren {}
 
 impl Limiter for Seren {
@@ -33,6 +38,7 @@ impl Limiter for Seren {
     }
 }
 
+#[derive(Clone)]
 pub struct Kraken {}
 
 impl Limiter for Kraken {
@@ -46,6 +52,7 @@ impl Limiter for Kraken {
     }
 }
 
+#[derive(Clone)]
 pub struct VerzikP1 {
     pub limit: u32,
 }
@@ -59,6 +66,7 @@ impl Limiter for VerzikP1 {
     }
 }
 
+#[derive(Clone)]
 pub struct Tekton {}
 
 impl Limiter for Tekton {
@@ -72,6 +80,7 @@ impl Limiter for Tekton {
     }
 }
 
+#[derive(Clone)]
 pub struct OneThirdDamage {}
 
 impl Limiter for OneThirdDamage {
@@ -81,6 +90,7 @@ impl Limiter for OneThirdDamage {
     }
 }
 
+#[derive(Clone)]
 pub struct Zogre {}
 
 impl Limiter for Zogre {
@@ -90,6 +100,7 @@ impl Limiter for Zogre {
     }
 }
 
+#[derive(Clone)]
 pub struct HalfDamage {}
 
 impl Limiter for HalfDamage {
