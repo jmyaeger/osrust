@@ -528,9 +528,6 @@ fn apply_melee_weapon_boosts(
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
-        _ if player.is_wearing("Berserker necklace", None) && player.is_wearing_tzhaar_weapon() => {
-            (Fraction::new(1, 1), Fraction::new(6, 5)) // TODO: check implementation order
-        }
         "Silverlight" | "Darklight" if monster.is_demon() => {
             (Fraction::new(0, 1), Fraction::new(3, 5))
         }

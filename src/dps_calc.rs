@@ -190,6 +190,14 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = AttackDistribution::new(vec![HitDistribution::new(combined_hits)]);
     }
 
+    // Berserker necklace + obby weapon distribution (tested, confirmed post-roll)
+    if player.is_using_melee()
+        && player.is_wearing("Berserker necklace", None)
+        && player.is_wearing_tzhaar_weapon()
+    {
+        dist = dist.scale_damage(Fraction::new(6, 5));
+    }
+
     // Dharok's set effect distribution
     if player.is_using_melee() && player.set_effects.full_dharoks {
         let full_hp = player.stats.hitpoints;

@@ -38,7 +38,7 @@ pub fn fang_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -59,7 +59,7 @@ pub fn dragon_crossbow_spec(
 
     // Hit is always successful
     let mut hit = Hit::accurate(damage);
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     hit
 }
@@ -78,7 +78,7 @@ pub fn arclight_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Drains are twice as effective on demons
         let demon_mod = if monster.is_demon() { 2 } else { 1 };
@@ -123,7 +123,7 @@ pub fn ancient_gs_spec(
 
     if hit.success {
         // Add delayed attack and heal if the hit is successful
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         monster.active_effects.push(CombatEffect::DelayedAttack {
             tick_delay: Some(9),
             damage: 25,
@@ -153,7 +153,7 @@ pub fn eldritch_staff_spec(
     // Perform an accurate hit
     let info = AttackInfo::new(player, monster);
     let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     // Restore prayer by half the damage, up to 120 prayer points
     player.restore_prayer(hit.damage / 2, Some(120));
@@ -185,7 +185,7 @@ pub fn blowpipe_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Heal the player for half of the damage
         player.heal(hit.damage / 2, None);
@@ -212,7 +212,7 @@ pub fn sgs_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Heal player by half the damage (10 minimum) and restore prayer by 1/4 the damage (5 minimum)
         player.heal(max(10, hit.damage / 2), None);
@@ -241,7 +241,7 @@ pub fn bgs_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     let cap = if monster.info.name.contains("Tekton") && !hit.success {
@@ -280,14 +280,14 @@ pub fn bulwark_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     // Second hit and stat drains only occur in multi
     if player.boosts.in_multi {
         let mut hit2 = base_attack(&info, rng);
         if hit2.success {
-            hit2.apply_transforms(monster, rng, limiter);
+            hit2.apply_transforms(player, monster, rng, limiter);
         }
         hit.combine(&hit2);
 
@@ -357,7 +357,7 @@ pub fn crystal_halberd_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     // Hits twice on monsters larger than 1x1
@@ -367,7 +367,7 @@ pub fn crystal_halberd_spec(
 
         let mut hit2 = base_attack(&info, rng);
         if hit2.success {
-            hit2.apply_transforms(monster, rng, limiter);
+            hit2.apply_transforms(player, monster, rng, limiter);
         }
         hit.combine(&hit2);
     }
@@ -388,7 +388,7 @@ pub fn abyssal_whip_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
     hit
 }
@@ -407,7 +407,7 @@ pub fn accursed_sceptre_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Drain magic and defence by up to 15% of base levels (less if already drained)
         let def_level_cap = monster.stats.defence - monster.stats.defence * 15 / 100;
@@ -439,7 +439,7 @@ pub fn webweaver_bow_spec(
 
     // 40% is rounded up by subtracting 60% floored
     let reduction = info.max_hit * 6 / 10;
-    info.max_hit = info.max_hit - reduction;
+    info.max_hit -= reduction;
 
     let mut total_hit = Hit::default();
 
@@ -447,7 +447,7 @@ pub fn webweaver_bow_spec(
     for _ in 0..4 {
         let mut hit = base_attack(&info, rng);
         if hit.success {
-            hit.apply_transforms(monster, rng, limiter);
+            hit.apply_transforms(player, monster, rng, limiter);
         }
         total_hit = total_hit.combine(&hit);
     }
@@ -468,7 +468,7 @@ pub fn ancient_mace_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         player.restore_prayer(hit.damage, None);
     }
 
@@ -498,7 +498,7 @@ pub fn barrelchest_anchor_spec(
     monster.drain_stats_in_order(hit.damage / 10, drain_order);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -520,7 +520,7 @@ pub fn dorgeshuun_weapon_spec(
     };
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Drains defence by damage, but only if it hasn't been drained already
         if monster.live_stats.defence == monster.stats.defence {
@@ -547,7 +547,7 @@ pub fn dragon_scimitar_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -571,14 +571,14 @@ pub fn dragon_warhammer_spec(
         // DWH spec always hits on first attack on Tekton
         if player.boosts.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-            hit.apply_transforms(monster, rng, limiter);
+            hit.apply_transforms(player, monster, rng, limiter);
             monster.drain_stat(CombatStat::Defence, def_drain, None);
 
             hit
         } else {
             let mut hit = base_attack(&info, rng);
             if hit.success {
-                hit.apply_transforms(monster, rng, limiter);
+                hit.apply_transforms(player, monster, rng, limiter);
                 monster.drain_stat(CombatStat::Defence, def_drain, None);
             } else {
                 // DWH spec still drains 5% of Tekton's defence on a miss
@@ -590,7 +590,7 @@ pub fn dragon_warhammer_spec(
     } else {
         let mut hit = base_attack(&info, rng);
         if hit.success {
-            hit.apply_transforms(monster, rng, limiter);
+            hit.apply_transforms(player, monster, rng, limiter);
             monster.drain_stat(CombatStat::Defence, def_drain, None);
         }
 
@@ -611,7 +611,7 @@ pub fn seercull_spec(
 
     // Spec always hits and drains magic by amount of damage dealt
     let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     // TODO: Test whether the drain happens before or after transforms
     monster.drain_stat(CombatStat::Magic, hit.damage, None);
@@ -633,7 +633,7 @@ pub fn abyssal_bludgeon_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -708,7 +708,7 @@ pub fn ags_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -744,7 +744,7 @@ pub fn dragon_longsword_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -767,7 +767,7 @@ pub fn dragon_mace_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -790,7 +790,7 @@ pub fn dragon_sword_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -813,7 +813,7 @@ pub fn granite_hammer_spec(
     hit.damage += 5;
     hit.success = true;
 
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     hit
 }
@@ -832,7 +832,7 @@ pub fn ballista_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -850,7 +850,7 @@ pub fn magic_longbow_spec(
     // Always accurate
     let mut hit = Hit::accurate(damage_roll(0, max_hit, rng));
 
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     hit
 }
@@ -871,7 +871,7 @@ pub fn sara_blessed_sword_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -888,7 +888,7 @@ pub fn voidwaker_spec(
     let max_hit = player.max_hits[&CombatType::Stab] * 3 / 2;
 
     let mut hit = Hit::accurate(damage_roll(min_hit, max_hit, rng));
-    hit.apply_transforms(monster, rng, limiter);
+    hit.apply_transforms(player, monster, rng, limiter);
 
     hit
 }
@@ -914,7 +914,7 @@ pub fn volatile_staff_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     // Restore previous spell and recalculate max hit
@@ -946,11 +946,11 @@ pub fn abyssal_dagger_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Only one accuracy roll, so if the first hit succeeds, the second hit is always accurate
         let mut hit2 = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
         hit = hit.combine(&hit2);
     }
 
@@ -987,12 +987,12 @@ pub fn dark_bow_spec(
     let mut hit = base_attack(&info, rng);
     if hit.success {
         hit.damage = clamp(hit.damage, clamp_min, clamp_max);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
     let mut hit2 = base_attack(&info, rng);
     if hit2.success {
         hit2.damage = clamp(hit2.damage, clamp_min, clamp_max);
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
     hit = hit.combine(&hit2);
 
@@ -1076,7 +1076,7 @@ pub fn dragon_claw_spec(
     if rng.gen_range(0..3) > 0 {
         // ~2/3 chance of 0-0-1-1 (NOTE: 2/3 comes from the wiki/GeChallengeM, and in-game testing is close enough)
         let mut hit = Hit::accurate(2);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         hit
     } else {
@@ -1105,10 +1105,10 @@ pub fn dragon_dagger_spec(
     let mut hit2 = base_attack(&info, rng);
 
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
     if hit2.success {
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
 
     hit1.combine(&hit2)
@@ -1126,8 +1126,8 @@ pub fn dragon_knife_spec(
     let mut hit1 = base_attack(&info, rng);
     let mut hit2 = base_attack(&info, rng);
 
-    hit1.apply_transforms(monster, rng, limiter);
-    hit2.apply_transforms(monster, rng, limiter);
+    hit1.apply_transforms(player, monster, rng, limiter);
+    hit2.apply_transforms(player, monster, rng, limiter);
 
     hit1.combine(&hit2)
 }
@@ -1150,8 +1150,8 @@ pub fn magic_shortbow_spec(
     let mut hit1 = base_attack(&info, rng);
     let mut hit2 = base_attack(&info, rng);
 
-    hit1.apply_transforms(monster, rng, limiter);
-    hit2.apply_transforms(monster, rng, limiter);
+    hit1.apply_transforms(player, monster, rng, limiter);
+    hit2.apply_transforms(player, monster, rng, limiter);
 
     hit1.combine(&hit2)
 }
@@ -1176,7 +1176,7 @@ pub fn sara_sword_spec(
     if hit.success {
         // Add a random amount between 1 and 16 to damage
         hit.damage += rng.gen_range(1..=16);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -1200,7 +1200,7 @@ pub fn zgs_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // If the monster is freezable, freeze it for 32 ticks (minus freeze resistance)
         if monster.is_freezable() {
@@ -1225,7 +1225,7 @@ pub fn ursine_chainmace_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Apply a DoT effect for 20 damage over 10 ticks (4 every 2 ticks)
         monster.active_effects.push(CombatEffect::DamageOverTime {
@@ -1262,7 +1262,7 @@ pub fn soulreaper_axe_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     // Restore HP lost while accumulating the stacks (8 per stack)
@@ -1287,14 +1287,14 @@ pub fn tonalztics_of_ralos_spec(
 
     let mut hit1 = base_attack(&info, rng);
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
         monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
     }
     if player.gear.weapon.matches_version("Charged") {
         // Only the charged version does a second attack
         let mut hit2 = base_attack(&info, rng);
         if hit2.success {
-            hit2.apply_transforms(monster, rng, limiter);
+            hit2.apply_transforms(player, monster, rng, limiter);
             monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
         }
         return hit1.combine(&hit2);
@@ -1332,7 +1332,7 @@ pub fn dual_macuahuitl_spec(
     // Roll two separate hits
     let mut hit1 = base_attack(&info1, rng);
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
     let mut hit2 = if hit1.success {
         // Only roll the second hit if the first hit was accurate
@@ -1342,7 +1342,7 @@ pub fn dual_macuahuitl_spec(
     };
 
     if hit2.success {
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
 
     // Next attack is guaranteed to be 3 ticks
@@ -1381,7 +1381,7 @@ pub fn atlatl_spec(
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit

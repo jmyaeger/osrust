@@ -62,10 +62,12 @@ impl Hit {
 
     pub fn apply_transforms(
         &mut self,
+        player: &mut Player,
         monster: &Monster,
         rng: &mut ThreadRng,
         limiter: &Option<Box<dyn Limiter>>,
     ) {
+        self.apply_berserker_necklace(player);
         self.damage = max(self.damage, 1);
         self.apply_flat_armour(monster);
         self.apply_limiters(rng, limiter);
@@ -96,6 +98,15 @@ impl Hit {
             self.damage = limiter.apply(self.damage, rng);
         }
     }
+
+    pub fn apply_berserker_necklace(&mut self, player: &Player) {
+        if player.is_using_melee()
+            && player.is_wearing("Berserker necklace", None)
+            && player.is_wearing_tzhaar_weapon()
+        {
+            self.damage = self.damage * 6 / 5;
+        }
+    }
 }
 
 pub fn standard_attack(
@@ -116,7 +127,7 @@ pub fn standard_attack(
 
     if hit.success {
         // Transform any accurate zeros into 1s, then apply post-roll transforms
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -191,7 +202,7 @@ pub fn fang_attack(
 
     if hit.success {
         // No accurate zeros, so no need to do anything before applying post-roll transforms
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -226,7 +237,7 @@ pub fn ahrims_staff_attack(
     }
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -251,7 +262,7 @@ pub fn dharoks_axe_attack(
     }
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -267,7 +278,7 @@ pub fn veracs_flail_attack(
     if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
         // Set effect rolls 25% chance to guarantee hit (minimum 1 damage)
         let mut hit = Hit::accurate(1 + damage_roll(1, player.max_hits[&combat_type] + 1, rng));
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -333,11 +344,11 @@ pub fn torags_hammers_attack(
     // Amulet of the damned effect gets implemented in roll calcs
 
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
 
     if hit2.success {
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
 
     hit1.combine(&hit2)
@@ -411,7 +422,7 @@ pub fn yellow_keris_attack(
     }
 
     if hit.success {
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -437,7 +448,7 @@ pub fn opal_bolt_attack(
     if rng.gen::<f64>() <= proc_chance {
         // Bolt effect adds on flat damage based on visible ranged level
         let mut hit = Hit::accurate(damage_roll(0, max_hit, rng) + extra_damage);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -465,7 +476,7 @@ pub fn pearl_bolt_attack(
     // Same implementation as opal bolts (accurate hit on procs, flat damage added)
     if rng.gen::<f64>() <= proc_chance {
         let mut hit = Hit::accurate(damage_roll(0, max_hit, rng) + extra_damage);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -547,7 +558,7 @@ pub fn diamond_bolt_attack(
     if rng.gen::<f64>() <= proc_chance {
         // Bolt proc ignores defense and boosts max hit
         let mut hit = Hit::accurate(damage_roll(0, max_hit, rng));
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
         standard_attack(player, monster, rng, limiter)
@@ -574,7 +585,7 @@ pub fn onyx_bolt_attack(
     if hit.success && !monster.is_undead() && rng.gen::<f64>() <= proc_chance {
         // Bolt proc boosts max hit but does not ignore defense
         hit.damage = damage_roll(0, max_hit, rng);
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
 
         // Heal the player by 1/4 of the damage
         player.heal(hit.damage / 4, None);
@@ -608,7 +619,7 @@ pub fn dragonstone_bolt_attack(
             hit.damage += extra_damage;
         }
 
-        hit.apply_transforms(monster, rng, limiter);
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -771,7 +782,7 @@ pub fn ice_spell_attack(
                     (false, Some(Spell::Ancient(AncientSpell::IceBarrage))) => 32,
                     _ => 0,
                 };
-            hit.apply_transforms(monster, rng, limiter);
+            hit.apply_transforms(player, monster, rng, limiter);
         }
 
         hit
@@ -796,7 +807,7 @@ pub fn scythe_attack(
     info2.max_hit /= 2;
     let mut hit2 = base_attack(&info2, rng);
     if hit2.success {
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
     if monster.info.size == 2 {
         return hit1.combine(&hit2);
@@ -806,7 +817,7 @@ pub fn scythe_attack(
     info3.max_hit /= 4;
     let mut hit3 = base_attack(&info3, rng);
     if hit3.success {
-        hit3.apply_transforms(monster, rng, limiter);
+        hit3.apply_transforms(player, monster, rng, limiter);
     }
     hit1.combine(&hit2).combine(&hit3)
 }
@@ -864,13 +875,13 @@ pub fn tonalztics_of_ralos_attack(
 
     let mut hit1 = base_attack(&info, rng);
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
         // Only the charged version does a second attack
         let mut hit2 = base_attack(&info, rng);
         if hit2.success {
-            hit2.apply_transforms(monster, rng, limiter);
+            hit2.apply_transforms(player, monster, rng, limiter);
         }
         return hit1.combine(&hit2);
     }
@@ -896,7 +907,7 @@ pub fn dual_macuahuitl_attack(
     // Roll two separate hits
     let mut hit1 = base_attack(&info1, rng);
     if hit1.success {
-        hit1.apply_transforms(monster, rng, limiter);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
     let mut hit2 = if hit1.success {
         // Only roll the second hit if the first hit was accurate
@@ -906,7 +917,7 @@ pub fn dual_macuahuitl_attack(
     };
 
     if hit2.success {
-        hit2.apply_transforms(monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
     }
 
     // Roll 33% chance for next attack to be one tick faster if the full set is equipped
