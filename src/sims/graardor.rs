@@ -1,4 +1,4 @@
-use crate::combat::{FightResult, FightVars, Simulation};
+use crate::combat::{FightResult, FightVars, PlayerDeathError, Simulation};
 use crate::limiters::Limiter;
 use crate::monster::{AttackType, Monster};
 use crate::player::Player;
@@ -48,14 +48,13 @@ impl GraardorFight {
         }
     }
 
-    fn simulate_door_altar_fight(&mut self) -> FightResult {
+    fn simulate_door_altar_fight(&mut self) -> Result<FightResult, PlayerDeathError> {
         let mut vars = FightVars::new();
         let mut mage_attack_tick = 1;
         let mut melee_attack_tick = 5;
         let player_attack = self.player.attack;
         let mut skip_next_attack = false;
         let mut current_tile = 1;
-        // let mut player_dead = false;
 
         while self.graardor.live_stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
@@ -118,10 +117,9 @@ impl GraardorFight {
                 }
             }
 
-            // if self.player.live_stats.hitpoints == 0 {
-            //     player_dead = true;
-            //     break;
-            // }
+            if self.player.live_stats.hitpoints == 0 {
+                return Err(PlayerDeathError);
+            }
 
             // Eat if below the provided threshold and force the player to skip the next attack
             if self.player.live_stats.hitpoints < self.config.eat_hp
@@ -144,18 +142,17 @@ impl GraardorFight {
 
         let ttk = vars.tick_counter as f64 * 0.6;
 
-        // TODO: Figure out how to handle simulations where the player died
-        FightResult {
+        Ok(FightResult {
             ttk,
             hit_attempts: vars.hit_attempts,
             hit_count: vars.hit_count,
             hit_amounts: vars.hit_amounts,
-        }
+        })
     }
 }
 
 impl Simulation for GraardorFight {
-    fn simulate(&mut self) -> FightResult {
+    fn simulate(&mut self) -> Result<FightResult, PlayerDeathError> {
         match self.config.method {
             GraardorMethod::DoorAltar => self.simulate_door_altar_fight(),
         }
@@ -229,6 +226,11 @@ mod tests {
 
         let result = fight.simulate();
 
-        assert!(result.ttk > 0.0);
+        match result {
+            Ok(result) => {
+                assert!(result.ttk > 0.0);
+            }
+            Err(PlayerDeathError) => {}
+        }
     }
 }

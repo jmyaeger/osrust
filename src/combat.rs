@@ -20,12 +20,27 @@ impl FightResult {
     }
 }
 
+pub struct PlayerDeathError;
+
+impl std::fmt::Display for PlayerDeathError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Player died before the monster did.")
+    }
+}
+
+impl std::fmt::Debug for PlayerDeathError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Player died before the monster did.")
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct CumulativeResults {
     pub ttks: Vec<f64>,
     pub hit_attempt_counts: Vec<u32>,
     pub hit_counts: Vec<u32>,
     pub hit_amounts: Vec<u32>,
+    pub player_deaths: usize,
 }
 
 impl CumulativeResults {
@@ -46,6 +61,7 @@ pub struct SimulationStats {
     pub ttk: f64,
     pub accuracy: f64,
     pub hit_dist: HashMap<u32, f64>,
+    pub success_rate: f64,
 }
 
 impl SimulationStats {
@@ -72,10 +88,15 @@ impl SimulationStats {
             .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
             .collect();
 
+        // Calculate success rate
+        let total_fights = results.ttks.len() + results.player_deaths;
+        let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
+
         Self {
             ttk,
             accuracy,
             hit_dist,
+            success_rate,
         }
     }
 }
@@ -98,7 +119,7 @@ impl FightVars {
 }
 
 pub trait Simulation {
-    fn simulate(&mut self) -> FightResult;
+    fn simulate(&mut self) -> Result<FightResult, PlayerDeathError>;
     fn is_immune(&self) -> bool;
     fn player(&self) -> &Player;
     fn monster(&self) -> &Monster;
@@ -187,7 +208,14 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
     for _ in 0..n {
         // Run a single fight simulation and update the result variables
         let result = simulation.simulate();
-        results.push(&result);
+        match result {
+            Ok(result) => {
+                results.push(&result);
+            }
+            Err(PlayerDeathError) => {
+                results.player_deaths += 1;
+            }
+        }
         simulation.reset();
     }
 
