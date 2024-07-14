@@ -1,4 +1,4 @@
-use crate::combat::{FightResult, FightVars, PlayerDeathError, Simulation};
+use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
 use crate::limiters::Limiter;
 use crate::monster::{AttackType, Monster};
 use crate::player::Player;
@@ -48,19 +48,27 @@ impl GraardorFight {
         }
     }
 
-    fn simulate_door_altar_fight(&mut self) -> Result<FightResult, PlayerDeathError> {
+    fn simulate_door_altar_fight(&mut self) -> Result<FightResult, SimulationError> {
+        if self.player.gear.weapon.speed != 4 {
+            let error_msg = format!(
+                "GraardorFight::simulate_door_altar_fight: player weapon speed must be 4, got {}",
+                self.player.gear.weapon.speed
+            );
+            return Err(SimulationError::ConfigError(error_msg));
+        }
+
         let mut vars = FightVars::new();
         let mut mage_attack_tick = 1;
         let mut melee_attack_tick = 5;
         let player_attack = self.player.attack;
         let mut skip_next_attack = false;
-        let mut current_tile = 1;
+        let mut cycle_tick = 0;
 
         while self.graardor.live_stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
                 if skip_next_attack {
                     skip_next_attack = false;
-                    vars.attack_tick += self.player.gear.weapon.speed;
+                    vars.attack_tick += 4;
                 } else {
                     // Process player attack
                     let hit = player_attack(
@@ -118,12 +126,12 @@ impl GraardorFight {
             }
 
             if self.player.live_stats.hitpoints == 0 {
-                return Err(PlayerDeathError);
+                return Err(SimulationError::PlayerDeathError);
             }
 
             // Eat if below the provided threshold and force the player to skip the next attack
             if self.player.live_stats.hitpoints < self.config.eat_hp
-                && [5, 6, 13, 14].contains(&current_tile)
+                && ((5..=8).contains(&cycle_tick) || (17..=20).contains(&cycle_tick))
             {
                 self.player.heal(self.config.heal_amount, None);
                 skip_next_attack = true;
@@ -133,10 +141,10 @@ impl GraardorFight {
             vars.tick_counter += 1;
 
             // Update tile position and reset if it's at the end of a cycle
-            if current_tile == 16 {
-                current_tile = 0;
+            if cycle_tick == 23 {
+                cycle_tick = 0;
             } else {
-                current_tile += 1;
+                cycle_tick += 1;
             }
         }
 
@@ -152,7 +160,7 @@ impl GraardorFight {
 }
 
 impl Simulation for GraardorFight {
-    fn simulate(&mut self) -> Result<FightResult, PlayerDeathError> {
+    fn simulate(&mut self) -> Result<FightResult, SimulationError> {
         match self.config.method {
             GraardorMethod::DoorAltar => self.simulate_door_altar_fight(),
         }
@@ -226,11 +234,8 @@ mod tests {
 
         let result = fight.simulate();
 
-        match result {
-            Ok(result) => {
-                assert!(result.ttk > 0.0);
-            }
-            Err(PlayerDeathError) => {}
+        if let Ok(result) = result {
+            assert!(result.ttk > 0.0);
         }
     }
 }

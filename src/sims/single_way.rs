@@ -1,4 +1,4 @@
-use crate::combat::{FightResult, FightVars, PlayerDeathError, Simulation};
+use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
 use crate::limiters::Limiter;
 use crate::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
@@ -24,7 +24,7 @@ impl SingleWayFight {
 }
 
 impl Simulation for SingleWayFight {
-    fn simulate(&mut self) -> Result<FightResult, PlayerDeathError> {
+    fn simulate(&mut self) -> Result<FightResult, SimulationError> {
         simulate_fight(
             &mut self.player,
             &mut self.monster,
@@ -60,7 +60,7 @@ fn simulate_fight(
     monster: &mut Monster,
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
-) -> Result<FightResult, PlayerDeathError> {
+) -> Result<FightResult, SimulationError> {
     let mut vars = FightVars::new();
     let player_attack = player.attack;
 

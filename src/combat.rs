@@ -20,17 +20,23 @@ impl FightResult {
     }
 }
 
-pub struct PlayerDeathError;
+pub enum SimulationError {
+    PlayerDeathError,
+    ConfigError(String),
+}
 
-impl std::fmt::Display for PlayerDeathError {
+impl std::fmt::Display for SimulationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Player died before the monster did.")
+        match self {
+            SimulationError::PlayerDeathError => write!(f, "Player died before the monster did."),
+            SimulationError::ConfigError(msg) => write!(f, "{}", msg),
+        }
     }
 }
 
-impl std::fmt::Debug for PlayerDeathError {
+impl std::fmt::Debug for SimulationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Player died before the monster did.")
+        std::fmt::Display::fmt(self, f)
     }
 }
 
@@ -119,7 +125,7 @@ impl FightVars {
 }
 
 pub trait Simulation {
-    fn simulate(&mut self) -> Result<FightResult, PlayerDeathError>;
+    fn simulate(&mut self) -> Result<FightResult, SimulationError>;
     fn is_immune(&self) -> bool;
     fn player(&self) -> &Player;
     fn monster(&self) -> &Monster;
@@ -212,7 +218,11 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
             Ok(result) => {
                 results.push(&result);
             }
-            Err(PlayerDeathError) => {
+            Err(e) => {
+                match e {
+                    SimulationError::PlayerDeathError => results.player_deaths += 1,
+                    SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
+                }
                 results.player_deaths += 1;
             }
         }
