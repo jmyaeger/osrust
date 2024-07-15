@@ -12,6 +12,8 @@ pub struct FightResult {
     pub hit_attempts: u32,
     pub hit_count: u32,
     pub hit_amounts: Vec<u32>,
+    pub food_eaten: u32,
+    pub damage_taken: u32,
 }
 
 impl FightResult {
@@ -47,6 +49,8 @@ pub struct CumulativeResults {
     pub hit_counts: Vec<u32>,
     pub hit_amounts: Vec<u32>,
     pub player_deaths: usize,
+    pub food_eaten: u32,
+    pub damage_taken: u32,
 }
 
 impl CumulativeResults {
@@ -59,6 +63,8 @@ impl CumulativeResults {
         self.hit_counts.push(result.hit_count);
         self.hit_amounts.extend(&result.hit_amounts);
         self.ttks.push(result.ttk);
+        self.food_eaten += result.food_eaten;
+        self.damage_taken += result.damage_taken;
     }
 }
 
@@ -68,6 +74,8 @@ pub struct SimulationStats {
     pub accuracy: f64,
     pub hit_dist: HashMap<u32, f64>,
     pub success_rate: f64,
+    pub avg_food_eaten: f64,
+    pub avg_damage_taken: f64,
 }
 
 impl SimulationStats {
@@ -94,15 +102,19 @@ impl SimulationStats {
             .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
             .collect();
 
-        // Calculate success rate
+        // Calculate success rate and average food eaten
         let total_fights = results.ttks.len() + results.player_deaths;
         let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
+        let avg_food_eaten = results.food_eaten as f64 / results.ttks.len() as f64;
+        let avg_damage_taken = results.damage_taken as f64 / results.ttks.len() as f64;
 
         Self {
             ttk,
             accuracy,
             hit_dist,
             success_rate,
+            avg_food_eaten,
+            avg_damage_taken,
         }
     }
 }

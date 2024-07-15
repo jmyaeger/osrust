@@ -63,6 +63,9 @@ impl GraardorFight {
         let player_attack = self.player.attack;
         let mut skip_next_attack = false;
         let mut cycle_tick = 0;
+        let mut food_eaten = 0;
+        let mut damage_taken = 0;
+        let mut eat_delay = 0;
 
         while self.graardor.live_stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
@@ -103,6 +106,7 @@ impl GraardorFight {
                     &mut self.rng,
                 );
                 self.player.take_damage(hit.damage);
+                damage_taken += hit.damage;
                 if vars.tick_counter == 6 {
                     mage_attack_tick += 7;
                 } else {
@@ -118,6 +122,7 @@ impl GraardorFight {
                     &mut self.rng,
                 );
                 self.player.take_damage(hit.damage);
+                damage_taken += hit.damage;
                 if vars.tick_counter == 5 {
                     melee_attack_tick += 22;
                 } else {
@@ -129,12 +134,30 @@ impl GraardorFight {
                 return Err(SimulationError::PlayerDeathError);
             }
 
+            // Decrement eat delay timer if there is one active
+            if eat_delay > 0 {
+                eat_delay -= 1;
+            }
+
             // Eat if below the provided threshold and force the player to skip the next attack
             if self.player.live_stats.hitpoints < self.config.eat_hp
                 && ((5..=8).contains(&cycle_tick) || (17..=20).contains(&cycle_tick))
+                && eat_delay == 0
             {
                 self.player.heal(self.config.heal_amount, None);
+                food_eaten += 1;
+                eat_delay = 3;
                 skip_next_attack = true;
+            }
+
+            // Regen 1 HP for Graardor every 10 ticks
+            if vars.tick_counter % 10 == 0 {
+                self.graardor.heal(1);
+            }
+
+            // Regen 1 HP for player every 100 ticks
+            if vars.tick_counter % 100 == 0 {
+                self.player.heal(1, None);
             }
 
             // Increment tick counter
@@ -155,6 +178,8 @@ impl GraardorFight {
             hit_attempts: vars.hit_attempts,
             hit_count: vars.hit_count,
             hit_amounts: vars.hit_amounts,
+            food_eaten,
+            damage_taken,
         })
     }
 }

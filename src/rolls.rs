@@ -95,8 +95,8 @@ pub fn calc_player_def_rolls(player: &mut Player) {
         _ => 8,
     };
 
-    let effective_level = player.live_stats.defence * player.prayers.defence + stance_bonus;
-    let effective_magic = player.live_stats.magic * player.prayers.magic_att;
+    let effective_level = player.live_stats.defence * (100 + player.prayers.defence) / 100;
+    let effective_magic = player.live_stats.magic * (100 + player.prayers.magic_att) / 100;
 
     for combat_type in &[
         (CombatType::Stab, player.bonuses.defence.stab),
@@ -104,12 +104,18 @@ pub fn calc_player_def_rolls(player: &mut Player) {
         (CombatType::Crush, player.bonuses.defence.crush),
         (CombatType::Ranged, player.bonuses.defence.ranged),
     ] {
-        def_rolls.insert(combat_type.0, calc_roll(effective_level, combat_type.1));
+        def_rolls.insert(
+            combat_type.0,
+            calc_roll(effective_level + stance_bonus, combat_type.1),
+        );
     }
     // Magic defence uses 70% magic level, 30% defence level
     def_rolls.insert(
         CombatType::Magic,
-        calc_roll(effective_magic * 7 / 10 + effective_level * 3 / 10, 1),
+        calc_roll(
+            effective_magic * 7 / 10 + effective_level * 3 / 10 + stance_bonus,
+            player.bonuses.defence.magic,
+        ),
     );
     player.def_rolls = def_rolls;
 }

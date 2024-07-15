@@ -1,6 +1,7 @@
 Next steps:
 
-- Write all of the special attack methods
+- Make a "stats" module that takes in a CumulativeResults struct and gets averages, distributions, etc.
+    - Change the simulate_n_fights() method to output CumulativeResults instead of SimulationStats
 - Figure out how I'm going to implement special attacks
     - Likely want to have some form of raw DPS (assuming the spec is a normal attack)
     - Also want to have integration of specs into a fight, accounting for spec regen and different spec strategies

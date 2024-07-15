@@ -122,6 +122,8 @@ fn simulate_fight(
         hit_attempts: vars.hit_attempts,
         hit_count: vars.hit_count,
         hit_amounts: vars.hit_amounts,
+        food_eaten: 0,
+        damage_taken: 0,
     })
 }
 

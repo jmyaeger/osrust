@@ -74,3 +74,19 @@ pub fn max_mage_sang_staff_player() -> Player {
 
     player
 }
+
+pub fn bowfa_crystal_player() -> Player {
+    let mut player = max_ranged_zcb_player();
+
+    player.equip("Bow of faerdhinen (c)", None);
+    player.equip("Crystal helm", Some("Active"));
+    player.equip("Crystal body", Some("Active"));
+    player.equip("Crystal legs", Some("Active"));
+    player.gear.ammo = None;
+    player.equip("Rada's blessing 4", None);
+
+    player.update_bonuses();
+    player.update_set_effects();
+
+    player
+}
