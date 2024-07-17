@@ -183,6 +183,8 @@ pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
 
 pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
 
+pub const IMMUNE_TO_STAT_DRAIN: &[i32] = &[13011, 13012, 13013];
+
 pub const FLAT_ARMOUR: [(i32, i32); 5] = [
     (13011, -2), // Blood moon
     (13012, 6),  // Eclipse moon (4 in clone phase)

@@ -1,5 +1,5 @@
 use crate::attacks::{self, base_attack, damage_roll, AttackInfo, Hit};
-use crate::constants::VERZIK_IDS;
+use crate::constants::{IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
 use crate::limiters::Limiter;
@@ -78,7 +78,7 @@ pub fn arclight_spec(
     let mut hit = base_attack(&info, rng);
 
     if hit.success {
-        hit.apply_transforms(player, monster, rng, limiter);
+        hit.damage = max(1, hit.damage);
 
         // Drains are twice as effective on demons
         let demon_mod = if monster.is_demon() { 2 } else { 1 };
@@ -99,6 +99,8 @@ pub fn arclight_spec(
             monster.live_stats.defence * demon_mod / 20 + 1,
             None,
         );
+
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -240,25 +242,31 @@ pub fn bgs_spec(
 
     let mut hit = base_attack(&info, rng);
 
+    // 0 -> 1 transform happens before drains
     if hit.success {
+        hit.damage = max(1, hit.damage);
+
+        if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
+            let cap = if monster.info.name.contains("Tekton") && !hit.success {
+                Some(10)
+            } else {
+                None
+            };
+
+            let stat_order = vec![
+                StatDrain::new(CombatStat::Defence, cap),
+                StatDrain::new(CombatStat::Strength, cap),
+                StatDrain::new(CombatStat::Attack, cap),
+                StatDrain::new(CombatStat::Magic, cap),
+                StatDrain::new(CombatStat::Ranged, cap),
+            ];
+
+            monster.drain_stats_in_order(hit.damage, stat_order);
+        }
+
+        // Other transforms happen after drains
         hit.apply_transforms(player, monster, rng, limiter);
     }
-
-    let cap = if monster.info.name.contains("Tekton") && !hit.success {
-        Some(10)
-    } else {
-        None
-    };
-
-    let stat_order = vec![
-        StatDrain::new(CombatStat::Defence, cap),
-        StatDrain::new(CombatStat::Strength, cap),
-        StatDrain::new(CombatStat::Attack, cap),
-        StatDrain::new(CombatStat::Magic, cap),
-        StatDrain::new(CombatStat::Ranged, cap),
-    ];
-
-    monster.drain_stats_in_order(hit.damage, stat_order);
 
     hit
 }
@@ -487,17 +495,19 @@ pub fn barrelchest_anchor_spec(
 
     let mut hit = base_attack(&info, rng);
 
-    // Stat drains happen before transforms, according to Mod Ash
-    let drain_order = vec![
-        StatDrain::new(CombatStat::Defence, None),
-        StatDrain::new(CombatStat::Strength, None),
-        StatDrain::new(CombatStat::Attack, None),
-        StatDrain::new(CombatStat::Magic, None),
-        StatDrain::new(CombatStat::Ranged, None),
-    ];
-    monster.drain_stats_in_order(hit.damage / 10, drain_order);
-
     if hit.success {
+        hit.damage = max(1, hit.damage);
+
+        // Stat drains happen before transforms, according to Mod Ash
+        let drain_order = vec![
+            StatDrain::new(CombatStat::Defence, None),
+            StatDrain::new(CombatStat::Strength, None),
+            StatDrain::new(CombatStat::Attack, None),
+            StatDrain::new(CombatStat::Magic, None),
+            StatDrain::new(CombatStat::Ranged, None),
+        ];
+        monster.drain_stats_in_order(hit.damage / 10, drain_order);
+
         hit.apply_transforms(player, monster, rng, limiter);
     }
 
@@ -520,12 +530,18 @@ pub fn dorgeshuun_weapon_spec(
     };
 
     if hit.success {
-        hit.apply_transforms(player, monster, rng, limiter);
+        // Apply 0 -> 1 transform before drain
+        hit.damage = max(1, hit.damage);
 
         // Drains defence by damage, but only if it hasn't been drained already
-        if monster.live_stats.defence == monster.stats.defence {
+        if monster.live_stats.defence == monster.stats.defence
+            && !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default())
+        {
             monster.drain_stat(CombatStat::Defence, hit.damage, None);
         }
+
+        // Apply other transforms after drain
+        hit.apply_transforms(player, monster, rng, limiter);
     }
 
     hit
@@ -571,8 +587,8 @@ pub fn dragon_warhammer_spec(
         // DWH spec always hits on first attack on Tekton
         if player.boosts.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-            hit.apply_transforms(player, monster, rng, limiter);
             monster.drain_stat(CombatStat::Defence, def_drain, None);
+            hit.apply_transforms(player, monster, rng, limiter);
 
             hit
         } else {
@@ -591,7 +607,10 @@ pub fn dragon_warhammer_spec(
         let mut hit = base_attack(&info, rng);
         if hit.success {
             hit.apply_transforms(player, monster, rng, limiter);
-            monster.drain_stat(CombatStat::Defence, def_drain, None);
+
+            if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
+                monster.drain_stat(CombatStat::Defence, def_drain, None);
+            }
         }
 
         hit
@@ -611,10 +630,15 @@ pub fn seercull_spec(
 
     // Spec always hits and drains magic by amount of damage dealt
     let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-    hit.apply_transforms(player, monster, rng, limiter);
 
-    // TODO: Test whether the drain happens before or after transforms
-    monster.drain_stat(CombatStat::Magic, hit.damage, None);
+    // Stat drain is determined from damage roll after 0 -> 1 transform
+    hit.damage = max(hit.damage, 1);
+
+    if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
+        monster.drain_stat(CombatStat::Magic, hit.damage, None);
+    }
+
+    hit.apply_transforms(player, monster, rng, limiter);
 
     hit
 }
@@ -1287,15 +1311,17 @@ pub fn tonalztics_of_ralos_spec(
 
     let mut hit1 = base_attack(&info, rng);
     if hit1.success {
-        hit1.apply_transforms(player, monster, rng, limiter);
+        hit1.damage = max(1, hit1.damage);
         monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+        hit1.apply_transforms(player, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
         // Only the charged version does a second attack
         let mut hit2 = base_attack(&info, rng);
         if hit2.success {
-            hit2.apply_transforms(player, monster, rng, limiter);
+            hit2.damage = max(1, hit2.damage);
             monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+            hit2.apply_transforms(player, monster, rng, limiter);
         }
         return hit1.combine(&hit2);
     }
