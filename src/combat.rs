@@ -12,11 +12,33 @@ pub struct FightResult {
     pub hit_attempts: u32,
     pub hit_count: u32,
     pub hit_amounts: Vec<u32>,
+    pub food_eaten: u32,
+    pub damage_taken: u32,
 }
 
 impl FightResult {
     pub fn new() -> Self {
         Self::default()
+    }
+}
+
+pub enum SimulationError {
+    PlayerDeathError,
+    ConfigError(String),
+}
+
+impl std::fmt::Display for SimulationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            SimulationError::PlayerDeathError => write!(f, "Player died before the monster did."),
+            SimulationError::ConfigError(msg) => write!(f, "{}", msg),
+        }
+    }
+}
+
+impl std::fmt::Debug for SimulationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        std::fmt::Display::fmt(self, f)
     }
 }
 
@@ -26,6 +48,9 @@ pub struct CumulativeResults {
     pub hit_attempt_counts: Vec<u32>,
     pub hit_counts: Vec<u32>,
     pub hit_amounts: Vec<u32>,
+    pub player_deaths: usize,
+    pub food_eaten: u32,
+    pub damage_taken: u32,
 }
 
 impl CumulativeResults {
@@ -38,6 +63,8 @@ impl CumulativeResults {
         self.hit_counts.push(result.hit_count);
         self.hit_amounts.extend(&result.hit_amounts);
         self.ttks.push(result.ttk);
+        self.food_eaten += result.food_eaten;
+        self.damage_taken += result.damage_taken;
     }
 }
 
@@ -46,6 +73,9 @@ pub struct SimulationStats {
     pub ttk: f64,
     pub accuracy: f64,
     pub hit_dist: HashMap<u32, f64>,
+    pub success_rate: f64,
+    pub avg_food_eaten: f64,
+    pub avg_damage_taken: f64,
 }
 
 impl SimulationStats {
@@ -72,10 +102,19 @@ impl SimulationStats {
             .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
             .collect();
 
+        // Calculate success rate and average food eaten
+        let total_fights = results.ttks.len() + results.player_deaths;
+        let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
+        let avg_food_eaten = results.food_eaten as f64 / results.ttks.len() as f64;
+        let avg_damage_taken = results.damage_taken as f64 / results.ttks.len() as f64;
+
         Self {
             ttk,
             accuracy,
             hit_dist,
+            success_rate,
+            avg_food_eaten,
+            avg_damage_taken,
         }
     }
 }
@@ -98,7 +137,7 @@ impl FightVars {
 }
 
 pub trait Simulation {
-    fn simulate(&mut self) -> FightResult;
+    fn simulate(&mut self) -> Result<FightResult, SimulationError>;
     fn is_immune(&self) -> bool;
     fn player(&self) -> &Player;
     fn monster(&self) -> &Monster;
@@ -187,7 +226,18 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
     for _ in 0..n {
         // Run a single fight simulation and update the result variables
         let result = simulation.simulate();
-        results.push(&result);
+        match result {
+            Ok(result) => {
+                results.push(&result);
+            }
+            Err(e) => {
+                match e {
+                    SimulationError::PlayerDeathError => results.player_deaths += 1,
+                    SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
+                }
+                results.player_deaths += 1;
+            }
+        }
         simulation.reset();
     }
 

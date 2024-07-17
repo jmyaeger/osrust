@@ -1109,6 +1109,110 @@ pub fn dragon_claw_spec(
     }
 }
 
+pub fn bone_claw_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    let original_min_hit = info.max_hit * 3 / 4;
+    info.min_hit = original_min_hit;
+
+    // First accuracy roll
+    if base_attack(&info, rng).success {
+        // Case 1: Deal between 75-175% of max hit split over 3 hits (2:1:1 ratio)
+        let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
+        let mut hit1 = Hit::accurate(total_damage / 2);
+        let mut hit2 = Hit::accurate(total_damage / 4);
+        let mut hit3 = hit2.clone();
+
+        hit1.apply_transforms(player, monster, rng, limiter);
+        hit2.apply_transforms(player, monster, rng, limiter);
+        hit3.apply_transforms(player, monster, rng, limiter);
+
+        // 15% chance for each hit to apply a burn
+        for _ in 0..3 {
+            if rng.gen::<f64>() <= 0.15 {
+                monster.add_burn_stack();
+            }
+        }
+
+        return hit1.combine(&hit2).combine(&hit3);
+    }
+
+    // Second accuracy roll
+    if base_attack(&info, rng).success {
+        // Case 2: Deal between 50-150% damage split over 3 hits
+        info.min_hit = original_min_hit * 2 / 3;
+        let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
+
+        // Subtract 1 from the two successful hits and add them to the "missed" hit
+        let mut hit1 = Hit::accurate(2);
+        let mut hit2 = Hit::accurate(total_damage / 2 - 1);
+        let mut hit3 = hit2.clone();
+
+        hit1.apply_limiters(rng, limiter);
+        hit2.apply_limiters(rng, limiter);
+        hit3.apply_limiters(rng, limiter);
+
+        // 30% chance for each hit to apply a burn
+        for _ in 0..3 {
+            if rng.gen::<f64>() <= 0.3 {
+                monster.add_burn_stack();
+            }
+        }
+
+        return hit1.combine(&hit2).combine(&hit3);
+    }
+
+    // Third accuracy roll
+    if base_attack(&info, rng).success {
+        // Case 3: Deal between 25-125% damage split over 3 hits
+        info.min_hit = original_min_hit / 3;
+        let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
+
+        // Subtract 2 from the successful hit and add 1 to each missed hit
+        let mut hit1 = Hit::accurate(1);
+        let mut hit2 = hit1.clone();
+        let mut hit3 = Hit::accurate(total_damage - 2);
+
+        hit1.apply_limiters(rng, limiter);
+        hit2.apply_limiters(rng, limiter);
+        hit3.apply_limiters(rng, limiter);
+
+        // 45% chance for each hit to apply a burn
+        for _ in 0..3 {
+            if rng.gen::<f64>() <= 0.45 {
+                monster.add_burn_stack();
+            }
+        }
+
+        return hit1.combine(&hit2).combine(&hit3);
+    }
+
+    // If all accuracy rolls fail
+    let miss_roll = rng.gen_range(0..5);
+    if miss_roll < 2 {
+        // 2/5 chance of 1-0-0
+        let mut hit = Hit::accurate(1);
+        hit.apply_transforms(player, monster, rng, limiter);
+
+        hit
+    } else if miss_roll < 4 {
+        // 2/5 chance of 1-1-0
+        let mut hit = Hit::accurate(1);
+        hit.apply_transforms(player, monster, rng, limiter);
+        let mut hit2 = Hit::accurate(1);
+        hit2.apply_transforms(player, monster, rng, limiter);
+        hit.combine(&hit2)
+    } else {
+        // 1/5 chance of 0-0-0
+        Hit::inaccurate()
+    }
+}
+
 pub fn dragon_dagger_spec(
     player: &mut Player,
     monster: &mut Monster,

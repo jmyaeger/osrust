@@ -1,4 +1,4 @@
-use crate::combat::{FightResult, FightVars, Simulation};
+use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
 use crate::limiters::Limiter;
 use crate::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
@@ -24,7 +24,7 @@ impl SingleWayFight {
 }
 
 impl Simulation for SingleWayFight {
-    fn simulate(&mut self) -> FightResult {
+    fn simulate(&mut self) -> Result<FightResult, SimulationError> {
         simulate_fight(
             &mut self.player,
             &mut self.monster,
@@ -60,7 +60,7 @@ fn simulate_fight(
     monster: &mut Monster,
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
-) -> FightResult {
+) -> Result<FightResult, SimulationError> {
     let mut vars = FightVars::new();
     let player_attack = player.attack;
 
@@ -116,12 +116,15 @@ fn simulate_fight(
     // Convert ttk to seconds
     let ttk = vars.tick_counter as f64 * 0.6;
 
-    FightResult {
+    // Player can never die here, so the result is always Ok(FightResult)
+    Ok(FightResult {
         ttk,
         hit_attempts: vars.hit_attempts,
         hit_count: vars.hit_count,
         hit_amounts: vars.hit_amounts,
-    }
+        food_eaten: 0,
+        damage_taken: 0,
+    })
 }
 
 #[cfg(test)]
@@ -163,7 +166,7 @@ mod tests {
 
         let mut rng = rand::thread_rng();
         let limiter = assign_limiter(&player, &monster);
-        let result = simulate_fight(&mut player, &mut monster, &mut rng, &limiter);
+        let result = simulate_fight(&mut player, &mut monster, &mut rng, &limiter).unwrap();
 
         assert!(result.ttk > 0.0);
         assert!(result.hit_attempts > 0);
