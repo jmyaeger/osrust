@@ -1160,7 +1160,7 @@ pub fn burning_claw_spec(
         // 15% chance for each hit to apply a burn
         for _ in 0..3 {
             if rng.gen::<f64>() <= 0.15 {
-                monster.add_burn_stack();
+                monster.add_burn_stack(10);
             }
         }
 
@@ -1185,7 +1185,7 @@ pub fn burning_claw_spec(
         // 30% chance for each hit to apply a burn
         for _ in 0..3 {
             if rng.gen::<f64>() <= 0.3 {
-                monster.add_burn_stack();
+                monster.add_burn_stack(10);
             }
         }
 
@@ -1210,7 +1210,7 @@ pub fn burning_claw_spec(
         // 45% chance for each hit to apply a burn
         for _ in 0..3 {
             if rng.gen::<f64>() <= 0.45 {
-                monster.add_burn_stack();
+                monster.add_burn_stack(10);
             }
         }
 
@@ -1542,11 +1542,42 @@ pub fn atlatl_spec(
     hit
 }
 
+pub fn scorching_bow_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy by 30%
+    info.max_att_roll = info.max_att_roll * 13 / 10;
+
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(player, monster, rng, limiter);
+
+        // Freezes demons for 20 ticks and adds a 5-damage burn stack
+        if monster.is_demon() {
+            monster.add_burn_stack(5);
+
+            if monster.is_freezable() {
+                monster.freeze(20);
+            }
+        }
+    }
+
+    hit
+}
+
+// TODO: implement purging staff spec
+
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
     match player.gear.weapon.name.as_str() {
         "Osmumten's fang" => fang_spec,
         "Dragon crossbow" => dragon_crossbow_spec,
         "Arclight" | "Darklight" => arclight_spec,
+        "Emberlight" => emberlight_spec,
         "Ancient godsword" => ancient_gs_spec,
         "Eldritch nightmare staff" => eldritch_staff_spec,
         "Toxic blowpipe" => blowpipe_spec,
@@ -1591,6 +1622,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Tonalztics of ralos" => tonalztics_of_ralos_spec,
         "Dual macuahuitl" => dual_macuahuitl_spec,
         "Eclipse atlatl" => atlatl_spec,
+        "Scorching bow" => scorching_bow_spec,
         _ => player.attack,
     }
 }

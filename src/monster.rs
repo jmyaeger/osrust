@@ -878,7 +878,7 @@ impl Monster {
             .map_or(false, |v| v.contains(version))
     }
 
-    pub fn add_burn_stack(&mut self) {
+    pub fn add_burn_stack(&mut self, burn_ticks: u32) {
         // Add one burn effect stack, up to a maximum of 5 concurrent stacks
         match self
             .active_effects
@@ -887,12 +887,12 @@ impl Monster {
         {
             Some(CombatEffect::Burn { stacks, .. }) => {
                 if stacks.len() < 5 {
-                    stacks.push(10); // 10 hits per stack
+                    stacks.push(burn_ticks); // 10 hits per stack
                 }
             }
             _ => self.active_effects.push(CombatEffect::Burn {
                 tick_counter: Some(0),
-                stacks: vec![10],
+                stacks: vec![burn_ticks],
             }),
         }
     }
