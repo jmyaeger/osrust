@@ -1,4 +1,4 @@
-use crate::attacks::{self, base_attack, damage_roll, AttackInfo, Hit};
+use crate::attacks::{self, base_attack, damage_roll, AttackFn, AttackInfo, Hit};
 use crate::constants::{IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
@@ -70,6 +70,25 @@ pub fn arclight_spec(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
+    demonbane_melee_spec(player, monster, rng, limiter, false)
+}
+
+pub fn emberlight_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    demonbane_melee_spec(player, monster, rng, limiter, true)
+}
+
+fn demonbane_melee_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+    emberlight: bool,
+) -> Hit {
     let mut info = AttackInfo::new(player, monster);
 
     // Spec always rolls against stab
@@ -80,23 +99,29 @@ pub fn arclight_spec(
     if hit.success {
         hit.damage = max(1, hit.damage);
 
-        // Drains are twice as effective on demons
-        let demon_mod = if monster.is_demon() { 2 } else { 1 };
+        // Drains are twice as effective on demons, or 3x if using emberlight against demons
+        let demon_mod = if monster.is_demon() && emberlight {
+            3
+        } else if monster.is_demon() {
+            2
+        } else {
+            1
+        };
 
-        // Drain stats by 1 + 5% or 10%
+        // Drain stats by 1 + 5%, 10%, or 15% of their base values
         monster.drain_stat(
             CombatStat::Attack,
-            monster.live_stats.attack * demon_mod / 20 + 1,
+            monster.stats.attack * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
             CombatStat::Strength,
-            monster.live_stats.strength * demon_mod / 20 + 1,
+            monster.stats.strength * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
             CombatStat::Defence,
-            monster.live_stats.defence * demon_mod / 20 + 1,
+            monster.stats.defence * demon_mod / 20 + 1,
             None,
         );
 
@@ -1109,7 +1134,7 @@ pub fn dragon_claw_spec(
     }
 }
 
-pub fn bone_claw_spec(
+pub fn burning_claw_spec(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut ThreadRng,
@@ -1515,6 +1540,59 @@ pub fn atlatl_spec(
     }
 
     hit
+}
+
+pub fn get_spec_attack_function(player: &Player) -> AttackFn {
+    match player.gear.weapon.name.as_str() {
+        "Osmumten's fang" => fang_spec,
+        "Dragon crossbow" => dragon_crossbow_spec,
+        "Arclight" | "Darklight" => arclight_spec,
+        "Ancient godsword" => ancient_gs_spec,
+        "Eldritch nightmare staff" => eldritch_staff_spec,
+        "Toxic blowpipe" => blowpipe_spec,
+        "Saradomin godsword" => sgs_spec,
+        "Bandos godsword" => bgs_spec,
+        "Dinh's bulwark" => bulwark_spec,
+        "Crystal halberd" | "Dragon halberd" => crystal_halberd_spec,
+        "Abyssal whip" => abyssal_whip_spec,
+        "Accursed sceptre" | "Accursed sceptre (a)" => accursed_sceptre_spec,
+        "Webweaver bow" => webweaver_bow_spec,
+        "Ancient mace" => ancient_mace_spec,
+        "Barrelchest anchor" => barrelchest_anchor_spec,
+        "Bone crossbow" | "Bone dagger" => dorgeshuun_weapon_spec,
+        "Dragon scimitar" => dragon_scimitar_spec,
+        "Dragon warhammer" => dragon_warhammer_spec,
+        "Seercull" => seercull_spec,
+        "Abyssal bludgeon" => abyssal_bludgeon_spec,
+        "Armadyl crossbow" => acb_spec,
+        "Zaryte crossbow" => zcb_spec,
+        "Armadyl godsword" => ags_spec,
+        "Dawnbringer" => dawnbringer_spec,
+        "Dragon longsword" => dragon_longsword_spec,
+        "Dragon mace" => dragon_mace_spec,
+        "Dragon sword" => dragon_sword_spec,
+        "Granite hammer" => granite_hammer_spec,
+        "Light ballista" | "Heavy ballista" => ballista_spec,
+        "Magic longbow" => magic_longbow_spec,
+        "Saradomin's blessed sword" => sara_blessed_sword_spec,
+        "Voidwaker" => voidwaker_spec,
+        "Volatile nightmare staff" => volatile_staff_spec,
+        "Abyssal dagger" => abyssal_dagger_spec,
+        "Dark bow" => dark_bow_spec,
+        "Dragon claws" => dragon_claw_spec,
+        "Burning claws" => burning_claw_spec,
+        "Dragon dagger" => dragon_dagger_spec,
+        "Dragon knife" => dragon_knife_spec,
+        "Magic shortbow" | "Magic shortbow (i)" => magic_shortbow_spec,
+        "Saradomin sword" => sara_sword_spec,
+        "Zamorak godsword" => zgs_spec,
+        "Ursine chainmace" => ursine_chainmace_spec,
+        "Soulreaper axe" => soulreaper_axe_spec,
+        "Tonalztics of ralos" => tonalztics_of_ralos_spec,
+        "Dual macuahuitl" => dual_macuahuitl_spec,
+        "Eclipse atlatl" => atlatl_spec,
+        _ => player.attack,
+    }
 }
 
 #[cfg(test)]
