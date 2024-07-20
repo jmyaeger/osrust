@@ -5,9 +5,35 @@ use std::collections::HashMap;
 
 use crate::utils::Fraction;
 
-pub trait HitTransformer: Fn(Hitsplat) -> HitDistribution {}
+pub trait HitTransformer: Fn(&Hitsplat) -> HitDistribution {}
 
-impl<F> HitTransformer for F where F: Fn(Hitsplat) -> HitDistribution {}
+impl<F> HitTransformer for F where F: Fn(&Hitsplat) -> HitDistribution {}
+
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct ProbabilisticDelay {
+    pub probability: f64,
+    pub delay: u32,
+}
+
+impl ProbabilisticDelay {
+    pub fn new(probability: f64, delay: u32) -> Self {
+        Self { probability, delay }
+    }
+}
+
+pub type WeaponDelayProvider = dyn Fn(&WeightedHit) -> Vec<ProbabilisticDelay>;
+
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct DelayedHit {
+    pub wh: WeightedHit,
+    pub delay: u32,
+}
+
+impl DelayedHit {
+    pub fn new(wh: WeightedHit, delay: u32) -> Self {
+        Self { wh, delay }
+    }
+}
 
 // Options for distribution transforms (only one option currently)
 #[derive(Debug, Clone)]
@@ -25,7 +51,7 @@ impl Default for TransformOpts {
 }
 
 // Single hitsplat with damage dealt and whether it passed the accuracy check
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Hitsplat {
     pub damage: u32,
     pub accurate: bool,
@@ -64,12 +90,12 @@ impl Hitsplat {
             return HitDistribution::new(vec![WeightedHit::new(1.0, vec![*self])]);
         }
 
-        t(*self)
+        t(self)
     }
 }
 
 // One hit with one or more total hitsplats and the overall probability for that hit
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct WeightedHit {
     pub probability: f64,         // The probability that this hit will occur
     pub hitsplats: Vec<Hitsplat>, // Allows for multi-hitsplat attacks
@@ -273,6 +299,44 @@ impl HitDistribution {
         self.hits.iter().map(|h| h.get_sum()).max().unwrap_or(0)
     }
 
+    pub fn with_probabilistic_delays(
+        &self,
+        delay_provider: &WeaponDelayProvider,
+    ) -> Vec<DelayedHit> {
+        let mut hits: Vec<DelayedHit> = Vec::new();
+
+        for wh in &self.hits {
+            let delays = delay_provider(wh);
+            for ProbabilisticDelay { probability, delay } in delays {
+                hits.push(DelayedHit::new(
+                    WeightedHit::new(
+                        wh.probability * probability,
+                        vec![Hitsplat::new(wh.get_sum(), wh.any_accurate())],
+                    ),
+                    delay,
+                ));
+            }
+        }
+
+        // Dedupe the results and merge entries
+        let mut acc: HashMap<u64, f64> = HashMap::new();
+        for DelayedHit { wh, delay } in hits {
+            let key = (wh.get_sum() as u64 & 0xFFFFFF) | ((delay as u64) << 24);
+            *acc.entry(key).or_default() += wh.probability;
+        }
+
+        acc.into_iter()
+            .map(|(key, prob)| {
+                let delay = (key & 0x8F000000) >> 24;
+                let dmg = key & 0xFFFFFF;
+                DelayedHit::new(
+                    WeightedHit::new(prob, vec![Hitsplat::new(dmg as u32, true)]),
+                    delay as u32,
+                )
+            })
+            .collect()
+    }
+
     pub fn linear(accuracy: f64, min: u32, max: u32) -> HitDistribution {
         // Create a linear hit distribution between two bounds with equal probabilities for all hits
         let mut d = HitDistribution::default();
@@ -436,7 +500,7 @@ pub fn capped_reroll_transformer(limit: u32, roll_max: u32, offset: u32) -> impl
     // Reroll damage within a specified range if it exceeds the limit value
     move |h| {
         if h.damage <= limit {
-            return HitDistribution::new(vec![WeightedHit::new(1.0, vec![h])]);
+            return HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]);
         }
 
         let mut d = HitDistribution::default();
@@ -447,7 +511,7 @@ pub fn capped_reroll_transformer(limit: u32, roll_max: u32, offset: u32) -> impl
                 vec![if h.damage > limit {
                     Hitsplat::new(i + offset, h.accurate)
                 } else {
-                    h
+                    *h
                 }],
             ));
         }

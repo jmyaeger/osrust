@@ -259,7 +259,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         let first_hit = AttackDistribution::new(vec![HitDistribution::linear(acc, 0, half_max)]);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
         dist = first_hit.transform(
-            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![h])]).zip(&second_hit),
+            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit),
             &TransformOpts {
                 transform_inaccurate: false,
             },
@@ -344,7 +344,7 @@ pub fn get_distribution(player: &Player, monster: &Monster) -> AttackDistributio
         dist = dist.transform(
             &|h| {
                 HitDistribution::new(vec![
-                    WeightedHit::new(0.75, vec![h]),
+                    WeightedHit::new(0.75, vec![*h]),
                     WeightedHit::new(0.25, vec![Hitsplat::new(h.damage * 13 / 10, h.accurate)]),
                 ])
             },
