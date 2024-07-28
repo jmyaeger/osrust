@@ -1,6 +1,7 @@
 pub mod attacks;
 pub mod combat;
 pub mod constants;
+pub mod dists;
 pub mod dps_calc;
 pub mod effects;
 pub mod equipment;

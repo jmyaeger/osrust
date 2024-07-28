@@ -353,12 +353,9 @@ impl HitDistribution {
         d
     }
 
-    pub fn single(accuracy: f64, hit: u32) -> HitDistribution {
+    pub fn single(accuracy: f64, hitsplats: Vec<Hitsplat>) -> HitDistribution {
         // Create a distribution with one possible hit
-        let mut d = HitDistribution::new(vec![WeightedHit::new(
-            accuracy,
-            vec![Hitsplat::new(hit, true)],
-        )]);
+        let mut d = HitDistribution::new(vec![WeightedHit::new(accuracy, hitsplats)]);
 
         // Add an inaccurate hit if the accuracy is not 1.0
         if accuracy != 1.0 {
@@ -372,7 +369,7 @@ impl HitDistribution {
 }
 
 // Distibution for a single attack, allowing for multiple hits with their own hit distributions
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct AttackDistribution {
     pub dists: Vec<HitDistribution>,
     single_hitsplat: Option<HitDistribution>, // property accessed through getter method

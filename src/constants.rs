@@ -427,3 +427,31 @@ pub const DEFAULT_DEF_ROLLS: [(CombatType, i32); 5] = [
     (CombatType::Ranged, 0),
     (CombatType::Magic, 0),
 ];
+
+pub const STAB_SPEC_WEAPONS: [&str; 5] = [
+    "Arclight",
+    "Emberlight",
+    "Darklight",
+    "Silverlight",
+    "Dragon sword",
+];
+
+pub const SLASH_SPEC_WEAPONS: [&str; 13] = [
+    "Ancient godsword",
+    "Bandos godsword",
+    "Armadyl godsword",
+    "Saradomin godsword",
+    "Zamorak godsword",
+    "Crystal halberd",
+    "Dragon halberd",
+    "Dragon scimitar",
+    "Dragon longsword",
+    "Dragon dagger",
+    "Abyssal dagger",
+    "Dragon claws",
+    "Saradomin sword",
+];
+
+pub const CRUSH_SPEC_WEAPONS: [&str; 3] = ["Dinh's bulwark", "Ancient mace", "Dragon mace"];
+
+pub const MAGIC_SPEC_WEAPONS: [&str; 1] = ["Saradomin's blessed sword"];

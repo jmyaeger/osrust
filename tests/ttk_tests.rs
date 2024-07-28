@@ -21,8 +21,8 @@ fn test_max_setups_ammonite_crab_ttk(#[case] mut player: Player, ammonite_crab: 
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -38,8 +38,8 @@ fn test_max_mage_brimstone_ring_kril_ttk(
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -53,8 +53,8 @@ fn test_vardorvis_ttk(#[case] mut player: Player, vardorvis: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -68,8 +68,8 @@ fn test_fang_ttk(max_melee_fang_player: Player, #[case] monster: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -87,8 +87,8 @@ fn test_barrows_gear_ttks(#[case] mut player: Player, scurrius: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -104,8 +104,8 @@ fn test_blue_keris_kq_ttk(
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -127,8 +127,8 @@ fn test_enchanted_bolt_acb_ttks(#[case] bolt_name: &str) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -149,8 +149,8 @@ fn test_enchanted_bolt_zcb_ttks(#[case] bolt_name: &str) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -169,8 +169,8 @@ fn test_scythe_against_different_sizes_ttk(
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -184,8 +184,8 @@ fn test_gadderhammer_ttk(max_melee_player: Player, #[case] monster: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -199,8 +199,8 @@ fn test_tonalztics_ttk(#[case] mut player: Player, scurrius: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -213,8 +213,8 @@ fn test_macuahuitl_no_set_effect_ttk(max_melee_macuahuitl_player: Player, scurri
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -228,8 +228,8 @@ fn test_macuahuitl_no_set_effect_baba_ttk(max_melee_macuahuitl_player: Player, b
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -243,8 +243,8 @@ fn test_max_range_zulrah(#[case] mut player: Player, zulrah_tanzanite: Monster) 
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -257,8 +257,8 @@ fn test_max_mage_shadow_zulrah(max_mage_shadow_player: Player, zulrah_magma: Mon
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -271,8 +271,8 @@ fn test_max_mage_seren(max_mage_shadow_player: Player, seren: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
 
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
@@ -286,8 +286,8 @@ fn test_max_ranged_kraken(max_ranged_tbow_player: Player, kraken: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 10000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.5);
 }
 
@@ -302,8 +302,8 @@ fn test_verzik_p1(#[case] mut player: Player, verzik_p1: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 10000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 1.0);
 }
 
@@ -316,8 +316,8 @@ fn test_max_mage_tekton(max_mage_shadow_player: Player, tekton: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -330,8 +330,8 @@ fn max_mage_vasa_crystal(max_mage_shadow_player: Player, vasa_crystal: Monster) 
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -345,8 +345,8 @@ fn test_olm_mage_offstyle(max_mage_shadow_player: Player, #[case] monster: Monst
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.2);
 }
 
@@ -360,8 +360,8 @@ fn test_olm_ranged_offstyle(max_ranged_tbow_overload_player: Player, #[case] mon
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.5);
 }
 
@@ -374,8 +374,8 @@ fn test_max_ranged_tbow_ice_demon(max_ranged_tbow_overload_player: Player, ice_d
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -388,8 +388,8 @@ fn test_max_melee_slagilith(max_melee_player: Player, slagilith: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -404,8 +404,8 @@ fn test_zogre_ttk(#[case] mut player: Player, zogre: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
@@ -422,8 +422,8 @@ fn test_ruby_bolts_zcb_zebak_500(max_ranged_zcb_ruby_player: Player, zebak: Mons
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.2);
 }
 
@@ -438,8 +438,8 @@ fn test_corp_limiters(#[case] mut player: Player, corp: Monster) {
     let simulation = SingleWayFight::new(player.clone(), monster.clone());
     let stats = simulate_n_fights(Box::new(simulation), 100000);
 
-    let dist = dps_calc::get_distribution(&player, &monster);
-    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster);
+    let dist = dps_calc::get_distribution(&player, &monster, false);
+    let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.5);
 }
 

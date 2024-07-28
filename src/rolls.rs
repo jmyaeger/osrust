@@ -537,7 +537,10 @@ fn apply_melee_weapon_boosts(
         "Silverlight" | "Darklight" if monster.is_demon() => {
             (Fraction::new(0, 1), Fraction::new(3, 5))
         }
-        "Arclight" if monster.is_demon() => (Fraction::new(7, 10), Fraction::new(7, 10)),
+        "Arclight" | "Emberlight" if monster.is_demon() => {
+            (Fraction::new(7, 10), Fraction::new(7, 10))
+        }
+        "Burning claws" if monster.is_demon() => (Fraction::new(1, 20), Fraction::new(1, 20)),
         "Leaf-bladed battleaxe" if monster.is_leafy() => {
             (Fraction::new(1, 1), Fraction::new(47, 40))
         }
@@ -549,6 +552,7 @@ fn apply_melee_weapon_boosts(
         ("Silverlight", None),
         ("Darklight", None),
         ("Arclight", None),
+        ("Emberlight", None),
     ]) && monster.is_demon()
     {
         if monster.info.name.contains("Duke Sucellus") {
@@ -646,6 +650,10 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             // DHCB boost is applied additively with slayer helm (verified in-game)
             att_gear_bonus += Fraction::new(3, 10);
             str_gear_bonus += Fraction::new(1, 4);
+        } else if player.is_wearing("Scorching bow", None) && monster.is_demon() {
+            // Scorching bow boost is applied additively with slayer helm (verified in-game)
+            att_gear_bonus += Fraction::new(3, 10);
+            str_gear_bonus += Fraction::new(3, 10);
         }
     }
 

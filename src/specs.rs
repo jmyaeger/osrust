@@ -990,8 +990,8 @@ pub fn abyssal_dagger_spec(
     info.max_hit = info.max_hit * 85 / 100;
     info.max_att_roll = info.max_att_roll * 5 / 4;
 
-    // Rolls against stab
-    info.max_def_roll = monster.def_rolls[&CombatType::Stab];
+    // Rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -1318,11 +1318,10 @@ pub fn sara_sword_spec(
     let mut info = AttackInfo::new(player, monster);
 
     // Boost max hit by 15%
-    info.max_hit = info.max_hit * 115 / 100;
+    info.max_hit = info.max_hit * 11 / 10;
 
-    // Rolls against magic but uses player's slash accuracy
-    info.max_def_roll = monster.def_rolls[&CombatType::Magic];
-    info.max_att_roll = player.att_rolls[&CombatType::Slash];
+    // Rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
 
     let mut hit = base_attack(&info, rng);
 
