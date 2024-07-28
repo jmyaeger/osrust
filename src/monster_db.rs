@@ -500,7 +500,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        if monster.info.name.contains("Tormented demon") {
+        if monster.info.name.contains("Tormented Demon") {
             if let Some(version) = &mut monster.info.version {
                 match version.as_str() {
                     "1" => {
