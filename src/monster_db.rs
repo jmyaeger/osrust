@@ -500,6 +500,23 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
+        if monster.info.name.contains("Tormented demon") {
+            if let Some(version) = &mut monster.info.version {
+                match version.as_str() {
+                    "1" => {
+                        *version = "Shielded".to_string();
+                    }
+                    "2" => {
+                        *version = "Shielded (Defenceless)".to_string();
+                    }
+                    "3" => {
+                        *version = "Unshielded".to_string();
+                    }
+                    _ => continue,
+                }
+            }
+        }
+
         stmt.execute(params![
             monster.info.name,
             monster.info.version,
