@@ -162,12 +162,6 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let inquisitor_boost = inquisitor_boost(player);
     let obsidian_boost = obsidian_boost(player);
 
-    // Dinh's bulwark bonus is applied directly to gear strength bonus
-    if player.is_wearing("Dinh's bulwark", None) && player.attrs.active_style == CombatStyle::Pummel
-    {
-        player.bonuses.strength.melee += player.bulwark_bonus();
-    }
-
     let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee);
 
     // Obsidian bonus is additive based on base max hit (verified in-game)

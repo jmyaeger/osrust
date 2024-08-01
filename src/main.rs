@@ -1,26 +1,26 @@
 use osrs::combat::simulate_n_fights;
 use osrs::equipment::CombatStyle;
-use osrs::equipment_db;
+// use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::monster::Monster;
-use osrs::monster_db;
+// use osrs::monster_db;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::rolls::calc_active_player_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::single_way::SingleWayFight;
 
 fn main() {
-    match monster_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match monster_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // match equipment_db::main() {
     //     Ok(_) => {}
     //     Err(e) => println!("{}", e),
     // }
 
-    // simulate_door_altar_graardor();
+    simulate_door_altar_graardor();
 }
 
 fn simulate_single_way() {

@@ -571,6 +571,12 @@ impl Player {
                 .add_bonuses(&self.gear.ammo.as_ref().unwrap().bonuses);
         }
 
+        // Dinh's bulwark bonus is applied directly to gear strength bonus
+        if self.is_wearing("Dinh's bulwark", None) && self.attrs.active_style == CombatStyle::Pummel
+        {
+            self.bonuses.strength.melee += self.bulwark_bonus();
+        }
+
         self.bonuses.add_bonuses(&self.gear.weapon.bonuses);
     }
 
