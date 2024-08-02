@@ -1077,19 +1077,48 @@ mod tests {
         let mut hit_damage = 0;
         let mut burn_damage = 0;
         let n = 1000000;
+        let mut hit_counter = 0;
+        let mut tick_counter = 0;
+        let mut attack_tick = 0;
+        let mut accurate_hits = 0;
 
-        for _ in 0..n {
-            let num_burns = monster.active_effects.len();
-            let hit = atlatl_attack(&mut player, &mut monster, &mut rng, &limiter);
-            hit_damage += hit.damage;
-            if monster.active_effects.len() > num_burns {
-                burn_damage += 10;
+        while hit_counter < n {
+            if tick_counter == attack_tick {
+                let hit = atlatl_attack(&mut player, &mut monster, &mut rng, &limiter);
+                if hit.success {
+                    accurate_hits += 1;
+                }
+                hit_damage += hit.damage;
+                hit_counter += 1;
+                attack_tick += player.gear.weapon.speed;
             }
+            for effect in &mut monster.active_effects {
+                burn_damage += effect.apply();
+            }
+            monster.clear_inactive_effects();
+            tick_counter += 1;
         }
 
-        let dps = hit_damage as f32 / (n as f32 * 1.8);
-        let dps_with_burn = (hit_damage + burn_damage) as f32 / (n as f32 * 1.8);
-        println!("dps: {:.2}, dps with burn: {:.2}", dps, dps_with_burn);
+        let mut remaining_burn_damage = 0;
+        if let Some(CombatEffect::Burn {
+            tick_counter: _,
+            stacks,
+        }) = monster
+            .active_effects
+            .iter()
+            .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+        {
+            remaining_burn_damage += stacks.iter().sum::<u32>();
+        }
+        burn_damage += remaining_burn_damage;
+
+        let dps = hit_damage as f64 / (n as f64 * 1.8);
+        let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
+        let acc = accurate_hits as f64 / n as f64;
+        println!(
+            "dps: {:.3}, dps with burn: {:.3}, acc: {:.5}",
+            dps, dps_with_burn, acc
+        );
         assert!(dps_with_burn > dps);
     }
 }
