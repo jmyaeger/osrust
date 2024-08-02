@@ -1038,3 +1038,58 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         _ => standard_attack as AttackFn,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::combat::assign_limiter;
+    use crate::equipment::CombatStyle;
+    use crate::loadouts::*;
+    use crate::monster::Monster;
+    use crate::potions::Potion;
+    use crate::prayers::{Prayer, PrayerBoost};
+    use crate::rolls::{calc_active_player_rolls, monster_def_rolls};
+
+    #[test]
+    fn test_atlatl_dps() {
+        let mut player = max_melee_player();
+        player.equip("Eclipse atlatl", None);
+        player.equip("Eclipse moon helm", None);
+        player.equip("Eclipse moon chestplate", None);
+        player.equip("Eclipse moon tassets", None);
+        player.equip("Atlatl dart", None);
+        player.update_bonuses();
+        player.update_set_effects();
+        player.set_active_style(CombatStyle::Rapid);
+        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.add_potion(Potion::Ranging);
+
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        monster.stats.defence = 1;
+        monster.live_stats.defence = 1;
+        monster.bonuses.defence.standard = -63;
+
+        calc_active_player_rolls(&mut player, &monster);
+        monster.def_rolls = monster_def_rolls(&monster);
+        let limiter = assign_limiter(&player, &monster);
+
+        let mut rng = rand::thread_rng();
+        let mut hit_damage = 0;
+        let mut burn_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let num_burns = monster.active_effects.len();
+            let hit = atlatl_attack(&mut player, &mut monster, &mut rng, &limiter);
+            hit_damage += hit.damage;
+            if monster.active_effects.len() > num_burns {
+                burn_damage += 10;
+            }
+        }
+
+        let dps = hit_damage as f32 / (n as f32 * 1.8);
+        let dps_with_burn = (hit_damage + burn_damage) as f32 / (n as f32 * 1.8);
+        println!("dps: {:.2}, dps with burn: {:.2}", dps, dps_with_burn);
+        assert!(dps_with_burn > dps);
+    }
+}
