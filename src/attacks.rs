@@ -1076,11 +1076,12 @@ mod tests {
         let mut rng = rand::thread_rng();
         let mut hit_damage = 0;
         let mut burn_damage = 0;
-        let n = 1000000;
-        let mut hit_counter = 0;
-        let mut tick_counter = 0;
+        let n = 1000000000;
+        let mut hit_counter = 0i64;
+        let mut tick_counter = 0i64;
         let mut attack_tick = 0;
-        let mut accurate_hits = 0;
+        let mut accurate_hits = 0i64;
+        let mut num_stacks = Vec::new();
 
         while hit_counter < n {
             if tick_counter == attack_tick {
@@ -1088,14 +1089,29 @@ mod tests {
                 if hit.success {
                     accurate_hits += 1;
                 }
-                hit_damage += hit.damage;
+                hit_damage += hit.damage as u64;
                 hit_counter += 1;
-                attack_tick += player.gear.weapon.speed;
+                attack_tick += player.gear.weapon.speed as i64;
             }
             for effect in &mut monster.active_effects {
-                burn_damage += effect.apply();
+                let burn = effect.apply();
+                burn_damage += burn as u64;
             }
             monster.clear_inactive_effects();
+
+            if let Some(CombatEffect::Burn {
+                tick_counter: _,
+                stacks,
+            }) = monster
+                .active_effects
+                .iter()
+                .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+            {
+                num_stacks.push(stacks.len());
+            } else {
+                num_stacks.push(0);
+            }
+
             tick_counter += 1;
         }
 
@@ -1110,7 +1126,7 @@ mod tests {
         {
             remaining_burn_damage += stacks.iter().sum::<u32>();
         }
-        burn_damage += remaining_burn_damage;
+        burn_damage += remaining_burn_damage as u64;
 
         let dps = hit_damage as f64 / (n as f64 * 1.8);
         let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
@@ -1119,6 +1135,29 @@ mod tests {
             "dps: {:.3}, dps with burn: {:.3}, acc: {:.5}",
             dps, dps_with_burn, acc
         );
+
+        let prob_zero_stacks =
+            num_stacks.iter().filter(|s| **s == 0).count() as f64 / tick_counter as f64;
+        let prob_one_stack =
+            num_stacks.iter().filter(|s| **s == 1).count() as f64 / tick_counter as f64;
+        let prob_two_stacks =
+            num_stacks.iter().filter(|s| **s == 2).count() as f64 / tick_counter as f64;
+        let prob_three_stacks =
+            num_stacks.iter().filter(|s| **s == 3).count() as f64 / tick_counter as f64;
+        let prob_four_stacks =
+            num_stacks.iter().filter(|s| **s == 4).count() as f64 / tick_counter as f64;
+        let prob_five_stacks =
+            num_stacks.iter().filter(|s| **s == 5).count() as f64 / tick_counter as f64;
+
+        println!("Probability of zero stacks: {:.6}", prob_zero_stacks);
+        println!("Probability of one stack: {:.6}", prob_one_stack);
+        println!("Probability of two stacks: {:.6}", prob_two_stacks);
+        println!("Probability of three stacks: {:.6}", prob_three_stacks);
+        println!("Probability of four stacks: {:.6}", prob_four_stacks);
+        println!("Probability of five stacks: {:.6}", prob_five_stacks);
+
+        let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
+        println!("Average number of stacks: {:.6}", avg_stacks);
         assert!(dps_with_burn > dps);
     }
 }

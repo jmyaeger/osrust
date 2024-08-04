@@ -6,17 +6,22 @@ use reqwest;
 use rusqlite::{params, Connection, Result};
 use serde::{Deserialize, Serialize};
 use serde_json;
+use std::fs::File;
+use std::io::Write;
 use url::Url;
 
 const FILE_NAME: &str = "src/databases/equipment.db";
 const FLAT_FILE_NAME: &str = "src/databases/equipment_flattened.db";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
+const IMG_PATH: &str = "src/images/equipment/";
+const WIKI_BASE: &str = "https://oldschool.runescape.wiki";
 
-const REQUIRED_PRINTOUTS: [&str; 20] = [
+const REQUIRED_PRINTOUTS: [&str; 21] = [
     "Crush attack bonus",
     "Crush defence bonus",
     "Equipment slot",
     "Item ID",
+    "Image",
     "Magic Damage bonus",
     "Magic attack bonus",
     "Magic defence bonus",
@@ -53,6 +58,7 @@ struct Equipment {
     id: i64,
     version: Option<String>,
     slot: String,
+    image: String,
     speed: Option<i64>,
     category: Option<String>,
     bonuses: Bonuses,
@@ -168,6 +174,8 @@ fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<serde_json::Va
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let wiki_data = get_equipment_data().await?;
 
+    let mut required_imgs = Vec::new();
+
     let conn = Connection::open(FILE_NAME)?;
     let conn_flat = Connection::open(FLAT_FILE_NAME)?;
 
@@ -187,6 +195,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             item_id INTEGER,
             name TEXT,
             version TEXT,
+            image TEXT,
             slot TEXT,
             speed INTEGER,
             category TEXT,
@@ -218,6 +227,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             item_id,
             name,
             version,
+            image,
             slot,
             speed,
             category,
@@ -239,7 +249,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             attack_range
         ) VALUES (
             ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17,
-            ?18, ?19, ?20, ?21, ?22
+            ?18, ?19, ?20, ?21, ?22, ?23
         )",
     )?;
 
@@ -309,6 +319,14 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             id: item_id,
             version: get_printout_value(&po.get("Version anchor").cloned())
                 .map(|v| v.to_string().replace('\"', "")),
+            image: po
+                .get("Image")
+                .and_then(|v| v.as_array())
+                .and_then(|a| a.first())
+                .and_then(|v| v.get("fulltext"))
+                .and_then(|v| v.as_str())
+                .map(|s| s.replace("File:", ""))
+                .unwrap_or_default(),
             slot: get_printout_value(&po.get("Equipment slot").cloned())
                 .map(|v| v.to_string())
                 .unwrap_or_default()
@@ -418,6 +436,11 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             continue;
         }
 
+        let image = equipment.image.clone();
+        if !image.is_empty() {
+            required_imgs.push(image);
+        }
+
         stmt.execute(params![
             equipment.name,
             equipment.version,
@@ -428,6 +451,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             equipment.id,
             equipment.name,
             equipment.version,
+            equipment.image,
             equipment.slot,
             equipment.speed,
             equipment.category,
@@ -467,6 +491,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             name: "Toxic blowpipe".to_string(),
             id: 12926,
             version: Some(k.to_string()),
+            image: "Toxic blowpipe.png".to_string(),
             slot: "weapon".to_string(),
             speed: Some(3),
             category: Some("Thrown".to_string()),
@@ -506,6 +531,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             equipment.id,
             equipment.name,
             equipment.version,
+            equipment.image,
             equipment.slot,
             equipment.speed,
             equipment.category,
@@ -529,6 +555,55 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     println!("SQLite database created successfully");
+
+    let mut success_img_dls = 0;
+    let mut failed_img_dls = 0;
+    let mut skipped_img_dls = 0;
+    let required_imgs: std::collections::HashSet<_> = required_imgs.into_iter().collect();
+    for (idx, img) in required_imgs.iter().enumerate() {
+        let img_path = format!("{}{}", IMG_PATH, img);
+        if std::path::Path::new(&img_path).exists() {
+            skipped_img_dls += 1;
+            continue;
+        }
+        println!(
+            "({}/{}) Fetching image: {}",
+            idx + 1,
+            required_imgs.len(),
+            img
+        );
+        let url = format!("{}/w/Special:Filepath/{}", WIKI_BASE, img);
+        let client = reqwest::Client::new();
+        let response = client
+            .get(&url)
+            .header(
+                "User-Agent",
+                "osrs-dps-calc (https://github.com/weirdgloop/osrs-dps-calc)",
+            )
+            .send()
+            .await;
+        match response {
+            Ok(response) => {
+                if response.status().is_success() {
+                    let mut file = File::create(&img_path)?;
+                    let content = response.bytes().await?;
+                    file.write_all(&content)?;
+                    println!("Saved image: {}", img);
+                    success_img_dls += 1;
+                } else {
+                    println!("Unable to save image: {}", img);
+                    failed_img_dls += 1;
+                }
+            }
+            Err(_) => {
+                println!("Error fetching image for {}", img);
+                continue;
+            }
+        }
+    }
+    println!("Total images saved: {}", success_img_dls);
+    println!("Total images skipped (already exists): {}", skipped_img_dls);
+    println!("Total images failed to save: {}", failed_img_dls);
 
     Ok(())
 }

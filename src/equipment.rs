@@ -209,6 +209,7 @@ pub struct Armor {
     pub bonuses: EquipmentBonuses,
     #[serde(deserialize_with = "parse_gear_slot")]
     pub slot: GearSlot,
+    pub image: String,
 }
 
 impl Equipment for Armor {
@@ -304,6 +305,7 @@ pub struct Weapon {
     pub combat_styles: HashMap<CombatStyle, CombatOption>,
     #[serde(default)]
     pub is_staff: bool, // Will be set in new() method
+    pub image: String,
 }
 
 impl Equipment for Weapon {
@@ -342,6 +344,7 @@ impl Default for Weapon {
             poison_severity: 0,
             combat_styles: Weapon::get_styles_from_weapon_type("Unarmed"),
             is_staff: false,
+            image: String::new(),
         }
     }
 }
