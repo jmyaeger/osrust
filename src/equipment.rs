@@ -235,7 +235,7 @@ impl Armor {
         !self.name.contains("blessing")
             && !["Ghommal's lucky penny", "Mith grapple", "Hallowed grapple"]
                 .contains(&self.name.as_str())
-            && self.slot != GearSlot::Ammo
+            && self.slot == GearSlot::Ammo
     }
 
     pub fn is_bolt_or_arrow(&self) -> bool {

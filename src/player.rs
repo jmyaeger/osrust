@@ -216,6 +216,7 @@ pub struct StatusBoosts {
     pub zcb_spec: bool,
     pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
+    pub current_hp: Option<u32>,
 }
 
 impl Default for StatusBoosts {
@@ -234,6 +235,7 @@ impl Default for StatusBoosts {
             zcb_spec: false,
             sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
+            current_hp: None,
         }
     }
 }
@@ -408,6 +410,9 @@ impl Player {
     pub fn reset_live_stats(&mut self) {
         // Restore to base stats, full spec energy, and reapply potion boosts
         self.live_stats = PlayerLiveStats::from_base_stats(&self.stats);
+        if let Some(hp) = self.boosts.current_hp {
+            self.live_stats.hitpoints = hp;
+        }
         self.apply_potion_boosts();
     }
 
@@ -629,7 +634,7 @@ impl Player {
                 self.bonuses.add_bonuses(&item.bonuses);
             }
         } else if self.gear.ammo.is_some()
-            && !self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo()
+            && !(self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo())
         {
             self.bonuses
                 .add_bonuses(&self.gear.ammo.as_ref().unwrap().bonuses);

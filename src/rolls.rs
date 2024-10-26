@@ -557,7 +557,7 @@ fn apply_melee_weapon_boosts(
         ("Silverlight", Some("Dyed")),
         ("Silverlight", None),
         ("Darklight", None),
-        ("Arclight", None),
+        ("Arclight", Some("Charged")),
         ("Emberlight", None),
     ]) && monster.is_demon()
     {

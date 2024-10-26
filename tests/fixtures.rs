@@ -38,7 +38,7 @@ pub fn spindel() -> Monster {
 
 #[fixture]
 pub fn duke() -> Monster {
-    Monster::new("Duke Sucellus", Some("Post-Quest, Awake")).unwrap()
+    Monster::new("Duke Sucellus", Some("Post-quest, awake")).unwrap()
 }
 
 #[fixture]
@@ -93,7 +93,7 @@ pub fn bloat() -> Monster {
 
 #[fixture]
 pub fn count_draynor() -> Monster {
-    Monster::new("Count Draynor", Some("Hard")).unwrap()
+    Monster::new("Count Draynor (Nightmare Zone)", Some("Hard Mode")).unwrap()
 }
 
 #[fixture]
@@ -157,7 +157,7 @@ pub fn wardens_p3() -> Monster {
 
 #[fixture]
 pub fn vardorvis() -> Monster {
-    Monster::new("Vardorvis", Some("Post-Quest")).unwrap()
+    Monster::new("Vardorvis", Some("Post-quest")).unwrap()
 }
 
 #[fixture]
@@ -446,7 +446,7 @@ pub fn max_melee_darklight_player() -> Player {
 #[fixture]
 pub fn max_melee_arclight_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Arclight", None);
+    player.equip("Arclight", Some("Charged"));
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -904,7 +904,8 @@ pub fn full_dharoks_1hp_player() -> Player {
     player.set_active_style(CombatStyle::Hack);
     player.update_set_effects();
     player.update_bonuses();
-    player.live_stats.hitpoints = 1;
+    player.boosts.current_hp = Some(1);
+    player.reset_live_stats();
     player
 }
 

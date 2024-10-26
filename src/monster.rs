@@ -741,7 +741,7 @@ impl Monster {
         match stat {
             CombatStat::Attack => {
                 // Mod Ash tweet indicates that stats drain down to 1, not 0
-                if self.live_stats.attack - amount < 1 {
+                if self.live_stats.attack.saturating_sub(amount) < 1 {
                     remainder = amount - self.live_stats.attack + 1;
                     self.live_stats.attack = 1;
                 } else {
@@ -749,7 +749,7 @@ impl Monster {
                 }
             }
             CombatStat::Strength => {
-                if self.live_stats.strength - amount < 1 {
+                if self.live_stats.strength.saturating_sub(amount) < 1 {
                     remainder = amount - self.live_stats.strength + 1;
                     self.live_stats.strength = 1;
                 } else {
@@ -757,7 +757,7 @@ impl Monster {
                 }
             }
             CombatStat::Magic => {
-                if self.live_stats.magic - amount < 1 {
+                if self.live_stats.magic.saturating_sub(amount) < 1 {
                     remainder = amount - self.live_stats.magic + 1;
                     self.live_stats.magic = 1;
                 } else {
@@ -766,7 +766,7 @@ impl Monster {
                 rolls::monster_def_rolls(self);
             }
             CombatStat::Ranged => {
-                if self.live_stats.ranged - amount < 1 {
+                if self.live_stats.ranged.saturating_sub(amount) < 1 {
                     remainder = amount - self.live_stats.ranged + 1;
                     self.live_stats.ranged = 1;
                 } else {
@@ -774,7 +774,7 @@ impl Monster {
                 }
             }
             CombatStat::Defence => {
-                if self.live_stats.defence - amount < 1 {
+                if self.live_stats.defence.saturating_sub(amount) < 1 {
                     remainder = amount - self.live_stats.defence + 1;
                     self.live_stats.defence = 1;
                 } else {

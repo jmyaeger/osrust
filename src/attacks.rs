@@ -446,12 +446,12 @@ pub fn opal_bolt_attack(
         player.live_stats.ranged / 10
     };
 
-    let max_hit = player.max_hits[&player.combat_type()];
-
     // Guaranteed hit if the bolt effect procs (verified in-game)
     if rng.gen::<f64>() <= proc_chance {
         // Bolt effect adds on flat damage based on visible ranged level
-        let mut hit = Hit::accurate(damage_roll(0, max_hit, rng) + extra_damage);
+        let att_info = AttackInfo::new(player, monster);
+        let mut hit = base_attack(&att_info, rng);
+        hit.damage += extra_damage;
         hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
@@ -475,11 +475,11 @@ pub fn pearl_bolt_attack(
     }
     let extra_damage = player.live_stats.ranged / denominator;
 
-    let max_hit = player.max_hits[&player.combat_type()];
-
     // Same implementation as opal bolts (accurate hit on procs, flat damage added)
     if rng.gen::<f64>() <= proc_chance {
-        let mut hit = Hit::accurate(damage_roll(0, max_hit, rng) + extra_damage);
+        let att_info = AttackInfo::new(player, monster);
+        let mut hit = base_attack(&att_info, rng);
+        hit.damage += extra_damage;
         hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
