@@ -26,6 +26,19 @@ pub enum Potion {
     ForgottenBrew,
     ImbuedHeart,
     SaturatedHeart,
+    RubyHarvest,
+    BlackWarlock,
+    SapphireGlacialis,
+    Moonlight,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum PotionStat {
+    Attack,
+    Strength,
+    Defence,
+    Ranging,
+    Magic,
 }
 
 // Contains the type of potion, the boost calc formula, and the calced boost
@@ -140,6 +153,30 @@ impl PotionBoost {
                 constant: 11,
                 boost: 0,
             },
+            Potion::RubyHarvest => PotionBoost {
+                potion_type: *potion,
+                factor: 15,
+                constant: 4,
+                boost: 0,
+            },
+            Potion::SapphireGlacialis => PotionBoost {
+                potion_type: *potion,
+                factor: 15,
+                constant: 4,
+                boost: 0,
+            },
+            Potion::BlackWarlock => PotionBoost {
+                potion_type: *potion,
+                factor: 15,
+                constant: 4,
+                boost: 0,
+            },
+            Potion::Moonlight => PotionBoost {
+                potion_type: *potion,
+                factor: 0,
+                constant: 0,
+                boost: 0, // Custom implementation
+            },
             _ => PotionBoost {
                 potion_type: *potion,
                 factor: 0,
@@ -165,6 +202,40 @@ impl PotionBoost {
         let stats = [att_level, def_level, ranged_level, magic_level];
         let sum: u32 = stats.iter().map(|&n| n / 10).sum();
         self.boost = 10 + (sum / 4);
+    }
+
+    pub fn calc_moonlight_boost(
+        &mut self,
+        combat_level: u32,
+        herblore_level: u32,
+        skill: PotionStat,
+    ) {
+        match skill {
+            PotionStat::Attack => {
+                if herblore_level >= 45 {
+                    self.boost = 5 + combat_level * 15 / 100;
+                } else if herblore_level >= 3 {
+                    self.boost = 3 + combat_level / 10;
+                }
+            }
+            PotionStat::Strength => {
+                if herblore_level >= 55 {
+                    self.boost = 5 + combat_level * 15 / 100;
+                } else if herblore_level >= 12 {
+                    self.boost = 3 + combat_level / 10;
+                }
+            }
+            PotionStat::Defence => {
+                if herblore_level >= 70 {
+                    self.boost = 7 + combat_level / 5;
+                } else if herblore_level >= 65 {
+                    self.boost = 5 + combat_level * 15 / 100;
+                } else if herblore_level >= 30 {
+                    self.boost = 3 + combat_level / 10;
+                }
+            }
+            _ => {}
+        }
     }
 }
 

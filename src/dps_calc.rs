@@ -4,6 +4,7 @@ use crate::constants::*;
 use crate::dists;
 use crate::dists::bolts::{self, BoltContext};
 use crate::equipment::{CombatStance, CombatType};
+use crate::hit_dist::flat_limit_transformer;
 use crate::hit_dist::{
     capped_reroll_transformer, division_transformer, flat_add_transformer, linear_min_transformer,
     multiply_transformer, AttackDistribution, HitDistribution, Hitsplat, TransformOpts,
@@ -42,6 +43,13 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
             _ => Fraction::new(1, 1),
         };
         max_att_roll = att_roll_factor.multiply_to_int(max_att_roll);
+    }
+
+    if player.is_wearing("Keris partisan of the sun", None)
+        && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+        && monster.live_stats.hitpoints < monster.stats.hitpoints / 4
+    {
+        max_att_roll = max_att_roll * 5 / 4;
     }
 
     let mut def_roll = if using_spec {
@@ -193,7 +201,7 @@ fn get_dot_expected(player: &Player, monster: &Monster, using_spec: bool) -> f64
 fn get_dot_max(player: &Player, monster: &Monster, using_spec: bool) -> u32 {
     if using_spec {
         if player.is_wearing("Burning claws", None) {
-            30
+            29
         } else if player.is_wearing("Scorching bow", None) {
             if monster.is_demon() {
                 5
@@ -211,11 +219,10 @@ fn get_dot_max(player: &Player, monster: &Monster, using_spec: bool) -> u32 {
 fn burning_claw_dot(player: &Player, monster: &Monster) -> f64 {
     let mut dot = 0.0;
     let accuracy = get_hit_chance(player, monster, true);
-    for i in 0..3 {
-        let prev_rolls_fail = (1.0 - accuracy).powi(i);
+    for acc_roll in 0..3 {
+        let prev_rolls_fail = (1.0 - accuracy).powi(acc_roll);
         let this_roll_hits = prev_rolls_fail * accuracy;
-        let burn_chance_per_splat = 0.15 * (i as f64 + 1.0);
-        dot += 30.0 * this_roll_hits * burn_chance_per_splat;
+        dot += this_roll_hits * BURN_EXPECTED[acc_roll as usize];
     }
 
     dot
@@ -330,11 +337,7 @@ pub fn get_distribution(
         let mut hit_count = 1;
         if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Abyssal dagger")
-            || player.is_wearing_any(vec![
-                ("Dark bow", None),
-                ("Magic shortbow", None),
-                ("Magic shortbow (i)", None),
-            ])
+            || player.is_wearing_any(vec![("Magic shortbow", None), ("Magic shortbow (i)", None)])
         {
             hit_count = 2;
         } else if player.is_wearing("Webweaver bow", None) {
@@ -400,7 +403,16 @@ pub fn get_distribution(
         let first_hit = AttackDistribution::new(vec![HitDistribution::linear(acc, 0, half_max)]);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
         dist = first_hit.transform(
-            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit),
+            &|h| {
+                if h.accurate {
+                    HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit)
+                } else {
+                    HitDistribution::new(vec![WeightedHit::new(
+                        1.0,
+                        vec![*h, Hitsplat::inaccurate()],
+                    )])
+                }
+            },
             &TransformOpts {
                 transform_inaccurate: false,
             },
@@ -409,7 +421,11 @@ pub fn get_distribution(
 
     // Double-hitting weapon distribution (Torag's hammers/sulphur blades)
     if player.is_using_melee()
-        && player.is_wearing_any(vec![("Torag's hammers", None), ("Sulphur blades", None)])
+        && player.is_wearing_any(vec![
+            ("Torag's hammers", None),
+            ("Sulphur blades", None),
+            ("Glacial temotli", None),
+        ])
     {
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(acc, 0, half_max);
@@ -522,6 +538,45 @@ pub fn get_distribution(
             },
             &TransformOpts::default(),
         );
+    }
+
+    // Vampyre stuff
+    if let Some(tier) = monster.vampyre_tier() {
+        if player.is_wearing("Efaritay's aid", None) {
+            dist = dist.scale_damage(Fraction::new(11, 10));
+        }
+        match (
+            player.gear.weapon.name.as_str(),
+            player.is_wearing_silver_weapon(),
+            tier,
+        ) {
+            ("Blisterwood flail", _, _) => {
+                dist = dist.scale_damage(Fraction::new(5, 4));
+            }
+            ("Blisterwood sickle", _, _) => {
+                dist = dist.scale_damage(Fraction::new(23, 20));
+            }
+            ("Ivandis flail", _, _) => {
+                dist = dist.scale_damage(Fraction::new(6, 5));
+            }
+            ("Rod of ivandis", _, 1 | 2) => {
+                dist = dist.scale_damage(Fraction::new(11, 10));
+            }
+            (_, true, 1) => {
+                dist = dist.scale_damage(Fraction::new(11, 10));
+            }
+            (_, _, _) => {}
+        }
+    }
+
+    if player.is_using_ranged() && player.is_wearing("Dark bow", None) {
+        dist = AttackDistribution::new(vec![standard_hit_dist.clone(), standard_hit_dist.clone()]);
+        if using_spec {
+            dist = dist.transform(
+                &flat_limit_transformer(48, min_hit),
+                &TransformOpts::default(),
+            );
+        }
     }
 
     let bolt_context = BoltContext::new(
@@ -668,7 +723,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
             let descent_of_dragons = player.is_wearing("Dragon arrow", None);
             let min_hit = if descent_of_dragons { 5 } else { 8 };
             let damage_factor = if descent_of_dragons { 15 } else { 13 };
-            (min_hit, min(48, base_max_hit * damage_factor / 10))
+            (min_hit, base_max_hit * damage_factor / 10)
         }
         "Accursed sceptre" | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
         _ => panic!("Spec not implemented for {}", player.gear.weapon.name),
@@ -784,13 +839,34 @@ fn apply_limiters(
         dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
     }
 
-    // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
-    let flat_armour = monster.info.id.map_or(0, |id| {
-        FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1
-    });
-    if flat_armour > 0 {
+    if monster.info.id == Some(HUEYCOATL_TAIL_ID) {
+        let using_crush = player.combat_type() == CombatType::Crush
+            && player.bonuses.attack.crush > player.bonuses.attack.stab
+            && player.bonuses.attack.crush > player.bonuses.attack.slash;
+        let dist_max = if using_crush { 9 } else { 4 };
         dist = dist.transform(
-            &flat_add_transformer(-flat_armour, 1),
+            &linear_min_transformer(dist_max, 0),
+            &TransformOpts::default(),
+        );
+        if using_crush {
+            dist = dist.transform(
+                &|h| {
+                    if h.damage > 0 {
+                        HitDistribution::single(1.0, vec![Hitsplat::new(h.damage, true)])
+                    } else {
+                        HitDistribution::single(1.0, vec![Hitsplat::new(1, false)])
+                    }
+                },
+                &TransformOpts::default(),
+            );
+        }
+    }
+
+    // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
+
+    if monster.bonuses.flat_armour > 0 {
+        dist = dist.transform(
+            &flat_add_transformer(-monster.bonuses.flat_armour, 1),
             &TransformOpts {
                 transform_inaccurate: false,
             },
@@ -988,6 +1064,12 @@ fn dist_is_current_hp_dependent(player: &Player, monster: &Monster) -> bool {
         return true;
     }
 
+    if player.is_wearing("Keris partisan of the sun", None)
+        && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+    {
+        return true;
+    }
+
     false
 }
 
@@ -1006,6 +1088,9 @@ fn dist_at_hp<'a>(
     let no_scaling = dist.get_single_hitsplat();
     if !dist_is_current_hp_dependent(player, monster)
         || hp == monster.live_stats.hitpoints as usize
+        || (player.is_wearing("Keris partisan of the sun", None)
+            && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+            && hp >= monster.stats.hitpoints as usize / 4)
         || (player.is_using_ranged()
             && player.is_using_crossbow()
             && player.is_wearing_any(vec![

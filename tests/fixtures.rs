@@ -288,6 +288,7 @@ pub fn mid_level_melee_player() -> Player {
         hitpoints: 80,
         prayer: 70,
         mining: 70,
+        herblore: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
@@ -347,6 +348,7 @@ pub fn mid_level_ranged_rcb_player() -> Player {
         hitpoints: 80,
         prayer: 70,
         mining: 70,
+        herblore: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
     player.add_potion(Potion::Ranging);
@@ -724,6 +726,7 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
         hitpoints: 80,
         prayer: 70,
         mining: 70,
+        herblore: 70,
     };
     player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
 

@@ -114,7 +114,7 @@ pub struct MonsterBonuses {
     pub strength: MonsterStrengthBonus,
     pub defence: MonsterDefBonuses,
     #[serde(default)]
-    pub flat_armour: u32, // Defaults to 0 during deserialization
+    pub flat_armour: i32,
 }
 
 // Damage sources from which the monster is immune
@@ -400,11 +400,6 @@ impl Monster {
         // Calculate base attack rolls and copy to live attack rolls
         monster.base_att_rolls = rolls::monster_att_rolls(&monster);
         monster.att_rolls.clone_from(&monster.base_att_rolls);
-
-        // Set the flat armour bonus if applicable
-        monster.bonuses.flat_armour = monster.info.id.map_or(0, |id| {
-            FLAT_ARMOUR.iter().find(|x| x.0 == id).unwrap_or(&(0, 0)).1 as u32
-        });
 
         if let Some(max_hits) = &mut monster.max_hits {
             if max_hits.len() == 1

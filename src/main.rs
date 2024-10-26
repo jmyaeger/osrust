@@ -3,7 +3,7 @@ use osrs::equipment::CombatStyle;
 use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::monster::Monster;
-// use osrs::monster_db;
+use osrs::monster_db;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::rolls::calc_active_player_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
@@ -48,15 +48,15 @@ fn simulate_single_way() {
 
 fn simulate_door_altar_graardor() {
     let mut player = loadouts::bowfa_crystal_player();
-    player.stats.ranged = 90;
-    player.stats.defence = 70;
+    player.stats.ranged = 87;
+    player.stats.defence = 80;
     player.reset_live_stats();
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    // player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
     player.equip("Barrows gloves", None);
     player.equip("Zamorak d'hide boots", None);
     player.equip("Ava's assembler", None);
-    // player.equip("Amulet of fury", None);
+    player.equip("Amulet of fury", None);
     // player.equip("Ring of suffering (i)", Some("Uncharged"));
     player.equip("Explorer's ring 4", None);
 
@@ -69,8 +69,8 @@ fn simulate_door_altar_graardor() {
 
     let fight_config = GraardorConfig {
         method: GraardorMethod::DoorAltar,
-        eat_hp: 40,
-        heal_amount: 22,
+        eat_hp: 20,
+        heal_amount: 18,
     };
 
     let fight = GraardorFight::new(player, fight_config);

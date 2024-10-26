@@ -286,9 +286,9 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     magic_damage = apply_virtus_bonus(magic_damage, player);
 
     // Determine if salve boost is applicable and apply it if so
-    // Smoke staff boosts are applied additively here as well (source: Mod Ash)
+    // Smoke staff and Efaritay's aid boosts are applied additively here as well (source: Mod Ash)
     let (mut att_roll, magic_damage, salve_active) =
-        apply_salve_and_smoke_magic_boosts(base_att_roll, magic_damage, player, monster);
+        apply_additive_magic_boosts(base_att_roll, magic_damage, player, monster);
 
     // "Primary" magic damage
     max_hit = max_hit * (1000 + magic_damage) / 1000;
@@ -309,10 +309,26 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
 
     // Apply demonbane/mark of darkness accuracy boost
     if player.is_using_demonbane_spell() && monster.is_demon() {
-        if player.boosts.charge_active {
-            att_roll = att_roll * 7 / 5;
-        } else {
-            att_roll = att_roll * 6 / 5;
+        let bonus = match (
+            player.boosts.mark_of_darkness,
+            player.is_wearing("Purging staff", None),
+        ) {
+            (true, true) => Fraction::new(18, 10),
+            (true, false) | (false, true) => Fraction::new(14, 10),
+            (false, false) => Fraction::new(12, 10),
+        };
+        att_roll = bonus.multiply_to_int(att_roll);
+    }
+
+    // Apply dragonbane boosts - still works for DHL and DHCB when manual casting
+    if monster.is_dragon() {
+        if player.is_wearing_any(vec![
+            ("Dragon hunter wand", None),
+            ("Dragon hunter lance", None),
+        ]) {
+            max_hit = max_hit * 6 / 5;
+        } else if player.is_wearing("Dragon hunter crossbow", None) {
+            max_hit = max_hit * 5 / 4;
         }
     }
 
@@ -325,7 +341,9 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     }
 
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
-    if player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell() {
+    if (player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell())
+        || player.is_wearing("Tome of earth", Some("Charged")) && player.is_using_earth_spell()
+    {
         max_hit = max_hit * 11 / 10;
     } else if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
         att_roll = att_roll * 11 / 10; //TODO: Check if this still exists
@@ -472,17 +490,10 @@ fn apply_vampyre_boost(
                 player.is_wearing("Efaritay's aid", None),
                 tier,
             ) {
-                ("Blisterwood flail", _, _, _) => (Fraction::new(105, 100), Fraction::new(5, 4)),
-                ("Blisterwood sickle", _, _, _) => {
-                    (Fraction::new(105, 100), Fraction::new(115, 100))
+                ("Blisterwood flail" | "Blisterwood sickle", _, _, _) => {
+                    (Fraction::new(105, 100), Fraction::new(1, 1))
                 }
-                ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(6, 5)),
-                // Other silver weapons against tier 1
-                (_, true, _, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
-                // Non-silver weapons with Efaritay's aid boost damage by 10% against tier 1
-                (_, false, true, 1) => (Fraction::new(1, 1), Fraction::new(11, 10)),
-                // Efaritay's aid or silver weapon -> no damage reduction (damage halved post-roll for Efaritay's + non-silver weapon)
-                (_, _, true, 2) => (Fraction::new(1, 1), Fraction::new(1, 1)),
+                ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(1, 1)),
                 // Any other weapon against tier 3 or any non-silver weapon against tier 2 will return (0, 0)
                 (_, _, _, 2 | 3) => (Fraction::new(0, 1), Fraction::new(0, 1)),
                 _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
@@ -514,6 +525,7 @@ fn apply_melee_weapon_boosts(
 
     let (mut att_factor, mut max_hit_factor) = match player.gear.weapon.name.as_str() {
         "Dragon hunter lance" if monster.is_dragon() => (Fraction::new(6, 5), Fraction::new(6, 5)),
+        "Dragon hunter wand" if monster.is_dragon() => (Fraction::new(3, 2), Fraction::new(6, 5)),
         "Keris partisan of breaching" if monster.is_kalphite() => {
             (Fraction::new(133, 100), Fraction::new(133, 100))
         }
@@ -583,12 +595,12 @@ fn inquisitor_boost(player: &Player) -> u32 {
         .filter(|armor| armor.name.contains("Inquisitor"))
         .count();
 
-    if player.set_effects.full_inquisitor {
-        inquisitor_pieces += 2;
-    }
-
-    if player.is_wearing("Inquisitor's mace", None) {
-        inquisitor_pieces *= 3;
+    if inquisitor_pieces > 0 {
+        if player.is_wearing("Inquisitor's mace", None) {
+            inquisitor_pieces *= 5;
+        } else if inquisitor_pieces == 3 {
+            inquisitor_pieces += 2;
+        }
     }
 
     1000 + 5 * inquisitor_pieces as u32
@@ -698,12 +710,7 @@ fn apply_ranged_weapon_boosts(
 
     let (att_factor, max_hit_factor) = match player.gear.weapon.name.as_str() {
         // DHCB is applied multiplicatively with anything but slayer helm
-        "Dragon hunter crossbow"
-            if monster.is_dragon()
-                && !(player.boosts.on_task && player.is_wearing_imbued_black_mask())
-                || (player.is_wearing_salve_i() && monster.is_undead())
-                || (player.is_wearing("Amulet of avarice", None) && monster.is_revenant()) =>
-        {
+        "Dragon hunter crossbow" if monster.is_dragon() && mult_boost_applies(player, monster) => {
             (Fraction::new(13, 10), Fraction::new(5, 4))
         }
         "Twisted bow" => {
@@ -713,12 +720,14 @@ fn apply_ranged_weapon_boosts(
                 Fraction::new(tbow_dmg_bonus, 100),
             )
         }
+        "Scorching bow" if monster.is_demon() && mult_boost_applies(player, monster) => {
+            (Fraction::new(13, 10), Fraction::new(13, 10))
+        }
+
         // Wildy bow is applied multiplicatively with anything but slayer helm
         _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
             && player.is_wearing_wildy_bow()
-            && (!(player.is_wearing_imbued_black_mask() && player.boosts.on_task)
-                || (player.is_wearing_salve_i() && monster.is_undead())
-                || (player.is_wearing("Amulet of avarice", None) && monster.is_revenant())) =>
+            && mult_boost_applies(player, monster) =>
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
@@ -734,6 +743,12 @@ fn apply_ranged_weapon_boosts(
     }
 
     (att_roll, max_hit)
+}
+
+fn mult_boost_applies(player: &Player, monster: &Monster) -> bool {
+    !(player.boosts.on_task && player.is_wearing_imbued_black_mask())
+        || (player.is_wearing_salve_i() && monster.is_undead())
+        || (player.is_wearing("Amulet of avarice", None) && monster.is_revenant())
 }
 
 fn get_base_magic_hit(player: &Player) -> u32 {
@@ -827,7 +842,7 @@ fn apply_virtus_bonus(magic_damage: u32, player: &Player) -> u32 {
     }
 }
 
-fn apply_salve_and_smoke_magic_boosts(
+fn apply_additive_magic_boosts(
     att_roll: i32,
     magic_damage: u32,
     player: &Player,
@@ -859,6 +874,12 @@ fn apply_salve_and_smoke_magic_boosts(
     if player.is_wearing_smoke_staff() && player.is_using_standard_spell() {
         att_roll_mod += 10;
         magic_damage += 100;
+    }
+
+    if let Some(1) = monster.vampyre_tier() {
+        if player.is_wearing("Efaritay's aid", None) && player.is_wearing_silver_weapon() {
+            att_roll_mod += 15;
+        }
     }
 
     att_roll = att_roll * att_roll_mod / 100;

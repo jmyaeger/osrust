@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::constants::HUEYCOATL_TAIL_ID;
 use crate::equipment::CombatType;
 use crate::limiters;
 use crate::monster::Monster;
@@ -206,6 +207,14 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
 
     if player.is_wearing("Efaritay's aid", None) && monster.vampyre_tier() == Some(2) {
         return Some(Box::new(limiters::HalfDamage {}));
+    }
+
+    if monster.info.id == Some(HUEYCOATL_TAIL_ID) {
+        let using_crush = player.combat_type() == CombatType::Crush
+            && player.bonuses.attack.crush > player.bonuses.attack.stab
+            && player.bonuses.attack.crush > player.bonuses.attack.slash;
+        let dist_max = if using_crush { 9 } else { 4 };
+        return Some(Box::new(limiters::HueycoatlTail { limit: dist_max }));
     }
 
     None

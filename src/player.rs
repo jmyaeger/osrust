@@ -1,11 +1,14 @@
-use crate::attacks::{standard_attack, AttackFn};
+use crate::attacks::{get_attack_functions, standard_attack, AttackFn};
 use crate::constants::*;
 use crate::effects::CombatEffect;
 use crate::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
 };
-use crate::potions::{Potion, PotionBoost};
+use crate::monster::Monster;
+use crate::potions::{Potion, PotionBoost, PotionStat};
 use crate::prayers::PrayerBoost;
+use crate::rolls::calc_active_player_rolls;
+use crate::specs::{get_spec_attack_function, SpecialAttackFn};
 use crate::spells;
 use reqwest::Error;
 use std::cmp::{max, min};
@@ -23,6 +26,7 @@ pub struct PlayerStats {
     pub magic: u32,
     pub prayer: u32,
     pub mining: u32,
+    pub herblore: u32,
 }
 
 impl Default for PlayerStats {
@@ -37,6 +41,7 @@ impl Default for PlayerStats {
             magic: 99,
             prayer: 99,
             mining: 99,
+            herblore: 99,
         }
     }
 }
@@ -56,6 +61,7 @@ impl PlayerStats {
             magic: 1,
             prayer: 1,
             mining: 1,
+            herblore: 1,
         }
     }
 
@@ -69,6 +75,7 @@ impl PlayerStats {
             magic: *stats_map.get("magic").unwrap_or(&99),
             prayer: *stats_map.get("prayer").unwrap_or(&99),
             mining: *stats_map.get("mining").unwrap_or(&99),
+            herblore: *stats_map.get("herblore").unwrap_or(&99),
         }
     }
 }
@@ -277,6 +284,59 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct GearSwitch {
+    pub label: String,
+    pub gear: Gear,
+    pub prayers: PrayerBoosts,
+    pub spell: Option<spells::Spell>,
+    pub active_style: CombatStyle,
+    pub set_effects: SetEffects,
+    pub attack: AttackFn,
+    pub spec: SpecialAttackFn,
+    pub att_rolls: HashMap<CombatType, i32>,
+    pub max_hits: HashMap<CombatType, u32>,
+    pub def_rolls: HashMap<CombatType, i32>,
+}
+
+impl GearSwitch {
+    pub fn new(
+        label: String,
+        gear: Gear,
+        prayers: PrayerBoosts,
+        spell: Option<spells::Spell>,
+        active_style: CombatStyle,
+        monster: &Monster,
+    ) -> Self {
+        let mut player = Player::new();
+        player.gear = gear;
+        player.prayers = prayers;
+        player.attrs.spell = spell;
+        player.attrs.active_style = active_style;
+
+        player.update_bonuses();
+        player.update_set_effects();
+        calc_active_player_rolls(&mut player, monster);
+
+        let attack = get_attack_functions(&player);
+        let spec = get_spec_attack_function(&player);
+
+        GearSwitch {
+            label,
+            gear: player.gear,
+            prayers: player.prayers,
+            spell,
+            active_style: player.attrs.active_style,
+            set_effects: player.set_effects,
+            attack,
+            spec,
+            att_rolls: player.att_rolls,
+            max_hits: player.max_hits,
+            def_rolls: player.def_rolls,
+        }
+    }
+}
+
 // Misc other player info - may restructure if there's a better place for these
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct PlayerAttrs {
@@ -301,6 +361,8 @@ pub struct Player {
     pub max_hits: HashMap<CombatType, u32>,
     pub def_rolls: HashMap<CombatType, i32>,
     pub attack: AttackFn,
+    pub spec: SpecialAttackFn,
+    pub switches: Vec<GearSwitch>,
 }
 
 impl Default for Player {
@@ -325,6 +387,8 @@ impl Default for Player {
             max_hits,
             def_rolls,
             attack: standard_attack,
+            spec: standard_attack,
+            switches: Vec::new(),
         }
     }
 }
@@ -604,13 +668,37 @@ impl Player {
     pub fn calc_potion_boosts(&mut self) {
         // Calculate all of the selected potion boosts
         if let Some(potion) = &mut self.potions.attack {
-            potion.calc_boost(self.stats.attack)
+            if potion.potion_type == Potion::Moonlight {
+                potion.calc_moonlight_boost(
+                    self.stats.attack,
+                    self.stats.herblore,
+                    PotionStat::Attack,
+                );
+            } else {
+                potion.calc_boost(self.stats.attack);
+            }
         }
         if let Some(potion) = &mut self.potions.strength {
-            potion.calc_boost(self.stats.strength)
+            if potion.potion_type == Potion::Moonlight {
+                potion.calc_moonlight_boost(
+                    self.stats.strength,
+                    self.stats.herblore,
+                    PotionStat::Strength,
+                );
+            } else {
+                potion.calc_boost(self.stats.strength);
+            }
         }
         if let Some(potion) = &mut self.potions.defence {
-            potion.calc_boost(self.stats.defence);
+            if potion.potion_type == Potion::Moonlight {
+                potion.calc_moonlight_boost(
+                    self.stats.defence,
+                    self.stats.herblore,
+                    PotionStat::Defence,
+                );
+            } else {
+                potion.calc_boost(self.stats.defence);
+            }
         }
         if let Some(potion) = &mut self.potions.ranged {
             potion.calc_boost(self.stats.ranged);
@@ -1135,6 +1223,8 @@ fn parse_player_data(data: String) -> PlayerStats {
 
     let mining_lvl = data_lines[15].split(',').collect::<Vec<&str>>()[1];
     skill_map.insert("mining", mining_lvl.parse::<u32>().unwrap());
+    let herblore_lvl = data_lines[16].split(',').collect::<Vec<&str>>()[1];
+    skill_map.insert("herblore", herblore_lvl.parse::<u32>().unwrap());
 
     PlayerStats {
         hitpoints: skill_map["hitpoints"],
@@ -1145,6 +1235,7 @@ fn parse_player_data(data: String) -> PlayerStats {
         magic: skill_map["magic"],
         prayer: skill_map["prayer"],
         mining: skill_map["mining"],
+        herblore: skill_map["herblore"],
     }
 }
 
@@ -1313,6 +1404,7 @@ mod test {
             hitpoints: 99,
             prayer: 99,
             mining: 99,
+            herblore: 99,
         };
         player.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
         player.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));

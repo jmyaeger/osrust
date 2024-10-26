@@ -9,6 +9,8 @@ pub const ICE_DEMON_IDS: &[i32] = &[
     7585, // cm
 ];
 
+pub const HUEYCOATL_TAIL_ID: i32 = 14014;
+
 pub const VERZIK_IDS: [i32; 18] = [
     10830, 10831, 10832, // P1 Entry
     8369, 8370, 8371, // P1 Normal
@@ -184,14 +186,6 @@ pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
 pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
 
 pub const IMMUNE_TO_STAT_DRAIN: &[i32] = &[13011, 13012, 13013];
-
-pub const FLAT_ARMOUR: [(i32, i32); 5] = [
-    (13011, -2), // Blood moon
-    (13012, 6),  // Eclipse moon (4 in clone phase)
-    (13013, -5), // Blue moon
-    (13033, -4), // Sulphur nagua
-    (13029, -2), // Grimy lizard
-];
 
 pub const FULL_AHRIMS: [(&str, Option<&str>); 4] = [
     ("Ahrim's hood", None),
@@ -455,3 +449,60 @@ pub const SLASH_SPEC_WEAPONS: [&str; 13] = [
 pub const CRUSH_SPEC_WEAPONS: [&str; 3] = ["Dinh's bulwark", "Ancient mace", "Dragon mace"];
 
 pub const MAGIC_SPEC_WEAPONS: [&str; 1] = ["Saradomin's blessed sword"];
+
+const BURN_PATTERNS: [[u8; 3]; 8] = [
+    [0, 0, 0],
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 1],
+    [1, 0, 0],
+    [1, 0, 1],
+    [1, 1, 0],
+    [1, 1, 1],
+];
+
+pub const BURN_EXPECTED: [f64; 3] = {
+    let mut results = [0.0; 3];
+    let mut acc_roll = 0;
+
+    while acc_roll < 3 {
+        let burn_chance = 0.15 * (acc_roll as f64 + 1.0);
+        let mut sum = 0.0;
+
+        let mut pattern_idx = 0;
+        while pattern_idx < BURN_PATTERNS.len() {
+            let pattern = BURN_PATTERNS[pattern_idx];
+            let mut prob = 1.0;
+            let mut i = 0;
+
+            while i < 3 {
+                prob *= if pattern[i] == 0 {
+                    1.0 - burn_chance
+                } else {
+                    burn_chance
+                };
+                i += 1;
+            }
+
+            let mut damage = 0.0;
+            let mut i = 0;
+
+            while i < 3 {
+                damage += pattern[i] as f64 * 10.0;
+                i += 1;
+            }
+
+            if pattern[0] == 1 && pattern[1] == 1 {
+                damage -= 1.0;
+            }
+
+            sum += prob * damage;
+            pattern_idx += 1;
+        }
+
+        results[acc_roll] = sum;
+        acc_roll += 1;
+    }
+
+    results
+};

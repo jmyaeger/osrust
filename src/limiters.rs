@@ -108,3 +108,17 @@ impl Limiter for HalfDamage {
         damage / 2
     }
 }
+
+#[derive(Clone)]
+pub struct HueycoatlTail {
+    pub limit: u32,
+}
+
+impl Limiter for HueycoatlTail {
+    fn apply(&self, damage: u32, rng: &mut ThreadRng) -> u32 {
+        // Hueycoatl's tail rolls a number betwwen 0-9 (crush weapon) or 0-4 (other styles)
+        // and takes the lower of the roll and the original damage roll
+        let second_roll = rng.gen_range(0..=self.limit);
+        min(damage, second_roll)
+    }
+}

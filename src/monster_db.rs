@@ -12,7 +12,7 @@ const FLAT_FILE_NAME: &str = "src/databases/monsters_flattened.db";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
 // const IMG_PATH: &str = "src/images/monsters/";
 
-const REQUIRED_PRINTOUTS: [&str; 36] = [
+const REQUIRED_PRINTOUTS: [&str; 37] = [
     "Attack bonus",
     "Attack level",
     "Attack speed",
@@ -49,6 +49,7 @@ const REQUIRED_PRINTOUTS: [&str; 36] = [
     "Light range defence bonus",
     "Standard range defence bonus",
     "Heavy range defence bonus",
+    "Flat armour",
 ];
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -96,6 +97,7 @@ struct Bonuses {
     attack: Offensive,
     defence: Defensive,
     strength: Strength,
+    flat_armour: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -278,7 +280,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             strength_magic INTEGER,
             immunities_poison BOOLEAN,
             immunities_venom BOOLEAN,
-            immunities_freeze INTEGER
+            immunities_freeze INTEGER,
+            flat_armour INTEGER
         )",
         [],
     )?;
@@ -292,10 +295,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             magic, ranged, strength, attack_melee, attack_ranged, attack_magic,
             defence_crush, defence_magic, defence_heavy, defence_standard, defence_light,
             defence_slash, defence_stab, strength_melee, strength_ranged, strength_magic,
-            immunities_poison, immunities_venom, immunities_freeze
+            immunities_poison, immunities_venom, immunities_freeze, flat_armour
         ) VALUES (
             ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17,
-            ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33
+            ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34
         )",
     )?;
 
@@ -446,6 +449,9 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .and_then(|magic_str| magic_str.as_i64())
                         .unwrap_or_default(),
                 },
+                flat_armour: get_printout_value(&po.get("Flat armour").cloned(), false)
+                    .and_then(|str| str.as_i64())
+                    .unwrap_or(0),
             },
             immunities: Immunities {
                 poison: get_printout_value(&po.get("Immune to poison").cloned(), false)
@@ -531,6 +537,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.info.attack_speed,
             serde_json::to_string(&monster_style).unwrap_or_default(),
             monster.info.size,
+            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
             serde_json::to_string(&monster.info.attributes).unwrap_or_default(),
             monster.info.weakness.as_ref().map(|w| w.element.clone()),
             monster.info.weakness.as_ref().map(|w| w.severity),
@@ -556,7 +563,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
-            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
+            monster.bonuses.flat_armour,
         ])?;
     }
 
@@ -606,6 +613,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ranged: 40,
                     magic: 40,
                 },
+                flat_armour: 0,
             },
             immunities: Immunities {
                 poison: false,
@@ -629,6 +637,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.info.attack_speed,
             serde_json::to_string(&monster_style).unwrap_or_default(),
             monster.info.size,
+            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
             serde_json::to_string(&monster.info.attributes).unwrap_or_default(),
             monster.info.weakness.as_ref().map(|w| w.element.clone()),
             monster.info.weakness.as_ref().map(|w| w.severity),
@@ -654,7 +663,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
-            serde_json::to_string(&monster.max_hit).unwrap_or_default(),
+            monster.bonuses.flat_armour,
         ])?;
 
         // conn.execute("CREATE INDEX idx_monsters_name ON monsters (name)", [])?;
