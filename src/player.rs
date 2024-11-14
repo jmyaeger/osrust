@@ -216,6 +216,7 @@ pub struct StatusBoosts {
     pub zcb_spec: bool,
     pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
+    pub sunlight_stacks: u32,
     pub current_hp: Option<u32>,
 }
 
@@ -235,6 +236,7 @@ impl Default for StatusBoosts {
             zcb_spec: false,
             sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
+            sunlight_stacks: 0,
             current_hp: None,
         }
     }
@@ -560,13 +562,19 @@ impl Player {
                     self.gear.shield = None;
                 }
 
-                // Modify attack speed if weapon is on rapid
-                if self.attrs.active_style == CombatStyle::Rapid
+                // Modify attack speed if weapon is on rapid or flare
+                if (self.attrs.active_style == CombatStyle::Rapid
                     && self
                         .gear
                         .weapon
                         .combat_styles
-                        .contains_key(&CombatStyle::Rapid)
+                        .contains_key(&CombatStyle::Rapid))
+                    || (self.attrs.active_style == CombatStyle::Flare
+                        && self
+                            .gear
+                            .weapon
+                            .combat_styles
+                            .contains_key(&CombatStyle::Flare))
                 {
                     self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
                 }
@@ -1039,6 +1047,11 @@ impl Player {
     pub fn is_using_corpbane_weapon(&self) -> bool {
         // Check if the player's weapon does full damage to Corp
         let weapon_name = &self.gear.weapon.name;
+
+        // Thunder khopesh does full damage - unknown if on all styles or only stab
+        if self.is_wearing("Thunder khopesh", None) {
+            return true;
+        }
         match self.combat_type() {
             CombatType::Magic => true,
             CombatType::Stab => {
@@ -1048,6 +1061,12 @@ impl Player {
             }
             _ => false,
         }
+    }
+
+    pub fn is_wearing_aotd(&self) -> bool {
+        // Check if the player is wearing an amulet of the damned or gloves of the damned
+        self.is_wearing_any_version("Amulet of the damned")
+            || self.is_wearing("Gloves of the damned", None)
     }
 
     pub fn set_spell(&mut self, spell: spells::Spell) {
@@ -1140,6 +1159,14 @@ impl Player {
             Some(overheal_hp) => self.stats.hitpoints + overheal_hp,
             None => self.stats.hitpoints,
         };
+
+        // Sunlight bracers double healing from all sources
+        let amount = if self.is_wearing("Sunlight bracers", None) {
+            amount * 2
+        } else {
+            amount
+        };
+
         self.live_stats.hitpoints = min(max_hp, self.live_stats.hitpoints + amount);
     }
 

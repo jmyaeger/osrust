@@ -1569,6 +1569,74 @@ pub fn scorching_bow_spec(
     hit
 }
 
+// Leagues weapons
+
+pub fn dogsword_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost max hit by 37.5% (10% then 25%) and accuracy by 100% (AGS effect)
+    info.max_hit = (info.max_hit * 11 / 10) * 5 / 4;
+    info.max_att_roll *= 2;
+
+    // Always rolls against slash
+    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+
+    let mut hit = base_attack(&info, rng);
+
+    // BGS effect
+    if hit.success {
+        hit.damage = max(1, hit.damage);
+
+        if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
+            let cap = if monster.info.name.contains("Tekton") && !hit.success {
+                Some(10)
+            } else {
+                None
+            };
+
+            let stat_order = vec![
+                StatDrain::new(CombatStat::Defence, cap),
+                StatDrain::new(CombatStat::Strength, cap),
+                StatDrain::new(CombatStat::Attack, cap),
+                StatDrain::new(CombatStat::Magic, cap),
+                StatDrain::new(CombatStat::Ranged, cap),
+            ];
+
+            monster.drain_stats_in_order(hit.damage, stat_order);
+        }
+
+        // Other transforms happen after drains
+        hit.apply_transforms(player, monster, rng, limiter);
+
+        // SGS effect
+        player.heal(max(10, hit.damage / 2), None);
+        let prayer_restore = max(5, hit.damage / 4);
+        player.restore_prayer(prayer_restore, None);
+
+        // Ancient GS effect
+        monster.active_effects.push(CombatEffect::DelayedAttack {
+            tick_delay: Some(9),
+            damage: 25,
+        });
+        player.active_effects.push(CombatEffect::DelayedHeal {
+            tick_delay: Some(9),
+            heal: 25,
+        });
+
+        // ZGS effect
+        if monster.is_freezable() {
+            monster.freeze(32);
+        }
+    }
+
+    hit
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {

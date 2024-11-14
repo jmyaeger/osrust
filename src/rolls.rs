@@ -155,6 +155,13 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
 pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let (eff_att, eff_str) = calc_eff_melee_lvls(player);
 
+    // Crystal blessing allows crystal armor boosts to be applied to melee weapons
+    let crystal_bonus = if player.is_wearing("Crystal blessing", None) {
+        crystal_bonus(player)
+    } else {
+        0
+    };
+
     // Get slayer and salve/avarice boosts
     let gear_bonus = melee_gear_bonus(player, monster);
 
@@ -162,7 +169,10 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let inquisitor_boost = inquisitor_boost(player);
     let obsidian_boost = obsidian_boost(player);
 
-    let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee);
+    let mut base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee);
+
+    // Assuming same placement of crystal boost as for ranged
+    base_max_hit = base_max_hit * (1000 + crystal_bonus) / 1000;
 
     // Obsidian bonus is additive based on base max hit (verified in-game)
     let scaled_max_hit =
@@ -178,7 +188,10 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     ];
 
     for &(combat_type, bonus) in &combat_types {
-        let base_att_roll = calc_roll(eff_att, bonus);
+        let mut base_att_roll = calc_roll(eff_att, bonus);
+
+        // Assuming same placement of crystal boost as for ranged
+        base_att_roll = base_att_roll * (1000 + 2 * crystal_bonus as i32) / 1000;
         let mut att_roll = gear_bonus.multiply_to_int(base_att_roll)
             + obsidian_boost.multiply_to_int(base_att_roll);
         let mut max_hit = scaled_max_hit;
@@ -946,7 +959,12 @@ fn get_elemental_weakness_boost(player: &Player, monster: &Monster) -> u32 {
     };
 
     if weakness_applies {
-        weakness.as_ref().unwrap().severity as u32
+        let base_boost = weakness.as_ref().unwrap().severity as u32;
+        if player.is_wearing("Devil's element", None) {
+            base_boost * 2
+        } else {
+            base_boost
+        }
     } else {
         0
     }

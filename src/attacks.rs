@@ -8,7 +8,7 @@ use crate::rolls::calc_player_melee_rolls;
 use crate::spells::{AncientSpell, Spell};
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use std::cmp::max;
+use std::cmp::{max, min};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AttackInfo {
@@ -230,14 +230,30 @@ pub fn ahrims_staff_attack(
 
     let mut hit = base_attack(&info, rng);
 
-    if hit.success && rng.gen_range(0..4) == 0 {
+    let set_roll_chance = if player.is_wearing("Gloves of the damned", None) {
+        2
+    } else {
+        4
+    };
+
+    if hit.success && rng.gen_range(0..set_roll_chance) == 0 {
         // Base set effect rolls a 25% chance to reduce strength by 5
         monster.drain_stat(CombatStat::Strength, 5, None);
     }
 
-    if player.is_wearing_any_version("Amulet of the damned") && rng.gen_range(0..4) == 0 {
-        // With amulet of the damned, 25% chance to increase damage 30% post-roll
-        hit.damage = hit.damage * 13 / 10;
+    let aotd_roll_chance = if player.is_wearing("Gloves of the damned", None) {
+        Some(2)
+    } else if player.is_wearing_any_version("Amulet of the damned") {
+        Some(4)
+    } else {
+        None
+    };
+
+    if let Some(roll_chance) = aotd_roll_chance {
+        if rng.gen_range(0..roll_chance) == 0 {
+            // With amulet of the damned, 25% chance to increase damage 30% post-roll (50% with gloves of the damned)
+            hit.damage = hit.damage * 13 / 10;
+        }
     }
 
     if hit.success {
@@ -261,7 +277,12 @@ pub fn dharoks_axe_attack(
         // Set effect damage increase is applied post-roll
         let max_hp = player.stats.hitpoints;
         let current_hp = player.live_stats.hitpoints;
-        let dmg_mod = 10000 + (max_hp.saturating_sub(current_hp)) * max_hp;
+        let mut dmg_mod = 10000 + (max_hp.saturating_sub(current_hp)) * max_hp;
+
+        // Gloves of the damned double the damage boost
+        if player.is_wearing("Amulet of the damned", None) {
+            dmg_mod *= 2;
+        }
         hit.damage = hit.damage * dmg_mod / 10000;
     }
 
@@ -279,8 +300,15 @@ pub fn veracs_flail_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
-    if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
-        // Set effect rolls 25% chance to guarantee hit (minimum 1 damage)
+
+    let roll_chance = if player.is_wearing("Gloves of the damned", None) {
+        2
+    } else {
+        4
+    };
+
+    if player.set_effects.full_veracs && rng.gen_range(0..roll_chance) == 0 {
+        // Set effect rolls 25% (50% with gloves) chance to guarantee hit (minimum 1 damage)
         let mut hit = Hit::accurate(1 + damage_roll(1, player.max_hits[&combat_type] + 1, rng));
         hit.apply_transforms(player, monster, rng, limiter);
         hit
@@ -295,14 +323,23 @@ pub fn karils_crossbow_attack(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    if player.set_effects.full_karils
-        && player.is_wearing_any_version("Amulet of the damned")
-        && rng.gen_range(0..4) == 0
-    {
-        // Set effect rolls 25% chance to hit an additional time for half the first hit's damage
-        let hit1 = standard_attack(player, monster, rng, limiter);
-        let hit2 = Hit::new(hit1.damage / 2, true);
-        hit1.combine(&hit2)
+    let roll_chance = if player.is_wearing("Gloves of the damned", None) {
+        Some(2)
+    } else if player.is_wearing_any_version("Amulet of the damned") {
+        Some(4)
+    } else {
+        None
+    };
+
+    if let Some(roll_chance) = roll_chance {
+        if player.set_effects.full_karils && rng.gen_range(0..roll_chance) == 0 {
+            // Set effect rolls 25% (50% with gloves) chance to hit an additional time for half the first hit's damage
+            let hit1 = standard_attack(player, monster, rng, limiter);
+            let hit2 = Hit::new(hit1.damage / 2, true);
+            hit1.combine(&hit2)
+        } else {
+            standard_attack(player, monster, rng, limiter)
+        }
     } else {
         standard_attack(player, monster, rng, limiter)
     }
@@ -315,11 +352,22 @@ pub fn guthans_warspear_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
-    if player.set_effects.full_guthans && rng.gen_range(0..4) == 0 {
-        // Set effect rolls 25% chance to heal by the damage dealt
-        if player.is_wearing_any_version("Amulet of the damned") {
+    let roll_chance = if player.is_wearing("Gloves of the damned", None) {
+        2
+    } else {
+        4
+    };
+
+    if player.set_effects.full_guthans && rng.gen_range(0..roll_chance) == 0 {
+        // Set effect rolls 25% (50% with gloves) chance to heal by the damage dealt
+        if player.is_wearing_aotd() {
             // Amulet of the damned allows up to 10 HP of overheal
-            player.heal(hit.damage, Some(10));
+            let overheal = if player.is_wearing("Gloves of the damned", None) {
+                Some(20)
+            } else {
+                Some(10)
+            };
+            player.heal(hit.damage, overheal);
         } else {
             player.heal(hit.damage, None);
         }
@@ -982,6 +1030,74 @@ pub fn blue_moon_spear_attack(
     }
 
     hit
+}
+
+// Leagues weapons
+
+pub fn drygore_blowpipe_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let max_hit = player.max_hits[&player.combat_type()];
+    let max_att_roll = player.att_rolls[&player.combat_type()];
+    let max_def_roll = monster.def_rolls[&player.combat_type()];
+    let att_roll1 = accuracy_roll(max_att_roll, rng);
+    let def_roll1 = defence_roll(max_def_roll, rng);
+
+    let (damage, success) = if att_roll1 > def_roll1 {
+        // Skip second roll if first roll was successful
+        (damage_roll(0, max_hit, rng), true)
+    } else {
+        let att_roll2 = accuracy_roll(max_att_roll, rng);
+        if att_roll2 > def_roll1 {
+            (damage_roll(0, max_hit, rng), true)
+        } else {
+            (0, false)
+        }
+    };
+
+    let mut hit = Hit::new(damage, success);
+
+    if hit.success {
+        hit.apply_transforms(player, monster, rng, limiter);
+    }
+
+    hit
+}
+
+pub fn thunder_khopesh_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let info = AttackInfo::new(player, monster);
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(player, monster, rng, limiter);
+        // Roll 20% chance to hit a lightning bolt with 50% max hit
+        if rng.gen_range(0..5) == 0 {
+            let damage2 = damage_roll(0, info.max_hit / 2, rng);
+            let mut hit2 = Hit::new(damage2, true);
+            hit2.apply_transforms(player, monster, rng, limiter);
+            hit = hit.combine(&hit2);
+        }
+    }
+
+    hit
+}
+
+pub fn sunlight_spear_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    player.boosts.sunlight_stacks = min(player.boosts.sunlight_stacks + 1, 20);
+
+    standard_attack(player, monster, rng, limiter)
 }
 
 pub type AttackFn = fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
