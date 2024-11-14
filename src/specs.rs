@@ -1646,14 +1646,14 @@ pub fn thunder_khopesh_spec(
     let hit1 = standard_attack(player, monster, rng, limiter);
     let hit2 = standard_attack(player, monster, rng, limiter);
 
-    let hit = hit1.combine(&hit2);
+    let mut hit = hit1.combine(&hit2);
 
     if hit.success {
         // If either hit lands, a third accurate hit is rolled with the same max hit
         let max_hit = player.max_hits[&player.combat_type()];
         let mut hit3 = Hit::accurate(damage_roll(0, max_hit, rng));
         hit3.apply_transforms(player, monster, rng, limiter);
-        hit.combine(&hit3);
+        hit = hit.combine(&hit3);
     }
 
     hit
@@ -1816,5 +1816,55 @@ mod tests {
         let dps = total_damage as f32 / (n as f32 * 4.2);
 
         assert!(dps - 5.723 < 0.1);
+    }
+
+    #[test]
+    fn test_khopesh() {
+        let mut player = max_melee_player();
+        player.equip("Thunder khopesh", None);
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Slash);
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        calc_active_player_rolls(&mut player, &monster);
+        let limiter = assign_limiter(&player, &monster);
+        let mut rng = rand::thread_rng();
+        let mut total_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let hit = thunder_khopesh_spec(&mut player, &mut monster, &mut rng, &limiter);
+            total_damage += hit.damage;
+        }
+
+        let dps = total_damage as f32 / (n as f32 * 2.4);
+
+        assert!(dps - 19.914 < 0.1);
+    }
+
+    #[test]
+    fn test_dogsword() {
+        let mut player = max_melee_player();
+        player.equip("The dogsword", None);
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Slash);
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        calc_active_player_rolls(&mut player, &monster);
+        let limiter = assign_limiter(&player, &monster);
+        let mut rng = rand::thread_rng();
+        let mut total_damage = 0;
+        let n = 1000000;
+
+        for _ in 0..n {
+            let hit = dogsword_spec(&mut player, &mut monster, &mut rng, &limiter);
+            total_damage += hit.damage;
+            monster.reset(); // Reset monster stats
+            if hit.success {
+                total_damage += 25; // Ancient godsword effect
+            }
+        }
+
+        let dps = total_damage as f32 / (n as f32 * 3.6);
+
+        assert!(dps - 13.769 < 0.1);
     }
 }

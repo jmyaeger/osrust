@@ -499,7 +499,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let natures_reprisal = Equipment {
         name: "Nature's reprisal".to_string(),
         id: -1,
-        version: Some("Nature's reprisal".to_string()),
+        version: None,
         image: "Nature's reprisal.png".to_string(),
         slot: "weapon".to_string(),
         speed: Some(5),
@@ -533,7 +533,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let drygore_blowpipe = Equipment {
         name: "Drygore blowpipe".to_string(),
         id: -1,
-        version: Some("Drygore blowpipe".to_string()),
+        version: None,
         image: "Drygore blowpipe.png".to_string(),
         slot: "weapon".to_string(),
         speed: Some(3),
@@ -567,7 +567,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dogsword = Equipment {
         name: "The dogsword".to_string(),
         id: -1,
-        version: Some("The dogsword".to_string()),
+        version: None,
         image: "The dogsword.png".to_string(),
         slot: "weapon".to_string(),
         speed: Some(6),
@@ -601,7 +601,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let thunder_khopesh = Equipment {
         name: "Thunder khopesh".to_string(),
         id: -1,
-        version: Some("Thunder khopesh".to_string()),
+        version: None,
         image: "Thunder khopesh.png".to_string(),
         slot: "weapon".to_string(),
         speed: Some(4),
@@ -635,7 +635,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sunlight_spear = Equipment {
         name: "Sunlight spear".to_string(),
         id: -1,
-        version: Some("Sunlight spear".to_string()),
+        version: None,
         image: "Sunlight spear.png".to_string(),
         slot: "weapon".to_string(),
         speed: Some(5),
@@ -669,7 +669,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let thousand_dragon_ward = Equipment {
         name: "Thousand-dragon ward".to_string(),
         id: -1,
-        version: Some("Thousand-dragon ward".to_string()),
+        version: None,
         image: "Thousand-dragon ward.png".to_string(),
         slot: "shield".to_string(),
         speed: None,
@@ -703,7 +703,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let gloves_of_the_damned = Equipment {
         name: "Gloves of the damned".to_string(),
         id: -1,
-        version: Some("Gloves of the damned".to_string()),
+        version: None,
         image: "Gloves of the damned.png".to_string(),
         slot: "hands".to_string(),
         speed: None,
@@ -737,7 +737,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sunlit_bracers = Equipment {
         name: "Sunlit bracers".to_string(),
         id: -1,
-        version: Some("Sunlit bracers".to_string()),
+        version: None,
         image: "Sunlit bracers.png".to_string(),
         slot: "hands".to_string(),
         speed: None,
@@ -771,7 +771,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let amulet_of_the_monarchs = Equipment {
         name: "Amulet of the monarchs".to_string(),
         id: -1,
-        version: Some("Amulet of the monarchs".to_string()),
+        version: None,
         image: "Amulet of the monarchs.png".to_string(),
         slot: "neck".to_string(),
         speed: None,
@@ -805,7 +805,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let emperor_ring = Equipment {
         name: "Emperor ring".to_string(),
         id: -1,
-        version: Some("Emperor ring".to_string()),
+        version: None,
         image: "Emperor ring.png".to_string(),
         slot: "ring".to_string(),
         speed: None,
@@ -839,7 +839,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let devils_element = Equipment {
         name: "Devil's element".to_string(),
         id: -1,
-        version: Some("Devil's element".to_string()),
+        version: None,
         image: "Devil's element.png".to_string(),
         slot: "shield".to_string(),
         speed: None,
@@ -873,7 +873,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let crystal_blessing = Equipment {
         name: "Crystal blessing".to_string(),
         id: -1,
-        version: Some("Crystal blessing".to_string()),
+        version: None,
         image: "Crystal blessing.png".to_string(),
         slot: "ammo".to_string(),
         speed: None,
