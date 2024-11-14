@@ -402,7 +402,7 @@ pub fn crystal_halberd_spec(
         if hit2.success {
             hit2.apply_transforms(player, monster, rng, limiter);
         }
-        hit.combine(&hit2);
+        hit = hit.combine(&hit2);
     }
 
     hit
@@ -1813,7 +1813,7 @@ mod tests {
             total_damage += hit.damage;
         }
 
-        let dps = total_damage as f32 / (n as f32 * 2.4);
+        let dps = total_damage as f32 / (n as f32 * 4.2);
 
         assert!(dps - 5.723 < 0.1);
     }
