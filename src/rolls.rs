@@ -803,6 +803,7 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
         "Crystal staff (basic)" | "Corrupted staff (basic)" => 23,
         "Crystal staff (attuned)" | "Corrupted staff (attuned)" => 31,
         "Crystal staff (perfected)" | "Corrupted staff (perfected)" => 39,
+        "Nature's reprisal" => max(1, (visible_magic - 15) / 3 + 3),
         _ => panic!(
             "Magic max hit could not be determined for {}",
             player.gear.weapon.name

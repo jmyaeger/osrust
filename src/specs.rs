@@ -1,4 +1,4 @@
-use crate::attacks::{self, base_attack, damage_roll, AttackFn, AttackInfo, Hit};
+use crate::attacks::{self, base_attack, damage_roll, standard_attack, AttackFn, AttackInfo, Hit};
 use crate::constants::{IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::effects::CombatEffect;
 use crate::equipment::CombatType;
@@ -1633,6 +1633,49 @@ pub fn dogsword_spec(
             monster.freeze(32);
         }
     }
+
+    hit
+}
+
+pub fn thunder_khopesh_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let hit1 = standard_attack(player, monster, rng, limiter);
+    let hit2 = standard_attack(player, monster, rng, limiter);
+
+    let hit = hit1.combine(&hit2);
+
+    if hit.success {
+        // If either hit lands, a third accurate hit is rolled with the same max hit
+        let max_hit = player.max_hits[&player.combat_type()];
+        let mut hit3 = Hit::accurate(damage_roll(0, max_hit, rng));
+        hit3.apply_transforms(player, monster, rng, limiter);
+        hit.combine(&hit3);
+    }
+
+    hit
+}
+
+pub fn sunlight_spear_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Spec boosts damage by 3% per prayer bonus
+    info.max_hit = info.max_hit * (100 + 3 * player.bonuses.prayer as u32) / 100;
+    let mut hit = base_attack(&info, rng);
+    if hit.success {
+        hit.apply_transforms(player, monster, rng, limiter);
+    }
+
+    // Each spec consumes 7 sunlight stacks
+    player.boosts.sunlight_stacks = player.boosts.sunlight_stacks.saturating_sub(7);
 
     hit
 }
