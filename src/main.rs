@@ -21,6 +21,7 @@ fn main() {
     }
 
     // simulate_door_altar_graardor();
+    // simulate_single_way();
 }
 
 fn simulate_single_way() {
