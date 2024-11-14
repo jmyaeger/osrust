@@ -1155,6 +1155,9 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Tonalztics of ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         "Eclipse atlatl" => atlatl_attack as AttackFn,
+        "Drygore blowpipe" => drygore_blowpipe_attack as AttackFn,
+        "Thunder khopesh" => thunder_khopesh_attack as AttackFn,
+        "Sunlight spear" => sunlight_spear_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }
 }

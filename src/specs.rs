@@ -1733,6 +1733,9 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Dual macuahuitl" => dual_macuahuitl_spec,
         "Eclipse atlatl" => atlatl_spec,
         "Scorching bow" => scorching_bow_spec,
+        "The dogsword" => dogsword_spec,
+        "Thunder khopesh" => thunder_khopesh_spec,
+        "Sunlight spear" => sunlight_spear_spec,
         _ => player.attack,
     }
 }
