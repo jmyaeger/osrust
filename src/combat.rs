@@ -15,6 +15,7 @@ pub struct FightResult {
     pub hit_amounts: Vec<u32>,
     pub food_eaten: u32,
     pub damage_taken: u32,
+    pub leftover_burn: u32,
 }
 
 impl FightResult {
@@ -52,6 +53,7 @@ pub struct CumulativeResults {
     pub player_deaths: usize,
     pub food_eaten: u32,
     pub damage_taken: u32,
+    pub leftover_burn: u32,
 }
 
 impl CumulativeResults {
@@ -66,6 +68,7 @@ impl CumulativeResults {
         self.ttks.push(result.ttk);
         self.food_eaten += result.food_eaten;
         self.damage_taken += result.damage_taken;
+        self.leftover_burn += result.leftover_burn;
     }
 }
 
@@ -77,6 +80,7 @@ pub struct SimulationStats {
     pub success_rate: f64,
     pub avg_food_eaten: f64,
     pub avg_damage_taken: f64,
+    pub avg_leftover_burn: f64,
 }
 
 impl SimulationStats {
@@ -108,6 +112,7 @@ impl SimulationStats {
         let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
         let avg_food_eaten = results.food_eaten as f64 / results.ttks.len() as f64;
         let avg_damage_taken = results.damage_taken as f64 / results.ttks.len() as f64;
+        let avg_leftover_burn = results.leftover_burn as f64 / results.ttks.len() as f64;
 
         Self {
             ttk,
@@ -116,6 +121,7 @@ impl SimulationStats {
             success_rate,
             avg_food_eaten,
             avg_damage_taken,
+            avg_leftover_burn,
         }
     }
 }

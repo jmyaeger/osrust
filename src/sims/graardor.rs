@@ -1,4 +1,5 @@
 use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
+use crate::effects::CombatEffect;
 use crate::limiters::Limiter;
 use crate::monster::{AttackType, Monster};
 use crate::player::Player;
@@ -173,6 +174,22 @@ impl GraardorFight {
 
         let ttk = vars.tick_counter as f64 * 0.6;
 
+        let leftover_burn = {
+            if let Some(CombatEffect::Burn {
+                tick_counter: _,
+                stacks,
+            }) = self
+                .graardor
+                .active_effects
+                .iter()
+                .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+            {
+                stacks.iter().sum()
+            } else {
+                0
+            }
+        };
+
         Ok(FightResult {
             ttk,
             hit_attempts: vars.hit_attempts,
@@ -180,6 +197,7 @@ impl GraardorFight {
             hit_amounts: vars.hit_amounts,
             food_eaten,
             damage_taken,
+            leftover_burn,
         })
     }
 }

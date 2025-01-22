@@ -1,4 +1,5 @@
 use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
+use crate::effects::CombatEffect;
 use crate::limiters::Limiter;
 use crate::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
@@ -116,6 +117,21 @@ fn simulate_fight(
     // Convert ttk to seconds
     let ttk = vars.tick_counter as f64 * 0.6;
 
+    let leftover_burn = {
+        if let Some(CombatEffect::Burn {
+            tick_counter: _,
+            stacks,
+        }) = monster
+            .active_effects
+            .iter()
+            .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+        {
+            stacks.iter().sum()
+        } else {
+            0
+        }
+    };
+
     // Player can never die here, so the result is always Ok(FightResult)
     Ok(FightResult {
         ttk,
@@ -124,6 +140,7 @@ fn simulate_fight(
         hit_amounts: vars.hit_amounts,
         food_eaten: 0,
         damage_taken: 0,
+        leftover_burn,
     })
 }
 

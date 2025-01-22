@@ -4,8 +4,10 @@ use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::monster::Monster;
 use osrs::monster_db;
+use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::rolls::calc_active_player_rolls;
+use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::single_way::SingleWayFight;
 
@@ -15,35 +17,49 @@ fn main() {
     //     Err(e) => println!("{}", e),
     // }
 
-    match equipment_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match equipment_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // simulate_door_altar_graardor();
+
+    simulate_single_way();
 }
 
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Dragon hunter lance", None);
-    player.equip("Slayer helmet (i)", None);
-    player.equip("Bandos chestplate", None);
-    player.equip("Bandos tassets", None);
-
+    player.equip("Eclipse atlatl", None);
+    player.equip("Eclipse moon helm", None);
+    player.equip("Eclipse moon chestplate", None);
+    player.equip("Eclipse moon tassets", None);
+    player.equip("Atlatl dart", None);
+    player.equip("Dizana's quiver", Some("Uncharged"));
     player.update_bonuses();
-    player.set_active_style(CombatStyle::Lunge);
+    player.update_set_effects();
+    player.set_active_style(CombatStyle::Rapid);
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.add_potion(Potion::Ranging);
 
-    let monster = Monster::new("Alchemical Hydra", Some("Fire")).unwrap();
+    player.set_effects.full_eclipse_moon = false;
+
+    let monster = Monster::new("Ammonite Crab", None).unwrap();
+    // monster.bonuses.defence.standard = -63;
+    // monster.def_rolls = monster_def_rolls(&monster);
+    // monster.stats.hitpoints = 200;
     // monster.info.toa_level = 300;
     // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
+    println!("Max hit: {}", player.max_hits[&player.combat_type()]);
+    println!("Max att roll: {}", player.att_rolls[&player.combat_type()]);
 
     let simulation = SingleWayFight::new(player, monster);
     let stats = simulate_n_fights(Box::new(simulation), 1000000);
 
     println!("Ttk: {}", stats.ttk);
     println!("Acc: {}", stats.accuracy);
+    println!("Avg. leftover burn damage: {}", stats.avg_leftover_burn)
 }
 
 fn simulate_door_altar_graardor() {

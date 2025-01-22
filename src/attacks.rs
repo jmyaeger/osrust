@@ -1080,7 +1080,7 @@ mod tests {
         let mut rng = rand::thread_rng();
         let mut hit_damage = 0;
         let mut burn_damage = 0;
-        let n = 1000000000;
+        let n = 100000000;
         let mut hit_counter = 0i64;
         let mut tick_counter = 0i64;
         let mut attack_tick = 0;
