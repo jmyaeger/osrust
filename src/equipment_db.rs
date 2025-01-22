@@ -441,37 +441,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             required_imgs.push(image);
         }
 
-        stmt.execute(params![
-            equipment.name,
-            equipment.version,
-            serde_json::to_string(&equipment).unwrap_or_default()
-        ])?;
-
-        stmt_flat.execute(params![
-            equipment.id,
-            equipment.name,
-            equipment.version,
-            equipment.image,
-            equipment.slot,
-            equipment.speed,
-            equipment.category,
-            equipment.bonuses.attack.stab,
-            equipment.bonuses.attack.slash,
-            equipment.bonuses.attack.crush,
-            equipment.bonuses.attack.magic,
-            equipment.bonuses.attack.ranged,
-            equipment.bonuses.defence.stab,
-            equipment.bonuses.defence.slash,
-            equipment.bonuses.defence.crush,
-            equipment.bonuses.defence.magic,
-            equipment.bonuses.defence.ranged,
-            equipment.bonuses.strength.melee,
-            equipment.bonuses.strength.ranged,
-            equipment.bonuses.strength.magic,
-            equipment.bonuses.prayer,
-            equipment.is_two_handed,
-            equipment.attack_range
-        ])?;
+        push_to_db(&mut stmt, &equipment)?;
+        push_to_db_flat(&mut stmt_flat, &equipment)?;
     }
 
     let ammo_list = HashMap::from([
@@ -521,37 +492,434 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             attack_range: Some(5),
         };
 
-        stmt.execute(params![
-            equipment.name,
-            equipment.version,
-            serde_json::to_string(&equipment).unwrap_or_default()
-        ])?;
+        push_to_db(&mut stmt, &equipment)?;
+        push_to_db_flat(&mut stmt_flat, &equipment)?;
+    }
 
-        stmt_flat.execute(params![
-            equipment.id,
-            equipment.name,
-            equipment.version,
-            equipment.image,
-            equipment.slot,
-            equipment.speed,
-            equipment.category,
-            equipment.bonuses.attack.stab,
-            equipment.bonuses.attack.slash,
-            equipment.bonuses.attack.crush,
-            equipment.bonuses.attack.magic,
-            equipment.bonuses.attack.ranged,
-            equipment.bonuses.defence.stab,
-            equipment.bonuses.defence.slash,
-            equipment.bonuses.defence.crush,
-            equipment.bonuses.defence.magic,
-            equipment.bonuses.defence.ranged,
-            equipment.bonuses.strength.melee,
-            equipment.bonuses.strength.ranged,
-            equipment.bonuses.strength.magic,
-            equipment.bonuses.prayer,
-            equipment.is_two_handed,
-            equipment.attack_range
-        ])?;
+    let natures_reprisal = Equipment {
+        name: "Nature's reprisal".to_string(),
+        id: -1,
+        version: Some("Nature's reprisal".to_string()),
+        image: "Nature's reprisal.png".to_string(),
+        slot: "weapon".to_string(),
+        speed: Some(5),
+        category: Some("Salamander".to_string()),
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 95,
+                slash: 0,
+                crush: 0,
+                magic: 45,
+                ranged: 155,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 103,
+                ranged: 92,
+                magic: 12.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: Some(true),
+        attack_range: Some(7),
+    };
+
+    let drygore_blowpipe = Equipment {
+        name: "Drygore blowpipe".to_string(),
+        id: -1,
+        version: Some("Drygore blowpipe".to_string()),
+        image: "Drygore blowpipe.png".to_string(),
+        slot: "weapon".to_string(),
+        speed: Some(3),
+        category: Some("Thrown".to_string()),
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 50,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 0,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: Some(true),
+        attack_range: Some(6),
+    };
+
+    let dogsword = Equipment {
+        name: "The dogsword".to_string(),
+        id: -1,
+        version: Some("The dogsword".to_string()),
+        image: "The dogsword.png".to_string(),
+        slot: "weapon".to_string(),
+        speed: Some(6),
+        category: Some("2h Sword".to_string()),
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 0,
+                slash: 132,
+                crush: 80,
+                magic: 0,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 132,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 8,
+        },
+        is_two_handed: Some(true),
+        attack_range: Some(1),
+    };
+
+    let thunder_khopesh = Equipment {
+        name: "Thunder khopesh".to_string(),
+        id: -1,
+        version: Some("Thunder khopesh".to_string()),
+        image: "Thunder khopesh.png".to_string(),
+        slot: "weapon".to_string(),
+        speed: Some(4),
+        category: Some("Slash Sword".to_string()),
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 65,
+                slash: 110,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 100,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: Some(false),
+        attack_range: Some(1),
+    };
+
+    let sunlight_spear = Equipment {
+        name: "Sunlight spear".to_string(),
+        id: -1,
+        version: Some("Sunlight spear".to_string()),
+        image: "Sunlight spear.png".to_string(),
+        slot: "weapon".to_string(),
+        speed: Some(5),
+        category: Some("Spear".to_string()),
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 125,
+                slash: 75,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 70,
+                slash: 70,
+                crush: 70,
+                magic: 28,
+                ranged: 70,
+            },
+            strength: StrengthBonuses {
+                melee: 113,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: Some(true),
+        attack_range: Some(1),
+    };
+
+    let thousand_dragon_ward = Equipment {
+        name: "Thousand-dragon ward".to_string(),
+        id: -1,
+        version: Some("Thousand-dragon ward".to_string()),
+        image: "Thousand-dragon ward.png".to_string(),
+        slot: "shield".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 35,
+                slash: 35,
+                crush: 35,
+                magic: 15,
+                ranged: 25,
+            },
+            defence: Defensive {
+                stab: 50,
+                slash: 55,
+                crush: 53,
+                magic: 40,
+                ranged: 52,
+            },
+            strength: StrengthBonuses {
+                melee: 12,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 6,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let gloves_of_the_damned = Equipment {
+        name: "Gloves of the damned".to_string(),
+        id: -1,
+        version: Some("Gloves of the damned".to_string()),
+        image: "Gloves of the damned.png".to_string(),
+        slot: "hands".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 12,
+                slash: 12,
+                crush: 12,
+                magic: 6,
+                ranged: 12,
+            },
+            defence: Defensive {
+                stab: 12,
+                slash: 12,
+                crush: 12,
+                magic: 6,
+                ranged: 12,
+            },
+            strength: StrengthBonuses {
+                melee: 12,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let sunlit_bracers = Equipment {
+        name: "Sunlit bracers".to_string(),
+        id: -1,
+        version: Some("Sunlit bracers".to_string()),
+        image: "Sunlit bracers.png".to_string(),
+        slot: "hands".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 10,
+                slash: 10,
+                crush: 10,
+                magic: 6,
+                ranged: 18,
+            },
+            defence: Defensive {
+                stab: 12,
+                slash: 12,
+                crush: 12,
+                magic: 6,
+                ranged: 12,
+            },
+            strength: StrengthBonuses {
+                melee: 8,
+                ranged: 4,
+                magic: 0.0,
+            },
+            prayer: 0,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let amulet_of_the_monarchs = Equipment {
+        name: "Amulet of the monarchs".to_string(),
+        id: -1,
+        version: Some("Amulet of the monarchs".to_string()),
+        image: "Amulet of the monarchs.png".to_string(),
+        slot: "neck".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 30,
+                slash: 30,
+                crush: 30,
+                magic: 30,
+                ranged: 30,
+            },
+            defence: Defensive {
+                stab: 30,
+                slash: 30,
+                crush: 30,
+                magic: 30,
+                ranged: 30,
+            },
+            strength: StrengthBonuses {
+                melee: 15,
+                ranged: 15,
+                magic: 10.0,
+            },
+            prayer: 10,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let emperor_ring = Equipment {
+        name: "Emperor ring".to_string(),
+        id: -1,
+        version: Some("Emperor ring".to_string()),
+        image: "Emperor ring.png".to_string(),
+        slot: "ring".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 30,
+                slash: 30,
+                crush: 30,
+                magic: 30,
+                ranged: 30,
+            },
+            defence: Defensive {
+                stab: 30,
+                slash: 30,
+                crush: 30,
+                magic: 30,
+                ranged: 30,
+            },
+            strength: StrengthBonuses {
+                melee: 15,
+                ranged: 15,
+                magic: 5.0,
+            },
+            prayer: 10,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let devils_element = Equipment {
+        name: "Devil's element".to_string(),
+        id: -1,
+        version: Some("Devil's element".to_string()),
+        image: "Devil's element.png".to_string(),
+        slot: "shield".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 20,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 0,
+                ranged: 0,
+                magic: 6.0,
+            },
+            prayer: 3,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    let crystal_blessing = Equipment {
+        name: "Crystal blessing".to_string(),
+        id: -1,
+        version: Some("Crystal blessing".to_string()),
+        image: "Crystal blessing.png".to_string(),
+        slot: "ammo".to_string(),
+        speed: None,
+        category: None,
+        bonuses: Bonuses {
+            attack: Offensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            defence: Defensive {
+                stab: 0,
+                slash: 0,
+                crush: 0,
+                magic: 0,
+                ranged: 0,
+            },
+            strength: StrengthBonuses {
+                melee: 0,
+                ranged: 0,
+                magic: 0.0,
+            },
+            prayer: 5,
+        },
+        is_two_handed: None,
+        attack_range: None,
+    };
+
+    for equipment in vec![
+        drygore_blowpipe,
+        dogsword,
+        thunder_khopesh,
+        thousand_dragon_ward,
+        gloves_of_the_damned,
+        amulet_of_the_monarchs,
+        emperor_ring,
+        devils_element,
+        crystal_blessing,
+        natures_reprisal,
+        sunlight_spear,
+        sunlit_bracers,
+    ] {
+        push_to_db(&mut stmt, &equipment)?;
+        push_to_db_flat(&mut stmt_flat, &equipment)?;
     }
 
     println!("SQLite database created successfully");
@@ -604,6 +972,46 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Total images saved: {}", success_img_dls);
     println!("Total images skipped (already exists): {}", skipped_img_dls);
     println!("Total images failed to save: {}", failed_img_dls);
+
+    Ok(())
+}
+
+fn push_to_db(stmt: &mut rusqlite::Statement, equipment: &Equipment) -> rusqlite::Result<()> {
+    stmt.execute(params![
+        equipment.name,
+        equipment.version,
+        serde_json::to_string(&equipment).unwrap_or_default()
+    ])?;
+
+    Ok(())
+}
+
+fn push_to_db_flat(stmt: &mut rusqlite::Statement, equipment: &Equipment) -> rusqlite::Result<()> {
+    stmt.execute(params![
+        equipment.id,
+        equipment.name,
+        equipment.version,
+        equipment.image,
+        equipment.slot,
+        equipment.speed,
+        equipment.category,
+        equipment.bonuses.attack.stab,
+        equipment.bonuses.attack.slash,
+        equipment.bonuses.attack.crush,
+        equipment.bonuses.attack.magic,
+        equipment.bonuses.attack.ranged,
+        equipment.bonuses.defence.stab,
+        equipment.bonuses.defence.slash,
+        equipment.bonuses.defence.crush,
+        equipment.bonuses.defence.magic,
+        equipment.bonuses.defence.ranged,
+        equipment.bonuses.strength.melee,
+        equipment.bonuses.strength.ranged,
+        equipment.bonuses.strength.magic,
+        equipment.bonuses.prayer,
+        equipment.is_two_handed,
+        equipment.attack_range
+    ])?;
 
     Ok(())
 }
