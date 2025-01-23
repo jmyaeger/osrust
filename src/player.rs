@@ -286,9 +286,18 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum SwitchType {
+    Melee,
+    Ranged,
+    Magic,
+    DefSpec,
+    DpsSpec,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
-    pub label: String,
+    pub switch_type: SwitchType,
     pub gear: Gear,
     pub prayers: PrayerBoosts,
     pub spell: Option<spells::Spell>,
@@ -303,7 +312,7 @@ pub struct GearSwitch {
 
 impl GearSwitch {
     pub fn new(
-        label: String,
+        switch_type: SwitchType,
         gear: Gear,
         prayers: PrayerBoosts,
         spell: Option<spells::Spell>,
@@ -323,8 +332,8 @@ impl GearSwitch {
         let attack = get_attack_functions(&player);
         let spec = get_spec_attack_function(&player);
 
-        GearSwitch {
-            label,
+        Self {
+            switch_type,
             gear: player.gear,
             prayers: player.prayers,
             spell,
@@ -335,6 +344,31 @@ impl GearSwitch {
             att_rolls: player.att_rolls,
             max_hits: player.max_hits,
             def_rolls: player.def_rolls,
+        }
+    }
+
+    pub fn from_player(player: &Player) -> Self {
+        let switch_type = match player.combat_type() {
+            CombatType::Crush | CombatType::Slash | CombatType::Stab => SwitchType::Melee,
+            CombatType::Ranged | CombatType::Heavy | CombatType::Light | CombatType::Standard => {
+                SwitchType::Ranged
+            }
+            CombatType::Magic => SwitchType::Magic,
+            _ => panic!("Unable to determine switch type"),
+        };
+
+        Self {
+            switch_type,
+            gear: player.gear.clone(),
+            prayers: player.prayers.clone(),
+            spell: player.attrs.spell,
+            active_style: player.attrs.active_style.clone(),
+            set_effects: player.set_effects.clone(),
+            attack: player.attack,
+            spec: player.spec,
+            att_rolls: player.att_rolls.clone(),
+            max_hits: player.max_hits.clone(),
+            def_rolls: player.def_rolls.clone(),
         }
     }
 }
@@ -781,6 +815,26 @@ impl Player {
         } else {
             self.gear.weapon.speed = self.gear.weapon.base_speed;
         }
+    }
+
+    pub fn switch(&mut self, switch_type: SwitchType) {
+        for switch in &self.switches {
+            if switch.switch_type == switch_type {
+                self.gear = switch.gear.clone();
+                self.prayers = switch.prayers.clone();
+                self.attrs.spell = switch.spell;
+                self.attrs.active_style = switch.active_style.clone();
+                self.set_effects = switch.set_effects.clone();
+                self.attack = switch.attack;
+                self.spec = switch.spec;
+                self.att_rolls = switch.att_rolls.clone();
+                self.max_hits = switch.max_hits.clone();
+                self.def_rolls = switch.def_rolls.clone();
+
+                return;
+            }
+        }
+        panic!("Gear switch not found.")
     }
 
     pub fn is_wearing_black_mask(&self) -> bool {

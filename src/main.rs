@@ -4,11 +4,13 @@ use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::monster::Monster;
 use osrs::monster_db;
+use osrs::player::{GearSwitch, Player, SwitchType};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::rolls::calc_active_player_rolls;
 use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
+use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
 use osrs::sims::single_way::SingleWayFight;
 
 fn main() {
@@ -24,7 +26,9 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
+
+    simulate_hunllef();
 }
 
 fn simulate_single_way() {
@@ -60,6 +64,64 @@ fn simulate_single_way() {
     println!("Ttk: {}", stats.ttk);
     println!("Acc: {}", stats.accuracy);
     println!("Avg. leftover burn damage: {}", stats.avg_leftover_burn)
+}
+
+fn simulate_hunllef() {
+    let mut player = Player::new();
+    player.stats.ranged = 92;
+    player.stats.magic = 80;
+    player.stats.defence = 85;
+    player.stats.hitpoints = 92;
+    player.reset_live_stats();
+    player.equip("Corrupted staff (perfected)", None);
+    player.equip("Crystal helm (basic)", None);
+    player.equip("Crystal body (basic)", None);
+    player.equip("Crystal legs (basic)", None);
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Accurate);
+    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
+    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+
+    let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
+    calc_active_player_rolls(&mut player, &hunllef);
+
+    let mage_switch = GearSwitch::from_player(&player);
+
+    player.equip("Corrupted bow (perfected)", None);
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Rapid);
+    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+
+    calc_active_player_rolls(&mut player, &hunllef);
+
+    let ranged_switch = GearSwitch::from_player(&player);
+    player.switches.push(mage_switch);
+    player.switches.push(ranged_switch);
+
+    let fight_config = HunllefConfig {
+        food_count: 12,
+        eat_strategy: EatStrategy::EatAtHp(50),
+        redemption_attempts: 0,
+        attack_strategy: AttackStrategy::TwoT3Weapons {
+            style1: SwitchType::Magic,
+            style2: SwitchType::Ranged,
+        },
+        lost_ticks: 10,
+    };
+
+    let fight = HunllefFight::new(player, fight_config);
+    let stats = simulate_n_fights(Box::new(fight), 100000);
+    println!("Average ttk: {:.2} seconds", stats.ttk);
+    println!("Average accuracy: {:.2}%", stats.accuracy);
+    println!("Success rate: {:.2}%", stats.success_rate * 100.0);
+    println!(
+        "Average number of food eaten per kill: {:.2}",
+        stats.avg_food_eaten
+    );
+    println!(
+        "Average damage taken per kill: {:.2}",
+        stats.avg_damage_taken
+    );
 }
 
 fn simulate_door_altar_graardor() {

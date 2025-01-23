@@ -332,7 +332,7 @@ impl Default for Weapon {
     fn default() -> Weapon {
         // Default case is unarmed
         Weapon {
-            name: String::new(),
+            name: String::from("Unarmed"),
             version: None,
             bonuses: EquipmentBonuses::default(),
             slot: GearSlot::Weapon,
@@ -1094,7 +1094,7 @@ mod tests {
     #[test]
     fn test_default_weapon() {
         let weapon = Weapon::default();
-        assert_eq!(weapon.name, "");
+        assert_eq!(weapon.name, "Unarmed");
         assert_eq!(weapon.bonuses, EquipmentBonuses::default());
         assert_eq!(weapon.speed, 0);
         assert_eq!(weapon.base_speed, 0);

@@ -1,9 +1,12 @@
 use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
+use crate::constants;
 use crate::effects::CombatEffect;
 use crate::limiters::Limiter;
 use crate::monster::{AttackType, Monster};
 use crate::player::Player;
 use rand::rngs::ThreadRng;
+
+const GRAARDOR_REGEN_TICKS: i32 = 10;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum GraardorMethod {
@@ -152,12 +155,12 @@ impl GraardorFight {
             }
 
             // Regen 1 HP for Graardor every 10 ticks
-            if vars.tick_counter % 10 == 0 {
+            if vars.tick_counter % GRAARDOR_REGEN_TICKS == 0 {
                 self.graardor.heal(1);
             }
 
             // Regen 1 HP for player every 100 ticks
-            if vars.tick_counter % 100 == 0 {
+            if vars.tick_counter % constants::PLAYER_REGEN_TICKS == 0 {
                 self.player.heal(1, None);
             }
 

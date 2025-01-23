@@ -506,3 +506,5 @@ pub const BURN_EXPECTED: [f64; 3] = {
 
     results
 };
+
+pub const PLAYER_REGEN_TICKS: i32 = 100;
