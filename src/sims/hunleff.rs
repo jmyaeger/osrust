@@ -480,7 +480,8 @@ mod tests {
         player.equip("Corrupted bow (perfected)", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
-        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+        player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
 
         calc_active_player_rolls(&mut player, &hunllef);
 
@@ -490,7 +491,7 @@ mod tests {
 
         let fight_config = HunllefConfig {
             food_count: 1,
-            eat_strategy: EatStrategy::TickEatOnly,
+            eat_strategy: EatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
                 style1: SwitchType::Magic,

@@ -181,6 +181,19 @@ impl PrayerBoosts {
     pub fn remove(&mut self, prayer: PrayerBoost) {
         if let Some(active_prayers) = &mut self.active_prayers {
             active_prayers.retain(|p| p != &prayer);
+            self.attack = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.attack);
+            self.strength =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.strength);
+            self.defence =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.defence);
+            self.ranged_att =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_att);
+            self.ranged_str =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_str);
+            self.magic_att =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_att);
+            self.magic_str =
+                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_str);
         }
     }
 }

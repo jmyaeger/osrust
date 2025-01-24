@@ -81,6 +81,7 @@ pub struct SimulationStats {
     pub avg_food_eaten: f64,
     pub avg_damage_taken: f64,
     pub avg_leftover_burn: f64,
+    pub total_deaths: u32,
 }
 
 impl SimulationStats {
@@ -122,6 +123,7 @@ impl SimulationStats {
             avg_food_eaten,
             avg_damage_taken,
             avg_leftover_burn,
+            total_deaths: results.player_deaths as u32,
         }
     }
 }
@@ -245,13 +247,10 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
             Ok(result) => {
                 results.push(&result);
             }
-            Err(e) => {
-                match e {
-                    SimulationError::PlayerDeathError => results.player_deaths += 1,
-                    SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
-                }
-                results.player_deaths += 1;
-            }
+            Err(e) => match e {
+                SimulationError::PlayerDeathError => results.player_deaths += 1,
+                SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
+            },
         }
         simulation.reset();
     }

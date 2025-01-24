@@ -115,20 +115,23 @@ fn simulate_hunllef() {
     player.switches.push(ranged_switch);
     player.switches.push(melee_switch);
 
+    player.switch(SwitchType::Ranged);
+
     let fight_config = HunllefConfig {
-        food_count: 22,
+        food_count: 12,
         eat_strategy: EatStrategy::EatAtHp(15),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Magic,
-            style2: SwitchType::Melee,
+            style2: SwitchType::Ranged,
         },
         lost_ticks: 10,
         logger: FightLogger::new(false, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 1000000);
+    let stats = simulate_n_fights(Box::new(fight), 100000);
+    println!("Number of player deaths: {}", stats.total_deaths);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);
