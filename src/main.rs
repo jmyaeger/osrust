@@ -1,14 +1,15 @@
 use osrs::combat::simulate_n_fights;
 use osrs::equipment::CombatStyle;
-use osrs::equipment_db;
+// use osrs::equipment_db;
 use osrs::loadouts;
+use osrs::logging::FightLogger;
 use osrs::monster::Monster;
-use osrs::monster_db;
+// use osrs::monster_db;
 use osrs::player::{GearSwitch, Player, SwitchType};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
 use osrs::rolls::calc_active_player_rolls;
-use osrs::rolls::monster_def_rolls;
+// use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
 use osrs::sims::single_way::SingleWayFight;
@@ -31,6 +32,7 @@ fn main() {
     simulate_hunllef();
 }
 
+#[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
     player.equip("Eclipse atlatl", None);
@@ -66,12 +68,15 @@ fn simulate_single_way() {
     println!("Avg. leftover burn damage: {}", stats.avg_leftover_burn)
 }
 
+#[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
     player.stats.ranged = 92;
-    player.stats.magic = 80;
-    player.stats.defence = 85;
-    player.stats.hitpoints = 92;
+    player.stats.magic = 92;
+    player.stats.defence = 75;
+    player.stats.hitpoints = 85;
+    player.stats.attack = 78;
+    player.stats.strength = 85;
     player.reset_live_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -91,26 +96,39 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+    player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
     let ranged_switch = GearSwitch::from_player(&player);
+
+    player.equip("Corrupted halberd (perfected)", None);
+    player.update_bonuses();
+    player.set_active_style(CombatStyle::Jab);
+    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.prayers.remove(PrayerBoost::new(Prayer::EagleEye));
+
+    calc_active_player_rolls(&mut player, &hunllef);
+
+    let melee_switch = GearSwitch::from_player(&player);
     player.switches.push(mage_switch);
     player.switches.push(ranged_switch);
+    player.switches.push(melee_switch);
 
     let fight_config = HunllefConfig {
-        food_count: 12,
-        eat_strategy: EatStrategy::EatAtHp(50),
+        food_count: 22,
+        eat_strategy: EatStrategy::EatAtHp(15),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Magic,
-            style2: SwitchType::Ranged,
+            style2: SwitchType::Melee,
         },
         lost_ticks: 10,
+        logger: FightLogger::new(false, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 100000);
+    let stats = simulate_n_fights(Box::new(fight), 1000000);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);
@@ -124,6 +142,7 @@ fn simulate_hunllef() {
     );
 }
 
+#[allow(unused)]
 fn simulate_door_altar_graardor() {
     let mut player = loadouts::bowfa_crystal_player();
     player.stats.ranged = 87;

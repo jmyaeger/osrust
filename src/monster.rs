@@ -13,6 +13,7 @@ use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
+use strum_macros::Display;
 
 lazy_static! {
     static ref MONSTER_DB: PathBuf =
@@ -137,7 +138,7 @@ pub struct Immunities {
 }
 
 // Enum for monster attack types
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Display)]
 pub enum AttackType {
     Stab,
     Slash,
@@ -534,6 +535,8 @@ impl Monster {
                 damage -= damage * defensive_bonus as u32 / 3000;
             }
         }
+
+        damage = min(damage, player.live_stats.hitpoints);
 
         Hit::new(damage, success)
     }

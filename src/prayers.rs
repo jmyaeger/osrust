@@ -1,26 +1,48 @@
+use std::fmt;
+use strum_macros::Display;
+
 // Most combat-related prayers (excluding protection prayers)
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Debug, Default, PartialEq, Clone, Display)]
 pub enum Prayer {
     #[default]
     None,
+    #[strum(to_string = "Clarity of Thought")]
     ClarityOfThought,
+    #[strum(to_string = "Improved Reflexes")]
     ImprovedReflexes,
+    #[strum(to_string = "Incredible Reflexes")]
     IncredibleReflexes,
+    #[strum(to_string = "Chivalry")]
     Chivalry,
+    #[strum(to_string = "Piety")]
     Piety,
+    #[strum(to_string = "Burst of Strength")]
     BurstOfStrength,
+    #[strum(to_string = "Superhuman Strength")]
     SuperhumanStrength,
+    #[strum(to_string = "Ultimate Strength")]
     UltimateStrength,
+    #[strum(to_string = "Thick Skin")]
     ThickSkin,
+    #[strum(to_string = "Rock Skin")]
     RockSkin,
+    #[strum(to_string = "Steel Skin")]
     SteelSkin,
+    #[strum(to_string = "Sharp Eye")]
     SharpEye,
+    #[strum(to_string = "Hawk Eye")]
     HawkEye,
+    #[strum(to_string = "Eagle Eye")]
     EagleEye,
+    #[strum(to_string = "Rigour")]
     Rigour,
+    #[strum(to_string = "Mystic Will")]
     MysticWill,
+    #[strum(to_string = "Mystic Lore")]
     MysticLore,
+    #[strum(to_string = "Mystic Might")]
     MysticMight,
+    #[strum(to_string = "Augury")]
     Augury,
 }
 
@@ -35,6 +57,12 @@ pub struct PrayerBoost {
     pub ranged_str: u32,
     pub magic_att: u32,
     pub magic_str: u32,
+}
+
+impl fmt::Display for PrayerBoost {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.prayer_type)
+    }
 }
 
 impl PrayerBoost {

@@ -1,7 +1,7 @@
 use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
-use crate::equipment::CombatType;
 use crate::limiters::Limiter;
+use crate::logging::FightLogger;
 use crate::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::player::{Player, SwitchType};
 use rand::rngs::ThreadRng;
@@ -38,9 +38,26 @@ const ALLOWED_GEAR: [&str; 22] = [
 pub struct HunllefConfig {
     pub food_count: u32, // Only normal paddlefish for now
     pub eat_strategy: EatStrategy,
-    pub redemption_attempts: u32, // Attempt to use redemption a certain number of times at the beginning
+    pub redemption_attempts: u32, // TODO: Attempt to use redemption a certain number of times at the beginning
     pub attack_strategy: AttackStrategy,
     pub lost_ticks: i32,
+    pub logger: FightLogger,
+}
+
+impl Default for HunllefConfig {
+    fn default() -> Self {
+        Self {
+            food_count: 20,
+            eat_strategy: EatStrategy::EatAtHp(50),
+            redemption_attempts: 0,
+            attack_strategy: AttackStrategy::TwoT3Weapons {
+                style1: SwitchType::Ranged,
+                style2: SwitchType::Magic,
+            },
+            lost_ticks: 0,
+            logger: FightLogger::new(false, "hunllef"),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -104,7 +121,7 @@ impl HunllefFight {
         let mut vars = FightVars::new();
         let mut hunllef_attack_tick = 2;
         let mut tornado_chance = 6; // 1/6 initial probability of tornado spawn
-        let mut tornado_cd: u32 = 5; // Tornadoes can't spawn in the first 5 attacks
+        let mut tornado_cd: u32 = 6; // Tornadoes can't spawn in the first 5 attacks
         let mut tornado_timer: u32 = 0;
         let player_attack = self.player.attack;
         let mut hunllef_attack_count = 0;
@@ -117,6 +134,10 @@ impl HunllefFight {
 
         vars.attack_tick += self.config.lost_ticks;
 
+        self.config
+            .logger
+            .log_initial_setup(&self.player, &self.hunllef);
+
         match &self.config.attack_strategy {
             AttackStrategy::TwoT3Weapons { style1, style2 } => {
                 // The normal case - two T3 weapons, no 5:1
@@ -128,11 +149,34 @@ impl HunllefFight {
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
 
+                self.config
+                    .logger
+                    .log_gear_switch(vars.tick_counter, current_style);
+
                 // Combat loop
                 while self.hunllef.live_stats.hitpoints > 0 {
-                    // Decrement the tornado timer if active and the tornado cooldown
+                    // Regen 1 HP for Hunllef every 100 ticks
+                    if vars.tick_counter % HUNLLEF_REGEN_TICKS == 0 {
+                        self.hunllef.heal(1);
+                        self.config.logger.log_hp_regen(
+                            vars.tick_counter,
+                            self.hunllef.live_stats.hitpoints,
+                            false,
+                        );
+                    }
+
+                    // Regen 1 HP for player every 100 ticks
+                    if vars.tick_counter % constants::PLAYER_REGEN_TICKS == 0 {
+                        self.player.heal(1, None);
+                        self.config.logger.log_hp_regen(
+                            vars.tick_counter,
+                            self.player.live_stats.hitpoints,
+                            true,
+                        );
+                    }
+
+                    // Decrement the tornado timer if active
                     tornado_timer = tornado_timer.saturating_sub(1);
-                    tornado_cd = tornado_cd.saturating_sub(1);
 
                     // Decrement eat delay timer if there is one active
                     if eat_delay > 0 {
@@ -148,6 +192,11 @@ impl HunllefFight {
                                 && food_count > 0
                             {
                                 self.player.heal(PADDLEFISH_HEAL, None);
+                                self.config.logger.log_food_eaten(
+                                    vars.tick_counter,
+                                    PADDLEFISH_HEAL,
+                                    self.player.live_stats.hitpoints,
+                                );
                                 food_count -= 1;
                                 food_eaten += 1;
                                 eat_delay = 3;
@@ -161,6 +210,11 @@ impl HunllefFight {
                                 && food_count > 0
                             {
                                 self.player.heal(PADDLEFISH_HEAL, None);
+                                self.config.logger.log_food_eaten(
+                                    vars.tick_counter,
+                                    PADDLEFISH_HEAL,
+                                    self.player.live_stats.hitpoints,
+                                );
                                 food_count -= 1;
                                 food_eaten += 1;
                                 eat_delay = 3;
@@ -168,13 +222,19 @@ impl HunllefFight {
                             }
                         }
                         EatStrategy::EatToFullDuringNadoes => {
-                            if tornado_timer > 0
+                            if ((tornado_timer > 0
                                 && self.player.stats.hitpoints - self.player.live_stats.hitpoints
-                                    >= PADDLEFISH_HEAL
+                                    >= PADDLEFISH_HEAL)
+                                || self.player.live_stats.hitpoints < 14)
                                 && eat_delay == 0
                                 && food_count > 0
                             {
                                 self.player.heal(PADDLEFISH_HEAL, None);
+                                self.config.logger.log_food_eaten(
+                                    vars.tick_counter,
+                                    PADDLEFISH_HEAL,
+                                    self.player.live_stats.hitpoints,
+                                );
                                 food_count -= 1;
                                 food_eaten += 1;
                                 eat_delay = 3;
@@ -186,6 +246,11 @@ impl HunllefFight {
                     // Apply any queued damage to the player
                     if let Some(damage) = queued_damage {
                         self.player.take_damage(damage);
+                        self.config.logger.log_player_damage(
+                            vars.tick_counter,
+                            damage,
+                            self.player.live_stats.hitpoints,
+                        );
                         damage_taken += damage;
                         queued_damage = None;
                     }
@@ -198,8 +263,19 @@ impl HunllefFight {
                             &mut self.rng,
                             &self.limiter,
                         );
+                        self.config.logger.log_player_attack(
+                            vars.tick_counter,
+                            hit.damage,
+                            hit.success,
+                            self.player.combat_type(),
+                        );
                         self.player.boosts.first_attack = false;
                         self.hunllef.take_damage(hit.damage);
+                        self.config.logger.log_monster_damage(
+                            vars.tick_counter,
+                            hit.damage,
+                            self.hunllef.live_stats.hitpoints,
+                        );
                         vars.hit_attempts += 1;
                         vars.hit_count += if hit.success { 1 } else { 0 };
                         vars.hit_amounts.push(hit.damage);
@@ -211,6 +287,9 @@ impl HunllefFight {
                             player_attack_count = 0;
                             std::mem::swap(&mut current_style, &mut other_style);
                             self.player.switch(current_style);
+                            self.config
+                                .logger
+                                .log_gear_switch(vars.tick_counter, current_style);
                         }
                     }
 
@@ -219,11 +298,15 @@ impl HunllefFight {
                     // Process Hunllef's attack
                     if vars.tick_counter == hunllef_attack_tick {
                         // Roll for tornado spawn if off cooldown and not about to switch styles
+                        tornado_cd = tornado_cd.saturating_sub(1);
                         let mut tornado_proc = false;
                         if tornado_cd == 0 && hunllef_attack_count % 4 != 3 {
                             if self.rng.gen_range(1..=tornado_chance) == 1 {
                                 // Tornado procs act like an empty attack
                                 tornado_proc = true;
+                                self.config
+                                    .logger
+                                    .log_custom(vars.tick_counter, "Tornadoes spawned.");
                                 hunllef_attack_tick += 5;
                                 hunllef_attack_count += 1;
 
@@ -239,13 +322,21 @@ impl HunllefFight {
                         if !tornado_proc {
                             // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
                             let hunllef_style = if (hunllef_attack_count / 4) % 2 == 0 {
-                                Some(AttackType::Ranged)
+                                AttackType::Ranged
                             } else {
-                                Some(AttackType::Magic)
+                                AttackType::Magic
                             };
-                            let hit =
-                                self.hunllef
-                                    .attack(&mut self.player, hunllef_style, &mut self.rng);
+                            let hit = self.hunllef.attack(
+                                &mut self.player,
+                                Some(hunllef_style),
+                                &mut self.rng,
+                            );
+                            self.config.logger.log_monster_attack(
+                                vars.tick_counter,
+                                hit.damage,
+                                hit.success,
+                                hunllef_style,
+                            );
                             // Queue the damage for the next tick to allow for tick eating
                             queued_damage = Some(hit.damage);
                             hunllef_attack_tick += 5;
@@ -253,32 +344,25 @@ impl HunllefFight {
                         }
                     }
 
-                    // Regen 1 HP for Hunllef every 100 ticks
-                    if vars.tick_counter % HUNLLEF_REGEN_TICKS == 0 {
-                        self.hunllef.heal(1);
-                    }
-
-                    // Regen 1 HP for player every 100 ticks
-                    if vars.tick_counter % constants::PLAYER_REGEN_TICKS == 0 {
-                        self.player.heal(1, None);
-                    }
-
                     // Increment tick counter
                     vars.tick_counter += 1;
 
                     if self.player.live_stats.hitpoints == 0 {
+                        self.config.logger.log_player_death(vars.tick_counter);
                         return Err(SimulationError::PlayerDeathError);
                     }
                 }
             }
             AttackStrategy::FiveToOne {
-                style1,
-                style2,
-                style3,
+                style1: _,
+                style2: _,
+                style3: _,
             } => {
                 unimplemented!()
             }
         }
+
+        self.config.logger.log_monster_death(vars.tick_counter);
 
         let ttk = vars.tick_counter as f64 * 0.6;
         let leftover_burn = 0; // Burn isn't possible in CG
@@ -413,6 +497,7 @@ mod tests {
                 style2: SwitchType::Ranged,
             },
             lost_ticks: 0,
+            logger: FightLogger::new(false, "hunllef"),
         };
 
         let mut fight = HunllefFight::new(player, fight_config);

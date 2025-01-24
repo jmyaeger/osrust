@@ -4,9 +4,10 @@ use crate::constants::*;
 use rusqlite::{params, Connection, Result};
 use serde::{Deserialize, Deserializer};
 use std::collections::HashMap;
+use std::fmt;
 use std::fs;
 use std::path::PathBuf;
-use strum_macros::EnumIter;
+use strum_macros::{Display, EnumIter};
 
 lazy_static! {
     static ref EQUIPMENT_DB: PathBuf =
@@ -17,7 +18,7 @@ lazy_static! {
 }
 
 // Slots in which a player can equip gear
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone, Display)]
 pub enum GearSlot {
     #[default]
     None,
@@ -35,15 +36,18 @@ pub enum GearSlot {
 }
 
 // Combat types, e.g., stab, slash, crush, magic, etc.
-#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize, Display)]
 pub enum CombatType {
     None,
     Stab,
     Slash,
     #[default]
     Crush, // Default because unarmed (punch) uses crush
+    #[strum(to_string = "Light Ranged")]
     Light,
+    #[strum(to_string = "Standard Ranged")]
     Standard,
+    #[strum(to_string = "Heavy Ranged")]
     Heavy,
     Magic,
     Ranged,
@@ -222,6 +226,16 @@ impl Equipment for Armor {
     }
 }
 
+impl fmt::Display for Armor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(version) = &self.version {
+            write!(f, "{} ({})", self.name, version)
+        } else {
+            write!(f, "{}", self.name)
+        }
+    }
+}
+
 impl Armor {
     pub fn new(name: &str, version: Option<&str>) -> Self {
         // Create a new Armor struct from item name and version (optional)
@@ -325,6 +339,16 @@ impl Equipment for Weapon {
         *self = weapon;
 
         Ok(())
+    }
+}
+
+impl fmt::Display for Weapon {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(version) = &self.version {
+            write!(f, "{} ({})", self.name, version)
+        } else {
+            write!(f, "{}", self.name)
+        }
     }
 }
 

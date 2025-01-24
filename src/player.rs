@@ -14,6 +14,7 @@ use reqwest::Error;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::hash::Hash;
+use strum_macros::Display;
 
 // Base stats of the player - should not be modified
 #[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
@@ -176,6 +177,12 @@ impl PrayerBoosts {
         self.magic_str =
             update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_str);
     }
+
+    pub fn remove(&mut self, prayer: PrayerBoost) {
+        if let Some(active_prayers) = &mut self.active_prayers {
+            active_prayers.retain(|p| p != &prayer);
+        }
+    }
 }
 
 fn conflicts_with(p1: &PrayerBoost, p2: &PrayerBoost) -> bool {
@@ -286,12 +293,14 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Display)]
 pub enum SwitchType {
     Melee,
     Ranged,
     Magic,
+    #[strum(to_string = "Defence-Reducing Spec")]
     DefSpec,
+    #[strum(to_string = "DPS Spec")]
     DpsSpec,
 }
 
