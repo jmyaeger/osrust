@@ -96,7 +96,7 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
+    // player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -106,7 +106,7 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Jab);
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
-    player.prayers.remove(PrayerBoost::new(Prayer::EagleEye));
+    // player.prayers.remove(PrayerBoost::new(Prayer::EagleEye));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -118,19 +118,19 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 12,
-        eat_strategy: EatStrategy::EatAtHp(15),
+        food_count: 20,
+        eat_strategy: EatStrategy::EatAtHp(50),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Magic,
-            style2: SwitchType::Ranged,
+            style1: SwitchType::Ranged,
+            style2: SwitchType::Melee,
         },
-        lost_ticks: 10,
-        logger: FightLogger::new(false, "hunllef"),
+        lost_ticks: 0,
+        logger: FightLogger::new(true, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 100000);
+    let stats = simulate_n_fights(Box::new(fight), 1);
     println!("Number of player deaths: {}", stats.total_deaths);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);

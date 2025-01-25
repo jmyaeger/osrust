@@ -66,7 +66,7 @@ impl PlayerStats {
         }
     }
 
-    pub fn from(stats_map: &HashMap<&str, u32>) -> Self {
+    pub fn from_hashmap(stats_map: &HashMap<&str, u32>) -> Self {
         Self {
             hitpoints: *stats_map.get("hitpoints").unwrap_or(&99),
             attack: *stats_map.get("attack").unwrap_or(&99),
@@ -200,13 +200,13 @@ impl PrayerBoosts {
 
 fn conflicts_with(p1: &PrayerBoost, p2: &PrayerBoost) -> bool {
     // Check if two prayer boosts conflict on any stats
-    p1.attack > 0 && p2.attack > 0
-        || p1.strength > 0 && p2.strength > 0
+    p1.attack > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+        || p1.strength > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
         || p1.defence > 0 && p2.defence > 0
-        || p1.ranged_att > 0 && p2.ranged_att > 0
-        || p1.ranged_str > 0 && p2.ranged_str > 0
-        || p1.magic_att > 0 && p2.magic_att > 0
-        || p1.magic_str > 0 && p2.magic_str > 0
+        || p1.ranged_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+        || p1.ranged_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
+        || p1.magic_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+        || p1.magic_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
 }
 
 fn update_prayer_boost(prayers: &[PrayerBoost], stat: fn(&PrayerBoost) -> u32) -> u32 {

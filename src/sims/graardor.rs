@@ -135,7 +135,30 @@ impl GraardorFight {
             }
 
             if self.player.live_stats.hitpoints == 0 {
-                return Err(SimulationError::PlayerDeathError);
+                let leftover_burn = {
+                    if let Some(CombatEffect::Burn {
+                        tick_counter: _,
+                        stacks,
+                    }) = self
+                        .graardor
+                        .active_effects
+                        .iter()
+                        .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+                    {
+                        stacks.iter().sum()
+                    } else {
+                        0
+                    }
+                };
+                return Err(SimulationError::PlayerDeathError(FightResult {
+                    ttk: 0.0,
+                    hit_attempts: vars.hit_attempts,
+                    hit_count: vars.hit_count,
+                    hit_amounts: vars.hit_amounts,
+                    food_eaten,
+                    damage_taken,
+                    leftover_burn,
+                }));
             }
 
             // Decrement eat delay timer if there is one active

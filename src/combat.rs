@@ -25,14 +25,16 @@ impl FightResult {
 }
 
 pub enum SimulationError {
-    PlayerDeathError,
+    PlayerDeathError(FightResult),
     ConfigError(String),
 }
 
 impl std::fmt::Display for SimulationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            SimulationError::PlayerDeathError => write!(f, "Player died before the monster did."),
+            SimulationError::PlayerDeathError(_) => {
+                write!(f, "Player died before the monster did.")
+            }
             SimulationError::ConfigError(msg) => write!(f, "{}", msg),
         }
     }
@@ -111,9 +113,9 @@ impl SimulationStats {
         // Calculate success rate and average food eaten
         let total_fights = results.ttks.len() + results.player_deaths;
         let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
-        let avg_food_eaten = results.food_eaten as f64 / results.ttks.len() as f64;
-        let avg_damage_taken = results.damage_taken as f64 / results.ttks.len() as f64;
-        let avg_leftover_burn = results.leftover_burn as f64 / results.ttks.len() as f64;
+        let avg_food_eaten = results.food_eaten as f64 / total_fights as f64;
+        let avg_damage_taken = results.damage_taken as f64 / total_fights as f64;
+        let avg_leftover_burn = results.leftover_burn as f64 / total_fights as f64;
 
         Self {
             ttk,
@@ -248,7 +250,15 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
                 results.push(&result);
             }
             Err(e) => match e {
-                SimulationError::PlayerDeathError => results.player_deaths += 1,
+                SimulationError::PlayerDeathError(result) => {
+                    results.player_deaths += 1;
+                    results.hit_amounts.extend(&result.hit_amounts);
+                    results.hit_attempt_counts.push(result.hit_attempts);
+                    results.hit_counts.push(result.hit_count);
+                    results.food_eaten += result.food_eaten;
+                    results.damage_taken += result.damage_taken;
+                    results.leftover_burn += result.leftover_burn;
+                }
                 SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
             },
         }

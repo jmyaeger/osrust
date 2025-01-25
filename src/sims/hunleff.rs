@@ -121,7 +121,7 @@ impl HunllefFight {
         let mut vars = FightVars::new();
         let mut hunllef_attack_tick = 2;
         let mut tornado_chance = 6; // 1/6 initial probability of tornado spawn
-        let mut tornado_cd: u32 = 6; // Tornadoes can't spawn in the first 5 attacks
+        let mut tornado_cd: u32 = 6; // Tornadoes can't spawn until the 6th attack
         let mut tornado_timer: u32 = 0;
         let player_attack = self.player.attack;
         let mut hunllef_attack_count = 0;
@@ -142,9 +142,10 @@ impl HunllefFight {
             AttackStrategy::TwoT3Weapons { style1, style2 } => {
                 // The normal case - two T3 weapons, no 5:1
 
-                // Start off with the first style and store the other for later
-                let mut current_style = *style1;
-                let mut other_style = *style2;
+                // Start off with a random style and store the other for later
+                let style_choice = self.rng.gen_range(1..3);
+                let mut current_style = if style_choice == 1 { *style1 } else { *style2 };
+                let mut other_style = if style_choice == 1 { *style2 } else { *style1 };
 
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
@@ -300,8 +301,10 @@ impl HunllefFight {
                         // Roll for tornado spawn if off cooldown and not about to switch styles
                         tornado_cd = tornado_cd.saturating_sub(1);
                         let mut tornado_proc = false;
-                        if tornado_cd == 0 && hunllef_attack_count % 4 != 3 {
-                            if self.rng.gen_range(1..=tornado_chance) == 1 {
+                        if tornado_cd == 0 {
+                            if self.rng.gen_range(1..=tornado_chance) == 1
+                                && hunllef_attack_count % 4 != 3
+                            {
                                 // Tornado procs act like an empty attack
                                 tornado_proc = true;
                                 self.config
@@ -311,12 +314,12 @@ impl HunllefFight {
                                 hunllef_attack_count += 1;
 
                                 // Reset the tornado cooldown and probability
-                                tornado_cd = 8;
+                                tornado_cd = 9;
                                 tornado_chance = 6;
                                 tornado_timer = 23;
                             } else {
                                 // Decrease the denominator by 1 for each failed proc
-                                tornado_chance -= 1;
+                                tornado_chance = std::cmp::max(tornado_chance - 1, 1);
                             }
                         }
                         if !tornado_proc {
@@ -349,7 +352,15 @@ impl HunllefFight {
 
                     if self.player.live_stats.hitpoints == 0 {
                         self.config.logger.log_player_death(vars.tick_counter);
-                        return Err(SimulationError::PlayerDeathError);
+                        return Err(SimulationError::PlayerDeathError(FightResult {
+                            ttk: 0.0,
+                            hit_attempts: vars.hit_attempts,
+                            hit_count: vars.hit_count,
+                            hit_amounts: vars.hit_amounts,
+                            food_eaten,
+                            damage_taken,
+                            leftover_burn: 0,
+                        }));
                     }
                 }
             }
@@ -490,7 +501,7 @@ mod tests {
         player.switches.push(ranged_switch);
 
         let fight_config = HunllefConfig {
-            food_count: 1,
+            food_count: 20,
             eat_strategy: EatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
