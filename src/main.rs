@@ -1,10 +1,10 @@
 use osrs::combat::simulate_n_fights;
 use osrs::equipment::CombatStyle;
-// use osrs::equipment_db;
+use osrs::equipment_db;
 use osrs::loadouts;
 use osrs::logging::FightLogger;
 use osrs::monster::Monster;
-// use osrs::monster_db;
+use osrs::monster_db;
 use osrs::player::{GearSwitch, Player, SwitchType};
 use osrs::potions::Potion;
 use osrs::prayers::{Prayer, PrayerBoost};
@@ -15,21 +15,21 @@ use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFig
 use osrs::sims::single_way::SingleWayFight;
 
 fn main() {
-    // match monster_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match monster_db::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
-    // match equipment_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match equipment_db::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
     // simulate_door_altar_graardor();
 
     // simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 }
 
 #[allow(unused)]

@@ -1,6 +1,7 @@
 use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
 use crate::effects::CombatEffect;
 use crate::limiters::Limiter;
+use crate::monster_scaling::scale_monster_hp_only;
 use crate::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
 
@@ -64,6 +65,7 @@ fn simulate_fight(
 ) -> Result<FightResult, SimulationError> {
     let mut vars = FightVars::new();
     let player_attack = player.attack;
+    scale_monster_hp_only(monster);
 
     while monster.live_stats.hitpoints > 0 {
         if vars.tick_counter == vars.attack_tick {
@@ -71,6 +73,7 @@ fn simulate_fight(
             let hit = player_attack(player, monster, rng, limiter);
             player.boosts.first_attack = false;
             monster.take_damage(hit.damage);
+            scale_monster_hp_only(monster);
             vars.hit_attempts += 1;
             vars.hit_count += if hit.success { 1 } else { 0 };
             vars.hit_amounts.push(hit.damage);
@@ -83,7 +86,11 @@ fn simulate_fight(
             effect_damage += effect.apply();
         }
 
-        monster.take_damage(effect_damage);
+        if effect_damage > 0 {
+            monster.take_damage(effect_damage);
+            scale_monster_hp_only(monster);
+        }
+
         monster.clear_inactive_effects();
 
         // Decrement freeze duration if it's active

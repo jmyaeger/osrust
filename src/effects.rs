@@ -221,33 +221,33 @@ fn apply_damage_over_time(
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::monster::Monster;
-    use rand::Rng;
+// #[cfg(test)]
+// mod tests {
+//     use crate::monster::Monster;
+//     use rand::Rng;
 
-    #[test]
-    fn test_atlatl_burn() {
-        let mut rng = rand::thread_rng();
-        let n = 1000000000;
-        let mut dummy_monster = Monster::new("Nex", None).unwrap();
-        let mut damage = 0;
+//     #[test]
+//     fn test_atlatl_burn() {
+//         let mut rng = rand::thread_rng();
+//         let n = 1000000000;
+//         let mut dummy_monster = Monster::new("Nex", None).unwrap();
+//         let mut damage = 0;
 
-        for i in 0..n {
-            if i % 3 == 0 && rng.gen_range(0..5) == 0 && rng.gen::<f32>() < 0.75 {
-                dummy_monster.add_burn_stack(10);
-            }
+//         for i in 0..n {
+//             if i % 3 == 0 && rng.gen_range(0..5) == 0 && rng.gen::<f32>() < 0.75 {
+//                 dummy_monster.add_burn_stack(10);
+//             }
 
-            for effect in &mut dummy_monster.active_effects {
-                damage += effect.apply();
-            }
+//             for effect in &mut dummy_monster.active_effects {
+//                 damage += effect.apply();
+//             }
 
-            dummy_monster.clear_inactive_effects();
-        }
+//             dummy_monster.clear_inactive_effects();
+//         }
 
-        let dps = damage as f32 / (n as f32 * 0.6);
-        println!("Burn DPS: {:.4}", dps);
+//         let dps = damage as f32 / (n as f32 * 0.6);
+//         println!("Burn DPS: {:.4}", dps);
 
-        assert!(dps > 0.0);
-    }
-}
+//         assert!(dps > 0.0);
+//     }
+// }

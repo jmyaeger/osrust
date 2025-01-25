@@ -156,7 +156,7 @@ impl PrayerBoosts {
         match &mut self.active_prayers {
             Some(active_prayers) => {
                 // Remove any conflicting prayer boosts first
-                active_prayers.retain(|p| !conflicts_with(p, &prayer));
+                active_prayers.retain(|p| !p.conflicts_with(&prayer));
                 active_prayers.push(prayer);
             }
             None => {
@@ -164,54 +164,29 @@ impl PrayerBoosts {
             }
         }
 
-        // Set boosts to the highest value provided by active prayers
-        self.attack = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.attack);
-        self.strength = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.strength);
-        self.defence = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.defence);
-        self.ranged_att =
-            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_att);
-        self.ranged_str =
-            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_str);
-        self.magic_att =
-            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_att);
-        self.magic_str =
-            update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_str);
+        self.update_prayer_boosts();
     }
 
     pub fn remove(&mut self, prayer: PrayerBoost) {
         if let Some(active_prayers) = &mut self.active_prayers {
             active_prayers.retain(|p| p != &prayer);
-            self.attack = update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.attack);
-            self.strength =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.strength);
-            self.defence =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.defence);
-            self.ranged_att =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_att);
-            self.ranged_str =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.ranged_str);
-            self.magic_att =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_att);
-            self.magic_str =
-                update_prayer_boost(self.active_prayers.as_ref().unwrap(), |p| p.magic_str);
+
+            self.update_prayer_boosts();
         }
     }
-}
 
-fn conflicts_with(p1: &PrayerBoost, p2: &PrayerBoost) -> bool {
-    // Check if two prayer boosts conflict on any stats
-    p1.attack > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
-        || p1.strength > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
-        || p1.defence > 0 && p2.defence > 0
-        || p1.ranged_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
-        || p1.ranged_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
-        || p1.magic_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
-        || p1.magic_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
-}
-
-fn update_prayer_boost(prayers: &[PrayerBoost], stat: fn(&PrayerBoost) -> u32) -> u32 {
-    // Search through active prayers and returns the highest boost value for a stat
-    prayers.iter().map(stat).max().unwrap_or(0)
+    fn update_prayer_boosts(&mut self) {
+        // Search through active prayers and returns the highest boost values for all stats
+        if let Some(prayers) = &mut self.active_prayers {
+            self.attack = prayers.iter().map(|p| p.attack).max().unwrap_or(0);
+            self.strength = prayers.iter().map(|p| p.strength).max().unwrap_or(0);
+            self.defence = prayers.iter().map(|p| p.defence).max().unwrap_or(0);
+            self.ranged_att = prayers.iter().map(|p| p.ranged_att).max().unwrap_or(0);
+            self.ranged_str = prayers.iter().map(|p| p.ranged_str).max().unwrap_or(0);
+            self.magic_att = prayers.iter().map(|p| p.magic_att).max().unwrap_or(0);
+            self.magic_str = prayers.iter().map(|p| p.magic_str).max().unwrap_or(0);
+        }
+    }
 }
 
 // Struct for holding sunfire rune min hit value

@@ -1203,12 +1203,12 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
 
-        let monster = Monster::new("Vardorvis", Some("Post-Quest")).unwrap();
+        let monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false);
         let ttk = get_ttk(dist, &player, &monster, false);
 
-        assert!(num::abs(ttk - 100.5) < 0.1);
+        assert!(num::abs(ttk - 90.6) < 0.1);
     }
 
     #[test]
@@ -1241,6 +1241,6 @@ mod tests {
         let dist = get_distribution(&player, &monster, false);
         let ttk = get_ttk(dist, &player, &monster, false);
 
-        assert!(num::abs(ttk - 225.2) < 0.1);
+        assert!(num::abs(ttk - 240.8) < 0.1);
     }
 }

@@ -270,4 +270,15 @@ impl PrayerBoost {
             },
         }
     }
+
+    pub fn conflicts_with(&self, p2: &PrayerBoost) -> bool {
+        // Check if two prayer boosts conflict on any stats
+        self.attack > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+            || self.strength > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
+            || self.defence > 0 && p2.defence > 0
+            || self.ranged_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+            || self.ranged_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
+            || self.magic_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
+            || self.magic_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
+    }
 }

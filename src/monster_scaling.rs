@@ -1,6 +1,7 @@
 // Adapted from the wiki DPS calc - credit to the wiki team
 
 use crate::monster::Monster;
+use crate::rolls::monster_def_rolls;
 
 pub fn scale_monster_hp_only(monster: &mut Monster) {
     // Currently only used for Vardorvis, but this allows for future expansion
@@ -27,6 +28,7 @@ fn apply_vard_scaling(monster: &mut Monster) {
         vard_ranges.def[0],
         vard_ranges.def[1],
     ) as u32;
+    monster.def_rolls = monster_def_rolls(monster);
 }
 
 struct VardNumbers {
