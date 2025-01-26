@@ -1,6 +1,6 @@
-use crate::monster::{AttackType, Monster};
-use crate::player::Player;
-use crate::{equipment::CombatType, player::SwitchType};
+use crate::types::monster::{AttackType, Monster};
+use crate::types::player::Player;
+use crate::types::{equipment::CombatType, player::SwitchType};
 use chrono::Local;
 use log::{debug, LevelFilter};
 use simplelog::{Config, WriteLogger};
@@ -217,24 +217,31 @@ impl FightLogger {
         }
     }
 
-    pub fn log_monster_attack(&mut self, tick: i32, damage: u32, success: bool, style: AttackType) {
+    pub fn log_monster_attack(
+        &mut self,
+        tick: i32,
+        damage: u32,
+        success: bool,
+        style: AttackType,
+        name: &str,
+    ) {
         if self.enabled {
             if success {
                 debug!(
-                    "[Tick {}] Monster hit with {} for {} damage",
-                    tick, style, damage
+                    "[Tick {}] {} hit with {} for {} damage",
+                    name, tick, style, damage
                 );
             } else {
-                debug!("[Tick {}] Monster missed with {}", tick, style);
+                debug!("[Tick {}] {} missed with {}", name, tick, style);
             }
         }
     }
 
-    pub fn log_monster_damage(&mut self, tick: i32, damage: u32, hp: u32) {
+    pub fn log_monster_damage(&mut self, tick: i32, damage: u32, hp: u32, name: &str) {
         if self.enabled {
             debug!(
-                "[Tick {}] Monster took {} damage ({} hp remaining)",
-                tick, damage, hp
+                "[Tick {}] {} took {} damage ({} hp remaining)",
+                name, tick, damage, hp
             );
         }
     }
@@ -254,31 +261,30 @@ impl FightLogger {
         }
     }
 
-    pub fn log_hp_regen(&mut self, tick: i32, hp: u32, is_player: bool) {
+    pub fn log_hp_regen(&mut self, tick: i32, hp: u32, name: &str) {
         if self.enabled {
-            if is_player {
-                debug!(
-                    "[Tick {}] Player regenerated 1 hp ({} hp remaining)",
-                    tick, hp
-                );
-            } else {
-                debug!(
-                    "[Tick {}] Monster regenerated 1 hp ({} hp remaining)",
-                    tick, hp
-                );
-            }
+            debug!(
+                "[Tick {}] {} regenerated 1 hp ({} hp remaining)",
+                name, tick, hp
+            );
         }
     }
 
-    pub fn log_monster_death(&mut self, tick: i32) {
+    pub fn log_monster_death(&mut self, tick: i32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] Monster has died, ending the fight", tick);
+            debug!("[Tick {}] {} has died.", name, tick);
         }
     }
 
     pub fn log_player_death(&mut self, tick: i32) {
         if self.enabled {
             debug!("[Tick {}] Player has died, ending the fight", tick);
+        }
+    }
+
+    pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str) {
+        if self.enabled {
+            debug!("[Tick {}] {} took {} effect damage", name, tick, damage);
         }
     }
 

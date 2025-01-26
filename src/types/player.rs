@@ -1,15 +1,15 @@
-use crate::attacks::{get_attack_functions, standard_attack, AttackFn};
+use crate::calc::rolls::calc_active_player_rolls;
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::attacks::specs::{get_spec_attack_function, SpecialAttackFn};
+use crate::combat::attacks::standard::{get_attack_functions, standard_attack, AttackFn};
 use crate::constants::*;
-use crate::effects::CombatEffect;
-use crate::equipment::{
+use crate::types::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
 };
-use crate::monster::Monster;
-use crate::potions::{Potion, PotionBoost, PotionStat};
-use crate::prayers::PrayerBoost;
-use crate::rolls::calc_active_player_rolls;
-use crate::specs::{get_spec_attack_function, SpecialAttackFn};
-use crate::spells;
+use crate::types::monster::Monster;
+use crate::types::potions::{Potion, PotionBoost, PotionStat};
+use crate::types::prayers::PrayerBoost;
+use crate::types::spells;
 use reqwest::Error;
 use std::cmp::{max, min};
 use std::collections::HashMap;
@@ -1298,9 +1298,9 @@ fn parse_player_data(data: String) -> PlayerStats {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
-    use crate::potions::Potion;
-    use crate::prayers::Prayer;
+    use crate::types::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
+    use crate::types::potions::Potion;
+    use crate::types::prayers::Prayer;
     use std::collections::HashMap;
 
     #[test]

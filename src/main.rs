@@ -1,35 +1,35 @@
-use osrs::combat::simulate_n_fights;
-use osrs::equipment::CombatStyle;
-use osrs::equipment_db;
-use osrs::loadouts;
-use osrs::logging::FightLogger;
-use osrs::monster::Monster;
-use osrs::monster_db;
-use osrs::player::{GearSwitch, Player, SwitchType};
-use osrs::potions::Potion;
-use osrs::prayers::{Prayer, PrayerBoost};
-use osrs::rolls::calc_active_player_rolls;
+use osrs::combat::simulation::simulate_n_fights;
+use osrs::types::equipment::CombatStyle;
+// use osrs::equipment_db;
+use osrs::types::monster::Monster;
+use osrs::utils::loadouts;
+use osrs::utils::logging::FightLogger;
+// use osrs::monster_db;
+use osrs::calc::rolls::calc_active_player_rolls;
+use osrs::types::player::{GearSwitch, Player, SwitchType};
+use osrs::types::potions::Potion;
+use osrs::types::prayers::{Prayer, PrayerBoost};
 // use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
 use osrs::sims::single_way::SingleWayFight;
 
 fn main() {
-    match monster_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match monster_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
-    match equipment_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match equipment_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // simulate_door_altar_graardor();
 
     // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 }
 
 #[allow(unused)]
@@ -72,11 +72,11 @@ fn simulate_single_way() {
 fn simulate_hunllef() {
     let mut player = Player::new();
     player.stats.ranged = 92;
-    player.stats.magic = 92;
-    player.stats.defence = 75;
-    player.stats.hitpoints = 85;
-    player.stats.attack = 78;
-    player.stats.strength = 85;
+    player.stats.magic = 84;
+    player.stats.defence = 1;
+    player.stats.hitpoints = 90;
+    player.stats.attack = 75;
+    player.stats.strength = 90;
     player.reset_live_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -96,7 +96,6 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    // player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -106,7 +105,6 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Jab);
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
-    // player.prayers.remove(PrayerBoost::new(Prayer::EagleEye));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -118,19 +116,19 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 20,
-        eat_strategy: EatStrategy::EatAtHp(50),
+        food_count: 24,
+        eat_strategy: EatStrategy::EatAtHp(70),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Ranged,
-            style2: SwitchType::Melee,
+            style2: SwitchType::Magic,
         },
         lost_ticks: 0,
-        logger: FightLogger::new(true, "hunllef"),
+        logger: FightLogger::new(false, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 1);
+    let stats = simulate_n_fights(Box::new(fight), 100000);
     println!("Number of player deaths: {}", stats.total_deaths);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
@@ -171,6 +169,7 @@ fn simulate_door_altar_graardor() {
         method: GraardorMethod::DoorAltar,
         eat_hp: 20,
         heal_amount: 18,
+        logger: FightLogger::new(false, "graardor"),
     };
 
     let fight = GraardorFight::new(player, fight_config);

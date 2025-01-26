@@ -1,8 +1,8 @@
-use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
-use crate::effects::CombatEffect;
-use crate::limiters::Limiter;
-use crate::monster_scaling::scale_monster_hp_only;
-use crate::{monster::Monster, player::Player};
+use crate::calc::monster_scaling::scale_monster_hp_only;
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::limiters::Limiter;
+use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
+use crate::types::{monster::Monster, player::Player};
 use rand::rngs::ThreadRng;
 
 pub struct SingleWayFight {
@@ -14,7 +14,7 @@ pub struct SingleWayFight {
 
 impl SingleWayFight {
     pub fn new(player: Player, monster: Monster) -> SingleWayFight {
-        let limiter = crate::combat::assign_limiter(&player, &monster);
+        let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
         let rng = rand::thread_rng();
         SingleWayFight {
             player,
@@ -48,7 +48,7 @@ impl Simulation for SingleWayFight {
     }
 
     fn set_attack_function(&mut self) {
-        self.player.attack = crate::attacks::get_attack_functions(&self.player);
+        self.player.attack = crate::combat::attacks::standard::get_attack_functions(&self.player);
     }
 
     fn reset(&mut self) {
@@ -154,13 +154,13 @@ fn simulate_fight(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::combat::assign_limiter;
-    use crate::equipment::{Armor, CombatStyle, Weapon};
-    use crate::monster::Monster;
-    use crate::player::{Gear, Player, PlayerStats};
-    use crate::potions::Potion;
-    use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::calc_player_melee_rolls;
+    use crate::calc::rolls::calc_player_melee_rolls;
+    use crate::combat::simulation::assign_limiter;
+    use crate::types::equipment::{Armor, CombatStyle, Weapon};
+    use crate::types::monster::Monster;
+    use crate::types::player::{Gear, Player, PlayerStats};
+    use crate::types::potions::Potion;
+    use crate::types::prayers::{Prayer, PrayerBoost};
 
     #[test]
     fn test_simulate_fight() {

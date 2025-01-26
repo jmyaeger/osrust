@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
+use crate::combat::limiters;
 use crate::constants::HUEYCOATL_TAIL_ID;
-use crate::equipment::CombatType;
-use crate::limiters;
-use crate::monster::Monster;
-use crate::player::Player;
-use crate::spells::{Spell, StandardSpell};
+use crate::types::equipment::CombatType;
+use crate::types::monster::Monster;
+use crate::types::player::Player;
+use crate::types::spells::{Spell, StandardSpell};
 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct FightResult {
@@ -272,13 +272,13 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::equipment::CombatStyle;
-    use crate::monster::Monster;
-    use crate::player::{Player, PlayerStats};
-    use crate::potions::Potion;
-    use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::calc_player_melee_rolls;
+    use crate::calc::rolls::calc_player_melee_rolls;
     use crate::sims::single_way::SingleWayFight;
+    use crate::types::equipment::CombatStyle;
+    use crate::types::monster::Monster;
+    use crate::types::player::{Player, PlayerStats};
+    use crate::types::potions::Potion;
+    use crate::types::prayers::{Prayer, PrayerBoost};
 
     #[test]
     fn test_simulate_n_fights() {

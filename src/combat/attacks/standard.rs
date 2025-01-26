@@ -1,11 +1,11 @@
+use crate::calc::rolls::calc_player_melee_rolls;
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::limiters::Limiter;
 use crate::constants::*;
-use crate::effects::CombatEffect;
-use crate::equipment::{CombatStyle, CombatType};
-use crate::limiters::Limiter;
-use crate::monster::{CombatStat, Monster};
-use crate::player::Player;
-use crate::rolls::calc_player_melee_rolls;
-use crate::spells::{AncientSpell, Spell};
+use crate::types::equipment::{CombatStyle, CombatType};
+use crate::types::monster::{CombatStat, Monster};
+use crate::types::player::Player;
+use crate::types::spells::{AncientSpell, Spell};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::cmp::max;

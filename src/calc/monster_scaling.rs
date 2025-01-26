@@ -1,7 +1,7 @@
 // Adapted from the wiki DPS calc - credit to the wiki team
 
-use crate::monster::Monster;
-use crate::rolls::monster_def_rolls;
+use crate::calc::rolls::monster_def_rolls;
+use crate::types::monster::Monster;
 
 pub fn scale_monster_hp_only(monster: &mut Monster) {
     // Currently only used for Vardorvis, but this allows for future expansion

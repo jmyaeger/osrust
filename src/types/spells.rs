@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::types::player::Player;
 use std::cmp::min;
 
 // pub trait Spell: std::fmt::Debug {

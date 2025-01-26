@@ -1,5 +1,5 @@
-use crate::hit_dist::{HitDistribution, HitTransformer, Hitsplat, WeightedHit};
-use crate::monster::Monster;
+use crate::calc::hit_dist::{HitDistribution, HitTransformer, Hitsplat, WeightedHit};
+use crate::types::monster::Monster;
 use std::cmp::min;
 
 #[derive(Debug, PartialEq, Clone)]

@@ -1,4 +1,4 @@
-use crate::equipment::CombatType;
+use crate::types::equipment::CombatType;
 
 pub const TBOW_ACC_CAP: i32 = 140;
 

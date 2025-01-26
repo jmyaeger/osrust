@@ -1,21 +1,21 @@
 // Adapted from the wiki DPS calc - credit to the wiki team
 
-use crate::constants::*;
-use crate::dists;
-use crate::dists::bolts::{self, BoltContext};
-use crate::equipment::{CombatStance, CombatType};
-use crate::hit_dist::flat_limit_transformer;
-use crate::hit_dist::{
+use crate::calc::hit_dist::flat_limit_transformer;
+use crate::calc::hit_dist::{
     capped_reroll_transformer, division_transformer, flat_add_transformer, linear_min_transformer,
     multiply_transformer, AttackDistribution, HitDistribution, Hitsplat, TransformOpts,
     WeightedHit,
 };
-use crate::monster::Monster;
-use crate::monster_scaling;
-use crate::player::Player;
-use crate::rolls::{calc_active_player_rolls, monster_def_rolls};
-use crate::spells::{Spell, StandardSpell};
-use crate::utils::Fraction;
+use crate::calc::monster_scaling;
+use crate::calc::rolls::{calc_active_player_rolls, monster_def_rolls};
+use crate::constants::*;
+use crate::dists;
+use crate::dists::bolts::{self, BoltContext};
+use crate::types::equipment::{CombatStance, CombatType};
+use crate::types::monster::Monster;
+use crate::types::player::Player;
+use crate::types::spells::{Spell, StandardSpell};
+use crate::utils::math::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -1117,12 +1117,12 @@ fn dist_at_hp<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::equipment::CombatStyle;
-    use crate::monster::Monster;
-    use crate::player::{Player, PlayerStats};
-    use crate::potions::Potion;
-    use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
+    use crate::calc::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
+    use crate::types::equipment::CombatStyle;
+    use crate::types::monster::Monster;
+    use crate::types::player::{Player, PlayerStats};
+    use crate::types::potions::Potion;
+    use crate::types::prayers::{Prayer, PrayerBoost};
     #[test]
     fn test_max_melee_ammonite_crab() {
         let mut player = Player::new();

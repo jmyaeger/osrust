@@ -1,7 +1,9 @@
-use osrs::equipment::CombatType;
-use osrs::monster::Monster;
-use osrs::player::Player;
-use osrs::rolls::{calc_player_magic_rolls, calc_player_melee_rolls, calc_player_ranged_rolls};
+use osrs::calc::rolls::{
+    calc_player_magic_rolls, calc_player_melee_rolls, calc_player_ranged_rolls,
+};
+use osrs::types::equipment::CombatType;
+use osrs::types::monster::Monster;
+use osrs::types::player::Player;
 use rstest::rstest;
 
 mod fixtures;

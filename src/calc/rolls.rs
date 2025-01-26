@@ -1,10 +1,10 @@
 use crate::constants::*;
-use crate::equipment::{CombatStance, CombatStyle, CombatType};
-use crate::monster::Monster;
-use crate::player::Player;
-use crate::prayers::Prayer;
-use crate::spells::{Spell, StandardSpell};
-use crate::utils::Fraction;
+use crate::types::equipment::{CombatStance, CombatStyle, CombatType};
+use crate::types::monster::Monster;
+use crate::types::player::Player;
+use crate::types::prayers::Prayer;
+use crate::types::spells::{Spell, StandardSpell};
+use crate::utils::math::Fraction;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 

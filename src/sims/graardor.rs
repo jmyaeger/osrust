@@ -1,9 +1,10 @@
-use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::limiters::Limiter;
+use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
-use crate::effects::CombatEffect;
-use crate::limiters::Limiter;
-use crate::monster::{AttackType, Monster};
-use crate::player::Player;
+use crate::types::monster::{AttackType, Monster};
+use crate::types::player::Player;
+use crate::utils::logging::FightLogger;
 use rand::rngs::ThreadRng;
 
 const GRAARDOR_REGEN_TICKS: i32 = 10;
@@ -13,11 +14,23 @@ pub enum GraardorMethod {
     DoorAltar,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct GraardorConfig {
     pub method: GraardorMethod,
     pub eat_hp: u32,
     pub heal_amount: u32,
+    pub logger: FightLogger,
+}
+
+impl Default for GraardorConfig {
+    fn default() -> Self {
+        Self {
+            method: GraardorMethod::DoorAltar,
+            eat_hp: 30,
+            heal_amount: 20,
+            logger: FightLogger::new(false, "graardor"),
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -38,7 +51,7 @@ impl GraardorFight {
         let melee_minion = Monster::new("Sergeant Strongstack", None).unwrap();
         let ranged_minion = Monster::new("Sergeant Grimspike", None).unwrap();
         let mage_minion = Monster::new("Sergeant Steelwill", None).unwrap();
-        let limiter = crate::combat::assign_limiter(&player, &graardor);
+        let limiter = crate::combat::simulation::assign_limiter(&player, &graardor);
         let rng = rand::thread_rng();
         GraardorFight {
             player,
@@ -71,6 +84,10 @@ impl GraardorFight {
         let mut damage_taken = 0;
         let mut eat_delay = 0;
 
+        self.config
+            .logger
+            .log_initial_setup(&self.player, &self.graardor);
+
         while self.graardor.live_stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
                 if skip_next_attack {
@@ -84,8 +101,20 @@ impl GraardorFight {
                         &mut self.rng,
                         &self.limiter,
                     );
+                    self.config.logger.log_player_attack(
+                        vars.tick_counter,
+                        hit.damage,
+                        hit.success,
+                        self.player.combat_type(),
+                    );
                     self.player.boosts.first_attack = false;
                     self.graardor.take_damage(hit.damage);
+                    self.config.logger.log_monster_damage(
+                        vars.tick_counter,
+                        hit.damage,
+                        self.graardor.live_stats.hitpoints,
+                        "Graardor",
+                    );
                     vars.hit_attempts += 1;
                     vars.hit_count += if hit.success { 1 } else { 0 };
                     vars.hit_amounts.push(hit.damage);
@@ -99,7 +128,15 @@ impl GraardorFight {
                 effect_damage += effect.apply();
             }
 
-            self.graardor.take_damage(effect_damage);
+            if effect_damage > 0 {
+                self.graardor.take_damage(effect_damage);
+                self.config.logger.log_monster_effect_damage(
+                    vars.tick_counter,
+                    effect_damage,
+                    "Graardor",
+                );
+            }
+
             self.graardor.clear_inactive_effects();
 
             // Process mage minion attack
@@ -109,7 +146,19 @@ impl GraardorFight {
                     Some(AttackType::Magic),
                     &mut self.rng,
                 );
+                self.config.logger.log_monster_attack(
+                    vars.tick_counter,
+                    hit.damage,
+                    hit.success,
+                    AttackType::Magic,
+                    "Sergeant Steelwill",
+                );
                 self.player.take_damage(hit.damage);
+                self.config.logger.log_player_damage(
+                    vars.tick_counter,
+                    hit.damage,
+                    self.player.live_stats.hitpoints,
+                );
                 damage_taken += hit.damage;
                 if vars.tick_counter == 6 {
                     mage_attack_tick += 7;
@@ -125,7 +174,19 @@ impl GraardorFight {
                     Some(AttackType::Crush),
                     &mut self.rng,
                 );
+                self.config.logger.log_monster_attack(
+                    vars.tick_counter,
+                    hit.damage,
+                    hit.success,
+                    AttackType::Crush,
+                    "Sergeant Strongstack",
+                );
                 self.player.take_damage(hit.damage);
+                self.config.logger.log_player_damage(
+                    vars.tick_counter,
+                    hit.damage,
+                    self.player.live_stats.hitpoints,
+                );
                 damage_taken += hit.damage;
                 if vars.tick_counter == 5 {
                     melee_attack_tick += 22;
@@ -172,6 +233,11 @@ impl GraardorFight {
                 && eat_delay == 0
             {
                 self.player.heal(self.config.heal_amount, None);
+                self.config.logger.log_food_eaten(
+                    vars.tick_counter,
+                    self.config.heal_amount,
+                    self.player.live_stats.hitpoints,
+                );
                 food_eaten += 1;
                 eat_delay = 3;
                 skip_next_attack = true;
@@ -180,11 +246,17 @@ impl GraardorFight {
             // Regen 1 HP for Graardor every 10 ticks
             if vars.tick_counter % GRAARDOR_REGEN_TICKS == 0 {
                 self.graardor.heal(1);
+                self.config
+                    .logger
+                    .log_hp_regen(vars.tick_counter, 1, "Graardor");
             }
 
             // Regen 1 HP for player every 100 ticks
             if vars.tick_counter % constants::PLAYER_REGEN_TICKS == 0 {
                 self.player.heal(1, None);
+                self.config
+                    .logger
+                    .log_hp_regen(vars.tick_counter, 1, "Player");
             }
 
             // Increment tick counter
@@ -248,7 +320,7 @@ impl Simulation for GraardorFight {
     }
 
     fn set_attack_function(&mut self) {
-        self.player.attack = crate::attacks::get_attack_functions(&self.player);
+        self.player.attack = crate::combat::attacks::standard::get_attack_functions(&self.player);
     }
 
     fn reset(&mut self) {
@@ -263,11 +335,11 @@ impl Simulation for GraardorFight {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::equipment::CombatStyle;
-    use crate::player::Player;
-    use crate::potions::Potion;
-    use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::calc_player_ranged_rolls;
+    use crate::calc::rolls::calc_player_ranged_rolls;
+    use crate::types::equipment::CombatStyle;
+    use crate::types::player::Player;
+    use crate::types::potions::Potion;
+    use crate::types::prayers::{Prayer, PrayerBoost};
 
     #[test]
     fn test_simulate_door_altar_fight() {
@@ -297,6 +369,7 @@ mod tests {
             method: GraardorMethod::DoorAltar,
             eat_hp: 30,
             heal_amount: 22,
+            logger: FightLogger::new(false, "graardor"),
         };
 
         let mut fight = GraardorFight::new(player, fight_config);

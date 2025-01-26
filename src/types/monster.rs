@@ -1,11 +1,12 @@
 use lazy_static::lazy_static;
 
-use crate::attacks::Hit;
-use crate::effects::CombatEffect;
-use crate::equipment::{CombatStyle, CombatType};
-use crate::monster_db::ElementalWeakness;
-use crate::player::Player;
-use crate::{constants::*, rolls};
+use crate::calc::rolls;
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::attacks::standard::Hit;
+use crate::constants::*;
+use crate::types::equipment::{CombatStyle, CombatType};
+use crate::types::player::Player;
+use crate::utils::monster_db::ElementalWeakness;
 use rand::Rng;
 use rusqlite::{params, Result};
 use serde::Deserialize;

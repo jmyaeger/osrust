@@ -3,7 +3,7 @@
 use std::cmp::min;
 use std::collections::HashMap;
 
-use crate::utils::Fraction;
+use crate::utils::math::Fraction;
 
 pub trait HitTransformer: Fn(&Hitsplat) -> HitDistribution {}
 

@@ -1,12 +1,12 @@
-use crate::attacks::{self, base_attack, damage_roll, AttackFn, AttackInfo, Hit};
+use crate::calc::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
+use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::attacks::standard::{base_attack, damage_roll, AttackFn, AttackInfo, Hit};
+use crate::combat::limiters::Limiter;
 use crate::constants::{IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
-use crate::effects::CombatEffect;
-use crate::equipment::CombatType;
-use crate::limiters::Limiter;
-use crate::monster::{CombatStat, Monster, StatDrain};
-use crate::player::Player;
-use crate::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
-use crate::spells::{SpecialSpell, Spell};
+use crate::types::equipment::CombatType;
+use crate::types::monster::{CombatStat, Monster, StatDrain};
+use crate::types::player::Player;
+use crate::types::spells::{SpecialSpell, Spell};
 use num::clamp;
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -704,7 +704,7 @@ pub fn acb_spec(
         .insert(CombatType::Ranged, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
-    let attack_fn = attacks::get_attack_functions(player);
+    let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
@@ -730,7 +730,7 @@ pub fn zcb_spec(
         .insert(CombatType::Ranged, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
-    let attack_fn = attacks::get_attack_functions(player);
+    let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
@@ -1629,11 +1629,11 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::combat::assign_limiter;
-    use crate::equipment::CombatStyle;
-    use crate::loadouts::*;
-    use crate::monster::Monster;
-    use crate::rolls::calc_active_player_rolls;
+    use crate::calc::rolls::calc_active_player_rolls;
+    use crate::combat::simulation::assign_limiter;
+    use crate::types::equipment::CombatStyle;
+    use crate::types::monster::Monster;
+    use crate::utils::loadouts::*;
 
     #[test]
     fn test_dragon_dagger() {

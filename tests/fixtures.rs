@@ -1,9 +1,9 @@
-use osrs::equipment::CombatStyle;
-use osrs::monster::Monster;
-use osrs::player::{Player, PlayerStats};
-use osrs::potions::Potion;
-use osrs::prayers::{Prayer, PrayerBoost};
-use osrs::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
+use osrs::types::equipment::CombatStyle;
+use osrs::types::monster::Monster;
+use osrs::types::player::{Player, PlayerStats};
+use osrs::types::potions::Potion;
+use osrs::types::prayers::{Prayer, PrayerBoost};
+use osrs::types::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
 use rstest::fixture;
 
 #[fixture]

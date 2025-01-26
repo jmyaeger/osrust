@@ -1,4 +1,4 @@
-use crate::hit_dist::{AttackDistribution, HitDistribution, Hitsplat, WeightedHit};
+use crate::calc::hit_dist::{AttackDistribution, HitDistribution, Hitsplat, WeightedHit};
 
 fn generate_totals(
     acc_roll: u32,

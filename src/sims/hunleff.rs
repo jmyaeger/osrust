@@ -1,9 +1,9 @@
-use crate::combat::{FightResult, FightVars, Simulation, SimulationError};
+use crate::combat::limiters::Limiter;
+use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
-use crate::limiters::Limiter;
-use crate::logging::FightLogger;
-use crate::monster::{AttackType, Monster, MonsterMaxHit};
-use crate::player::{Player, SwitchType};
+use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
+use crate::types::player::{Player, SwitchType};
+use crate::utils::logging::FightLogger;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -106,7 +106,7 @@ impl HunllefFight {
             MonsterMaxHit::new(max_hit, AttackType::Magic),
         ]);
 
-        let limiter = crate::combat::assign_limiter(&player, &hunllef);
+        let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
         let rng = rand::thread_rng();
         HunllefFight {
             player,
@@ -162,7 +162,7 @@ impl HunllefFight {
                         self.config.logger.log_hp_regen(
                             vars.tick_counter,
                             self.hunllef.live_stats.hitpoints,
-                            false,
+                            "Hunllef",
                         );
                     }
 
@@ -172,7 +172,7 @@ impl HunllefFight {
                         self.config.logger.log_hp_regen(
                             vars.tick_counter,
                             self.player.live_stats.hitpoints,
-                            true,
+                            "Player",
                         );
                     }
 
@@ -276,6 +276,7 @@ impl HunllefFight {
                             vars.tick_counter,
                             hit.damage,
                             self.hunllef.live_stats.hitpoints,
+                            "Hunllef",
                         );
                         vars.hit_attempts += 1;
                         vars.hit_count += if hit.success { 1 } else { 0 };
@@ -339,6 +340,7 @@ impl HunllefFight {
                                 hit.damage,
                                 hit.success,
                                 hunllef_style,
+                                "Hunllef",
                             );
                             // Queue the damage for the next tick to allow for tick eating
                             queued_damage = Some(hit.damage);
@@ -373,7 +375,9 @@ impl HunllefFight {
             }
         }
 
-        self.config.logger.log_monster_death(vars.tick_counter);
+        self.config
+            .logger
+            .log_monster_death(vars.tick_counter, "Hunllef");
 
         let ttk = vars.tick_counter as f64 * 0.6;
         let leftover_burn = 0; // Burn isn't possible in CG
@@ -408,7 +412,7 @@ impl Simulation for HunllefFight {
     }
 
     fn set_attack_function(&mut self) {
-        self.player.attack = crate::attacks::get_attack_functions(&self.player);
+        self.player.attack = crate::combat::attacks::standard::get_attack_functions(&self.player);
     }
 
     fn reset(&mut self) {
@@ -462,11 +466,11 @@ fn has_valid_gear(player: &Player) -> bool {
 
 mod tests {
     use super::*;
-    use crate::equipment::CombatStyle;
-    use crate::monster::Monster;
-    use crate::player::{GearSwitch, Player, SwitchType};
-    use crate::prayers::{Prayer, PrayerBoost};
-    use crate::rolls::calc_active_player_rolls;
+    use crate::calc::rolls::calc_active_player_rolls;
+    use crate::types::equipment::CombatStyle;
+    use crate::types::monster::Monster;
+    use crate::types::player::{GearSwitch, Player, SwitchType};
+    use crate::types::prayers::{Prayer, PrayerBoost};
     #[test]
     fn test_hunllef_sim() {
         let mut player = Player::new();
