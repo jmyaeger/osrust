@@ -1108,6 +1108,7 @@ fn dist_at_hp<'a>(
     // Scale monster's stats based on current hp (only applies to Vardorvis currently)
     let mut monster_copy = monster.clone();
     monster_copy.stats.hitpoints.base = hp as u32;
+    monster_copy.stats.hitpoints.reset();
     monster_scaling::scale_monster_hp_only(&mut monster_copy);
 
     // Return the new hp-scaled distribution

@@ -1001,7 +1001,7 @@ impl Player {
 
     pub fn take_damage(&mut self, amount: u32) {
         // Takes damage, capping at 0 HP
-        self.stats.hitpoints.drain(amount, None);
+        self.stats.hitpoints.drain(amount, Some(0));
     }
 
     pub fn clear_inactive_effects(&mut self) {

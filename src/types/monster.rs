@@ -699,7 +699,7 @@ impl Monster {
     }
 
     pub fn take_damage(&mut self, amount: u32) {
-        self.stats.hitpoints.drain(amount, None);
+        self.stats.hitpoints.drain(amount, Some(0));
     }
 
     pub fn is_freezable(&self) -> bool {
