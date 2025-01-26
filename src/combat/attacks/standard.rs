@@ -259,9 +259,9 @@ pub fn dharoks_axe_attack(
 
     if hit.success && player.set_effects.full_dharoks {
         // Set effect damage increase is applied post-roll
-        let max_hp = player.stats.hitpoints;
-        let current_hp = player.live_stats.hitpoints;
-        let dmg_mod = 10000 + (max_hp.saturating_sub(current_hp)) * max_hp;
+        let max_hp = player.stats.hitpoints.base;
+        let current_hp = player.stats.hitpoints.current;
+        let dmg_mod = 10000 + (max_hp - current_hp) * max_hp;
         hit.damage = hit.damage * dmg_mod / 10000;
     }
 
@@ -421,8 +421,8 @@ pub fn yellow_keris_attack(
 
     if monster.live_stats.hitpoints.saturating_sub(hit.damage) == 0 && monster.is_toa_monster() {
         // Killing a ToA monster heals the player by 12 and costs 5 prayer points
-        player.heal(12, Some(player.stats.hitpoints / 5));
-        player.live_stats.prayer = player.live_stats.prayer.saturating_sub(5);
+        player.heal(12, Some(player.stats.hitpoints.base / 5));
+        player.stats.prayer.drain(5, None);
     }
 
     if hit.success {
@@ -441,9 +441,9 @@ pub fn opal_bolt_attack(
     let proc_chance = player.bolt_proc_chance(OPAL_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
-        player.live_stats.ranged / 9
+        player.stats.ranged.current / 9
     } else {
-        player.live_stats.ranged / 10
+        player.stats.ranged.current / 10
     };
 
     // Guaranteed hit if the bolt effect procs (verified in-game)
@@ -473,7 +473,7 @@ pub fn pearl_bolt_attack(
     if player.is_wearing("Zaryte crossbow", None) {
         denominator = denominator * 9 / 10;
     }
-    let extra_damage = player.live_stats.ranged / denominator;
+    let extra_damage = player.stats.ranged.current / denominator;
 
     // Same implementation as opal bolts (accurate hit on procs, flat damage added)
     if rng.gen::<f64>() <= proc_chance {
@@ -528,7 +528,7 @@ pub fn ruby_bolt_attack(
 
     if rng.gen::<f64>() <= proc_chance {
         // Bolt proc ignores defense and deals fixed amount of damage
-        player.take_damage(player.live_stats.hitpoints / 10);
+        player.take_damage(player.stats.hitpoints.current / 10);
         let damage = if limiter.is_some() && !monster.info.name.contains("Corporeal Beast") {
             limiter.as_ref().unwrap().apply(ruby_damage, rng)
         } else {
@@ -607,9 +607,9 @@ pub fn dragonstone_bolt_attack(
     let proc_chance = player.bolt_proc_chance(DRAGONSTONE_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
-        player.live_stats.ranged * 2 / 9
+        player.stats.ranged.current * 2 / 9
     } else {
-        player.live_stats.ranged / 5
+        player.stats.ranged.current / 5
     };
 
     let info = AttackInfo::new(player, monster);
@@ -746,7 +746,7 @@ pub fn blood_spell_attack(
 
     let overheal = if player.is_wearing("Blood ancient sceptre", None) {
         // Blood ancient sceptre allows 10% overheal
-        Some(player.stats.hitpoints / 10)
+        Some(player.stats.hitpoints.base / 10)
     } else {
         None
     };
@@ -834,7 +834,7 @@ pub fn soulreaper_axe_attack(
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
 
-    if player.boosts.soulreaper_stacks < 5 && player.live_stats.hitpoints > 8 {
+    if player.boosts.soulreaper_stacks < 5 && player.stats.hitpoints.current > 8 {
         // Add a soulreaper stack if the player has less than 5 stacks and can survive the self-damage
         player.take_damage(SOULREAPER_STACK_DAMAGE);
         player.boosts.soulreaper_stacks += 1;
@@ -1069,8 +1069,8 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
 //         player.add_potion(Potion::Ranging);
 
 //         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
-//         monster.stats.defence = 1;
 //         monster.live_stats.defence = 1;
+//         monster.stats.defence = 1;
 //         monster.bonuses.defence.standard = -63;
 
 //         calc_active_player_rolls(&mut player, &monster);

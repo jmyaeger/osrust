@@ -55,13 +55,13 @@ impl FightLogger {
                 player.def_rolls[&CombatType::Magic]
             );
             debug!("Player's stats (with boosts):");
-            debug!("Attack: {}", player.live_stats.attack);
-            debug!("Strength: {}", player.live_stats.strength);
-            debug!("Ranged: {}", player.live_stats.ranged);
-            debug!("Defence: {}", player.live_stats.defence);
-            debug!("Magic: {}", player.live_stats.magic);
-            debug!("Prayer: {}", player.live_stats.prayer);
-            debug!("Hitpoints: {}\n", player.live_stats.hitpoints);
+            debug!("Attack: {}", player.stats.attack.current);
+            debug!("Strength: {}", player.stats.strength.current);
+            debug!("Ranged: {}", player.stats.ranged.current);
+            debug!("Defence: {}", player.stats.defence.current);
+            debug!("Magic: {}", player.stats.magic.current);
+            debug!("Prayer: {}", player.stats.prayer.current);
+            debug!("Hitpoints: {}\n", player.stats.hitpoints.current);
             debug!("Active prayers:");
             if let Some(prayers) = &player.prayers.active_prayers {
                 for prayer in prayers {

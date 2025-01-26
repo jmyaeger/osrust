@@ -10,123 +10,11 @@ use crate::types::monster::Monster;
 use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
 use crate::types::prayers::PrayerBoosts;
 use crate::types::spells;
-use reqwest::Error;
-use std::cmp::{max, min};
+use crate::types::stats::{PlayerStat, PlayerStats, SpecEnergy};
+use reqwest;
+use std::cmp::max;
 use std::collections::HashMap;
-use std::hash::Hash;
 use strum_macros::Display;
-
-// Base stats of the player - should not be modified
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
-pub struct PlayerStats {
-    pub hitpoints: u32,
-    pub attack: u32,
-    pub strength: u32,
-    pub defence: u32,
-    pub ranged: u32,
-    pub magic: u32,
-    pub prayer: u32,
-    pub mining: u32,
-    pub herblore: u32,
-}
-
-impl Default for PlayerStats {
-    fn default() -> Self {
-        Self {
-            // Assume max stats as default case
-            hitpoints: 99,
-            attack: 99,
-            strength: 99,
-            defence: 99,
-            ranged: 99,
-            magic: 99,
-            prayer: 99,
-            mining: 99,
-            herblore: 99,
-        }
-    }
-}
-
-impl PlayerStats {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn min_stats() -> Self {
-        Self {
-            hitpoints: 10,
-            attack: 1,
-            strength: 1,
-            defence: 1,
-            ranged: 1,
-            magic: 1,
-            prayer: 1,
-            mining: 1,
-            herblore: 1,
-        }
-    }
-
-    pub fn from_hashmap(stats_map: &HashMap<&str, u32>) -> Self {
-        Self {
-            hitpoints: *stats_map.get("hitpoints").unwrap_or(&99),
-            attack: *stats_map.get("attack").unwrap_or(&99),
-            strength: *stats_map.get("strength").unwrap_or(&99),
-            defence: *stats_map.get("defence").unwrap_or(&99),
-            ranged: *stats_map.get("ranged").unwrap_or(&99),
-            magic: *stats_map.get("magic").unwrap_or(&99),
-            prayer: *stats_map.get("prayer").unwrap_or(&99),
-            mining: *stats_map.get("mining").unwrap_or(&99),
-            herblore: *stats_map.get("herblore").unwrap_or(&99),
-        }
-    }
-}
-
-// Live stats of the player during combat, including boosts - can be modified
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
-pub struct PlayerLiveStats {
-    pub hitpoints: u32,
-    pub attack: u32,
-    pub strength: u32,
-    pub defence: u32,
-    pub ranged: u32,
-    pub magic: u32,
-    pub prayer: u32,
-    pub special_attack: u8,
-}
-
-impl Default for PlayerLiveStats {
-    fn default() -> Self {
-        Self {
-            hitpoints: 99,
-            attack: 99,
-            strength: 99,
-            defence: 99,
-            ranged: 99,
-            magic: 99,
-            prayer: 99,
-            special_attack: 100,
-        }
-    }
-}
-
-impl PlayerLiveStats {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn from_base_stats(base_stats: &PlayerStats) -> Self {
-        Self {
-            hitpoints: base_stats.hitpoints,
-            attack: base_stats.attack,
-            strength: base_stats.strength,
-            defence: base_stats.defence,
-            ranged: base_stats.ranged,
-            magic: base_stats.magic,
-            prayer: base_stats.prayer,
-            special_attack: 100,
-        }
-    }
-}
 
 // Struct for holding sunfire rune min hit value
 #[derive(Debug, PartialEq, Default, Clone, Copy)]
@@ -304,7 +192,6 @@ pub struct PlayerAttrs {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,
-    pub live_stats: PlayerLiveStats,
     pub gear: Gear,
     pub bonuses: EquipmentBonuses,
     pub potions: PotionBoosts,
@@ -330,7 +217,6 @@ impl Default for Player {
 
         Self {
             stats: PlayerStats::default(),
-            live_stats: PlayerLiveStats::default(),
             gear: Gear::default(),
             bonuses: EquipmentBonuses::default(),
             potions: PotionBoosts::default(),
@@ -361,11 +247,10 @@ impl Player {
         self.attrs.name = Some(rsn.to_string());
     }
 
-    pub fn reset_live_stats(&mut self) {
+    pub fn reset_current_stats(&mut self) {
         // Restore to base stats, full spec energy, and reapply potion boosts
-        self.live_stats = PlayerLiveStats::from_base_stats(&self.stats);
         if let Some(hp) = self.boosts.current_hp {
-            self.live_stats.hitpoints = hp;
+            self.stats.hitpoints.current = hp;
         }
         self.apply_potion_boosts();
     }
@@ -670,19 +555,19 @@ impl Player {
     fn apply_potion_boosts(&mut self) {
         // Apply all of the selected potion boosts to the player's live stats
         if let Some(potion) = &self.potions.attack {
-            self.live_stats.attack += potion.boost;
+            self.stats.attack.boost(potion.boost);
         }
         if let Some(potion) = &self.potions.strength {
-            self.live_stats.strength += potion.boost;
+            self.stats.strength.boost(potion.boost);
         }
         if let Some(potion) = &self.potions.defence {
-            self.live_stats.defence += potion.boost;
+            self.stats.defence.boost(potion.boost);
         }
         if let Some(potion) = &self.potions.ranged {
-            self.live_stats.ranged += potion.boost;
+            self.stats.ranged.boost(potion.boost);
         }
         if let Some(potion) = &self.potions.magic {
-            self.live_stats.magic += potion.boost;
+            self.stats.magic.boost(potion.boost);
         }
     }
 
@@ -1072,7 +957,7 @@ impl Player {
             _ => panic!("Unknown potion type"),
         }
         self.calc_potion_boosts();
-        self.reset_live_stats();
+        self.reset_current_stats();
     }
 
     pub fn bulwark_bonus(&self) -> i32 {
@@ -1110,16 +995,12 @@ impl Player {
 
     pub fn heal(&mut self, amount: u32, overheal_hp: Option<u32>) {
         // Heals the player by the specified amount (with optional maximum overheal)
-        let max_hp = match overheal_hp {
-            Some(overheal_hp) => self.stats.hitpoints + overheal_hp,
-            None => self.stats.hitpoints,
-        };
-        self.live_stats.hitpoints = min(max_hp, self.live_stats.hitpoints + amount);
+        self.stats.hitpoints.restore(amount, overheal_hp);
     }
 
     pub fn take_damage(&mut self, amount: u32) {
         // Takes damage, capping at 0 HP
-        self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
+        self.stats.hitpoints.drain(amount, None);
     }
 
     pub fn clear_inactive_effects(&mut self) {
@@ -1134,8 +1015,8 @@ impl Player {
     }
 
     pub fn restore_prayer(&mut self, amount: u32, max_level: Option<u32>) {
-        let cap = max_level.unwrap_or(self.stats.prayer);
-        self.live_stats.prayer = min(cap, self.live_stats.prayer + amount);
+        let cap = max_level.unwrap_or(self.stats.prayer.base);
+        self.stats.prayer.restore(amount, Some(cap));
     }
 
     pub fn seercull_spec_max(&self) -> u32 {
@@ -1146,7 +1027,7 @@ impl Player {
             .as_ref()
             .map_or(0, |ammo| ammo.bonuses.strength.ranged);
 
-        1 + (self.live_stats.ranged + 10) * (str_bonus + 64) as u32 / 1280
+        1 + (self.stats.ranged.base + 10) * (str_bonus + 64) as u32 / 1280
     }
 
     pub fn bolt_proc_chance(&self, base_chance: f64) -> f64 {
@@ -1168,7 +1049,7 @@ impl Player {
     }
 }
 
-fn fetch_player_data(rsn: &str) -> Result<String, Error> {
+fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
     // Fetches player data from the OSRS hiscores
     let url = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws";
     let params = [("player", rsn)];
@@ -1206,15 +1087,16 @@ fn parse_player_data(data: String) -> PlayerStats {
     skill_map.insert("herblore", herblore_lvl.parse::<u32>().unwrap());
 
     PlayerStats {
-        hitpoints: skill_map["hitpoints"],
-        attack: skill_map["attack"],
-        strength: skill_map["strength"],
-        defence: skill_map["defence"],
-        ranged: skill_map["ranged"],
-        magic: skill_map["magic"],
-        prayer: skill_map["prayer"],
-        mining: skill_map["mining"],
-        herblore: skill_map["herblore"],
+        hitpoints: PlayerStat::new(skill_map["hitpoints"]),
+        attack: PlayerStat::new(skill_map["attack"]),
+        strength: PlayerStat::new(skill_map["strength"]),
+        defence: PlayerStat::new(skill_map["defence"]),
+        ranged: PlayerStat::new(skill_map["ranged"]),
+        magic: PlayerStat::new(skill_map["magic"]),
+        prayer: PlayerStat::new(skill_map["prayer"]),
+        mining: PlayerStat::new(skill_map["mining"]),
+        herblore: PlayerStat::new(skill_map["herblore"]),
+        spec: SpecEnergy::default(),
     }
 }
 
@@ -1255,7 +1137,6 @@ mod test {
         def_rolls.insert(CombatType::Ranged, 0);
         def_rolls.insert(CombatType::Magic, 0);
 
-        assert_eq!(player.live_stats, PlayerLiveStats::default());
         assert_eq!(player.stats, PlayerStats::default());
         assert_eq!(player.gear, Gear::default());
         assert_eq!(player.bonuses, EquipmentBonuses::default());
@@ -1276,13 +1157,13 @@ mod test {
     fn test_lookup_stats() {
         let mut player = Player::new();
         player.lookup_stats("Lynx Titan");
-        assert_eq!(player.stats.attack, 99);
-        assert_eq!(player.stats.defence, 99);
-        assert_eq!(player.stats.strength, 99);
-        assert_eq!(player.stats.hitpoints, 99);
-        assert_eq!(player.stats.ranged, 99);
-        assert_eq!(player.stats.magic, 99);
-        assert_eq!(player.stats.prayer, 99);
+        assert_eq!(player.stats.attack.base, 99);
+        assert_eq!(player.stats.defence.base, 99);
+        assert_eq!(player.stats.strength.base, 99);
+        assert_eq!(player.stats.hitpoints.base, 99);
+        assert_eq!(player.stats.ranged.base, 99);
+        assert_eq!(player.stats.magic.base, 99);
+        assert_eq!(player.stats.prayer.base, 99);
     }
 
     #[test]
@@ -1374,17 +1255,7 @@ mod test {
     #[test]
     fn test_potion_boosts() {
         let mut player = Player::new();
-        player.stats = PlayerStats {
-            attack: 99,
-            strength: 99,
-            defence: 99,
-            ranged: 99,
-            magic: 99,
-            hitpoints: 99,
-            prayer: 99,
-            mining: 99,
-            herblore: 99,
-        };
+        player.stats = PlayerStats::default();
         player.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
         player.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
         player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
@@ -1392,13 +1263,13 @@ mod test {
         player.potions.magic = Some(PotionBoost::new(&Potion::SaturatedHeart));
 
         player.calc_potion_boosts();
-        player.reset_live_stats();
+        player.reset_current_stats();
 
-        assert_eq!(player.live_stats.attack, 118);
-        assert_eq!(player.live_stats.strength, 118);
-        assert_eq!(player.live_stats.defence, 118);
-        assert_eq!(player.live_stats.ranged, 112);
-        assert_eq!(player.live_stats.magic, 112);
+        assert_eq!(player.stats.attack.current, 118);
+        assert_eq!(player.stats.strength.current, 118);
+        assert_eq!(player.stats.defence.current, 118);
+        assert_eq!(player.stats.ranged.current, 112);
+        assert_eq!(player.stats.magic.current, 112);
     }
 
     #[test]
@@ -1410,25 +1281,25 @@ mod test {
         player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
         player.potions.strength = Some(PotionBoost::new(&Potion::DragonBattleaxe));
         player.calc_potion_boosts();
-        player.reset_live_stats();
+        player.reset_current_stats();
         player
             .potions
             .strength
             .as_mut()
             .unwrap()
             .calc_dragon_battleaxe_boost(
-                player.live_stats.attack,
-                player.live_stats.defence,
-                player.live_stats.ranged,
-                player.live_stats.magic,
+                player.stats.attack,
+                player.stats.defence,
+                player.stats.ranged,
+                player.stats.magic,
             );
-        player.reset_live_stats();
+        player.reset_current_stats();
 
-        assert_eq!(player.live_stats.attack, 120);
-        assert_eq!(player.live_stats.strength, 120);
-        assert_eq!(player.live_stats.defence, 118);
-        assert_eq!(player.live_stats.ranged, 112);
-        assert_eq!(player.live_stats.magic, 103);
+        assert_eq!(player.stats.attack.current, 120);
+        assert_eq!(player.stats.strength.current, 120);
+        assert_eq!(player.stats.defence.current, 118);
+        assert_eq!(player.stats.ranged.current, 112);
+        assert_eq!(player.stats.magic.current, 103);
     }
 
     #[test]

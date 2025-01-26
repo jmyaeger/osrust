@@ -88,7 +88,7 @@ impl GraardorFight {
             .logger
             .log_initial_setup(&self.player, &self.graardor);
 
-        while self.graardor.live_stats.hitpoints > 0 {
+        while self.graardor.stats.hitpoints > 0 {
             if vars.tick_counter == vars.attack_tick {
                 if skip_next_attack {
                     skip_next_attack = false;
@@ -112,7 +112,7 @@ impl GraardorFight {
                     self.config.logger.log_monster_damage(
                         vars.tick_counter,
                         hit.damage,
-                        self.graardor.live_stats.hitpoints,
+                        self.graardor.stats.hitpoints,
                         "Graardor",
                     );
                     vars.hit_attempts += 1;
@@ -157,7 +157,7 @@ impl GraardorFight {
                 self.config.logger.log_player_damage(
                     vars.tick_counter,
                     hit.damage,
-                    self.player.live_stats.hitpoints,
+                    self.player.stats.hitpoints.current,
                 );
                 damage_taken += hit.damage;
                 if vars.tick_counter == 6 {
@@ -185,7 +185,7 @@ impl GraardorFight {
                 self.config.logger.log_player_damage(
                     vars.tick_counter,
                     hit.damage,
-                    self.player.live_stats.hitpoints,
+                    self.player.stats.hitpoints.current,
                 );
                 damage_taken += hit.damage;
                 if vars.tick_counter == 5 {
@@ -195,7 +195,7 @@ impl GraardorFight {
                 }
             }
 
-            if self.player.live_stats.hitpoints == 0 {
+            if self.player.stats.hitpoints.current == 0 {
                 let leftover_burn = {
                     if let Some(CombatEffect::Burn {
                         tick_counter: _,
@@ -228,7 +228,7 @@ impl GraardorFight {
             }
 
             // Eat if below the provided threshold and force the player to skip the next attack
-            if self.player.live_stats.hitpoints < self.config.eat_hp
+            if self.player.stats.hitpoints.current < self.config.eat_hp
                 && ((5..=8).contains(&cycle_tick) || (17..=20).contains(&cycle_tick))
                 && eat_delay == 0
             {
@@ -236,7 +236,7 @@ impl GraardorFight {
                 self.config.logger.log_food_eaten(
                     vars.tick_counter,
                     self.config.heal_amount,
-                    self.player.live_stats.hitpoints,
+                    self.player.stats.hitpoints.current,
                 );
                 food_eaten += 1;
                 eat_delay = 3;
@@ -324,7 +324,7 @@ impl Simulation for GraardorFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_live_stats();
+        self.player.reset_current_stats();
         self.graardor.reset();
         self.melee_minion.reset();
         self.ranged_minion.reset();

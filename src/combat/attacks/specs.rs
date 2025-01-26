@@ -337,23 +337,23 @@ pub fn bulwark_spec(
         for stat in stats {
             match stat {
                 CombatStat::Attack => {
-                    if player.live_stats.attack > highest_stat.1 {
-                        highest_stat = (stat, player.live_stats.attack);
+                    if monster.live_stats.attack > highest_stat.1 {
+                        highest_stat = (stat, monster.live_stats.attack);
                     }
                 }
                 CombatStat::Strength => {
-                    if player.live_stats.strength > highest_stat.1 {
-                        highest_stat = (stat, player.live_stats.strength);
+                    if monster.live_stats.strength > highest_stat.1 {
+                        highest_stat = (stat, monster.live_stats.strength);
                     }
                 }
                 CombatStat::Ranged => {
-                    if player.live_stats.ranged > highest_stat.1 {
-                        highest_stat = (stat, player.live_stats.ranged);
+                    if monster.live_stats.ranged > highest_stat.1 {
+                        highest_stat = (stat, monster.live_stats.ranged);
                     }
                 }
                 CombatStat::Magic => {
-                    if player.live_stats.magic > highest_stat.1 {
-                        highest_stat = (stat, player.live_stats.magic);
+                    if monster.live_stats.magic > highest_stat.1 {
+                        highest_stat = (stat, monster.live_stats.magic);
                     }
                 }
                 _ => unreachable!(),
@@ -362,8 +362,8 @@ pub fn bulwark_spec(
 
         // If either attack or strength is the highest stat, drain both of them by 5%
         if highest_stat.0 == CombatStat::Attack || highest_stat.0 == CombatStat::Strength {
-            monster.drain_stat(CombatStat::Attack, monster.live_stats.attack / 20, None);
-            monster.drain_stat(CombatStat::Strength, monster.live_stats.strength / 20, None);
+            monster.drain_stat(CombatStat::Attack, monster.stats.attack / 20, None);
+            monster.drain_stat(CombatStat::Strength, monster.stats.strength / 20, None);
         } else {
             // Otherwise, drain the highest stat by 5%
             monster.drain_stat(highest_stat.0, highest_stat.1 / 20, None);
@@ -447,12 +447,12 @@ pub fn accursed_sceptre_spec(
         let magic_level_cap = monster.stats.magic - monster.stats.magic * 15 / 100;
 
         if monster.live_stats.defence > def_level_cap {
-            let def_drain_cap = monster.live_stats.defence - def_level_cap;
+            let def_drain_cap = monster.stats.defence - def_level_cap;
             monster.drain_stat(CombatStat::Defence, def_drain_cap, Some(def_level_cap));
         }
 
         if monster.live_stats.magic > magic_level_cap {
-            let magic_drain_cap = monster.live_stats.magic - magic_level_cap;
+            let magic_drain_cap = monster.stats.magic - magic_level_cap;
             monster.drain_stat(CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
         }
     }
@@ -677,7 +677,7 @@ pub fn abyssal_bludgeon_spec(
     let mut info = AttackInfo::new(player, monster);
 
     // Boost max hit by 0.5% per missing prayer point
-    let damage_mod = 1000 + 5 * (player.stats.prayer - player.live_stats.prayer);
+    let damage_mod = 1000 + 5 * max(0, player.stats.prayer.base - player.stats.prayer.current);
     info.max_hit = info.max_hit * damage_mod / 1000;
 
     let mut hit = base_attack(&info, rng);
@@ -1435,7 +1435,7 @@ pub fn tonalztics_of_ralos_spec(
     info.max_hit = info.max_hit * 3 / 4;
 
     let drain_cap = Some(monster.stats.defence / 2);
-    let drain_amount = monster.live_stats.magic / 10;
+    let drain_amount = monster.stats.magic / 10;
 
     let mut hit1 = base_attack(&info, rng);
     if hit1.success {
@@ -1480,7 +1480,7 @@ pub fn dual_macuahuitl_spec(
     info2.min_hit = min_hit - min_hit / 2;
 
     // Take damage equal to 25% of current HP
-    let damage = player.live_stats.hitpoints / 4;
+    let damage = player.stats.hitpoints.current / 4;
     player.take_damage(damage);
 
     // Roll two separate hits

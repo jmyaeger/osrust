@@ -276,9 +276,10 @@ mod tests {
     use crate::sims::single_way::SingleWayFight;
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
-    use crate::types::player::{Player, PlayerStats};
+    use crate::types::player::Player;
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::stats::PlayerStats;
 
     #[test]
     fn test_simulate_n_fights() {

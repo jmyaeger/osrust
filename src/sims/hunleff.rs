@@ -155,13 +155,13 @@ impl HunllefFight {
                     .log_gear_switch(vars.tick_counter, current_style);
 
                 // Combat loop
-                while self.hunllef.live_stats.hitpoints > 0 {
+                while self.hunllef.stats.hitpoints > 0 {
                     // Regen 1 HP for Hunllef every 100 ticks
                     if vars.tick_counter % HUNLLEF_REGEN_TICKS == 0 {
                         self.hunllef.heal(1);
                         self.config.logger.log_hp_regen(
                             vars.tick_counter,
-                            self.hunllef.live_stats.hitpoints,
+                            self.hunllef.stats.hitpoints,
                             "Hunllef",
                         );
                     }
@@ -171,7 +171,7 @@ impl HunllefFight {
                         self.player.heal(1, None);
                         self.config.logger.log_hp_regen(
                             vars.tick_counter,
-                            self.player.live_stats.hitpoints,
+                            self.player.stats.hitpoints.current,
                             "Player",
                         );
                     }
@@ -188,7 +188,7 @@ impl HunllefFight {
                     match self.config.eat_strategy {
                         EatStrategy::EatAtHp(threshold) => {
                             // Eat if at or below the provided threshold and force the player to skip the next attack
-                            if self.player.live_stats.hitpoints <= threshold
+                            if self.player.stats.hitpoints.current <= threshold
                                 && eat_delay == 0
                                 && food_count > 0
                             {
@@ -196,7 +196,7 @@ impl HunllefFight {
                                 self.config.logger.log_food_eaten(
                                     vars.tick_counter,
                                     PADDLEFISH_HEAL,
-                                    self.player.live_stats.hitpoints,
+                                    self.player.stats.hitpoints.current,
                                 );
                                 food_count -= 1;
                                 food_eaten += 1;
@@ -206,7 +206,7 @@ impl HunllefFight {
                         }
                         EatStrategy::TickEatOnly => {
                             if queued_damage.is_some()
-                                && self.player.live_stats.hitpoints < 14
+                                && self.player.stats.hitpoints.current < 14
                                 && eat_delay == 0
                                 && food_count > 0
                             {
@@ -214,7 +214,7 @@ impl HunllefFight {
                                 self.config.logger.log_food_eaten(
                                     vars.tick_counter,
                                     PADDLEFISH_HEAL,
-                                    self.player.live_stats.hitpoints,
+                                    self.player.stats.hitpoints.current,
                                 );
                                 food_count -= 1;
                                 food_eaten += 1;
@@ -224,9 +224,10 @@ impl HunllefFight {
                         }
                         EatStrategy::EatToFullDuringNadoes => {
                             if ((tornado_timer > 0
-                                && self.player.stats.hitpoints - self.player.live_stats.hitpoints
+                                && self.player.stats.hitpoints.base
+                                    - self.player.stats.hitpoints.current
                                     >= PADDLEFISH_HEAL)
-                                || self.player.live_stats.hitpoints < 14)
+                                || self.player.stats.hitpoints.current < 14)
                                 && eat_delay == 0
                                 && food_count > 0
                             {
@@ -234,7 +235,7 @@ impl HunllefFight {
                                 self.config.logger.log_food_eaten(
                                     vars.tick_counter,
                                     PADDLEFISH_HEAL,
-                                    self.player.live_stats.hitpoints,
+                                    self.player.stats.hitpoints.current,
                                 );
                                 food_count -= 1;
                                 food_eaten += 1;
@@ -250,7 +251,7 @@ impl HunllefFight {
                         self.config.logger.log_player_damage(
                             vars.tick_counter,
                             damage,
-                            self.player.live_stats.hitpoints,
+                            self.player.stats.hitpoints.current,
                         );
                         damage_taken += damage;
                         queued_damage = None;
@@ -275,7 +276,7 @@ impl HunllefFight {
                         self.config.logger.log_monster_damage(
                             vars.tick_counter,
                             hit.damage,
-                            self.hunllef.live_stats.hitpoints,
+                            self.hunllef.stats.hitpoints,
                             "Hunllef",
                         );
                         vars.hit_attempts += 1;
@@ -352,7 +353,7 @@ impl HunllefFight {
                     // Increment tick counter
                     vars.tick_counter += 1;
 
-                    if self.player.live_stats.hitpoints == 0 {
+                    if self.player.stats.hitpoints.current == 0 {
                         self.config.logger.log_player_death(vars.tick_counter);
                         return Err(SimulationError::PlayerDeathError(FightResult {
                             ttk: 0.0,
@@ -416,7 +417,7 @@ impl Simulation for HunllefFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_live_stats();
+        self.player.reset_current_stats();
         self.hunllef.reset();
     }
 }
@@ -471,13 +472,14 @@ mod tests {
     use crate::types::monster::Monster;
     use crate::types::player::{GearSwitch, Player, SwitchType};
     use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::stats::PlayerStat;
     #[test]
     fn test_hunllef_sim() {
         let mut player = Player::new();
-        player.stats.defence = 70;
-        player.stats.ranged = 70;
-        player.stats.magic = 70;
-        player.reset_live_stats();
+        player.stats.defence = PlayerStat::new(70);
+        player.stats.ranged = PlayerStat::new(70);
+        player.stats.magic = PlayerStat::new(70);
+        player.reset_current_stats();
         player.equip("Corrupted staff (perfected)", None);
         player.equip("Crystal helm (basic)", None);
         player.equip("Crystal body (basic)", None);

@@ -169,17 +169,17 @@ pub enum SpecialSpell {
 impl SpecialSpell {
     pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
-            SpecialSpell::Invocate => min(1 + player.live_stats.magic * 44 / 99, 44),
-            SpecialSpell::Immolate => min(1 + player.live_stats.magic * 58 / 99, 58),
+            SpecialSpell::Invocate => min(1 + player.stats.magic.current * 44 / 99, 44),
+            SpecialSpell::Immolate => min(1 + player.stats.magic.current * 58 / 99, 58),
         }
     }
 }
 
 fn magic_dart_max_hit(player: &Player) -> u32 {
     if player.is_wearing("Slayer's staff (e)", None) || player.boosts.on_task {
-        13 + player.live_stats.magic / 6
+        13 + player.stats.magic.current / 6
     } else {
-        10 + player.live_stats.magic / 10
+        10 + player.stats.magic.current / 10
     }
 }
 

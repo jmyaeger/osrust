@@ -95,8 +95,8 @@ pub fn calc_player_def_rolls(player: &mut Player) {
         _ => 8,
     };
 
-    let effective_level = player.live_stats.defence * (100 + player.prayers.defence) / 100;
-    let effective_magic = player.live_stats.magic * (100 + player.prayers.magic_att) / 100;
+    let effective_level = player.stats.defence.current * (100 + player.prayers.defence) / 100;
+    let effective_magic = player.stats.magic.current * (100 + player.prayers.magic_att) / 100;
 
     for combat_type in &[
         (CombatType::Stab, player.bonuses.defence.stab),
@@ -368,9 +368,10 @@ fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {
 
     let att_pray_boost = player.prayers.attack;
     let str_pray_boost = player.prayers.strength;
-    let soulreaper_boost = player.boosts.soulreaper_stacks * player.live_stats.strength * 6 / 100;
+    let soulreaper_boost =
+        player.boosts.soulreaper_stacks * player.stats.strength.current * 6 / 100;
 
-    let mut eff_att = player.live_stats.attack * (100 + att_pray_boost) / 100 + att_stance_bonus;
+    let mut eff_att = player.stats.attack.current * (100 + att_pray_boost) / 100 + att_stance_bonus;
 
     let is_using_burst_of_strength =
         player
@@ -384,10 +385,10 @@ fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {
             });
 
     // Soulreaper stacks boost effective strength level additively
-    let mut eff_str = if is_using_burst_of_strength && player.live_stats.strength <= 20 {
-        player.live_stats.strength + 1 + soulreaper_boost + str_stance_bonus
+    let mut eff_str = if is_using_burst_of_strength && player.stats.strength.current <= 20 {
+        player.stats.strength.current + 1 + soulreaper_boost + str_stance_bonus
     } else {
-        player.live_stats.strength * (100 + str_pray_boost) / 100
+        player.stats.strength.current * (100 + str_pray_boost) / 100
             + soulreaper_boost
             + str_stance_bonus
     };
@@ -412,12 +413,13 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
 
     // Eclipse atlatl uses visible melee strength level for ranged strength
     let str_level = if player.is_wearing("Eclipse atlatl", None) {
-        player.live_stats.strength
+        player.stats.strength.current
     } else {
-        player.live_stats.ranged
+        player.stats.ranged.current
     };
 
-    let mut eff_att = player.live_stats.ranged * (100 + range_att_pray_boost) / 100 + stance_bonus;
+    let mut eff_att =
+        player.stats.ranged.current * (100 + range_att_pray_boost) / 100 + stance_bonus;
 
     let is_using_sharp_eye = player
         .prayers
@@ -771,11 +773,11 @@ fn salamander_max_hit(player: &Player) -> u32 {
         _ => panic!("Unimplemented salamander: {}", player.gear.weapon.name),
     };
 
-    (1 + 2 * player.live_stats.magic * factor) / 1280
+    (1 + 2 * player.stats.magic.current * factor) / 1280
 }
 
 fn charged_staff_max_hit(player: &Player) -> u32 {
-    let visible_magic = player.live_stats.magic;
+    let visible_magic = player.stats.magic.current;
     match player.gear.weapon.name.as_str() {
         "Starter staff" => 8,
         "Warped sceptre" => (8 * visible_magic + 96) / 37,
@@ -820,7 +822,7 @@ fn calc_eff_magic_lvl(player: &Player) -> u32 {
         Fraction::new(1, 1)
     };
 
-    let visible_magic = player.live_stats.magic;
+    let visible_magic = player.stats.magic.current;
 
     void_bonus.multiply_to_int(visible_magic * (100 + magic_att_pray_boost) / 100) + stance_bonus
 }

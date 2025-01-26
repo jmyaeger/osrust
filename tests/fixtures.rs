@@ -1,9 +1,10 @@
 use osrs::types::equipment::CombatStyle;
 use osrs::types::monster::Monster;
-use osrs::types::player::{Player, PlayerStats};
+use osrs::types::player::Player;
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
 use osrs::types::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
+use osrs::types::stats::{PlayerStat, PlayerStats, SpecEnergy};
 use rstest::fixture;
 
 #[fixture]
@@ -280,15 +281,16 @@ pub fn max_melee_player() -> Player {
 pub fn mid_level_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: 80,
-        strength: 80,
-        defence: 80,
-        ranged: 80,
-        magic: 80,
-        hitpoints: 80,
-        prayer: 70,
-        mining: 70,
-        herblore: 70,
+        attack: PlayerStat::new(80),
+        strength: PlayerStat::new(80),
+        defence: PlayerStat::new(80),
+        ranged: PlayerStat::new(80),
+        magic: PlayerStat::new(80),
+        hitpoints: PlayerStat::new(80),
+        prayer: PlayerStat::new(70),
+        mining: PlayerStat::new(70),
+        herblore: PlayerStat::new(70),
+        spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
     player.add_potion(Potion::SuperCombat);
@@ -340,15 +342,16 @@ pub fn max_ranged_zcb_player() -> Player {
 pub fn mid_level_ranged_rcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: 80,
-        strength: 80,
-        defence: 80,
-        ranged: 80,
-        magic: 80,
-        hitpoints: 80,
-        prayer: 70,
-        mining: 70,
-        herblore: 70,
+        attack: PlayerStat::new(80),
+        strength: PlayerStat::new(80),
+        defence: PlayerStat::new(80),
+        ranged: PlayerStat::new(80),
+        magic: PlayerStat::new(80),
+        hitpoints: PlayerStat::new(80),
+        prayer: PlayerStat::new(70),
+        mining: PlayerStat::new(70),
+        herblore: PlayerStat::new(70),
+        spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
     player.add_potion(Potion::Ranging);
@@ -610,9 +613,9 @@ pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
 #[fixture]
 pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots_80_str() -> Player {
     let mut player = full_eclipse_atlatl_melee_gear_rigour_all_pots();
-    player.stats.strength = 80;
+    player.stats.strength = PlayerStat::new(80);
     player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.reset_current_stats();
     player
 }
 
@@ -718,20 +721,21 @@ pub fn max_mage_kodai_ice_barrage_player() -> Player {
 pub fn mid_level_magic_warped_sceptre_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: 80,
-        strength: 80,
-        defence: 80,
-        ranged: 80,
-        magic: 80,
-        hitpoints: 80,
-        prayer: 70,
-        mining: 70,
-        herblore: 70,
+        attack: PlayerStat::new(80),
+        strength: PlayerStat::new(80),
+        defence: PlayerStat::new(80),
+        ranged: PlayerStat::new(80),
+        magic: PlayerStat::new(80),
+        hitpoints: PlayerStat::new(80),
+        prayer: PlayerStat::new(70),
+        mining: PlayerStat::new(70),
+        herblore: PlayerStat::new(70),
+        spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
 
     player.calc_potion_boosts();
-    player.reset_live_stats();
+    player.reset_current_stats();
 
     player.equip("Ahrim's hood", None);
     player.equip("Occult necklace", None);
@@ -905,7 +909,7 @@ pub fn full_dharoks_1hp_player() -> Player {
     player.update_set_effects();
     player.update_bonuses();
     player.boosts.current_hp = Some(1);
-    player.reset_live_stats();
+    player.reset_current_stats();
     player
 }
 

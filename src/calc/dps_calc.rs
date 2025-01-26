@@ -450,7 +450,7 @@ pub fn get_distribution(
 
                 // Drains defence by 10% of the magic level
                 let def_drain = monster_copy.stats.magic / 10;
-                monster_copy.live_stats.defence -= def_drain;
+                monster_copy.stats.defence -= def_drain;
                 monster_copy.def_rolls = monster_def_rolls(&monster_copy);
 
                 let second_hit_acc = get_hit_chance(player, &monster_copy, using_spec);
@@ -498,7 +498,7 @@ pub fn get_distribution(
             .unwrap_or_else(|| panic!("No pickaxe bonus for {}", player.gear.weapon.name))
             .1;
 
-        let numerator = 50 + player.stats.mining + pick_bonus;
+        let numerator = 50 + player.stats.mining.current + pick_bonus;
         let denominator = 150;
 
         dist = dist.transform(
@@ -580,7 +580,7 @@ pub fn get_distribution(
     }
 
     let bolt_context = BoltContext::new(
-        player.live_stats.ranged,
+        player.stats.ranged.current,
         max_hit,
         player.is_wearing("Zaryte crossbow", None),
         using_spec,
@@ -667,8 +667,8 @@ pub fn get_distribution(
 
     // Dharok's set effect distribution
     if player.is_using_melee() && player.set_effects.full_dharoks {
-        let full_hp = player.stats.hitpoints;
-        let current_hp = player.live_stats.hitpoints;
+        let full_hp = player.stats.hitpoints.base;
+        let current_hp = player.stats.hitpoints.current;
         let numerator = 10000 + (full_hp - current_hp) as i32 * full_hp as i32;
         dist = dist.scale_damage(Fraction::new(numerator, 10000));
     }
@@ -712,7 +712,8 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
         "Dragon dagger" => (0, base_max_hit * 23 / 20),
         "Abyssal dagger" => (0, base_max_hit * 17 / 20),
         "Abyssal bludegon" => {
-            let damage_mod = 1000 + 5 * (player.stats.prayer - player.live_stats.prayer);
+            let damage_mod =
+                1000 + 5 * max(0, player.stats.prayer.base - player.stats.prayer.current);
             (0, base_max_hit * damage_mod / 1000)
         }
         "Dual macuahuitl" if player.set_effects.full_blood_moon => {
@@ -908,7 +909,7 @@ pub fn get_dps(dist: AttackDistribution, player: &Player) -> f64 {
 fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
     let mut dist = dist;
     let hist = dist.as_histogram(false);
-    let start_hp = monster.live_stats.hitpoints as usize;
+    let start_hp = monster.stats.hitpoints as usize;
     let max_hit = min(start_hp, dist.get_max() as usize);
     if max_hit == 0 {
         return 0.0;
@@ -1087,7 +1088,7 @@ fn dist_at_hp<'a>(
     // (rubies above 500 hp, hp = max hp, or no hp scaling at all)
     let no_scaling = dist.get_single_hitsplat();
     if !dist_is_current_hp_dependent(player, monster)
-        || hp == monster.live_stats.hitpoints as usize
+        || hp == monster.stats.hitpoints as usize
         || (player.is_wearing("Keris partisan of the sun", None)
             && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
             && hp >= monster.stats.hitpoints as usize / 4)
@@ -1097,7 +1098,7 @@ fn dist_at_hp<'a>(
                 ("Ruby bolts (e)", None),
                 ("Ruby dragon bolts (e)", None),
             ])
-            && monster.live_stats.hitpoints >= 500
+            && monster.stats.hitpoints >= 500
             && hp >= 500)
     {
         hp_hit_dists.insert(hp, no_scaling.clone());
@@ -1106,7 +1107,7 @@ fn dist_at_hp<'a>(
 
     // Scale monster's stats based on current hp (only applies to Vardorvis currently)
     let mut monster_copy = monster.clone();
-    monster_copy.live_stats.hitpoints = hp as u32;
+    monster_copy.stats.hitpoints = hp as u32;
     monster_scaling::scale_monster_hp_only(&mut monster_copy);
 
     // Return the new hp-scaled distribution
@@ -1120,9 +1121,10 @@ mod tests {
     use crate::calc::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
-    use crate::types::player::{Player, PlayerStats};
+    use crate::types::player::Player;
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::stats::PlayerStats;
     #[test]
     fn test_max_melee_ammonite_crab() {
         let mut player = Player::new();

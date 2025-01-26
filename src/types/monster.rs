@@ -537,7 +537,7 @@ impl Monster {
             }
         }
 
-        damage = min(damage, player.live_stats.hitpoints);
+        damage = min(damage, player.stats.hitpoints.current);
 
         Hit::new(damage, success)
     }
@@ -617,7 +617,7 @@ impl Monster {
         // Take the higher of the magic level and magic attack bonus, capped at the limit
         let highest_magic = min(
             magic_limit,
-            max(self.stats.magic as i32, self.bonuses.attack.magic),
+            max(self.live_stats.magic as i32, self.bonuses.attack.magic),
         );
 
         let tbow_m = highest_magic * 3 / 10; // Intermediate value

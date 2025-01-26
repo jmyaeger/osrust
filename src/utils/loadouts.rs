@@ -1,7 +1,8 @@
 use crate::types::equipment::CombatStyle;
-use crate::types::player::{Player, PlayerStats};
+use crate::types::player::Player;
 use crate::types::potions::Potion;
 use crate::types::prayers::{Prayer, PrayerBoost};
+use crate::types::stats::PlayerStats;
 
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();

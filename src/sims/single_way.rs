@@ -52,7 +52,7 @@ impl Simulation for SingleWayFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_live_stats();
+        self.player.reset_current_stats();
         self.monster.reset();
     }
 }
@@ -158,9 +158,10 @@ mod tests {
     use crate::combat::simulation::assign_limiter;
     use crate::types::equipment::{Armor, CombatStyle, Gear, Weapon};
     use crate::types::monster::Monster;
-    use crate::types::player::{Player, PlayerStats};
+    use crate::types::player::Player;
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::stats::PlayerStats;
 
     #[test]
     fn test_simulate_fight() {

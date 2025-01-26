@@ -1,3 +1,5 @@
+use crate::types::stats::PlayerStat;
+
 // All types of potions or combat level boosting items
 #[derive(Debug, Default, PartialEq, Copy, Clone)]
 pub enum Potion {
@@ -186,52 +188,52 @@ impl PotionBoost {
         }
     }
 
-    pub fn calc_boost(&mut self, level: u32) {
+    pub fn calc_boost(&mut self, level: PlayerStat) {
         // Calculate the level boost based on the player's base level
-        self.boost = self.factor * level / 100 + self.constant;
+        self.boost = self.factor * level.base / 100 + self.constant;
     }
 
     pub fn calc_dragon_battleaxe_boost(
         &mut self,
-        att_level: u32,
-        def_level: u32,
-        ranged_level: u32,
-        magic_level: u32,
+        att_level: PlayerStat,
+        def_level: PlayerStat,
+        ranged_level: PlayerStat,
+        magic_level: PlayerStat,
     ) {
         // DBA boost gets its own function
         let stats = [att_level, def_level, ranged_level, magic_level];
-        let sum: u32 = stats.iter().map(|&n| n / 10).sum();
+        let sum: u32 = stats.iter().map(|&n| n.current / 10).sum();
         self.boost = 10 + (sum / 4);
     }
 
     pub fn calc_moonlight_boost(
         &mut self,
-        combat_level: u32,
-        herblore_level: u32,
+        combat_level: PlayerStat,
+        herblore_level: PlayerStat,
         skill: PotionStat,
     ) {
         match skill {
             PotionStat::Attack => {
-                if herblore_level >= 45 {
-                    self.boost = 5 + combat_level * 15 / 100;
-                } else if herblore_level >= 3 {
-                    self.boost = 3 + combat_level / 10;
+                if herblore_level.base >= 45 {
+                    self.boost = 5 + combat_level.base * 15 / 100;
+                } else if herblore_level.base >= 3 {
+                    self.boost = 3 + combat_level.base / 10;
                 }
             }
             PotionStat::Strength => {
-                if herblore_level >= 55 {
-                    self.boost = 5 + combat_level * 15 / 100;
-                } else if herblore_level >= 12 {
-                    self.boost = 3 + combat_level / 10;
+                if herblore_level.base >= 55 {
+                    self.boost = 5 + combat_level.base * 15 / 100;
+                } else if herblore_level.base >= 12 {
+                    self.boost = 3 + combat_level.base / 10;
                 }
             }
             PotionStat::Defence => {
-                if herblore_level >= 70 {
-                    self.boost = 7 + combat_level / 5;
-                } else if herblore_level >= 65 {
-                    self.boost = 5 + combat_level * 15 / 100;
-                } else if herblore_level >= 30 {
-                    self.boost = 3 + combat_level / 10;
+                if herblore_level.base >= 70 {
+                    self.boost = 7 + combat_level.base / 5;
+                } else if herblore_level.base >= 65 {
+                    self.boost = 5 + combat_level.base * 15 / 100;
+                } else if herblore_level.base >= 30 {
+                    self.boost = 3 + combat_level.base / 10;
                 }
             }
             _ => {}
@@ -252,10 +254,16 @@ pub struct PotionBoosts {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::types::stats::PlayerStat;
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut potion = PotionBoost::new(&Potion::DragonBattleaxe);
-        potion.calc_dragon_battleaxe_boost(120, 118, 112, 103);
+        potion.calc_dragon_battleaxe_boost(
+            PlayerStat::from(120),
+            PlayerStat::from(118),
+            PlayerStat::from(112),
+            PlayerStat::from(103),
+        );
         assert_eq!(potion.boost, 21);
     }
 }

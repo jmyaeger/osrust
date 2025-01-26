@@ -508,3 +508,21 @@ pub const BURN_EXPECTED: [f64; 3] = {
 };
 
 pub const PLAYER_REGEN_TICKS: i32 = 100;
+pub const MAX_LEVEL: u32 = 99;
+pub const MIN_LEVEL: u32 = 1;
+pub const MIN_HITPOINTS: u32 = 10;
+pub const FULL_SPEC: u8 = 100;
+pub const SPEC_REGEN: u8 = 10;
+pub const DEATH_CHARGE: u8 = 15;
+
+pub const STAT_NAMES: [&str; 9] = [
+    "hitpoints",
+    "attack",
+    "strength",
+    "defence",
+    "ranged",
+    "magic",
+    "prayer",
+    "mining",
+    "herblore",
+];
