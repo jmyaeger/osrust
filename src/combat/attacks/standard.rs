@@ -410,7 +410,7 @@ pub fn yellow_keris_attack(
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
 
-    if (monster.live_stats.hitpoints as f32) / (monster.stats.hitpoints as f32) < 0.25
+    if (monster.stats.hitpoints.current as f32) / (monster.stats.hitpoints.base as f32) < 0.25
         && monster.is_toa_monster()
     {
         // In ToA, accuracy is boosted by 25% when monster is below 25% health
@@ -419,7 +419,7 @@ pub fn yellow_keris_attack(
 
     let mut hit = base_attack(&info, rng);
 
-    if monster.live_stats.hitpoints.saturating_sub(hit.damage) == 0 && monster.is_toa_monster() {
+    if monster.stats.hitpoints.current.saturating_sub(hit.damage) == 0 && monster.is_toa_monster() {
         // Killing a ToA monster heals the player by 12 and costs 5 prayer points
         player.heal(12, Some(player.stats.hitpoints.base / 5));
         player.stats.prayer.drain(5, None);
@@ -521,9 +521,9 @@ pub fn ruby_bolt_attack(
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
         // Verified to be 22/100, not 2/9
-        (monster.live_stats.hitpoints * 22 / 100).clamp(1, 110)
+        (monster.stats.hitpoints.current * 22 / 100).clamp(1, 110)
     } else {
-        (monster.live_stats.hitpoints / 5).clamp(1, 100)
+        (monster.stats.hitpoints.current / 5).clamp(1, 100)
     };
 
     if rng.gen::<f64>() <= proc_chance {
@@ -701,26 +701,26 @@ pub fn shadow_spell_attack(
 
     if hit.success {
         // Only drains attack if it hasn't been drained already
-        if monster.live_stats.attack == monster.stats.attack {
+        if monster.stats.attack.current == monster.stats.attack.base {
             monster.drain_stat(
                 CombatStat::Attack,
-                monster.stats.attack * drain_amount / 1000,
+                monster.stats.attack.base * drain_amount / 1000,
                 None,
             );
         }
         if player.is_wearing("Shadow ancient sceptre", None) {
             // Shadow ancient sceptre also drains strength and defense if not drained previously
-            if monster.live_stats.strength == monster.stats.strength {
+            if monster.stats.strength.current == monster.stats.strength.base {
                 monster.drain_stat(
                     CombatStat::Strength,
-                    monster.stats.strength * drain_amount / 1000,
+                    monster.stats.strength.base * drain_amount / 1000,
                     None,
                 );
             }
-            if monster.live_stats.defence == monster.stats.defence {
+            if monster.stats.defence.current == monster.stats.defence.base {
                 monster.drain_stat(
                     CombatStat::Defence,
-                    monster.stats.defence * drain_amount / 1000,
+                    monster.stats.defence.base * drain_amount / 1000,
                     None,
                 );
             }

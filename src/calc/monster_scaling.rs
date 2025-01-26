@@ -13,15 +13,15 @@ pub fn scale_monster_hp_only(monster: &mut Monster) {
 fn apply_vard_scaling(monster: &mut Monster) {
     // Scale Vardorvis' strength and defence based on current hp
     let vard_ranges = VardNumbers::get(monster);
-    let current_hp = monster.live_stats.hitpoints as i32;
-    monster.live_stats.strength = lerp(
+    let current_hp = monster.stats.hitpoints.current as i32;
+    monster.stats.strength.current = lerp(
         current_hp,
         vard_ranges.max_hp,
         0,
         vard_ranges.str[0],
         vard_ranges.str[1],
     ) as u32;
-    monster.live_stats.defence = lerp(
+    monster.stats.defence.current = lerp(
         current_hp,
         vard_ranges.max_hp,
         0,

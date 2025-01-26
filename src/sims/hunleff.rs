@@ -155,13 +155,13 @@ impl HunllefFight {
                     .log_gear_switch(vars.tick_counter, current_style);
 
                 // Combat loop
-                while self.hunllef.stats.hitpoints > 0 {
+                while self.hunllef.stats.hitpoints.current > 0 {
                     // Regen 1 HP for Hunllef every 100 ticks
                     if vars.tick_counter % HUNLLEF_REGEN_TICKS == 0 {
                         self.hunllef.heal(1);
                         self.config.logger.log_hp_regen(
                             vars.tick_counter,
-                            self.hunllef.stats.hitpoints,
+                            self.hunllef.stats.hitpoints.current,
                             "Hunllef",
                         );
                     }
@@ -276,7 +276,7 @@ impl HunllefFight {
                         self.config.logger.log_monster_damage(
                             vars.tick_counter,
                             hit.damage,
-                            self.hunllef.stats.hitpoints,
+                            self.hunllef.stats.hitpoints.current,
                             "Hunllef",
                         );
                         vars.hit_attempts += 1;

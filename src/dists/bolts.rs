@@ -130,7 +130,7 @@ pub fn onyx_bolts<'a>(ctx: &'a BoltContext) -> Box<dyn HitTransformer + 'a> {
 pub fn ruby_bolts<'a>(ctx: &'a BoltContext) -> Box<dyn HitTransformer + 'a> {
     let chance = 0.06 * kandarin_factor(ctx);
     let cap = if ctx.zcb { 110 } else { 100 };
-    let effect_dmg = ctx.monster.live_stats.hitpoints * if ctx.zcb { 22 } else { 20 } / 100;
+    let effect_dmg = ctx.monster.stats.hitpoints.current * if ctx.zcb { 22 } else { 20 } / 100;
     let effect_hit = HitDistribution::single(1.0, vec![Hitsplat::new(min(cap, effect_dmg), true)]);
 
     Box::new(move |h: &Hitsplat| {

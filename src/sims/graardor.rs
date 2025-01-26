@@ -88,7 +88,7 @@ impl GraardorFight {
             .logger
             .log_initial_setup(&self.player, &self.graardor);
 
-        while self.graardor.stats.hitpoints > 0 {
+        while self.graardor.stats.hitpoints.current > 0 {
             if vars.tick_counter == vars.attack_tick {
                 if skip_next_attack {
                     skip_next_attack = false;
@@ -112,7 +112,7 @@ impl GraardorFight {
                     self.config.logger.log_monster_damage(
                         vars.tick_counter,
                         hit.damage,
-                        self.graardor.stats.hitpoints,
+                        self.graardor.stats.hitpoints.current,
                         "Graardor",
                     );
                     vars.hit_attempts += 1;

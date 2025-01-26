@@ -47,7 +47,7 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
 
     if player.is_wearing("Keris partisan of the sun", None)
         && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
-        && monster.live_stats.hitpoints < monster.stats.hitpoints / 4
+        && monster.stats.hitpoints.current < monster.stats.hitpoints.base / 4
     {
         max_att_roll = max_att_roll * 5 / 4;
     }
@@ -250,7 +250,7 @@ pub fn get_distribution(
     if ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
         return AttackDistribution::new(vec![HitDistribution::single(
             1.0,
-            vec![Hitsplat::new(monster.stats.hitpoints, true)],
+            vec![Hitsplat::new(monster.stats.hitpoints.base, true)],
         )]);
     }
 
@@ -449,8 +449,8 @@ pub fn get_distribution(
                 let mut monster_copy = monster.clone();
 
                 // Drains defence by 10% of the magic level
-                let def_drain = monster_copy.stats.magic / 10;
-                monster_copy.stats.defence -= def_drain;
+                let def_drain = monster_copy.stats.magic.base / 10;
+                monster_copy.stats.defence.drain(def_drain, None);
                 monster_copy.def_rolls = monster_def_rolls(&monster_copy);
 
                 let second_hit_acc = get_hit_chance(player, &monster_copy, using_spec);
@@ -909,7 +909,7 @@ pub fn get_dps(dist: AttackDistribution, player: &Player) -> f64 {
 fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
     let mut dist = dist;
     let hist = dist.as_histogram(false);
-    let start_hp = monster.stats.hitpoints as usize;
+    let start_hp = monster.stats.hitpoints.base as usize;
     let max_hit = min(start_hp, dist.get_max() as usize);
     if max_hit == 0 {
         return 0.0;
@@ -960,7 +960,7 @@ pub fn get_ttk_distribution(
     using_spec: bool,
 ) -> HashMap<usize, f64> {
     let speed = player.gear.weapon.speed as usize;
-    let max_hp = monster.stats.hitpoints as usize;
+    let max_hp = monster.stats.hitpoints.base as usize;
     let mut dist_copy = dist.clone();
     let dist_single = dist_copy.get_single_hitsplat();
 
@@ -1088,17 +1088,17 @@ fn dist_at_hp<'a>(
     // (rubies above 500 hp, hp = max hp, or no hp scaling at all)
     let no_scaling = dist.get_single_hitsplat();
     if !dist_is_current_hp_dependent(player, monster)
-        || hp == monster.stats.hitpoints as usize
+        || hp == monster.stats.hitpoints.base as usize
         || (player.is_wearing("Keris partisan of the sun", None)
             && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
-            && hp >= monster.stats.hitpoints as usize / 4)
+            && hp >= monster.stats.hitpoints.base as usize / 4)
         || (player.is_using_ranged()
             && player.is_using_crossbow()
             && player.is_wearing_any(vec![
                 ("Ruby bolts (e)", None),
                 ("Ruby dragon bolts (e)", None),
             ])
-            && monster.stats.hitpoints >= 500
+            && monster.stats.hitpoints.base >= 500
             && hp >= 500)
     {
         hp_hit_dists.insert(hp, no_scaling.clone());
@@ -1107,7 +1107,7 @@ fn dist_at_hp<'a>(
 
     // Scale monster's stats based on current hp (only applies to Vardorvis currently)
     let mut monster_copy = monster.clone();
-    monster_copy.stats.hitpoints = hp as u32;
+    monster_copy.stats.hitpoints.base = hp as u32;
     monster_scaling::scale_monster_hp_only(&mut monster_copy);
 
     // Return the new hp-scaled distribution

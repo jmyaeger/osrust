@@ -6,6 +6,7 @@ use crate::combat::attacks::standard::Hit;
 use crate::constants::*;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
+use crate::types::stats::MonsterStats;
 use crate::utils::monster_db::ElementalWeakness;
 use rand::Rng;
 use rusqlite::{params, Result};
@@ -61,30 +62,6 @@ pub enum Attribute {
     Undead,
     Vampyre(u8), // Value is the vampyre tier (1, 2, 3)
     Xerician,
-}
-
-// Base stats of a monster
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Deserialize)]
-pub struct MonsterStats {
-    pub hitpoints: u32,
-    pub attack: u32,
-    pub strength: u32,
-    pub defence: u32,
-    pub ranged: u32,
-    pub magic: u32,
-}
-
-impl Default for MonsterStats {
-    fn default() -> Self {
-        Self {
-            hitpoints: 10,
-            attack: 1,
-            strength: 1,
-            defence: 1,
-            ranged: 1,
-            magic: 1,
-        }
-    }
 }
 
 // Offensive bonus for a each primary combat style
@@ -313,8 +290,6 @@ where
 pub struct Monster {
     pub info: MonsterInfo,
     pub stats: MonsterStats,
-    #[serde(default)]
-    pub live_stats: MonsterStats,
     pub bonuses: MonsterBonuses,
     pub immunities: Immunities,
     #[serde(skip)]
@@ -356,7 +331,6 @@ impl Default for Monster {
         Self {
             info: MonsterInfo::default(),
             stats: MonsterStats::default(),
-            live_stats: MonsterStats::default(),
             bonuses: MonsterBonuses::default(),
             immunities: Immunities::default(),
             def_rolls: def_rolls.clone(),
@@ -391,9 +365,6 @@ impl Monster {
 
         // Deserialize the JSON data into a Monster struct
         let mut monster: Monster = serde_json::from_str(row.as_str())?;
-
-        // Initialize the live stats to the base stats
-        monster.live_stats = monster.stats;
 
         // Calculate base defence rolls and copy to live defence rolls
         monster.base_def_rolls = rolls::monster_def_rolls(&monster);
@@ -568,10 +539,10 @@ impl Monster {
         };
 
         // Apply level scaling
-        let level_scaled_hp = self.stats.hitpoints * toa_level_bonus / 100;
+        let level_scaled_hp = self.stats.hitpoints.base * toa_level_bonus / 100;
 
         // If the NPC is affected by path scaling, apply it
-        self.stats.hitpoints = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
+        self.stats.hitpoints.base = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
             round_toa_hp(path_scaled_hp)
         } else {
@@ -579,7 +550,7 @@ impl Monster {
         };
 
         // Set the live HP to the scaled base HP
-        self.live_stats.hitpoints = self.stats.hitpoints;
+        self.stats.hitpoints.current = self.stats.hitpoints.base;
     }
 
     fn scale_toa_defence(&mut self) {
@@ -617,7 +588,7 @@ impl Monster {
         // Take the higher of the magic level and magic attack bonus, capped at the limit
         let highest_magic = min(
             magic_limit,
-            max(self.live_stats.magic as i32, self.bonuses.attack.magic),
+            max(self.stats.magic.current as i32, self.bonuses.attack.magic),
         );
 
         let tbow_m = highest_magic * 3 / 10; // Intermediate value
@@ -724,11 +695,11 @@ impl Monster {
     }
 
     pub fn heal(&mut self, amount: u32) {
-        self.live_stats.hitpoints = min(self.live_stats.hitpoints + amount, self.stats.hitpoints);
+        self.stats.hitpoints.restore(amount, None);
     }
 
     pub fn take_damage(&mut self, amount: u32) {
-        self.live_stats.hitpoints = self.live_stats.hitpoints.saturating_sub(amount);
+        self.stats.hitpoints.drain(amount, None);
     }
 
     pub fn is_freezable(&self) -> bool {
@@ -745,44 +716,44 @@ impl Monster {
         match stat {
             CombatStat::Attack => {
                 // Mod Ash tweet indicates that stats drain down to 1, not 0
-                if self.live_stats.attack.saturating_sub(amount) < 1 {
-                    remainder = amount - self.live_stats.attack + 1;
-                    self.live_stats.attack = 1;
+                if self.stats.attack.current.saturating_sub(amount) < 1 {
+                    remainder = amount - self.stats.attack.current + 1;
+                    self.stats.attack.current = 1;
                 } else {
-                    self.live_stats.attack -= amount;
+                    self.stats.attack.drain(amount, None);
                 }
             }
             CombatStat::Strength => {
-                if self.live_stats.strength.saturating_sub(amount) < 1 {
-                    remainder = amount - self.live_stats.strength + 1;
-                    self.live_stats.strength = 1;
+                if self.stats.strength.current.saturating_sub(amount) < 1 {
+                    remainder = amount - self.stats.strength.current + 1;
+                    self.stats.strength.current = 1;
                 } else {
-                    self.live_stats.strength -= amount;
+                    self.stats.strength.drain(amount, None);
                 }
             }
             CombatStat::Magic => {
-                if self.live_stats.magic.saturating_sub(amount) < 1 {
-                    remainder = amount - self.live_stats.magic + 1;
-                    self.live_stats.magic = 1;
+                if self.stats.magic.current.saturating_sub(amount) < 1 {
+                    remainder = amount - self.stats.magic.current + 1;
+                    self.stats.magic.current = 1;
                 } else {
-                    self.live_stats.magic -= amount;
+                    self.stats.magic.drain(amount, None);
                 }
                 rolls::monster_def_rolls(self);
             }
             CombatStat::Ranged => {
-                if self.live_stats.ranged.saturating_sub(amount) < 1 {
-                    remainder = amount - self.live_stats.ranged + 1;
-                    self.live_stats.ranged = 1;
+                if self.stats.ranged.current.saturating_sub(amount) < 1 {
+                    remainder = amount - self.stats.ranged.current + 1;
+                    self.stats.ranged.current = 1;
                 } else {
-                    self.live_stats.ranged -= amount;
+                    self.stats.ranged.drain(amount, None);
                 }
             }
             CombatStat::Defence => {
-                if self.live_stats.defence.saturating_sub(amount) < 1 {
-                    remainder = amount - self.live_stats.defence + 1;
-                    self.live_stats.defence = 1;
+                if self.stats.defence.current.saturating_sub(amount) < 1 {
+                    remainder = amount - self.stats.defence.current + 1;
+                    self.stats.defence.current = 1;
                 } else {
-                    self.live_stats.defence -= amount;
+                    self.stats.defence.drain(amount, None);
                 }
                 rolls::monster_def_rolls(self);
             }
@@ -804,7 +775,7 @@ impl Monster {
 
     pub fn reset(&mut self) {
         // Reset live stats, status effects, and defence rolls
-        self.live_stats = self.stats;
+        self.stats.reset_all();
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         rolls::monster_def_rolls(self);
@@ -943,7 +914,7 @@ mod tests {
         let mut baba = Monster::new("Ba-Ba", None).unwrap();
         baba.info.toa_level = 400;
         baba.scale_toa();
-        assert_eq!(baba.stats.hitpoints, 990);
+        assert_eq!(baba.stats.hitpoints.base, 990);
         assert_eq!(baba.def_rolls[&CombatType::Stab], 33321);
     }
 

@@ -67,7 +67,7 @@ fn simulate_fight(
     let player_attack = player.attack;
     scale_monster_hp_only(monster);
 
-    while monster.live_stats.hitpoints > 0 {
+    while monster.stats.hitpoints.current > 0 {
         if vars.tick_counter == vars.attack_tick {
             // Process player attack
             let hit = player_attack(player, monster, rng, limiter);
@@ -113,7 +113,7 @@ fn simulate_fight(
         }
 
         // Add the attack cooldown on the last hit (for continuous TTK)
-        if monster.live_stats.hitpoints == 0 {
+        if monster.stats.hitpoints.current == 0 {
             vars.tick_counter = vars.attack_tick;
         } else {
             // Increment tick counter

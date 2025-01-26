@@ -249,6 +249,7 @@ impl Player {
 
     pub fn reset_current_stats(&mut self) {
         // Restore to base stats, full spec energy, and reapply potion boosts
+        self.stats.reset_all();
         if let Some(hp) = self.boosts.current_hp {
             self.stats.hitpoints.current = hp;
         }

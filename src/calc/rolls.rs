@@ -27,7 +27,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     ] {
         def_rolls.insert(
             combat_type.0,
-            calc_roll(9 + monster.live_stats.defence, combat_type.1),
+            calc_roll(9 + monster.stats.defence.current, combat_type.1),
         );
     }
 
@@ -35,14 +35,17 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     if !MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
         def_rolls.insert(
             CombatType::Magic,
-            calc_roll(9 + monster.live_stats.magic, monster.bonuses.defence.magic),
+            calc_roll(
+                9 + monster.stats.magic.current,
+                monster.bonuses.defence.magic,
+            ),
         );
     } else {
         // Use defence level in some special cases
         def_rolls.insert(
             CombatType::Magic,
             calc_roll(
-                9 + monster.live_stats.defence,
+                9 + monster.stats.defence.current,
                 monster.bonuses.defence.magic,
             ),
         );
@@ -56,27 +59,27 @@ pub fn monster_att_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     for combat_type in &[
         (
             CombatType::Stab,
-            monster.live_stats.attack,
+            monster.stats.attack.current,
             monster.bonuses.attack.melee,
         ),
         (
             CombatType::Slash,
-            monster.live_stats.attack,
+            monster.stats.attack.current,
             monster.bonuses.attack.melee,
         ),
         (
             CombatType::Crush,
-            monster.live_stats.attack,
+            monster.stats.attack.current,
             monster.bonuses.attack.melee,
         ),
         (
             CombatType::Ranged,
-            monster.live_stats.ranged,
+            monster.stats.ranged.current,
             monster.bonuses.attack.ranged,
         ),
         (
             CombatType::Magic,
-            monster.live_stats.magic,
+            monster.stats.magic.current,
             monster.bonuses.attack.magic,
         ),
     ] {

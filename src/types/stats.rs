@@ -1,3 +1,5 @@
+use serde::Deserialize;
+
 use crate::constants::*;
 use std::cmp::{max, min};
 use std::collections::HashMap;
@@ -31,6 +33,19 @@ impl PlayerStats {
             herblore: Stat::min_level(),
             spec: SpecEnergy::default(),
         }
+    }
+
+    pub fn reset_all(&mut self) {
+        self.hitpoints.reset();
+        self.attack.reset();
+        self.strength.reset();
+        self.defence.reset();
+        self.ranged.reset();
+        self.magic.reset();
+        self.prayer.reset();
+        self.mining.reset();
+        self.herblore.reset();
+        self.spec.reset();
     }
 }
 
@@ -98,6 +113,10 @@ impl SpecEnergy {
     pub fn drain(&mut self, amount: u8) {
         self.0 = max(0, self.0.saturating_sub(amount));
     }
+
+    pub fn reset(&mut self) {
+        self.regen_full();
+    }
 }
 
 impl Default for SpecEnergy {
@@ -139,6 +158,10 @@ impl Stat {
     pub fn boost(&mut self, amount: u32) {
         self.current = min(self.current + amount, self.base + amount);
     }
+
+    pub fn reset(&mut self) {
+        self.current = self.base;
+    }
 }
 
 impl From<u32> for Stat {
@@ -150,5 +173,68 @@ impl From<u32> for Stat {
 impl Default for Stat {
     fn default() -> Self {
         Self::new(MAX_LEVEL)
+    }
+}
+
+impl<'de> Deserialize<'de> for Stat {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        // Can handle both object form and direct number form
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum StatValue {
+            Number(u32),
+            Object {
+                base: u32,
+                #[serde(default)]
+                current: u32,
+            },
+        }
+
+        let value = StatValue::deserialize(deserializer)?;
+        match value {
+            StatValue::Number(base) => Ok(Stat {
+                base,
+                current: base,
+            }),
+            StatValue::Object { base, current } => Ok(Stat { base, current }),
+        }
+    }
+}
+
+// Base stats of a monster
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Deserialize)]
+pub struct MonsterStats {
+    pub hitpoints: Stat,
+    pub attack: Stat,
+    pub strength: Stat,
+    pub defence: Stat,
+    pub ranged: Stat,
+    pub magic: Stat,
+}
+
+impl Default for MonsterStats {
+    fn default() -> Self {
+        Self {
+            hitpoints: Stat::new(MIN_HITPOINTS),
+            attack: Stat::min_level(),
+            strength: Stat::min_level(),
+            defence: Stat::min_level(),
+            ranged: Stat::min_level(),
+            magic: Stat::min_level(),
+        }
+    }
+}
+
+impl MonsterStats {
+    pub fn reset_all(&mut self) {
+        self.hitpoints.reset();
+        self.attack.reset();
+        self.strength.reset();
+        self.defence.reset();
+        self.ranged.reset();
+        self.magic.reset();
     }
 }

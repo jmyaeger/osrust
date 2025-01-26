@@ -111,17 +111,17 @@ fn demonbane_melee_spec(
         // Drain stats by 1 + 5%, 10%, or 15% of their base values
         monster.drain_stat(
             CombatStat::Attack,
-            monster.stats.attack * demon_mod / 20 + 1,
+            monster.stats.attack.base * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
             CombatStat::Strength,
-            monster.stats.strength * demon_mod / 20 + 1,
+            monster.stats.strength.base * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
             CombatStat::Defence,
-            monster.stats.defence * demon_mod / 20 + 1,
+            monster.stats.defence.base * demon_mod / 20 + 1,
             None,
         );
 
@@ -337,23 +337,23 @@ pub fn bulwark_spec(
         for stat in stats {
             match stat {
                 CombatStat::Attack => {
-                    if monster.live_stats.attack > highest_stat.1 {
-                        highest_stat = (stat, monster.live_stats.attack);
+                    if monster.stats.attack.current > highest_stat.1 {
+                        highest_stat = (stat, monster.stats.attack.current);
                     }
                 }
                 CombatStat::Strength => {
-                    if monster.live_stats.strength > highest_stat.1 {
-                        highest_stat = (stat, monster.live_stats.strength);
+                    if monster.stats.strength.current > highest_stat.1 {
+                        highest_stat = (stat, monster.stats.strength.current);
                     }
                 }
                 CombatStat::Ranged => {
-                    if monster.live_stats.ranged > highest_stat.1 {
-                        highest_stat = (stat, monster.live_stats.ranged);
+                    if monster.stats.ranged.current > highest_stat.1 {
+                        highest_stat = (stat, monster.stats.ranged.current);
                     }
                 }
                 CombatStat::Magic => {
-                    if monster.live_stats.magic > highest_stat.1 {
-                        highest_stat = (stat, monster.live_stats.magic);
+                    if monster.stats.magic.current > highest_stat.1 {
+                        highest_stat = (stat, monster.stats.magic.current);
                     }
                 }
                 _ => unreachable!(),
@@ -362,8 +362,8 @@ pub fn bulwark_spec(
 
         // If either attack or strength is the highest stat, drain both of them by 5%
         if highest_stat.0 == CombatStat::Attack || highest_stat.0 == CombatStat::Strength {
-            monster.drain_stat(CombatStat::Attack, monster.stats.attack / 20, None);
-            monster.drain_stat(CombatStat::Strength, monster.stats.strength / 20, None);
+            monster.drain_stat(CombatStat::Attack, monster.stats.attack.base / 20, None);
+            monster.drain_stat(CombatStat::Strength, monster.stats.strength.base / 20, None);
         } else {
             // Otherwise, drain the highest stat by 5%
             monster.drain_stat(highest_stat.0, highest_stat.1 / 20, None);
@@ -443,16 +443,16 @@ pub fn accursed_sceptre_spec(
         hit.apply_transforms(player, monster, rng, limiter);
 
         // Drain magic and defence by up to 15% of base levels (less if already drained)
-        let def_level_cap = monster.stats.defence - monster.stats.defence * 15 / 100;
-        let magic_level_cap = monster.stats.magic - monster.stats.magic * 15 / 100;
+        let def_level_cap = monster.stats.defence.base - monster.stats.defence.base * 15 / 100;
+        let magic_level_cap = monster.stats.magic.base - monster.stats.magic.base * 15 / 100;
 
-        if monster.live_stats.defence > def_level_cap {
-            let def_drain_cap = monster.stats.defence - def_level_cap;
+        if monster.stats.defence.current > def_level_cap {
+            let def_drain_cap = monster.stats.defence.base - def_level_cap;
             monster.drain_stat(CombatStat::Defence, def_drain_cap, Some(def_level_cap));
         }
 
-        if monster.live_stats.magic > magic_level_cap {
-            let magic_drain_cap = monster.stats.magic - magic_level_cap;
+        if monster.stats.magic.current > magic_level_cap {
+            let magic_drain_cap = monster.stats.magic.base - magic_level_cap;
             monster.drain_stat(CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
         }
     }
@@ -559,7 +559,7 @@ pub fn dorgeshuun_weapon_spec(
         hit.damage = max(1, hit.damage);
 
         // Drains defence by damage, but only if it hasn't been drained already
-        if monster.live_stats.defence == monster.stats.defence
+        if monster.stats.defence.current == monster.stats.defence.base
             && !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default())
         {
             monster.drain_stat(CombatStat::Defence, hit.damage, None);
@@ -606,7 +606,7 @@ pub fn dragon_warhammer_spec(
     info.max_hit = info.max_hit * 3 / 2;
 
     // Store defence drain amount (30% of current level)
-    let def_drain = monster.live_stats.defence * 3 / 10;
+    let def_drain = monster.stats.defence.current * 3 / 10;
 
     if monster.info.name.contains("Tekton") {
         // DWH spec always hits on first attack on Tekton
@@ -623,7 +623,11 @@ pub fn dragon_warhammer_spec(
                 monster.drain_stat(CombatStat::Defence, def_drain, None);
             } else {
                 // DWH spec still drains 5% of Tekton's defence on a miss
-                monster.drain_stat(CombatStat::Defence, monster.live_stats.defence / 20, None);
+                monster.drain_stat(
+                    CombatStat::Defence,
+                    monster.stats.defence.current / 20,
+                    None,
+                );
             }
 
             hit
@@ -1434,8 +1438,8 @@ pub fn tonalztics_of_ralos_spec(
     // Rolls up to 3/4 of the "true" max hit for each hit
     info.max_hit = info.max_hit * 3 / 4;
 
-    let drain_cap = Some(monster.stats.defence / 2);
-    let drain_amount = monster.stats.magic / 10;
+    let drain_cap = Some(monster.stats.defence.base / 2);
+    let drain_amount = monster.stats.magic.base / 10;
 
     let mut hit1 = base_attack(&info, rng);
     if hit1.success {
