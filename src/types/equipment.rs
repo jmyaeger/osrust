@@ -35,6 +35,22 @@ pub enum GearSlot {
     Cape,
 }
 
+#[derive(Default, PartialEq, Debug, Clone)]
+pub struct Gear {
+    pub head: Option<Armor>,
+    pub neck: Option<Armor>,
+    pub cape: Option<Armor>,
+    pub ammo: Option<Armor>,
+    pub second_ammo: Option<Armor>,
+    pub weapon: Weapon, // Default to unarmed, which is still a weapon
+    pub shield: Option<Armor>,
+    pub body: Option<Armor>,
+    pub legs: Option<Armor>,
+    pub hands: Option<Armor>,
+    pub feet: Option<Armor>,
+    pub ring: Option<Armor>,
+}
+
 // Combat types, e.g., stab, slash, crush, magic, etc.
 #[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize, Display)]
 pub enum CombatType {

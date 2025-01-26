@@ -282,3 +282,54 @@ impl PrayerBoost {
             || self.magic_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
     }
 }
+
+// Collection of active prayers and their cumulative boosts
+#[derive(Debug, Default, PartialEq, Clone)]
+pub struct PrayerBoosts {
+    pub active_prayers: Option<Vec<PrayerBoost>>,
+    pub attack: u32,
+    pub strength: u32,
+    pub defence: u32,
+    pub ranged_att: u32,
+    pub ranged_str: u32,
+    pub magic_att: u32,
+    pub magic_str: u32,
+}
+
+impl PrayerBoosts {
+    pub fn add(&mut self, prayer: PrayerBoost) {
+        match &mut self.active_prayers {
+            Some(active_prayers) => {
+                // Remove any conflicting prayer boosts first
+                active_prayers.retain(|p| !p.conflicts_with(&prayer));
+                active_prayers.push(prayer);
+            }
+            None => {
+                self.active_prayers = Some(vec![prayer]);
+            }
+        }
+
+        self.update_prayer_boosts();
+    }
+
+    pub fn remove(&mut self, prayer: PrayerBoost) {
+        if let Some(active_prayers) = &mut self.active_prayers {
+            active_prayers.retain(|p| p != &prayer);
+
+            self.update_prayer_boosts();
+        }
+    }
+
+    fn update_prayer_boosts(&mut self) {
+        // Search through active prayers and returns the highest boost values for all stats
+        if let Some(prayers) = &mut self.active_prayers {
+            self.attack = prayers.iter().map(|p| p.attack).max().unwrap_or(0);
+            self.strength = prayers.iter().map(|p| p.strength).max().unwrap_or(0);
+            self.defence = prayers.iter().map(|p| p.defence).max().unwrap_or(0);
+            self.ranged_att = prayers.iter().map(|p| p.ranged_att).max().unwrap_or(0);
+            self.ranged_str = prayers.iter().map(|p| p.ranged_str).max().unwrap_or(0);
+            self.magic_att = prayers.iter().map(|p| p.magic_att).max().unwrap_or(0);
+            self.magic_str = prayers.iter().map(|p| p.magic_str).max().unwrap_or(0);
+        }
+    }
+}

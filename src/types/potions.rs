@@ -239,6 +239,16 @@ impl PotionBoost {
     }
 }
 
+// Collection of active potion boosts, separated by combat type
+#[derive(Debug, Default, PartialEq, Clone)]
+pub struct PotionBoosts {
+    pub attack: Option<PotionBoost>,
+    pub strength: Option<PotionBoost>,
+    pub defence: Option<PotionBoost>,
+    pub ranged: Option<PotionBoost>,
+    pub magic: Option<PotionBoost>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

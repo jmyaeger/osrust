@@ -4,11 +4,11 @@ use crate::combat::attacks::specs::{get_spec_attack_function, SpecialAttackFn};
 use crate::combat::attacks::standard::{get_attack_functions, standard_attack, AttackFn};
 use crate::constants::*;
 use crate::types::equipment::{
-    self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Weapon,
+    self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Gear, Weapon,
 };
 use crate::types::monster::Monster;
-use crate::types::potions::{Potion, PotionBoost, PotionStat};
-use crate::types::prayers::PrayerBoost;
+use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
+use crate::types::prayers::PrayerBoosts;
 use crate::types::spells;
 use reqwest::Error;
 use std::cmp::{max, min};
@@ -128,67 +128,6 @@ impl PlayerLiveStats {
     }
 }
 
-// Collection of active potion boosts, separated by combat type
-#[derive(Debug, Default, PartialEq, Clone)]
-pub struct PotionBoosts {
-    pub attack: Option<PotionBoost>,
-    pub strength: Option<PotionBoost>,
-    pub defence: Option<PotionBoost>,
-    pub ranged: Option<PotionBoost>,
-    pub magic: Option<PotionBoost>,
-}
-
-// Collection of active prayers and their cumulative boosts
-#[derive(Debug, Default, PartialEq, Clone)]
-pub struct PrayerBoosts {
-    pub active_prayers: Option<Vec<PrayerBoost>>,
-    pub attack: u32,
-    pub strength: u32,
-    pub defence: u32,
-    pub ranged_att: u32,
-    pub ranged_str: u32,
-    pub magic_att: u32,
-    pub magic_str: u32,
-}
-
-impl PrayerBoosts {
-    pub fn add(&mut self, prayer: PrayerBoost) {
-        match &mut self.active_prayers {
-            Some(active_prayers) => {
-                // Remove any conflicting prayer boosts first
-                active_prayers.retain(|p| !p.conflicts_with(&prayer));
-                active_prayers.push(prayer);
-            }
-            None => {
-                self.active_prayers = Some(vec![prayer]);
-            }
-        }
-
-        self.update_prayer_boosts();
-    }
-
-    pub fn remove(&mut self, prayer: PrayerBoost) {
-        if let Some(active_prayers) = &mut self.active_prayers {
-            active_prayers.retain(|p| p != &prayer);
-
-            self.update_prayer_boosts();
-        }
-    }
-
-    fn update_prayer_boosts(&mut self) {
-        // Search through active prayers and returns the highest boost values for all stats
-        if let Some(prayers) = &mut self.active_prayers {
-            self.attack = prayers.iter().map(|p| p.attack).max().unwrap_or(0);
-            self.strength = prayers.iter().map(|p| p.strength).max().unwrap_or(0);
-            self.defence = prayers.iter().map(|p| p.defence).max().unwrap_or(0);
-            self.ranged_att = prayers.iter().map(|p| p.ranged_att).max().unwrap_or(0);
-            self.ranged_str = prayers.iter().map(|p| p.ranged_str).max().unwrap_or(0);
-            self.magic_att = prayers.iter().map(|p| p.magic_att).max().unwrap_or(0);
-            self.magic_str = prayers.iter().map(|p| p.magic_str).max().unwrap_or(0);
-        }
-    }
-}
-
 // Struct for holding sunfire rune min hit value
 #[derive(Debug, PartialEq, Default, Clone, Copy)]
 pub struct SunfireBoost {
@@ -263,22 +202,6 @@ pub struct SetEffects {
     pub full_blue_moon: bool,
     pub full_eclipse_moon: bool,
     pub bloodbark_pieces: usize,
-}
-
-#[derive(Default, PartialEq, Debug, Clone)]
-pub struct Gear {
-    pub head: Option<Armor>,
-    pub neck: Option<Armor>,
-    pub cape: Option<Armor>,
-    pub ammo: Option<Armor>,
-    pub second_ammo: Option<Armor>,
-    pub weapon: Weapon, // Default to unarmed, which is still a weapon
-    pub shield: Option<Armor>,
-    pub body: Option<Armor>,
-    pub legs: Option<Armor>,
-    pub hands: Option<Armor>,
-    pub feet: Option<Armor>,
-    pub ring: Option<Armor>,
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Display)]
@@ -1300,7 +1223,7 @@ mod test {
     use super::*;
     use crate::types::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
     use crate::types::potions::Potion;
-    use crate::types::prayers::Prayer;
+    use crate::types::prayers::{Prayer, PrayerBoost};
     use std::collections::HashMap;
 
     #[test]

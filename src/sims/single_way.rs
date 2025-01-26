@@ -156,9 +156,9 @@ mod tests {
     use super::*;
     use crate::calc::rolls::calc_player_melee_rolls;
     use crate::combat::simulation::assign_limiter;
-    use crate::types::equipment::{Armor, CombatStyle, Weapon};
+    use crate::types::equipment::{Armor, CombatStyle, Gear, Weapon};
     use crate::types::monster::Monster;
-    use crate::types::player::{Gear, Player, PlayerStats};
+    use crate::types::player::{Player, PlayerStats};
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
 
