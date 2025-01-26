@@ -472,13 +472,13 @@ mod tests {
     use crate::types::monster::Monster;
     use crate::types::player::{GearSwitch, Player, SwitchType};
     use crate::types::prayers::{Prayer, PrayerBoost};
-    use crate::types::stats::PlayerStat;
+    use crate::types::stats::Stat;
     #[test]
     fn test_hunllef_sim() {
         let mut player = Player::new();
-        player.stats.defence = PlayerStat::new(70);
-        player.stats.ranged = PlayerStat::new(70);
-        player.stats.magic = PlayerStat::new(70);
+        player.stats.defence = Stat::new(70);
+        player.stats.ranged = Stat::new(70);
+        player.stats.magic = Stat::new(70);
         player.reset_current_stats();
         player.equip("Corrupted staff (perfected)", None);
         player.equip("Crystal helm (basic)", None);

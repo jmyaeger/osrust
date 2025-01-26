@@ -13,7 +13,7 @@ use osrs::types::prayers::{Prayer, PrayerBoost};
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
 use osrs::sims::single_way::SingleWayFight;
-use osrs::types::stats::PlayerStat;
+use osrs::types::stats::Stat;
 
 fn main() {
     // match monster_db::main() {
@@ -72,12 +72,12 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = PlayerStat::new(92);
-    player.stats.magic = PlayerStat::new(84);
-    player.stats.defence = PlayerStat::new(1);
-    player.stats.hitpoints = PlayerStat::new(90);
-    player.stats.attack = PlayerStat::new(75);
-    player.stats.strength = PlayerStat::new(90);
+    player.stats.ranged = Stat::new(92);
+    player.stats.magic = Stat::new(84);
+    player.stats.defence = Stat::new(1);
+    player.stats.hitpoints = Stat::new(90);
+    player.stats.attack = Stat::new(75);
+    player.stats.strength = Stat::new(90);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -147,8 +147,8 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_door_altar_graardor() {
     let mut player = loadouts::bowfa_crystal_player();
-    player.stats.ranged = PlayerStat::new(87);
-    player.stats.defence = PlayerStat::new(80);
+    player.stats.ranged = Stat::new(87);
+    player.stats.defence = Stat::new(80);
     player.reset_current_stats();
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
     player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));

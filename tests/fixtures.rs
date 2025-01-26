@@ -4,7 +4,7 @@ use osrs::types::player::Player;
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
 use osrs::types::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
-use osrs::types::stats::{PlayerStat, PlayerStats, SpecEnergy};
+use osrs::types::stats::{Stat, PlayerStats, SpecEnergy};
 use rstest::fixture;
 
 #[fixture]
@@ -281,15 +281,15 @@ pub fn max_melee_player() -> Player {
 pub fn mid_level_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: PlayerStat::new(80),
-        strength: PlayerStat::new(80),
-        defence: PlayerStat::new(80),
-        ranged: PlayerStat::new(80),
-        magic: PlayerStat::new(80),
-        hitpoints: PlayerStat::new(80),
-        prayer: PlayerStat::new(70),
-        mining: PlayerStat::new(70),
-        herblore: PlayerStat::new(70),
+        attack: Stat::new(80),
+        strength: Stat::new(80),
+        defence: Stat::new(80),
+        ranged: Stat::new(80),
+        magic: Stat::new(80),
+        hitpoints: Stat::new(80),
+        prayer: Stat::new(70),
+        mining: Stat::new(70),
+        herblore: Stat::new(70),
         spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
@@ -342,15 +342,15 @@ pub fn max_ranged_zcb_player() -> Player {
 pub fn mid_level_ranged_rcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: PlayerStat::new(80),
-        strength: PlayerStat::new(80),
-        defence: PlayerStat::new(80),
-        ranged: PlayerStat::new(80),
-        magic: PlayerStat::new(80),
-        hitpoints: PlayerStat::new(80),
-        prayer: PlayerStat::new(70),
-        mining: PlayerStat::new(70),
-        herblore: PlayerStat::new(70),
+        attack: Stat::new(80),
+        strength: Stat::new(80),
+        defence: Stat::new(80),
+        ranged: Stat::new(80),
+        magic: Stat::new(80),
+        hitpoints: Stat::new(80),
+        prayer: Stat::new(70),
+        mining: Stat::new(70),
+        herblore: Stat::new(70),
         spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
@@ -613,7 +613,7 @@ pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
 #[fixture]
 pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots_80_str() -> Player {
     let mut player = full_eclipse_atlatl_melee_gear_rigour_all_pots();
-    player.stats.strength = PlayerStat::new(80);
+    player.stats.strength = Stat::new(80);
     player.calc_potion_boosts();
     player.reset_current_stats();
     player
@@ -721,15 +721,15 @@ pub fn max_mage_kodai_ice_barrage_player() -> Player {
 pub fn mid_level_magic_warped_sceptre_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats {
-        attack: PlayerStat::new(80),
-        strength: PlayerStat::new(80),
-        defence: PlayerStat::new(80),
-        ranged: PlayerStat::new(80),
-        magic: PlayerStat::new(80),
-        hitpoints: PlayerStat::new(80),
-        prayer: PlayerStat::new(70),
-        mining: PlayerStat::new(70),
-        herblore: PlayerStat::new(70),
+        attack: Stat::new(80),
+        strength: Stat::new(80),
+        defence: Stat::new(80),
+        ranged: Stat::new(80),
+        magic: Stat::new(80),
+        hitpoints: Stat::new(80),
+        prayer: Stat::new(70),
+        mining: Stat::new(70),
+        herblore: Stat::new(70),
         spec: SpecEnergy::default(),
     };
     player.prayers.add(PrayerBoost::new(Prayer::MysticMight));

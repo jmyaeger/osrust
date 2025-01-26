@@ -1,4 +1,4 @@
-use crate::types::stats::PlayerStat;
+use crate::types::stats::Stat;
 
 // All types of potions or combat level boosting items
 #[derive(Debug, Default, PartialEq, Copy, Clone)]
@@ -188,17 +188,17 @@ impl PotionBoost {
         }
     }
 
-    pub fn calc_boost(&mut self, level: PlayerStat) {
+    pub fn calc_boost(&mut self, level: Stat) {
         // Calculate the level boost based on the player's base level
         self.boost = self.factor * level.base / 100 + self.constant;
     }
 
     pub fn calc_dragon_battleaxe_boost(
         &mut self,
-        att_level: PlayerStat,
-        def_level: PlayerStat,
-        ranged_level: PlayerStat,
-        magic_level: PlayerStat,
+        att_level: Stat,
+        def_level: Stat,
+        ranged_level: Stat,
+        magic_level: Stat,
     ) {
         // DBA boost gets its own function
         let stats = [att_level, def_level, ranged_level, magic_level];
@@ -208,8 +208,8 @@ impl PotionBoost {
 
     pub fn calc_moonlight_boost(
         &mut self,
-        combat_level: PlayerStat,
-        herblore_level: PlayerStat,
+        combat_level: Stat,
+        herblore_level: Stat,
         skill: PotionStat,
     ) {
         match skill {
@@ -254,15 +254,15 @@ pub struct PotionBoosts {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::stats::PlayerStat;
+    use crate::types::stats::Stat;
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut potion = PotionBoost::new(&Potion::DragonBattleaxe);
         potion.calc_dragon_battleaxe_boost(
-            PlayerStat::from(120),
-            PlayerStat::from(118),
-            PlayerStat::from(112),
-            PlayerStat::from(103),
+            Stat::from(120),
+            Stat::from(118),
+            Stat::from(112),
+            Stat::from(103),
         );
         assert_eq!(potion.boost, 21);
     }

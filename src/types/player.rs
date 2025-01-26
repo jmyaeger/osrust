@@ -10,7 +10,7 @@ use crate::types::monster::Monster;
 use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
 use crate::types::prayers::PrayerBoosts;
 use crate::types::spells;
-use crate::types::stats::{PlayerStat, PlayerStats, SpecEnergy};
+use crate::types::stats::{PlayerStats, SpecEnergy, Stat};
 use reqwest;
 use std::cmp::max;
 use std::collections::HashMap;
@@ -1087,15 +1087,15 @@ fn parse_player_data(data: String) -> PlayerStats {
     skill_map.insert("herblore", herblore_lvl.parse::<u32>().unwrap());
 
     PlayerStats {
-        hitpoints: PlayerStat::new(skill_map["hitpoints"]),
-        attack: PlayerStat::new(skill_map["attack"]),
-        strength: PlayerStat::new(skill_map["strength"]),
-        defence: PlayerStat::new(skill_map["defence"]),
-        ranged: PlayerStat::new(skill_map["ranged"]),
-        magic: PlayerStat::new(skill_map["magic"]),
-        prayer: PlayerStat::new(skill_map["prayer"]),
-        mining: PlayerStat::new(skill_map["mining"]),
-        herblore: PlayerStat::new(skill_map["herblore"]),
+        hitpoints: Stat::new(skill_map["hitpoints"]),
+        attack: Stat::new(skill_map["attack"]),
+        strength: Stat::new(skill_map["strength"]),
+        defence: Stat::new(skill_map["defence"]),
+        ranged: Stat::new(skill_map["ranged"]),
+        magic: Stat::new(skill_map["magic"]),
+        prayer: Stat::new(skill_map["prayer"]),
+        mining: Stat::new(skill_map["mining"]),
+        herblore: Stat::new(skill_map["herblore"]),
         spec: SpecEnergy::default(),
     }
 }

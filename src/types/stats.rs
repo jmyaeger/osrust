@@ -1,35 +1,34 @@
 use crate::constants::*;
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 // Stats of the player (both base stats and current stats)
 #[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Default)]
 pub struct PlayerStats {
-    pub hitpoints: PlayerStat,
-    pub attack: PlayerStat,
-    pub strength: PlayerStat,
-    pub defence: PlayerStat,
-    pub ranged: PlayerStat,
-    pub magic: PlayerStat,
-    pub prayer: PlayerStat,
-    pub mining: PlayerStat,
-    pub herblore: PlayerStat,
+    pub hitpoints: Stat,
+    pub attack: Stat,
+    pub strength: Stat,
+    pub defence: Stat,
+    pub ranged: Stat,
+    pub magic: Stat,
+    pub prayer: Stat,
+    pub mining: Stat,
+    pub herblore: Stat,
     pub spec: SpecEnergy,
 }
 
 impl PlayerStats {
     pub fn min_stats() -> Self {
         Self {
-            hitpoints: PlayerStat::from(MIN_HITPOINTS),
-            attack: PlayerStat::min_level(),
-            strength: PlayerStat::min_level(),
-            defence: PlayerStat::min_level(),
-            ranged: PlayerStat::min_level(),
-            magic: PlayerStat::min_level(),
-            prayer: PlayerStat::min_level(),
-            mining: PlayerStat::min_level(),
-            herblore: PlayerStat::min_level(),
+            hitpoints: Stat::from(MIN_HITPOINTS),
+            attack: Stat::min_level(),
+            strength: Stat::min_level(),
+            defence: Stat::min_level(),
+            ranged: Stat::min_level(),
+            magic: Stat::min_level(),
+            prayer: Stat::min_level(),
+            mining: Stat::min_level(),
+            herblore: Stat::min_level(),
             spec: SpecEnergy::default(),
         }
     }
@@ -43,15 +42,15 @@ impl TryFrom<&HashMap<&str, u32>> for PlayerStats {
         for stat_name in STAT_NAMES {
             if let Some(&value) = stats_map.get(stat_name) {
                 match stat_name {
-                    "hitpoints" => stats.hitpoints = PlayerStat::from(value),
-                    "attack" => stats.attack = PlayerStat::from(value),
-                    "strength" => stats.strength = PlayerStat::from(value),
-                    "defence" => stats.defence = PlayerStat::from(value),
-                    "ranged" => stats.ranged = PlayerStat::from(value),
-                    "magic" => stats.magic = PlayerStat::from(value),
-                    "prayer" => stats.prayer = PlayerStat::from(value),
-                    "mining" => stats.mining = PlayerStat::from(value),
-                    "herblore" => stats.herblore = PlayerStat::from(value),
+                    "hitpoints" => stats.hitpoints = Stat::from(value),
+                    "attack" => stats.attack = Stat::from(value),
+                    "strength" => stats.strength = Stat::from(value),
+                    "defence" => stats.defence = Stat::from(value),
+                    "ranged" => stats.ranged = Stat::from(value),
+                    "magic" => stats.magic = Stat::from(value),
+                    "prayer" => stats.prayer = Stat::from(value),
+                    "mining" => stats.mining = Stat::from(value),
+                    "herblore" => stats.herblore = Stat::from(value),
                     _ => return Err("Invalid stat name"),
                 }
             }
@@ -95,6 +94,10 @@ impl SpecEnergy {
     pub fn death_charge(&mut self) {
         self.0 = min(self.0 + DEATH_CHARGE, FULL_SPEC);
     }
+
+    pub fn drain(&mut self, amount: u8) {
+        self.0 = max(0, self.0.saturating_sub(amount));
+    }
 }
 
 impl Default for SpecEnergy {
@@ -104,12 +107,12 @@ impl Default for SpecEnergy {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PlayerStat {
+pub struct Stat {
     pub base: u32,
     pub current: u32,
 }
 
-impl PlayerStat {
+impl Stat {
     pub fn new(base: u32) -> Self {
         Self {
             base,
@@ -138,13 +141,13 @@ impl PlayerStat {
     }
 }
 
-impl From<u32> for PlayerStat {
+impl From<u32> for Stat {
     fn from(value: u32) -> Self {
         Self::new(value)
     }
 }
 
-impl Default for PlayerStat {
+impl Default for Stat {
     fn default() -> Self {
         Self::new(MAX_LEVEL)
     }
