@@ -421,7 +421,7 @@ impl Monster {
             .info
             .attack_styles
             .as_ref()
-            .map_or(false, |x| x.len() == 1)
+            .is_some_and(|x| x.len() == 1)
         {
             self.info.attack_styles.as_ref().unwrap()[0]
         } else {
@@ -578,7 +578,7 @@ impl Monster {
             .info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Xerician))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Xerician))
         {
             350 // Inside CoX
         } else {
@@ -608,63 +608,63 @@ impl Monster {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Draconic))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Draconic))
     }
 
     pub fn is_demon(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Demon))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Demon))
     }
 
     pub fn is_undead(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Undead))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Undead))
     }
 
     pub fn is_kalphite(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Kalphite))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Kalphite))
     }
 
     pub fn is_leafy(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Leafy))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Leafy))
     }
 
     pub fn is_golem(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Golem))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Golem))
     }
 
     pub fn is_rat(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Rat))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Rat))
     }
 
     pub fn is_fiery(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Fiery))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Fiery))
     }
 
     pub fn is_shade(&self) -> bool {
         self.info
             .attributes
             .as_ref()
-            .map_or(false, |attrs| attrs.contains(&Attribute::Shade))
+            .is_some_and(|attrs| attrs.contains(&Attribute::Shade))
     }
 
     pub fn vampyre_tier(&self) -> Option<u8> {
@@ -738,7 +738,7 @@ impl Monster {
                 } else {
                     self.stats.magic.drain(amount, None);
                 }
-                rolls::monster_def_rolls(self);
+                self.def_rolls = rolls::monster_def_rolls(self);
             }
             CombatStat::Ranged => {
                 if self.stats.ranged.current.saturating_sub(amount) < 1 {
@@ -755,7 +755,7 @@ impl Monster {
                 } else {
                     self.stats.defence.drain(amount, None);
                 }
-                rolls::monster_def_rolls(self);
+                self.def_rolls = rolls::monster_def_rolls(self);
             }
         }
 
@@ -778,7 +778,8 @@ impl Monster {
         self.stats.reset_all();
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
-        rolls::monster_def_rolls(self);
+        self.base_def_rolls = rolls::monster_def_rolls(self);
+        self.scale_toa_defence();
         self.active_effects = Vec::new();
     }
 
@@ -828,7 +829,7 @@ impl Monster {
                         .gear
                         .ammo
                         .as_ref()
-                        .map_or(false, |ammo| ammo.name.contains("arrow"))))
+                        .is_some_and(|ammo| ammo.name.contains("arrow"))))
         {
             return true;
         }
@@ -845,7 +846,7 @@ impl Monster {
         self.info
             .version
             .as_ref()
-            .map_or(false, |v| v.contains(version))
+            .is_some_and(|v| v.contains(version))
     }
 
     pub fn add_burn_stack(&mut self, burn_ticks: u32) {

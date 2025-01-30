@@ -281,7 +281,7 @@ impl Armor {
     }
 
     pub fn matches_version(&self, version: &str) -> bool {
-        self.version.as_ref().map_or(false, |v| v.contains(version))
+        self.version.as_ref().is_some_and(|v| v.contains(version))
     }
 }
 
@@ -415,7 +415,7 @@ impl Weapon {
     }
 
     pub fn matches_version(&self, version: &str) -> bool {
-        self.version.as_ref().map_or(false, |v| v.contains(version))
+        self.version.as_ref().is_some_and(|v| v.contains(version))
     }
 
     pub fn get_styles_from_weapon_type(weapon_type: &str) -> HashMap<CombatStyle, CombatOption> {

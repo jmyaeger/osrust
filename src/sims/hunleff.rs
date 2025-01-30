@@ -464,7 +464,6 @@ fn has_valid_gear(player: &Player) -> bool {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use crate::calc::rolls::calc_active_player_rolls;

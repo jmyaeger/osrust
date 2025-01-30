@@ -204,7 +204,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
                 .gear
                 .ammo
                 .as_ref()
-                .map_or(false, |ammo| ammo.name.contains(" brutal"))
+                .is_some_and(|ammo| ammo.name.contains(" brutal"))
             || !player.gear.weapon.name.contains("Comp ogre bow")
         {
             return Some(Box::new(limiters::Zogre {}));

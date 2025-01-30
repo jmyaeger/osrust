@@ -4,7 +4,7 @@ use osrs::types::player::Player;
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
 use osrs::types::spells::{AncientSpell, ArceuusSpell, Spell, StandardSpell};
-use osrs::types::stats::{Stat, PlayerStats, SpecEnergy};
+use osrs::types::stats::{PlayerStats, SpecEnergy, Stat};
 use rstest::fixture;
 
 #[fixture]
@@ -1016,24 +1016,28 @@ pub fn full_blood_moon_player() -> Player {
     player
 }
 
+#[allow(unused)]
 pub fn slayer(mut player: Player) -> Player {
     player.equip("Slayer helmet (i)", None);
     player.update_bonuses();
     player
 }
 
+#[allow(unused)]
 pub fn salve_ei(mut player: Player) -> Player {
     player.equip("Salve amulet(ei)", None);
     player.update_bonuses();
     player
 }
 
+#[allow(unused)]
 pub fn salve_i(mut player: Player) -> Player {
     player.equip("Salve amulet(i)", None);
     player.update_bonuses();
     player
 }
 
+#[allow(unused)]
 pub fn avarice_forinthry(mut player: Player) -> Player {
     player.equip("Amulet of avarice", None);
     player.boosts.forinthry_surge = true;
@@ -1041,12 +1045,14 @@ pub fn avarice_forinthry(mut player: Player) -> Player {
     player
 }
 
+#[allow(unused)]
 pub fn efaritays_aid(mut player: Player) -> Player {
     player.equip("Efaritay's aid", None);
     player.update_bonuses();
     player
 }
 
+#[allow(unused)]
 pub fn scale_toa(mut monster: Monster, toa_level: u32) -> Monster {
     monster.info.toa_level = toa_level;
     monster.scale_toa();

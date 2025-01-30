@@ -381,7 +381,7 @@ fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {
             .prayers
             .active_prayers
             .as_ref()
-            .map_or(false, |prayers| {
+            .is_some_and(|prayers| {
                 prayers
                     .iter()
                     .any(|p| p.prayer_type == Prayer::BurstOfStrength)
@@ -428,7 +428,7 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
         .prayers
         .active_prayers
         .as_ref()
-        .map_or(false, |prayers| {
+        .is_some_and(|prayers| {
             prayers.iter().any(|p| p.prayer_type == Prayer::SharpEye)
         });
 

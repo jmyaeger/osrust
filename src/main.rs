@@ -72,12 +72,13 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(92);
-    player.stats.magic = Stat::new(84);
-    player.stats.defence = Stat::new(1);
-    player.stats.hitpoints = Stat::new(90);
-    player.stats.attack = Stat::new(75);
-    player.stats.strength = Stat::new(90);
+    player.lookup_stats("IM Orphion");
+    // player.stats.ranged = Stat::new(92);
+    // player.stats.magic = Stat::new(84);
+    // player.stats.defence = Stat::new(1);
+    // player.stats.hitpoints = Stat::new(90);
+    // player.stats.attack = Stat::new(75);
+    // player.stats.strength = Stat::new(90);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -118,19 +119,18 @@ fn simulate_hunllef() {
 
     let fight_config = HunllefConfig {
         food_count: 24,
-        eat_strategy: EatStrategy::EatAtHp(70),
+        eat_strategy: EatStrategy::EatAtHp(68),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Ranged,
             style2: SwitchType::Magic,
         },
-        lost_ticks: 0,
+        lost_ticks: 50,
         logger: FightLogger::new(false, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
     let stats = simulate_n_fights(Box::new(fight), 100000);
-    println!("Number of player deaths: {}", stats.total_deaths);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);

@@ -222,7 +222,7 @@ fn has_category(category_array: &[serde_json::Value], category: &str) -> bool {
     category_array.iter().any(|c| {
         c.get("fulltext")
             .and_then(|fulltext| fulltext.as_str())
-            .map_or(false, |fulltext| {
+            .is_some_and(|fulltext| {
                 fulltext == format!("Category:{}", category)
             })
     })

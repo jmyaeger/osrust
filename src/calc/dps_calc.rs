@@ -828,7 +828,7 @@ fn apply_limiters(
                 .gear
                 .ammo
                 .as_ref()
-                .map_or(false, |ammo| ammo.name.contains(" brutal"))
+                .is_some_and(|ammo| ammo.name.contains(" brutal"))
             || !player.gear.weapon.name.contains("Comp ogre bow")
         {
             dist = dist.transform(&division_transformer(4, 0), &TransformOpts::default());

@@ -70,6 +70,8 @@ fn test_fang_ttk(max_melee_fang_player: Player, #[case] monster: Monster) {
 
     let dist = dps_calc::get_distribution(&player, &monster, false);
     let calc_ttk = dps_calc::get_ttk(dist, &player, &monster, false);
+    println!("calc_ttk: {}", calc_ttk);
+    println!("stats.ttk: {}", stats.ttk);
     assert!(num::abs(calc_ttk - stats.ttk) < 0.1);
 }
 
