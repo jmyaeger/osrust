@@ -491,7 +491,7 @@ mod tests {
         let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
         calc_active_player_rolls(&mut player, &hunllef);
 
-        let mage_switch = GearSwitch::from_player(&player);
+        let mage_switch = GearSwitch::from(&player);
 
         player.equip("Corrupted bow (perfected)", None);
         player.update_bonuses();
@@ -501,7 +501,7 @@ mod tests {
 
         calc_active_player_rolls(&mut player, &hunllef);
 
-        let ranged_switch = GearSwitch::from_player(&player);
+        let ranged_switch = GearSwitch::from(&player);
         player.switches.push(mage_switch);
         player.switches.push(ranged_switch);
 

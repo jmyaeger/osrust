@@ -73,7 +73,7 @@ pub struct StatusEffects {
 }
 
 // Holds set effect data to avoid iterating through gear many times
-#[derive(Default, Debug, PartialEq, Clone)]
+#[derive(Default, Debug, PartialEq, Clone, Copy)]
 pub struct SetEffects {
     pub full_void: bool,
     pub full_elite_void: bool,
@@ -92,7 +92,7 @@ pub struct SetEffects {
     pub bloodbark_pieces: usize,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Display)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Display, Hash)]
 pub enum SwitchType {
     Melee,
     Ranged,
@@ -154,8 +154,10 @@ impl GearSwitch {
             def_rolls: player.def_rolls,
         }
     }
+}
 
-    pub fn from_player(player: &Player) -> Self {
+impl From<&Player> for GearSwitch {
+    fn from(player: &Player) -> Self {
         let switch_type = match player.combat_type() {
             CombatType::Crush | CombatType::Slash | CombatType::Stab => SwitchType::Melee,
             CombatType::Ranged | CombatType::Heavy | CombatType::Light | CombatType::Standard => {
@@ -170,8 +172,8 @@ impl GearSwitch {
             gear: player.gear.clone(),
             prayers: player.prayers.clone(),
             spell: player.attrs.spell,
-            active_style: player.attrs.active_style.clone(),
-            set_effects: player.set_effects.clone(),
+            active_style: player.attrs.active_style,
+            set_effects: player.set_effects,
             attack: player.attack,
             spec: player.spec,
             att_rolls: player.att_rolls.clone(),
@@ -652,13 +654,16 @@ impl Player {
                 self.gear = switch.gear.clone();
                 self.prayers = switch.prayers.clone();
                 self.attrs.spell = switch.spell;
-                self.attrs.active_style = switch.active_style.clone();
-                self.set_effects = switch.set_effects.clone();
+                self.attrs.active_style = switch.active_style;
+                self.set_effects = switch.set_effects;
                 self.attack = switch.attack;
                 self.spec = switch.spec;
-                self.att_rolls = switch.att_rolls.clone();
-                self.max_hits = switch.max_hits.clone();
-                self.def_rolls = switch.def_rolls.clone();
+                self.att_rolls.clear();
+                self.att_rolls.extend(switch.att_rolls.iter());
+                self.max_hits.clear();
+                self.max_hits.extend(switch.max_hits.iter());
+                self.def_rolls.clear();
+                self.def_rolls.extend(switch.def_rolls.iter());
 
                 return;
             }

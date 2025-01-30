@@ -89,7 +89,7 @@ pub enum CombatStance {
 }
 
 // Name of the combat style as seen in the weapon interface
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone, Copy)]
 pub enum CombatStyle {
     Chop,
     Slash,

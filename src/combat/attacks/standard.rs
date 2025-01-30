@@ -961,7 +961,7 @@ pub fn blue_moon_spear_attack(
     // Bind spells have a chance to perform a melee attack on the next tick
     if hit.success && player.set_effects.full_blue_moon && player.is_using_bind_spell() {
         // Store current combat style
-        let current_style = player.attrs.active_style.clone();
+        let current_style = player.attrs.active_style;
 
         // Grasp spells have 50% chance while other binds have 20% chance
         let range_max = if player.is_using_grasp_spell() { 2 } else { 5 };

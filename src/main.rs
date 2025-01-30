@@ -92,7 +92,7 @@ fn simulate_hunllef() {
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
 
-    let mage_switch = GearSwitch::from_player(&player);
+    let mage_switch = GearSwitch::from(&player);
 
     player.equip("Corrupted bow (perfected)", None);
     player.update_bonuses();
@@ -101,7 +101,7 @@ fn simulate_hunllef() {
 
     calc_active_player_rolls(&mut player, &hunllef);
 
-    let ranged_switch = GearSwitch::from_player(&player);
+    let ranged_switch = GearSwitch::from(&player);
 
     player.equip("Corrupted halberd (perfected)", None);
     player.update_bonuses();
@@ -110,7 +110,7 @@ fn simulate_hunllef() {
 
     calc_active_player_rolls(&mut player, &hunllef);
 
-    let melee_switch = GearSwitch::from_player(&player);
+    let melee_switch = GearSwitch::from(&player);
     player.switches.push(mage_switch);
     player.switches.push(ranged_switch);
     player.switches.push(melee_switch);
