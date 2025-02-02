@@ -262,110 +262,42 @@ impl Player {
         // Check if the player is wearing the specified piece of gear
         let version = version.map(|v| v.to_string());
 
-        self.gear
-            .head
-            .as_ref()
-            .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .neck
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .cape
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .ammo
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self.gear.weapon.name == gear_name && self.gear.weapon.version == version
-            || self
-                .gear
-                .shield
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .body
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .legs
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .hands
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .feet
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
-            || self
-                .gear
-                .ring
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name && armor.version == version)
+        self.gear.weapon.name == gear_name && self.gear.weapon.version == version
+            || [
+                &self.gear.head,
+                &self.gear.neck,
+                &self.gear.cape,
+                &self.gear.ammo,
+                &self.gear.shield,
+                &self.gear.body,
+                &self.gear.legs,
+                &self.gear.feet,
+                &self.gear.hands,
+                &self.gear.ring,
+            ]
+            .iter()
+            .filter_map(|slot| slot.as_ref())
+            .any(|armor| armor.name == gear_name && armor.version == version)
     }
 
     pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {
         // Same as is_wearing() but allows for any version to match
-        self.gear
-            .head
-            .as_ref()
-            .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .neck
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .cape
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .ammo
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self.gear.weapon.name == gear_name
-            || self
-                .gear
-                .shield
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .body
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .legs
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .hands
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .feet
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
-            || self
-                .gear
-                .ring
-                .as_ref()
-                .is_some_and(|armor| armor.name == gear_name)
+        self.gear.weapon.name == gear_name
+            || [
+                &self.gear.head,
+                &self.gear.neck,
+                &self.gear.cape,
+                &self.gear.ammo,
+                &self.gear.shield,
+                &self.gear.body,
+                &self.gear.legs,
+                &self.gear.feet,
+                &self.gear.hands,
+                &self.gear.ring,
+            ]
+            .iter()
+            .filter_map(|slot| slot.as_ref())
+            .any(|armor| armor.name == gear_name)
     }
 
     pub fn is_wearing_any(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
