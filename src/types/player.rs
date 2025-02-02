@@ -949,47 +949,28 @@ impl Player {
 
     pub fn add_potion(&mut self, potion: Potion) {
         // Add a potion to the correct slot, calc boosts, and reset live stats
-        match potion {
-            Potion::Attack | Potion::SuperAttack | Potion::ZamorakBrewAtt => {
-                self.potions.attack = Some(PotionBoost::new(&potion));
-            }
-            Potion::Strength
-            | Potion::SuperStrength
-            | Potion::ZamorakBrewStr
-            | Potion::DragonBattleaxe => {
-                self.potions.strength = Some(PotionBoost::new(&potion));
-            }
-            Potion::Defence | Potion::SuperDefence | Potion::SaradominBrew => {
-                self.potions.defence = Some(PotionBoost::new(&potion));
-            }
-            Potion::Ranging | Potion::SuperRanging => {
-                self.potions.ranged = Some(PotionBoost::new(&potion));
-            }
-            Potion::Magic
-            | Potion::SuperMagic
-            | Potion::ImbuedHeart
-            | Potion::SaturatedHeart
-            | Potion::AncientBrew
-            | Potion::ForgottenBrew => {
-                self.potions.magic = Some(PotionBoost::new(&potion));
-            }
-            Potion::SuperCombat => {
-                self.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
-                self.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
-                self.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
-            }
-            Potion::SmellingSalts
-            | Potion::OverloadMinus
-            | Potion::Overload
-            | Potion::OverloadPlus => {
-                self.potions.attack = Some(PotionBoost::new(&potion));
-                self.potions.strength = Some(PotionBoost::new(&potion));
-                self.potions.defence = Some(PotionBoost::new(&potion));
-                self.potions.ranged = Some(PotionBoost::new(&potion));
-                self.potions.magic = Some(PotionBoost::new(&potion));
-            }
-            _ => panic!("Unknown potion type"),
+        if potion.boosts_attack() {
+            self.potions.attack = Some(PotionBoost::new(&potion));
+        } else if potion.boosts_strength() {
+            self.potions.strength = Some(PotionBoost::new(&potion));
+        } else if potion.boosts_defence() {
+            self.potions.defence = Some(PotionBoost::new(&potion));
+        } else if potion.boosts_ranged() {
+            self.potions.ranged = Some(PotionBoost::new(&potion));
+        } else if potion.boosts_magic() {
+            self.potions.magic = Some(PotionBoost::new(&potion));
+        } else if potion == Potion::SuperCombat {
+            self.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
+            self.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
+            self.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
+        } else if potion.boosts_all() {
+            self.potions.attack = Some(PotionBoost::new(&potion));
+            self.potions.strength = Some(PotionBoost::new(&potion));
+            self.potions.defence = Some(PotionBoost::new(&potion));
+            self.potions.ranged = Some(PotionBoost::new(&potion));
+            self.potions.magic = Some(PotionBoost::new(&potion));
         }
+
         self.calc_potion_boosts();
         self.reset_current_stats();
     }

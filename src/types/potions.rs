@@ -34,6 +34,47 @@ pub enum Potion {
     Moonlight,
 }
 
+impl Potion {
+    pub fn boosts_attack(&self) -> bool {
+        self == &Potion::Attack || self == &Potion::SuperAttack || self == &Potion::ZamorakBrewAtt
+    }
+
+    pub fn boosts_strength(&self) -> bool {
+        self == &Potion::Strength
+            || self == &Potion::SuperStrength
+            || self == &Potion::ZamorakBrewStr
+            || self == &Potion::DragonBattleaxe
+    }
+
+    pub fn boosts_defence(&self) -> bool {
+        self == &Potion::Defence || self == &Potion::SuperDefence || self == &Potion::SaradominBrew
+    }
+
+    pub fn boosts_ranged(&self) -> bool {
+        self == &Potion::Ranging || self == &Potion::SuperRanging
+    }
+
+    pub fn boosts_magic(&self) -> bool {
+        self == &Potion::Magic
+            || self == &Potion::SuperMagic
+            || self == &Potion::ImbuedHeart
+            || self == &Potion::SaturatedHeart
+            || self == &Potion::AncientBrew
+            || self == &Potion::ForgottenBrew
+    }
+
+    pub fn boosts_all_melee(&self) -> bool {
+        self == &Potion::SuperCombat
+    }
+
+    pub fn boosts_all(&self) -> bool {
+        self == &Potion::SmellingSalts
+            || self == &Potion::OverloadMinus
+            || self == &Potion::Overload
+            || self == &Potion::OverloadPlus
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum PotionStat {
     Attack,
