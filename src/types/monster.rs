@@ -286,11 +286,11 @@ where
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct MonsterAttRolls {
-    pub stab: i32,
-    pub slash: i32,
-    pub crush: i32,
-    pub ranged: i32,
-    pub magic: i32,
+    stab: i32,
+    slash: i32,
+    crush: i32,
+    ranged: i32,
+    magic: i32,
 }
 
 impl MonsterAttRolls {
@@ -325,13 +325,14 @@ impl MonsterAttRolls {
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct MonsterDefRolls {
-    pub stab: i32,
-    pub slash: i32,
-    pub crush: i32,
-    pub light: i32,
-    pub standard: i32,
-    pub heavy: i32,
-    pub magic: i32,
+    stab: i32,
+    slash: i32,
+    crush: i32,
+    ranged: i32,
+    light: i32,
+    standard: i32,
+    heavy: i32,
+    magic: i32,
 }
 
 impl MonsterDefRolls {
@@ -343,7 +344,7 @@ impl MonsterDefRolls {
             CombatType::Light => self.light,
             CombatType::Standard => self.standard,
             CombatType::Heavy => self.heavy,
-            CombatType::Ranged => panic!("Monsters do not have generic ranged defence rolls"),
+            CombatType::Ranged => self.ranged,
             CombatType::Magic => self.magic,
             CombatType::None => 0,
         }
@@ -357,7 +358,7 @@ impl MonsterDefRolls {
             CombatType::Light => self.light = value,
             CombatType::Standard => self.standard = value,
             CombatType::Heavy => self.heavy = value,
-            CombatType::Ranged => panic!("Monsters do not have generic ranged defence rolls"),
+            CombatType::Ranged => self.ranged = value,
             CombatType::Magic => self.magic = value,
             CombatType::None => {}
         }

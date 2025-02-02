@@ -176,9 +176,9 @@ impl From<&Player> for GearSwitch {
             set_effects: player.set_effects,
             attack: player.attack,
             spec: player.spec,
-            att_rolls: player.att_rolls.clone(),
-            max_hits: player.max_hits.clone(),
-            def_rolls: player.def_rolls.clone(),
+            att_rolls: player.att_rolls,
+            max_hits: player.max_hits,
+            def_rolls: player.def_rolls,
         }
     }
 }
