@@ -561,14 +561,7 @@ fn apply_melee_weapon_boosts(
         _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
     };
 
-    if player.is_wearing_any(vec![
-        ("Silverlight", Some("Dyed")),
-        ("Silverlight", None),
-        ("Darklight", None),
-        ("Arclight", Some("Charged")),
-        ("Emberlight", None),
-    ]) && monster.is_demon()
-    {
+    if player.is_wearing_any(DEMONBANE_WEAPONS) && monster.is_demon() {
         if monster.info.name.contains("Duke Sucellus") {
             att_factor *= Fraction::new(7, 10);
             max_hit_factor *= Fraction::new(7, 10);
@@ -616,7 +609,7 @@ fn inquisitor_boost(player: &Player) -> u32 {
 
 fn crystal_bonus(player: &Player) -> u32 {
     player
-        .is_wearing_crystal_bow()
+        .is_wearing_elf_bow()
         .then(|| {
             [
                 ("Crystal helm", 25),

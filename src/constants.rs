@@ -534,3 +534,122 @@ pub const ANCIENT_SPECTRES: [(&str, Option<&str>); 5] = [
     ("Blood ancient sceptre", None),
     ("Ice ancient sceptre", None),
 ];
+
+pub const BLACK_MASKS: [(&str, Option<&str>); 4] = [
+    ("Black mask", None),
+    ("Black mask (i)", None),
+    ("Slayer helmet", None),
+    ("Slayer helmet (i)", None),
+];
+
+pub const BLACK_MASKS_IMBUED: [(&str, Option<&str>); 2] =
+    [("Black mask (i)", None), ("Slayer helmet (i)", None)];
+
+pub const SALVE_UNENCHANTED: [(&str, Option<&str>); 2] =
+    [("Salve amulet", None), ("Salve amulet(i)", None)];
+
+pub const SALVE_IMBUED: [(&str, Option<&str>); 2] =
+    [("Salve amulet(i)", None), ("Salve amulet(ei)", None)];
+
+pub const SALVE_ENCHANTED: [(&str, Option<&str>); 2] =
+    [("Salve amulet(e)", None), ("Salve amulet(ei)", None)];
+
+pub const WILDY_MACES: [(&str, Option<&str>); 2] = [
+    ("Viggora's chainmace", Some("Charged")),
+    ("Ursine chainmace", Some("Charged")),
+];
+
+pub const WILDY_BOWS: [(&str, Option<&str>); 2] = [
+    ("Craw's bow", Some("Charged")),
+    ("Webweaver bow", Some("Charged")),
+];
+
+pub const WILDY_STAVES: [(&str, Option<&str>); 4] = [
+    ("Thammaron's sceptre", Some("Charged")),
+    ("Accursed sceptre", Some("Charged")),
+    ("Thammaron's sceptre (a)", Some("Charged")),
+    ("Accursed sceptre (a)", Some("Charged")),
+];
+
+pub const ELF_BOWS: [(&str, Option<&str>); 3] = [
+    ("Crystal bow", Some("Active")),
+    ("Bow of faerdhinen", Some("Charged")),
+    ("Bow of faerdhinen (c)", None),
+];
+
+pub const SMOKE_STAVES: [(&str, Option<&str>); 2] =
+    [("Smoke battlestaff", None), ("Mystic smoke staff", None)];
+
+pub const IVANDIS_WEAPONS: [(&str, Option<&str>); 3] = [
+    ("Blisterwood flail", None),
+    ("Blisterwood sickle", None),
+    ("Ivandis flail", None),
+];
+
+pub const KERIS_WEAPONS: [(&str, Option<&str>); 5] = [
+    ("Keris", None),
+    ("Keris partisan", None),
+    ("Keris partisan of the sun", None),
+    ("Keris partisan of corruption", None),
+    ("Keris partisan of breaching", None),
+];
+
+pub const LEAF_BLADED_WEAPONS: [(&str, Option<&str>); 3] = [
+    ("Leaf-bladed spear", None),
+    ("Leaf-bladed sword", None),
+    ("Leaf-bladed battleaxe", None),
+];
+
+pub const BROAD_BOLTS: [(&str, Option<&str>); 2] =
+    [("Broad bolts", None), ("Amethyst broad bolts", None)];
+
+pub const RATBANE_WEAPONS: [(&str, Option<&str>); 3] = [
+    ("Bone mace", None),
+    ("Bone shortbow", None),
+    ("Bone staff", None),
+];
+
+pub const ALWAYS_HITS_SPEC: [(&str, Option<&str>); 2] =
+    [("Voidwaker", None), ("Dawnbringer", None)];
+
+pub const MAGIC_SHORTBOWS: [(&str, Option<&str>); 2] =
+    [("Magic shortbow", None), ("Magic shortbow (i)", None)];
+
+pub const DOUBLE_HIT_WEAPONS: [(&str, Option<&str>); 3] = [
+    ("Torag's hammers", None),
+    ("Sulphur blades", None),
+    ("Glacial temotli", None),
+];
+
+pub const OPAL_BOLTS: [(&str, Option<&str>); 2] =
+    [("Opal bolts (e)", None), ("Opal dragon bolts (e)", None)];
+
+pub const PEARL_BOLTS: [(&str, Option<&str>); 2] =
+    [("Pearl bolts (e)", None), ("Pearl dragon bolts (e)", None)];
+
+pub const DIAMOND_BOLTS: [(&str, Option<&str>); 2] = [
+    ("Diamond bolts (e)", None),
+    ("Diamond dragon bolts (e)", None),
+];
+
+pub const DRAGONSTONE_BOLTS: [(&str, Option<&str>); 2] = [
+    ("Dragonstone bolts (e)", None),
+    ("Dragonstone dragon bolts (e)", None),
+];
+
+pub const ONYX_BOLTS: [(&str, Option<&str>); 2] =
+    [("Onyx bolts (e)", None), ("Onyx dragon bolts (e)", None)];
+
+pub const RUBY_BOLTS: [(&str, Option<&str>); 2] =
+    [("Ruby bolts (e)", None), ("Ruby dragon bolts (e)", None)];
+
+pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
+    ("Silverlight", Some("Dyed")),
+    ("Silverlight", None),
+    ("Darklight", None),
+    ("Arclight", Some("Charged")),
+    ("Emberlight", None),
+    ("Scorching bow", None),
+];
+
+pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];

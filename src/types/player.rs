@@ -337,14 +337,12 @@ impl Player {
             "ammo" => {
                 // If quiver is equipped and the ammo slot is already full with a different ammo type,
                 // equip the new ammo in the second_ammo slot
-                if self.is_wearing_any(vec![
-                    ("Dizana's quiver", Some("Charged")),
-                    ("Dizana's quiver", Some("Uncharged")),
-                ]) && (self.gear.ammo.is_some()
-                    && !((self.gear.ammo.as_ref().unwrap().is_bolt()
-                        && item_name.contains("bolts"))
-                        || (self.gear.ammo.as_ref().unwrap().is_arrow()
-                            && item_name.contains("arrow"))))
+                if self.is_wearing_any_version("Dizana's quiver")
+                    && (self.gear.ammo.is_some()
+                        && !((self.gear.ammo.as_ref().unwrap().is_bolt()
+                            && item_name.contains("bolts"))
+                            || (self.gear.ammo.as_ref().unwrap().is_arrow()
+                                && item_name.contains("arrow"))))
                 {
                     self.gear.second_ammo = Some(Armor::new(item_name, version));
 
@@ -611,67 +609,47 @@ impl Player {
 
     pub fn is_wearing_black_mask(&self) -> bool {
         // Check if the player is wearing any type of black mask or slayer helmet
-        self.is_wearing_any(vec![
-            ("Black mask", None),
-            ("Black mask (i)", None),
-            ("Slayer helmet", None),
-            ("Slayer helmet (i)", None),
-        ])
+        self.is_wearing_any(BLACK_MASKS)
     }
 
     pub fn is_wearing_imbued_black_mask(&self) -> bool {
         // Check if the player is wearing an imbued black mask or slayer helmet
-        self.is_wearing_any(vec![("Black mask (i)", None), ("Slayer helmet (i)", None)])
+        self.is_wearing_any(BLACK_MASKS_IMBUED)
     }
 
     pub fn is_wearing_salve(&self) -> bool {
         // Check if the player is wearing an unenchanted salve amulet
-        self.is_wearing_any(vec![("Salve amulet", None), ("Salve amulet(i)", None)])
+        self.is_wearing_any(SALVE_UNENCHANTED)
     }
 
     pub fn is_wearing_salve_e(&self) -> bool {
         // Check if the player is wearing an enchanted salve amulet
-        self.is_wearing_any(vec![("Salve amulet (e)", None), ("Salve amulet(ei)", None)])
+        self.is_wearing_any(SALVE_ENCHANTED)
     }
 
     pub fn is_wearing_salve_i(&self) -> bool {
         // Check if the player is wearing an imbued salve amulet
-        self.is_wearing_any(vec![("Salve amulet(i)", None), ("Salve amulet(ei)", None)])
+        self.is_wearing_any(SALVE_IMBUED)
     }
 
     pub fn is_wearing_wildy_mace(&self) -> bool {
         // Check if the player is wearing either type of wilderness mace
-        self.is_wearing_any(vec![
-            ("Viggora's chainmace", Some("Charged")),
-            ("Ursine chainmace", Some("Charged")),
-        ])
+        self.is_wearing_any(WILDY_MACES)
     }
 
     pub fn is_wearing_wildy_bow(&self) -> bool {
         // Check if the player is wearing either type of wilderness bow
-        self.is_wearing_any(vec![
-            ("Craw's bow", Some("Charged")),
-            ("Webweaver bow", Some("Charged")),
-        ])
+        self.is_wearing_any(WILDY_BOWS)
     }
 
     pub fn is_wearing_wildy_staff(&self) -> bool {
         // Check if the player is wearing any form of wilderness staff
-        self.is_wearing_any(vec![
-            ("Thammaron's sceptre", Some("Charged")),
-            ("Accursed sceptre", Some("Charged")),
-            ("Thammaron's sceptre (a)", Some("Charged")),
-            ("Accursed sceptre (a)", Some("Charged")),
-        ])
+        self.is_wearing_any(WILDY_STAVES)
     }
 
-    pub fn is_wearing_crystal_bow(&self) -> bool {
+    pub fn is_wearing_elf_bow(&self) -> bool {
         // Check if the player is wearing a crystal bow or bowfa
-        self.is_wearing_any(vec![
-            ("Crystal bow", Some("Active")),
-            ("Bow of faerdhinen", Some("Charged")),
-            ("Bow of faerdhinen (c)", None),
-        ])
+        self.is_wearing_any(ELF_BOWS)
     }
 
     pub fn is_wearing_tzhaar_weapon(&self) -> bool {
@@ -686,52 +664,30 @@ impl Player {
 
     pub fn is_wearing_smoke_staff(&self) -> bool {
         // Check if the player is wearing either type of smoke staff
-        self.is_wearing_any(vec![
-            ("Smoke battlestaff", None),
-            ("Mystic smoke staff", None),
-        ])
+        self.is_wearing_any(SMOKE_STAVES)
     }
 
     pub fn is_wearing_silver_weapon(&self) -> bool {
         // Check if the player is wearing any type of silver weapon
-        self.is_wearing_any(Vec::from(SILVER_WEAPONS))
+        self.is_wearing_any(SILVER_WEAPONS)
             || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
     }
 
     pub fn is_wearing_ivandis_weapon(&self) -> bool {
         // Check if the player is wearing one of the weapons that can harm T3 vampyres
-        self.is_wearing_any(vec![
-            ("Blisterwood flail", None),
-            ("Blisterwood sickle", None),
-            ("Ivandis flail", None),
-        ])
+        self.is_wearing_any(IVANDIS_WEAPONS)
     }
 
     pub fn is_wearing_keris(&self) -> bool {
         // Check if the player is wearing any type of keris
-        self.is_wearing_any(vec![
-            ("Keris", None),
-            ("Keris partisan", None),
-            ("Keris partisan of the sun", None),
-            ("Keris partisan of corruption", None),
-            ("Keris partisan of breaching", None),
-        ])
+        self.is_wearing_any(KERIS_WEAPONS)
     }
 
     pub fn is_wearing_leaf_bladed_weapon(&self) -> bool {
         // Check if the player is wearing any type of leaf-bladed weapon or broad bolts
-        (self.is_using_melee()
-            && self.is_wearing_any(vec![
-                ("Leaf-bladed spear", None),
-                ("Leaf-bladed sword", None),
-                ("Leaf-bladed battleaxe", None),
-            ]))
+        (self.is_using_melee() && self.is_wearing_any(LEAF_BLADED_WEAPONS))
             || (self.combat_type() == CombatType::Ranged
-                && (self.is_using_crossbow()
-                    && self.is_wearing_any(vec![
-                        ("Broad bolts", None),
-                        ("Amethyst broad bolts", None),
-                    ])))
+                && (self.is_using_crossbow() && self.is_wearing_any(BROAD_BOLTS)))
             || self.is_wearing("Broad arrows", None)
     }
 
@@ -760,11 +716,7 @@ impl Player {
 
     pub fn is_wearing_ratbone_weapon(&self) -> bool {
         // Check if the player is wearing any type of ratbone weapon
-        self.is_wearing_any(vec![
-            ("Bone mace", None),
-            ("Bone shortbow", None),
-            ("Bone staff", None),
-        ])
+        self.is_wearing_any(RATBANE_WEAPONS)
     }
 
     pub fn is_using_spell(&self) -> bool {
@@ -1010,7 +962,7 @@ impl Player {
     }
 
     pub fn is_wearing_ogre_bow(&self) -> bool {
-        self.is_wearing_any(vec![("Ogre bow", None), ("Comp ogre bow", None)])
+        self.is_wearing_any(OGRE_BOWS)
     }
 }
 

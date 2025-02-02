@@ -154,7 +154,7 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
         && player.is_wearing("Dawnbringer", None))
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
-        || (using_spec && player.is_wearing_any(vec![("Voidwaker", None), ("Dawnbringer", None)]))
+        || (using_spec && player.is_wearing_any(ALWAYS_HITS_SPEC))
     {
         return 1.0;
     }
@@ -337,7 +337,7 @@ pub fn get_distribution(
         let mut hit_count = 1;
         if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Abyssal dagger")
-            || player.is_wearing_any(vec![("Magic shortbow", None), ("Magic shortbow (i)", None)])
+            || player.is_wearing_any(MAGIC_SHORTBOWS)
         {
             hit_count = 2;
         } else if player.is_wearing("Webweaver bow", None) {
@@ -420,13 +420,7 @@ pub fn get_distribution(
     }
 
     // Double-hitting weapon distribution (Torag's hammers/sulphur blades)
-    if player.is_using_melee()
-        && player.is_wearing_any(vec![
-            ("Torag's hammers", None),
-            ("Sulphur blades", None),
-            ("Glacial temotli", None),
-        ])
-    {
+    if player.is_using_melee() && player.is_wearing_any(DOUBLE_HIT_WEAPONS) {
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(acc, 0, half_max);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
@@ -591,18 +585,12 @@ pub fn get_distribution(
     // Enchanted bolt distributions
     if player.is_using_ranged() && player.is_using_crossbow() {
         // Opal bolts
-        if player.is_wearing_any(vec![
-            ("Opal bolts (e)", None),
-            ("Opal dragon bolts (e)", None),
-        ]) {
+        if player.is_wearing_any(OPAL_BOLTS) {
             dist = dist.transform(&bolts::opal_bolts(&bolt_context), &TransformOpts::default());
         }
 
         // Pearl bolts
-        if player.is_wearing_any(vec![
-            ("Pearl bolts (e)", None),
-            ("Pearl dragon bolts (e)", None),
-        ]) {
+        if player.is_wearing_any(PEARL_BOLTS) {
             dist = dist.transform(
                 &bolts::pearl_bolts(&bolt_context),
                 &TransformOpts::default(),
@@ -610,10 +598,7 @@ pub fn get_distribution(
         }
 
         // Diamond bolts
-        if player.is_wearing_any(vec![
-            ("Diamond bolts (e)", None),
-            ("Diamond dragon bolts (e)", None),
-        ]) {
+        if player.is_wearing_any(DIAMOND_BOLTS) {
             dist = dist.transform(
                 &bolts::diamond_bolts(&bolt_context),
                 &TransformOpts::default(),
@@ -621,10 +606,7 @@ pub fn get_distribution(
         }
 
         // Dragonstone bolts
-        if player.is_wearing_any(vec![
-            ("Dragonstone bolts (e)", None),
-            ("Dragonstone dragon bolts (e)", None),
-        ]) && (!monster.is_fiery() || !monster.is_dragon())
+        if player.is_wearing_any(DRAGONSTONE_BOLTS) && (!monster.is_fiery() || !monster.is_dragon())
         {
             dist = dist.transform(
                 &bolts::dragonstone_bolts(&bolt_context),
@@ -633,10 +615,7 @@ pub fn get_distribution(
         }
 
         // Onyx bolts
-        if player.is_wearing_any(vec![
-            ("Onyx bolts (e)", None),
-            ("Onyx dragon bolts (e)", None),
-        ]) {
+        if player.is_wearing_any(ONYX_BOLTS) {
             dist = dist.transform(&bolts::onyx_bolts(&bolt_context), &TransformOpts::default());
         }
     }
@@ -647,13 +626,7 @@ pub fn get_distribution(
     }
 
     // Ruby bolts
-    if player.is_using_ranged()
-        && player.is_using_crossbow()
-        && player.is_wearing_any(vec![
-            ("Ruby bolts (e)", None),
-            ("Ruby dragon bolts (e)", None),
-        ])
-    {
+    if player.is_using_ranged() && player.is_using_crossbow() && player.is_wearing_any(RUBY_BOLTS) {
         dist = dist.transform(&bolts::ruby_bolts(&bolt_context), &TransformOpts::default());
     }
 
@@ -1056,12 +1029,7 @@ fn dist_is_current_hp_dependent(player: &Player, monster: &Monster) -> bool {
         return true;
     }
 
-    if player.is_using_crossbow()
-        && player.is_wearing_any(vec![
-            ("Ruby bolts (e)", None),
-            ("Ruby dragon bolts (e)", None),
-        ])
-    {
+    if player.is_using_crossbow() && player.is_wearing_any(RUBY_BOLTS) {
         return true;
     }
 
@@ -1094,10 +1062,7 @@ fn dist_at_hp<'a>(
             && hp >= monster.stats.hitpoints.base as usize / 4)
         || (player.is_using_ranged()
             && player.is_using_crossbow()
-            && player.is_wearing_any(vec![
-                ("Ruby bolts (e)", None),
-                ("Ruby dragon bolts (e)", None),
-            ])
+            && player.is_wearing_any(RUBY_BOLTS)
             && monster.stats.hitpoints.base >= 500
             && hp >= 500)
     {
