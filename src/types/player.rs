@@ -988,7 +988,7 @@ impl Player {
             .as_ref()
             .map_or(0, |ammo| ammo.bonuses.strength.ranged);
 
-        1 + (self.stats.ranged.base + 10) * (str_bonus + 64) as u32 / 1280
+        (320 + (self.stats.ranged.current + 10) * (str_bonus + 64) as u32) / 640
     }
 
     pub fn bolt_proc_chance(&self, base_chance: f64) -> f64 {
@@ -1007,6 +1007,10 @@ impl Player {
         }
 
         proc_chance
+    }
+
+    pub fn is_wearing_ogre_bow(&self) -> bool {
+        self.is_wearing_any(vec![("Ogre bow", None), ("Comp ogre bow", None)])
     }
 }
 

@@ -144,7 +144,7 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
 
             // Calc melee rolls if it's needed for the blue moon effect
             if player.set_effects.full_blue_moon {
-                let current_style = player.attrs.active_style.clone();
+                let current_style = player.attrs.active_style;
                 player.set_active_style(CombatStyle::Swipe);
                 calc_player_melee_rolls(player, monster);
                 player.set_active_style(current_style);
@@ -245,6 +245,11 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
 
     // TODO: Find out when vampyre boosts are applied
     (att_roll, max_hit) = apply_silver_bolts_bonus(att_roll, max_hit, player, monster);
+
+    // Ogre bow and ogre comp bow use same max hit formula as seercull/MSB/MLB specs
+    if player.is_wearing_ogre_bow() {
+        max_hit = player.seercull_spec_max();
+    }
 
     for &combat_type in &[CombatType::Light, CombatType::Standard, CombatType::Heavy] {
         player.att_rolls.insert(combat_type, att_roll);
@@ -428,9 +433,7 @@ fn calc_eff_ranged_lvls(player: &Player) -> (u32, u32) {
         .prayers
         .active_prayers
         .as_ref()
-        .is_some_and(|prayers| {
-            prayers.iter().any(|p| p.prayer_type == Prayer::SharpEye)
-        });
+        .is_some_and(|prayers| prayers.iter().any(|p| p.prayer_type == Prayer::SharpEye));
 
     let mut eff_str = if is_using_sharp_eye && str_level <= 20 {
         str_level + 1 + stance_bonus
