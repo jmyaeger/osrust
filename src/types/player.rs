@@ -300,18 +300,24 @@ impl Player {
             .any(|armor| armor.name == gear_name)
     }
 
-    pub fn is_wearing_any(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
+    pub fn is_wearing_any<I>(&self, gear_names: I) -> bool
+    where
+        I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
+    {
         // Check if the player is wearing any item in the provided Vec
         gear_names
-            .iter()
-            .any(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
+            .into_iter()
+            .any(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
-    pub fn is_wearing_all(&self, gear_names: Vec<(&str, Option<&str>)>) -> bool {
+    pub fn is_wearing_all<I>(&self, gear_names: I) -> bool
+    where
+        I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
+    {
         // Check if the player is wearing all items in the provided Vec
         gear_names
-            .iter()
-            .all(|&gear_name| self.is_wearing(gear_name.0, gear_name.1))
+            .into_iter()
+            .all(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
     }
 
     pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
@@ -448,17 +454,17 @@ impl Player {
 
     pub fn update_set_effects(&mut self) {
         // Update status of all set effects at once
-        self.set_effects.full_ahrims = self.is_wearing_all(Vec::from(FULL_AHRIMS));
-        self.set_effects.full_blood_moon = self.is_wearing_all(Vec::from(FULL_BLOOD_MOON));
-        self.set_effects.full_blue_moon = self.is_wearing_all(Vec::from(FULL_BLUE_MOON));
-        self.set_effects.full_dharoks = self.is_wearing_all(Vec::from(FULL_DHAROKS));
-        self.set_effects.full_guthans = self.is_wearing_all(Vec::from(FULL_GUTHANS));
-        self.set_effects.full_eclipse_moon = self.is_wearing_all(Vec::from(FULL_ECLIPSE_MOON));
-        self.set_effects.full_inquisitor = self.is_wearing_all(Vec::from(FULL_INQUISITOR));
-        self.set_effects.full_justiciar = self.is_wearing_all(Vec::from(FULL_JUSTICIAR));
-        self.set_effects.full_karils = self.is_wearing_all(Vec::from(FULL_KARILS));
-        self.set_effects.full_obsidian = self.is_wearing_all(Vec::from(FULL_OBSIDIAN));
-        self.set_effects.full_torags = self.is_wearing_all(Vec::from(FULL_TORAGS));
+        self.set_effects.full_ahrims = self.is_wearing_all(FULL_AHRIMS);
+        self.set_effects.full_blood_moon = self.is_wearing_all(FULL_BLOOD_MOON);
+        self.set_effects.full_blue_moon = self.is_wearing_all(FULL_BLUE_MOON);
+        self.set_effects.full_dharoks = self.is_wearing_all(FULL_DHAROKS);
+        self.set_effects.full_guthans = self.is_wearing_all(FULL_GUTHANS);
+        self.set_effects.full_eclipse_moon = self.is_wearing_all(FULL_ECLIPSE_MOON);
+        self.set_effects.full_inquisitor = self.is_wearing_all(FULL_INQUISITOR);
+        self.set_effects.full_justiciar = self.is_wearing_all(FULL_JUSTICIAR);
+        self.set_effects.full_karils = self.is_wearing_all(FULL_KARILS);
+        self.set_effects.full_obsidian = self.is_wearing_all(FULL_OBSIDIAN);
+        self.set_effects.full_torags = self.is_wearing_all(FULL_TORAGS);
         self.set_effects.full_void = self.is_wearing_full_void();
         self.set_effects.full_elite_void = self.is_wearing_full_elite_void();
         self.set_effects.bloodbark_pieces = BLOODBARK_ARMOR
@@ -749,13 +755,7 @@ impl Player {
 
     pub fn is_wearing_ancient_spectre(&self) -> bool {
         // Check if the player is wearing any type of ancient spectre
-        self.is_wearing_any(vec![
-            ("Ancient sceptre", None),
-            ("Smoke ancient sceptre", None),
-            ("Shadow ancient sceptre", None),
-            ("Blood ancient sceptre", None),
-            ("Ice ancient sceptre", None),
-        ])
+        self.is_wearing_any(ANCIENT_SPECTRES)
     }
 
     pub fn is_wearing_ratbone_weapon(&self) -> bool {

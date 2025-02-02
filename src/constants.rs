@@ -526,3 +526,11 @@ pub const STAT_NAMES: [&str; 9] = [
     "mining",
     "herblore",
 ];
+
+pub const ANCIENT_SPECTRES: [(&str, Option<&str>); 5] = [
+    ("Ancient sceptre", None),
+    ("Smoke ancient sceptre", None),
+    ("Shadow ancient sceptre", None),
+    ("Blood ancient sceptre", None),
+    ("Ice ancient sceptre", None),
+];
