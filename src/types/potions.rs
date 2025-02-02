@@ -36,7 +36,10 @@ pub enum Potion {
 
 impl Potion {
     pub fn boosts_attack(&self) -> bool {
-        self == &Potion::Attack || self == &Potion::SuperAttack || self == &Potion::ZamorakBrewAtt
+        self == &Potion::Attack
+            || self == &Potion::SuperAttack
+            || self == &Potion::ZamorakBrewAtt
+            || self == &Potion::RubyHarvest
     }
 
     pub fn boosts_strength(&self) -> bool {
@@ -44,10 +47,14 @@ impl Potion {
             || self == &Potion::SuperStrength
             || self == &Potion::ZamorakBrewStr
             || self == &Potion::DragonBattleaxe
+            || self == &Potion::BlackWarlock
     }
 
     pub fn boosts_defence(&self) -> bool {
-        self == &Potion::Defence || self == &Potion::SuperDefence || self == &Potion::SaradominBrew
+        self == &Potion::Defence
+            || self == &Potion::SuperDefence
+            || self == &Potion::SaradominBrew
+            || self == &Potion::SapphireGlacialis
     }
 
     pub fn boosts_ranged(&self) -> bool {
@@ -61,6 +68,10 @@ impl Potion {
             || self == &Potion::SaturatedHeart
             || self == &Potion::AncientBrew
             || self == &Potion::ForgottenBrew
+    }
+
+    pub fn boosts_all_melee(&self) -> bool {
+        self == &Potion::SuperCombat || self == &Potion::Moonlight
     }
 
     pub fn boosts_all(&self) -> bool {
@@ -114,7 +125,8 @@ impl PotionBoost {
             | Potion::SuperStrength
             | Potion::SuperDefence
             | Potion::SuperRanging
-            | Potion::SuperMagic => PotionBoost {
+            | Potion::SuperMagic
+            | Potion::SuperCombat => PotionBoost {
                 potion_type: *potion,
                 factor: 15,
                 constant: 5,

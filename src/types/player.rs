@@ -615,6 +615,13 @@ impl Player {
                     self.stats.herblore,
                     PotionStat::Strength,
                 );
+            } else if potion.potion_type == Potion::DragonBattleaxe {
+                potion.calc_dragon_battleaxe_boost(
+                    self.stats.attack,
+                    self.stats.defence,
+                    self.stats.ranged,
+                    self.stats.magic,
+                );
             } else {
                 potion.calc_boost(self.stats.strength);
             }
@@ -959,10 +966,10 @@ impl Player {
             self.potions.ranged = Some(PotionBoost::new(&potion));
         } else if potion.boosts_magic() {
             self.potions.magic = Some(PotionBoost::new(&potion));
-        } else if potion == Potion::SuperCombat {
-            self.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
-            self.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
-            self.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
+        } else if potion.boosts_all_melee() {
+            self.potions.attack = Some(PotionBoost::new(&potion));
+            self.potions.strength = Some(PotionBoost::new(&potion));
+            self.potions.defence = Some(PotionBoost::new(&potion));
         } else if potion.boosts_all() {
             self.potions.attack = Some(PotionBoost::new(&potion));
             self.potions.strength = Some(PotionBoost::new(&potion));
