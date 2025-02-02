@@ -63,10 +63,6 @@ impl Potion {
             || self == &Potion::ForgottenBrew
     }
 
-    pub fn boosts_all_melee(&self) -> bool {
-        self == &Potion::SuperCombat
-    }
-
     pub fn boosts_all(&self) -> bool {
         self == &Potion::SmellingSalts
             || self == &Potion::OverloadMinus
