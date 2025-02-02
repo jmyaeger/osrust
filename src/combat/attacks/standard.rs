@@ -32,10 +32,10 @@ impl AttackInfo {
         };
         AttackInfo {
             combat_type,
-            max_att_roll: player.att_rolls[&combat_type],
-            max_def_roll: monster.def_rolls[&combat_type],
+            max_att_roll: player.att_rolls.get(combat_type),
+            max_def_roll: monster.def_rolls.get(combat_type),
             min_hit,
-            max_hit: player.max_hits[&combat_type],
+            max_hit: player.max_hits.get(combat_type),
         }
     }
 
@@ -172,9 +172,9 @@ pub fn fang_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
-    let max_att_roll = player.att_rolls[&combat_type];
-    let max_def_roll = monster.def_rolls[&combat_type];
-    let true_max_hit = player.max_hits[&combat_type];
+    let max_att_roll = player.att_rolls.get(combat_type);
+    let max_def_roll = monster.def_rolls.get(combat_type);
+    let true_max_hit = player.max_hits.get(combat_type);
 
     // Fang rolls from 15% of max hit to max_hit - 15%
     let min_hit = true_max_hit * 15 / 100;
@@ -281,7 +281,7 @@ pub fn veracs_flail_attack(
     let combat_type = player.combat_type();
     if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
         // Set effect rolls 25% chance to guarantee hit (minimum 1 damage)
-        let mut hit = Hit::accurate(1 + damage_roll(1, player.max_hits[&combat_type] + 1, rng));
+        let mut hit = Hit::accurate(1 + damage_roll(1, player.max_hits.get(combat_type) + 1, rng));
         hit.apply_transforms(player, monster, rng, limiter);
         hit
     } else {
@@ -379,7 +379,7 @@ pub fn dawnbringer_attack(
     rng: &mut ThreadRng,
     _: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let max_hit = player.max_hits[&player.combat_type()];
+    let max_hit = player.max_hits.get(player.combat_type());
 
     // Guaranteed to hit because it can only be used on Verzik
     let mut damage = damage_roll(0, max_hit, rng);
@@ -552,7 +552,7 @@ pub fn diamond_bolt_attack(
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(DIAMOND_PROC_CHANCE);
 
-    let base_max_hit = player.max_hits[&player.combat_type()];
+    let base_max_hit = player.max_hits.get(player.combat_type());
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
         base_max_hit * 126 / 100
     } else {
@@ -577,7 +577,7 @@ pub fn onyx_bolt_attack(
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(ONYX_PROC_CHANCE);
 
-    let base_max_hit = player.max_hits[&player.combat_type()];
+    let base_max_hit = player.max_hits.get(player.combat_type());
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
         base_max_hit * 132 / 100
     } else {

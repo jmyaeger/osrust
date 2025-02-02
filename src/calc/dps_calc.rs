@@ -22,7 +22,7 @@ use std::collections::HashMap;
 fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
     // Calculate theoretical hit chance for most weapons
     let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls[&combat_type];
+    let mut max_att_roll = player.att_rolls.get(combat_type);
 
     if using_spec {
         let att_roll_factor = match &player.gear.weapon.name as &str {
@@ -54,18 +54,18 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
 
     let mut def_roll = if using_spec {
         if STAB_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls[&CombatType::Stab]
+            monster.def_rolls.get(CombatType::Stab)
         } else if SLASH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls[&CombatType::Slash]
+            monster.def_rolls.get(CombatType::Slash)
         } else if CRUSH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls[&CombatType::Crush]
+            monster.def_rolls.get(CombatType::Crush)
         } else if MAGIC_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls[&CombatType::Magic]
+            monster.def_rolls.get(CombatType::Magic)
         } else {
-            monster.def_rolls[&combat_type]
+            monster.def_rolls.get(combat_type)
         }
     } else {
-        monster.def_rolls[&combat_type]
+        monster.def_rolls.get(combat_type)
     };
 
     let std_roll = |attack: i32, defence: i32| -> f64 {
@@ -95,13 +95,13 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
 fn get_fang_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
     // Calculate theoretical hit chance for Osmumten's fang outside of ToA
     let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls[&combat_type];
+    let mut max_att_roll = player.att_rolls.get(combat_type);
 
     if using_spec {
         max_att_roll = max_att_roll * 3 / 2;
     }
 
-    let mut def_roll = monster.def_rolls[&combat_type];
+    let mut def_roll = monster.def_rolls.get(combat_type);
 
     let std_roll = |attack: i32, defence: i32| -> f64 {
         if attack > defence {
@@ -171,8 +171,8 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
 
     if player.combat_type() == CombatType::Magic && player.is_wearing("Brimstone ring", None) {
         let mut monster_copy = monster.clone();
-        let def_roll = monster.def_rolls[&CombatType::Magic] * 9 / 10;
-        monster_copy.def_rolls.insert(CombatType::Magic, def_roll);
+        let def_roll = monster.def_rolls.get(CombatType::Magic) * 9 / 10;
+        monster_copy.def_rolls.set(CombatType::Magic, def_roll);
         hit_chance =
             hit_chance * 0.75 + get_normal_accuracy(player, &monster_copy, using_spec) * 0.25;
     }
@@ -239,7 +239,7 @@ pub fn get_distribution(
     let (min_hit, max_hit) = if using_spec {
         get_spec_min_max_hit(player, monster)
     } else {
-        (0, player.max_hits[&combat_type])
+        (0, player.max_hits.get(combat_type))
     };
 
     let standard_hit_dist = HitDistribution::linear(acc, min_hit, max_hit);
@@ -277,7 +277,7 @@ pub fn get_distribution(
 
     // Clamp damage range between 15-85% if using fang
     if player.is_using_melee() && player.is_wearing("Osmumten's fang", None) {
-        let min_hit = player.max_hits[&CombatType::Stab] * 3 / 20;
+        let min_hit = player.max_hits.get(CombatType::Stab) * 3 / 20;
         dist = AttackDistribution::new(vec![HitDistribution::linear(
             acc,
             min_hit,
@@ -318,11 +318,11 @@ pub fn get_distribution(
         && player.is_wearing_any(vec![("Dragon halberd", None), ("Crystal halberd", None)])
     {
         // Second hit has 75% accuracy
-        let second_hit_att_roll = player.att_rolls[&player.combat_type()] * 3 / 4;
+        let second_hit_att_roll = player.att_rolls.get(player.combat_type()) * 3 / 4;
         let mut player_copy = player.clone();
         player_copy
             .att_rolls
-            .insert(player.combat_type(), second_hit_att_roll);
+            .set(player.combat_type(), second_hit_att_roll);
         calc_active_player_rolls(&mut player_copy, monster);
 
         let second_hit_acc = get_hit_chance(&player_copy, monster, using_spec);
@@ -663,7 +663,7 @@ pub fn get_distribution(
 
 fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
     let combat_type = player.combat_type();
-    let base_max_hit = player.max_hits[&combat_type];
+    let base_max_hit = player.max_hits.get(combat_type);
     match player.gear.weapon.name.as_str() {
         "Soulreaper axe" => {
             let current_stacks = player.boosts.soulreaper_stacks;
@@ -673,7 +673,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
 
             (
                 0,
-                player_copy.max_hits[&combat_type] * (100 + 6 * current_stacks) / 100,
+                player_copy.max_hits.get(combat_type) * (100 + 6 * current_stacks) / 100,
             )
         }
         "Saradomin godsword" | "Zamorak godsword" | "Ancient godsword" | "Dragon halberd"

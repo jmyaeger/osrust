@@ -1,16 +1,15 @@
 use crate::constants::*;
 use crate::types::equipment::{CombatStance, CombatStyle, CombatType};
-use crate::types::monster::Monster;
+use crate::types::monster::{Monster, MonsterAttRolls, MonsterDefRolls};
 use crate::types::player::Player;
 use crate::types::prayers::Prayer;
 use crate::types::spells::{Spell, StandardSpell};
 use crate::utils::math::Fraction;
 use std::cmp::{max, min};
-use std::collections::HashMap;
 
-pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
-    let mut def_rolls = HashMap::new();
-    for combat_type in &[
+pub fn monster_def_rolls(monster: &Monster) -> MonsterDefRolls {
+    let mut def_rolls = MonsterDefRolls::default();
+    for combat_type in [
         (CombatType::Stab, monster.bonuses.defence.stab),
         (CombatType::Slash, monster.bonuses.defence.slash),
         (CombatType::Crush, monster.bonuses.defence.crush),
@@ -25,7 +24,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
                 / 3,
         ),
     ] {
-        def_rolls.insert(
+        def_rolls.set(
             combat_type.0,
             calc_roll(9 + monster.stats.defence.current, combat_type.1),
         );
@@ -33,7 +32,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
 
     // Use magic level for magic defence in most cases
     if !MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
-        def_rolls.insert(
+        def_rolls.set(
             CombatType::Magic,
             calc_roll(
                 9 + monster.stats.magic.current,
@@ -42,7 +41,7 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
         );
     } else {
         // Use defence level in some special cases
-        def_rolls.insert(
+        def_rolls.set(
             CombatType::Magic,
             calc_roll(
                 9 + monster.stats.defence.current,
@@ -53,10 +52,10 @@ pub fn monster_def_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
     def_rolls
 }
 
-pub fn monster_att_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
-    let mut att_rolls = HashMap::new();
+pub fn monster_att_rolls(monster: &Monster) -> MonsterAttRolls {
+    let mut att_rolls = MonsterAttRolls::default();
     let stance_bonus = 9;
-    for combat_type in &[
+    for combat_type in [
         (
             CombatType::Stab,
             monster.stats.attack.current,
@@ -84,14 +83,12 @@ pub fn monster_att_rolls(monster: &Monster) -> HashMap<CombatType, i32> {
         ),
     ] {
         let effective_level = combat_type.1 + stance_bonus;
-        att_rolls.insert(combat_type.0, calc_roll(effective_level, combat_type.2));
+        att_rolls.set(combat_type.0, calc_roll(effective_level, combat_type.2));
     }
     att_rolls
 }
 
 pub fn calc_player_def_rolls(player: &mut Player) {
-    let mut def_rolls = HashMap::new();
-
     let stance_bonus = match player.combat_stance() {
         CombatStance::Defensive | CombatStance::Longrange => 11,
         CombatStance::Controlled => 9,
@@ -107,20 +104,19 @@ pub fn calc_player_def_rolls(player: &mut Player) {
         (CombatType::Crush, player.bonuses.defence.crush),
         (CombatType::Ranged, player.bonuses.defence.ranged),
     ] {
-        def_rolls.insert(
+        player.def_rolls.set(
             combat_type.0,
             calc_roll(effective_level + stance_bonus, combat_type.1),
         );
     }
     // Magic defence uses 70% magic level, 30% defence level
-    def_rolls.insert(
+    player.def_rolls.set(
         CombatType::Magic,
         calc_roll(
             effective_magic * 7 / 10 + effective_level * 3 / 10 + stance_bonus,
             player.bonuses.defence.magic,
         ),
     );
-    player.def_rolls = def_rolls;
 }
 
 fn calc_roll(eff_lvl: u32, bonus: i32) -> i32 {
@@ -171,9 +167,6 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let scaled_max_hit =
         gear_bonus.multiply_to_int(base_max_hit) + obsidian_boost.multiply_to_int(base_max_hit);
 
-    let mut att_rolls = HashMap::new();
-    let mut max_hits = HashMap::new();
-
     let combat_types = [
         (CombatType::Stab, player.bonuses.attack.stab),
         (CombatType::Slash, player.bonuses.attack.slash),
@@ -192,22 +185,19 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         // Silver weapons against vampyres; non-silver weapons return zeros
         (att_roll, max_hit) = apply_vampyre_boost(att_roll, max_hit, player, monster);
 
-        att_rolls.insert(combat_type, att_roll);
-        max_hits.insert(combat_type, max_hit);
+        player.att_rolls.set(combat_type, att_roll);
+        player.max_hits.set(combat_type, max_hit);
     }
 
     // Apply inquisitor boost last
-    att_rolls.insert(
+    player.att_rolls.set(
         CombatType::Crush,
-        att_rolls[&CombatType::Crush] * inquisitor_boost as i32 / 1000,
+        player.att_rolls.get(CombatType::Crush) * inquisitor_boost as i32 / 1000,
     );
-    max_hits.insert(
+    player.max_hits.set(
         CombatType::Crush,
-        max_hits[&CombatType::Crush] * inquisitor_boost / 1000,
+        player.max_hits.get(CombatType::Crush) * inquisitor_boost / 1000,
     );
-
-    player.att_rolls = att_rolls;
-    player.max_hits = max_hits;
 }
 
 pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
@@ -251,9 +241,9 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
         max_hit = player.seercull_spec_max();
     }
 
-    for &combat_type in &[CombatType::Light, CombatType::Standard, CombatType::Heavy] {
-        player.att_rolls.insert(combat_type, att_roll);
-        player.max_hits.insert(combat_type, max_hit);
+    for combat_type in [CombatType::Light, CombatType::Standard, CombatType::Heavy] {
+        player.att_rolls.set(combat_type, att_roll);
+        player.max_hits.set(combat_type, max_hit);
     }
 }
 
@@ -358,8 +348,8 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         max_hit = max_hit * 11 / 10;
     }
 
-    player.att_rolls.insert(CombatType::Magic, att_roll);
-    player.max_hits.insert(CombatType::Magic, max_hit);
+    player.att_rolls.set(CombatType::Magic, att_roll);
+    player.max_hits.set(CombatType::Magic, max_hit);
 }
 
 fn calc_eff_melee_lvls(player: &Player) -> (u32, u32) {

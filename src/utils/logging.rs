@@ -40,19 +40,19 @@ impl FightLogger {
             debug!("Player's active combat style: {}", player.combat_type());
             debug!(
                 "Player's max attack roll: {}",
-                player.att_rolls[&player.combat_type()]
+                player.att_rolls.get(player.combat_type())
             );
             debug!(
                 "Player's max hit: {}",
-                player.max_hits[&player.combat_type()]
+                player.max_hits.get(player.combat_type())
             );
             debug!(
                 "Player's max defence rolls\n: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n", 
-                player.def_rolls[&CombatType::Stab],
-                player.def_rolls[&CombatType::Slash],
-                player.def_rolls[&CombatType::Crush],
-                player.def_rolls[&CombatType::Ranged],
-                player.def_rolls[&CombatType::Magic]
+                player.def_rolls.get(CombatType::Stab),
+                player.def_rolls.get(CombatType::Slash),
+                player.def_rolls.get(CombatType::Crush),
+                player.def_rolls.get(CombatType::Ranged),
+                player.def_rolls.get(CombatType::Magic)
             );
             debug!("Player's stats (with boosts):");
             debug!("Attack: {}", player.stats.attack.current);
@@ -164,11 +164,11 @@ impl FightLogger {
 
             debug!(
                 "Monster's max attack rolls: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
-                monster.att_rolls[&CombatType::Stab],
-                monster.att_rolls[&CombatType::Slash],
-                monster.att_rolls[&CombatType::Crush],
-                monster.att_rolls[&CombatType::Ranged],
-                monster.att_rolls[&CombatType::Magic]
+                monster.att_rolls.get(CombatType::Stab),
+                monster.att_rolls.get(CombatType::Slash),
+                monster.att_rolls.get(CombatType::Crush),
+                monster.att_rolls.get(CombatType::Ranged),
+                monster.att_rolls.get(CombatType::Magic)
             );
             if let Some(max_hits) = &monster.max_hits {
                 debug!(
@@ -184,13 +184,13 @@ impl FightLogger {
             }
             debug!(
                 "Monster's max defence rolls: {} (Stab), {} (Slash), {} (Crush), {} (Light), {} (Standard), {} (Heavy), {} (Magic)\n", 
-                monster.def_rolls[&CombatType::Stab],
-                monster.def_rolls[&CombatType::Slash],
-                monster.def_rolls[&CombatType::Crush],
-                monster.def_rolls[&CombatType::Light],
-                monster.def_rolls[&CombatType::Standard],
-                monster.def_rolls[&CombatType::Heavy],
-                monster.def_rolls[&CombatType::Magic]
+                monster.def_rolls.get(CombatType::Stab),
+                monster.def_rolls.get(CombatType::Slash),
+                monster.def_rolls.get(CombatType::Crush),
+                monster.def_rolls.get(CombatType::Light),
+                monster.def_rolls.get(CombatType::Standard),
+                monster.def_rolls.get(CombatType::Heavy),
+                monster.def_rolls.get(CombatType::Magic)
             );
         }
     }

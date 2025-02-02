@@ -58,8 +58,11 @@ fn simulate_single_way() {
     // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
-    println!("Max hit: {}", player.max_hits[&player.combat_type()]);
-    println!("Max att roll: {}", player.att_rolls[&player.combat_type()]);
+    println!("Max hit: {}", player.max_hits.get(player.combat_type()));
+    println!(
+        "Max att roll: {}",
+        player.att_rolls.get(player.combat_type())
+    );
 
     let simulation = SingleWayFight::new(player, monster);
     let stats = simulate_n_fights(Box::new(simulation), 1000000);

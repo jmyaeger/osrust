@@ -113,9 +113,9 @@ pub struct GearSwitch {
     pub set_effects: SetEffects,
     pub attack: AttackFn,
     pub spec: SpecialAttackFn,
-    pub att_rolls: HashMap<CombatType, i32>,
-    pub max_hits: HashMap<CombatType, u32>,
-    pub def_rolls: HashMap<CombatType, i32>,
+    pub att_rolls: PlayerAttRolls,
+    pub max_hits: PlayerMaxHits,
+    pub def_rolls: PlayerDefRolls,
 }
 
 impl GearSwitch {
@@ -191,6 +191,135 @@ pub struct PlayerAttrs {
     pub spell: Option<spells::Spell>,
 }
 
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct PlayerAttRolls {
+    stab: i32,
+    slash: i32,
+    crush: i32,
+    light: i32,
+    standard: i32,
+    heavy: i32,
+    magic: i32,
+}
+
+impl PlayerAttRolls {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn get(&self, combat_type: CombatType) -> i32 {
+        match combat_type {
+            CombatType::Stab => self.stab,
+            CombatType::Slash => self.slash,
+            CombatType::Crush => self.crush,
+            CombatType::Light => self.light,
+            CombatType::Standard => self.standard,
+            CombatType::Heavy => self.heavy,
+            CombatType::Ranged => panic!("Players do not have generic ranged attack rolls"),
+            CombatType::Magic => self.magic,
+            CombatType::None => 0,
+        }
+    }
+
+    pub fn set(&mut self, combat_type: CombatType, value: i32) {
+        match combat_type {
+            CombatType::Stab => self.stab = value,
+            CombatType::Slash => self.slash = value,
+            CombatType::Crush => self.crush = value,
+            CombatType::Light => self.light = value,
+            CombatType::Standard => self.standard = value,
+            CombatType::Heavy => self.heavy = value,
+            CombatType::Ranged => panic!("Players do not have generic ranged attack rolls"),
+            CombatType::Magic => self.magic = value,
+            CombatType::None => {}
+        }
+    }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct PlayerDefRolls {
+    stab: i32,
+    slash: i32,
+    crush: i32,
+    ranged: i32,
+    magic: i32,
+}
+
+impl PlayerDefRolls {
+    pub fn get(&self, combat_type: CombatType) -> i32 {
+        match combat_type {
+            CombatType::Stab => self.stab,
+            CombatType::Slash => self.slash,
+            CombatType::Crush => self.crush,
+            CombatType::Ranged => self.ranged,
+            CombatType::Light => self.ranged,
+            CombatType::Standard => self.ranged,
+            CombatType::Heavy => self.ranged,
+            CombatType::Magic => self.magic,
+            CombatType::None => 0,
+        }
+    }
+
+    pub fn set(&mut self, combat_type: CombatType, value: i32) {
+        match combat_type {
+            CombatType::Stab => self.stab = value,
+            CombatType::Slash => self.slash = value,
+            CombatType::Crush => self.crush = value,
+            CombatType::Ranged => self.ranged = value,
+            CombatType::Light => self.ranged = value,
+            CombatType::Standard => self.ranged = value,
+            CombatType::Heavy => self.ranged = value,
+            CombatType::Magic => self.magic = value,
+            CombatType::None => {}
+        }
+    }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct PlayerMaxHits {
+    stab: u32,
+    slash: u32,
+    crush: u32,
+    light: u32,
+    standard: u32,
+    heavy: u32,
+    magic: u32,
+}
+
+impl PlayerMaxHits {
+    pub fn get(&self, combat_type: CombatType) -> u32 {
+        match combat_type {
+            CombatType::Stab => self.stab,
+            CombatType::Slash => self.slash,
+            CombatType::Crush => self.crush,
+            CombatType::Light => self.light,
+            CombatType::Standard => self.standard,
+            CombatType::Heavy => self.heavy,
+            CombatType::Ranged => self.standard, // All ranged max hits are the same
+            CombatType::Magic => self.magic,
+            CombatType::None => 0,
+        }
+    }
+
+    pub fn set(&mut self, combat_type: CombatType, value: u32) {
+        match combat_type {
+            CombatType::Stab => self.stab = value,
+            CombatType::Slash => self.slash = value,
+            CombatType::Crush => self.crush = value,
+            CombatType::Light => self.light = value,
+            CombatType::Standard => self.standard = value,
+            CombatType::Heavy => self.heavy = value,
+            CombatType::Ranged => {
+                self.standard = value;
+                self.light = value;
+                self.heavy = value;
+            }
+            CombatType::Magic => self.magic = value,
+            CombatType::None => {}
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,
@@ -202,9 +331,9 @@ pub struct Player {
     pub active_effects: Vec<CombatEffect>,
     pub set_effects: SetEffects,
     pub attrs: PlayerAttrs,
-    pub att_rolls: HashMap<CombatType, i32>,
-    pub max_hits: HashMap<CombatType, u32>,
-    pub def_rolls: HashMap<CombatType, i32>,
+    pub att_rolls: PlayerAttRolls,
+    pub max_hits: PlayerMaxHits,
+    pub def_rolls: PlayerDefRolls,
     pub attack: AttackFn,
     pub spec: SpecialAttackFn,
     pub switches: Vec<GearSwitch>,
@@ -212,11 +341,6 @@ pub struct Player {
 
 impl Default for Player {
     fn default() -> Self {
-        // Set all roll values to zero by default
-        let att_rolls = Vec::from(DEFAULT_ATTACK_ROLLS).into_iter().collect();
-        let max_hits = Vec::from(DEFAULT_MAX_HITS).into_iter().collect();
-        let def_rolls = Vec::from(DEFAULT_DEF_ROLLS).into_iter().collect();
-
         Self {
             stats: PlayerStats::default(),
             gear: Gear::default(),
@@ -227,9 +351,9 @@ impl Default for Player {
             active_effects: Vec::new(),
             set_effects: SetEffects::default(),
             attrs: PlayerAttrs::default(),
-            att_rolls,
-            max_hits,
-            def_rolls,
+            att_rolls: PlayerAttRolls::default(),
+            max_hits: PlayerMaxHits::default(),
+            def_rolls: PlayerDefRolls::default(),
             attack: standard_attack,
             spec: standard_attack,
             switches: Vec::new(),
@@ -594,12 +718,9 @@ impl Player {
                 self.set_effects = switch.set_effects;
                 self.attack = switch.attack;
                 self.spec = switch.spec;
-                self.att_rolls.clear();
-                self.att_rolls.extend(switch.att_rolls.iter());
-                self.max_hits.clear();
-                self.max_hits.extend(switch.max_hits.iter());
-                self.def_rolls.clear();
-                self.def_rolls.extend(switch.def_rolls.iter());
+                self.att_rolls = switch.att_rolls;
+                self.max_hits = switch.max_hits;
+                self.def_rolls = switch.def_rolls;
 
                 return;
             }
@@ -1020,39 +1141,13 @@ fn parse_player_data(data: String) -> PlayerStats {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::types::equipment::{CombatStyle, CombatType, StrengthBonus, StyleBonus};
+    use crate::types::equipment::{CombatStyle, StrengthBonus, StyleBonus};
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
-    use std::collections::HashMap;
 
     #[test]
     fn test_default_player() {
         let player = Player::new();
-
-        let mut att_rolls = HashMap::new();
-        att_rolls.insert(CombatType::Stab, 0);
-        att_rolls.insert(CombatType::Slash, 0);
-        att_rolls.insert(CombatType::Crush, 0);
-        att_rolls.insert(CombatType::Light, 0);
-        att_rolls.insert(CombatType::Standard, 0);
-        att_rolls.insert(CombatType::Heavy, 0);
-        att_rolls.insert(CombatType::Magic, 0);
-
-        let mut max_hits = HashMap::new();
-        max_hits.insert(CombatType::Stab, 0);
-        max_hits.insert(CombatType::Slash, 0);
-        max_hits.insert(CombatType::Crush, 0);
-        max_hits.insert(CombatType::Light, 0);
-        max_hits.insert(CombatType::Standard, 0);
-        max_hits.insert(CombatType::Heavy, 0);
-        max_hits.insert(CombatType::Magic, 0);
-
-        let mut def_rolls = HashMap::new();
-        def_rolls.insert(CombatType::Stab, 0);
-        def_rolls.insert(CombatType::Slash, 0);
-        def_rolls.insert(CombatType::Crush, 0);
-        def_rolls.insert(CombatType::Ranged, 0);
-        def_rolls.insert(CombatType::Magic, 0);
 
         assert_eq!(player.stats, PlayerStats::default());
         assert_eq!(player.gear, Gear::default());
@@ -1062,9 +1157,9 @@ mod test {
         assert_eq!(player.boosts, StatusBoosts::default());
         assert_eq!(player.active_effects, Vec::new());
         assert_eq!(player.set_effects, SetEffects::default());
-        assert_eq!(player.att_rolls, att_rolls);
-        assert_eq!(player.max_hits, max_hits);
-        assert_eq!(player.def_rolls, def_rolls);
+        assert_eq!(player.att_rolls, PlayerAttRolls::default());
+        assert_eq!(player.max_hits, PlayerMaxHits::default());
+        assert_eq!(player.def_rolls, PlayerDefRolls::default());
         assert!(player.attrs.name.is_none());
         assert_eq!(player.attrs.active_style, CombatStyle::Punch);
         assert!(player.attrs.spell.is_none());

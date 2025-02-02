@@ -92,7 +92,7 @@ fn demonbane_melee_spec(
     let mut info = AttackInfo::new(player, monster);
 
     // Spec always rolls against stab
-    info.max_def_roll = monster.def_rolls[&CombatType::Stab];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Stab);
 
     let mut hit = base_attack(&info, rng);
 
@@ -144,7 +144,7 @@ pub fn ancient_gs_spec(
     info.max_hit = info.max_hit * 11 / 10;
 
     // Spec always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 
@@ -234,7 +234,7 @@ pub fn sgs_spec(
     info.max_hit = info.max_hit * 11 / 10;
 
     // Spec always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 
@@ -263,7 +263,7 @@ pub fn bgs_spec(
     info.max_hit = (info.max_hit * 11 / 10) * 11 / 10;
 
     // Spec always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 
@@ -308,7 +308,7 @@ pub fn bulwark_spec(
     info.max_att_roll = info.max_att_roll * 6 / 5;
 
     // Spec always rolls against crush
-    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
     let mut hit = base_attack(&info, rng);
 
@@ -385,7 +385,7 @@ pub fn crystal_halberd_spec(
     info.max_hit = info.max_hit * 11 / 10;
 
     // Spec always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 
@@ -497,7 +497,7 @@ pub fn ancient_mace_spec(
     let mut info = AttackInfo::new(player, monster);
 
     // Always rolls against crush
-    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -584,7 +584,7 @@ pub fn dragon_scimitar_spec(
     info.max_att_roll = info.max_att_roll * 5 / 4;
 
     // Always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -699,20 +699,18 @@ pub fn acb_spec(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
-    let old_att_roll = player.att_rolls[&CombatType::Ranged];
+    let old_att_roll = player.att_rolls.get(CombatType::Ranged);
     player.boosts.acb_spec = true;
 
     // Double accuracy
-    player
-        .att_rolls
-        .insert(CombatType::Ranged, old_att_roll * 2);
+    player.att_rolls.set(CombatType::Ranged, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    player.att_rolls.insert(CombatType::Ranged, old_att_roll);
+    player.att_rolls.set(CombatType::Ranged, old_att_roll);
     player.boosts.acb_spec = false;
 
     hit
@@ -725,20 +723,18 @@ pub fn zcb_spec(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
-    let old_att_roll = player.att_rolls[&CombatType::Ranged];
+    let old_att_roll = player.att_rolls.get(CombatType::Ranged);
     player.boosts.zcb_spec = true;
 
     // Double accuracy
-    player
-        .att_rolls
-        .insert(CombatType::Ranged, old_att_roll * 2);
+    player.att_rolls.set(CombatType::Ranged, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    player.att_rolls.insert(CombatType::Ranged, old_att_roll);
+    player.att_rolls.set(CombatType::Ranged, old_att_roll);
     player.boosts.zcb_spec = false;
 
     hit
@@ -757,7 +753,7 @@ pub fn ags_spec(
     info.max_att_roll *= 2;
 
     // Always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -793,7 +789,7 @@ pub fn dragon_longsword_spec(
     info.max_hit = info.max_hit * 5 / 4;
 
     // Always rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -816,7 +812,7 @@ pub fn dragon_mace_spec(
     info.max_hit = info.max_hit * 3 / 2;
 
     // Always rolls against crush
-    info.max_def_roll = monster.def_rolls[&CombatType::Crush];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -839,7 +835,7 @@ pub fn dragon_sword_spec(
     info.max_hit = info.max_hit * 5 / 4;
 
     // Always rolls against stab
-    info.max_def_roll = monster.def_rolls[&CombatType::Stab];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Stab);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -920,7 +916,7 @@ pub fn sara_blessed_sword_spec(
     info.max_hit = info.max_hit * 5 / 4;
 
     // Rolls against magic
-    info.max_def_roll = monster.def_rolls[&CombatType::Magic];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Magic);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -937,8 +933,8 @@ pub fn voidwaker_spec(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Rolls between 50-150% of max hit, always accurate
-    let min_hit = player.max_hits[&CombatType::Stab] / 2;
-    let max_hit = player.max_hits[&CombatType::Stab] * 3 / 2;
+    let min_hit = player.max_hits.get(CombatType::Stab) / 2;
+    let max_hit = player.max_hits.get(CombatType::Stab) * 3 / 2;
 
     let mut hit = Hit::accurate(damage_roll(min_hit, max_hit, rng));
     hit.apply_transforms(player, monster, rng, limiter);
@@ -995,7 +991,7 @@ pub fn abyssal_dagger_spec(
     info.max_att_roll = info.max_att_roll * 5 / 4;
 
     // Rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
     if hit.success {
@@ -1061,7 +1057,7 @@ pub fn dragon_claw_spec(
     let mut info = AttackInfo::new(player, monster);
 
     // Rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let modified_max_hit = info.max_hit - 1;
 
@@ -1255,7 +1251,7 @@ pub fn dragon_dagger_spec(
     info.max_att_roll = info.max_att_roll * 115 / 100;
 
     // Rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     // Rolls two independent hits
     let mut hit1 = base_attack(&info, rng);
@@ -1325,7 +1321,7 @@ pub fn sara_sword_spec(
     info.max_hit = info.max_hit * 11 / 10;
 
     // Rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 
@@ -1351,7 +1347,7 @@ pub fn zgs_spec(
     info.max_hit = info.max_hit * 11 / 10;
 
     // Rolls against slash
-    info.max_def_roll = monster.def_rolls[&CombatType::Slash];
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     let mut hit = base_attack(&info, rng);
 

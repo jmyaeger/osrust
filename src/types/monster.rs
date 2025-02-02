@@ -12,7 +12,6 @@ use rand::Rng;
 use rusqlite::{params, Result};
 use serde::Deserialize;
 use std::cmp::{max, min};
-use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use strum_macros::Display;
@@ -285,62 +284,107 @@ where
     Ok(attack_types)
 }
 
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct MonsterAttRolls {
+    pub stab: i32,
+    pub slash: i32,
+    pub crush: i32,
+    pub ranged: i32,
+    pub magic: i32,
+}
+
+impl MonsterAttRolls {
+    pub fn get(&self, combat_type: CombatType) -> i32 {
+        match combat_type {
+            CombatType::Stab => self.stab,
+            CombatType::Slash => self.slash,
+            CombatType::Crush => self.crush,
+            CombatType::Light => self.ranged,
+            CombatType::Standard => self.ranged,
+            CombatType::Heavy => self.ranged,
+            CombatType::Ranged => self.ranged,
+            CombatType::Magic => self.magic,
+            CombatType::None => 0,
+        }
+    }
+
+    pub fn set(&mut self, combat_type: CombatType, value: i32) {
+        match combat_type {
+            CombatType::Stab => self.stab = value,
+            CombatType::Slash => self.slash = value,
+            CombatType::Crush => self.crush = value,
+            CombatType::Light => self.ranged = value,
+            CombatType::Standard => self.ranged = value,
+            CombatType::Heavy => self.ranged = value,
+            CombatType::Ranged => self.ranged = value,
+            CombatType::Magic => self.magic = value,
+            CombatType::None => {}
+        }
+    }
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+pub struct MonsterDefRolls {
+    pub stab: i32,
+    pub slash: i32,
+    pub crush: i32,
+    pub light: i32,
+    pub standard: i32,
+    pub heavy: i32,
+    pub magic: i32,
+}
+
+impl MonsterDefRolls {
+    pub fn get(&self, combat_type: CombatType) -> i32 {
+        match combat_type {
+            CombatType::Stab => self.stab,
+            CombatType::Slash => self.slash,
+            CombatType::Crush => self.crush,
+            CombatType::Light => self.light,
+            CombatType::Standard => self.standard,
+            CombatType::Heavy => self.heavy,
+            CombatType::Ranged => panic!("Monsters do not have generic ranged defence rolls"),
+            CombatType::Magic => self.magic,
+            CombatType::None => 0,
+        }
+    }
+
+    pub fn set(&mut self, combat_type: CombatType, value: i32) {
+        match combat_type {
+            CombatType::Stab => self.stab = value,
+            CombatType::Slash => self.slash = value,
+            CombatType::Crush => self.crush = value,
+            CombatType::Light => self.light = value,
+            CombatType::Standard => self.standard = value,
+            CombatType::Heavy => self.heavy = value,
+            CombatType::Ranged => panic!("Monsters do not have generic ranged defence rolls"),
+            CombatType::Magic => self.magic = value,
+            CombatType::None => {}
+        }
+    }
+}
+
 // Overall monster struct
-#[derive(Debug, PartialEq, Clone, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Deserialize, Default)]
 pub struct Monster {
     pub info: MonsterInfo,
     pub stats: MonsterStats,
     pub bonuses: MonsterBonuses,
     pub immunities: Immunities,
     #[serde(skip)]
-    pub def_rolls: HashMap<CombatType, i32>,
+    pub def_rolls: MonsterDefRolls,
     #[serde(skip)]
-    pub base_def_rolls: HashMap<CombatType, i32>,
+    pub base_def_rolls: MonsterDefRolls,
     #[serde(default)]
     #[serde(rename(deserialize = "max_hit"))]
     #[serde(deserialize_with = "deserialize_max_hits")]
     pub max_hits: Option<Vec<MonsterMaxHit>>,
     #[serde(skip)]
-    pub base_att_rolls: HashMap<CombatType, i32>,
+    pub base_att_rolls: MonsterAttRolls,
     #[serde(skip)]
-    pub att_rolls: HashMap<CombatType, i32>,
+    pub att_rolls: MonsterAttRolls,
     #[serde(skip)]
     pub active_effects: Vec<CombatEffect>, // Will move poison/venom here
-}
-
-impl Default for Monster {
-    fn default() -> Self {
-        // Default to zero for all combat rolls
-        let mut def_rolls = HashMap::new();
-        def_rolls.insert(CombatType::Stab, 0);
-        def_rolls.insert(CombatType::Slash, 0);
-        def_rolls.insert(CombatType::Crush, 0);
-        def_rolls.insert(CombatType::Light, 0);
-        def_rolls.insert(CombatType::Standard, 0);
-        def_rolls.insert(CombatType::Heavy, 0);
-        def_rolls.insert(CombatType::Magic, 0);
-
-        // Default to zero for all attack rolls
-        let mut att_rolls = HashMap::new();
-        att_rolls.insert(CombatType::Stab, 0);
-        att_rolls.insert(CombatType::Slash, 0);
-        att_rolls.insert(CombatType::Crush, 0);
-        att_rolls.insert(CombatType::Ranged, 0);
-        att_rolls.insert(CombatType::Magic, 0);
-
-        Self {
-            info: MonsterInfo::default(),
-            stats: MonsterStats::default(),
-            bonuses: MonsterBonuses::default(),
-            immunities: Immunities::default(),
-            def_rolls: def_rolls.clone(),
-            base_def_rolls: def_rolls.clone(),
-            max_hits: None,
-            base_att_rolls: att_rolls.clone(),
-            att_rolls: att_rolls.clone(),
-            active_effects: Vec::new(),
-        }
-    }
 }
 
 impl Monster {
@@ -434,15 +478,15 @@ impl Monster {
         );
 
         let max_att_roll = match attack_type {
-            AttackType::Stab => self.att_rolls[&CombatType::Stab],
-            AttackType::Slash => self.att_rolls[&CombatType::Slash],
-            AttackType::Crush => self.att_rolls[&CombatType::Crush],
-            AttackType::Ranged => self.att_rolls[&CombatType::Ranged],
-            AttackType::Magic => self.att_rolls[&CombatType::Magic],
+            AttackType::Stab => self.att_rolls.get(CombatType::Stab),
+            AttackType::Slash => self.att_rolls.get(CombatType::Slash),
+            AttackType::Crush => self.att_rolls.get(CombatType::Crush),
+            AttackType::Ranged => self.att_rolls.get(CombatType::Ranged),
+            AttackType::Magic => self.att_rolls.get(CombatType::Magic),
             AttackType::Melee => {
-                (self.att_rolls[&CombatType::Stab]
-                    + self.att_rolls[&CombatType::Slash]
-                    + self.att_rolls[&CombatType::Crush])
+                (self.att_rolls.get(CombatType::Stab)
+                    + self.att_rolls.get(CombatType::Slash)
+                    + self.att_rolls.get(CombatType::Crush))
                     / 3
             }
             AttackType::Special => panic!("Special attack type not supported"),
@@ -452,15 +496,15 @@ impl Monster {
         let att_roll = rng.gen_range(0..=max_att_roll);
 
         let max_def_roll = match attack_type {
-            AttackType::Stab => player.def_rolls[&CombatType::Stab],
-            AttackType::Slash => player.def_rolls[&CombatType::Slash],
-            AttackType::Crush => player.def_rolls[&CombatType::Crush],
-            AttackType::Ranged => player.def_rolls[&CombatType::Ranged],
-            AttackType::Magic => player.def_rolls[&CombatType::Magic],
+            AttackType::Stab => player.def_rolls.get(CombatType::Stab),
+            AttackType::Slash => player.def_rolls.get(CombatType::Slash),
+            AttackType::Crush => player.def_rolls.get(CombatType::Crush),
+            AttackType::Ranged => player.def_rolls.get(CombatType::Ranged),
+            AttackType::Magic => player.def_rolls.get(CombatType::Magic),
             AttackType::Melee => {
-                (player.def_rolls[&CombatType::Stab]
-                    + player.def_rolls[&CombatType::Slash]
-                    + player.def_rolls[&CombatType::Crush])
+                (player.def_rolls.get(CombatType::Stab)
+                    + player.def_rolls.get(CombatType::Slash)
+                    + player.def_rolls.get(CombatType::Crush))
                     / 3
             }
             AttackType::Special => panic!("Special attack type not supported"),
@@ -565,9 +609,9 @@ impl Monster {
             CombatType::Heavy,
             CombatType::Magic,
         ] {
-            self.def_rolls.insert(
+            self.def_rolls.set(
                 defence_type,
-                self.base_def_rolls[&defence_type] * toa_level_bonus as i32 / 1000,
+                self.base_def_rolls.get(defence_type) * toa_level_bonus as i32 / 1000,
             );
         }
     }
@@ -916,7 +960,7 @@ mod tests {
         baba.info.toa_level = 400;
         baba.scale_toa();
         assert_eq!(baba.stats.hitpoints.base, 990);
-        assert_eq!(baba.def_rolls[&CombatType::Stab], 33321);
+        assert_eq!(baba.def_rolls.get(CombatType::Stab), 33321);
     }
 
     #[test]

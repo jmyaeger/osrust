@@ -10,70 +10,316 @@ mod fixtures;
 use fixtures::*;
 
 #[rstest]
-#[case(max_melee_player(), ammonite_crab(), &CombatType::Stab, 33525, 56)]
-#[case(mid_level_melee_player(), ammonite_crab(), &CombatType::Slash, 24125, 39)]
-#[case(max_melee_dhl_player(), vorkath(), &CombatType::Stab, 38880, 60)]
-#[case(max_melee_keris_partisan_player(), kalphite(), &CombatType::Crush, 27714, 59)]
-#[case(max_melee_blue_keris_partisan_player(), kalphite(), &CombatType::Crush, 36859, 59)]
-#[case(mid_level_melee_barronite_player(), chaos_golem(), &CombatType::Crush, 18600, 35)]
-#[case(max_melee_ursine_chainmace_player(), vetion(), &CombatType::Crush, 44700, 78)]
-#[case(max_melee_ursine_chainmace_player(), ammonite_crab(), &CombatType::Crush, 29800, 52)]
-#[case(max_melee_silverlight_player(), kril(), &CombatType::Slash, 21456, 59)]
-#[case(max_melee_darklight_player(), kril(), &CombatType::Slash, 21754, 59)]
-#[case(max_melee_arclight_player(), kril(), &CombatType::Slash, 42554, 61)]
-#[case(max_melee_silverlight_player(), duke(), &CombatType::Slash, 21456, 52)]
-#[case(max_melee_darklight_player(), duke(), &CombatType::Slash, 21754, 52)]
-#[case(max_melee_arclight_player(), duke(), &CombatType::Slash, 37297, 53)]
-#[case(mid_level_melee_lbba_player(), kurask(), &CombatType::Slash, 22692, 49)]
-#[case(max_melee_colossal_blade_player(), aberrant_spectre(), &CombatType::Slash, 29651, 60)]
-#[case(max_melee_colossal_blade_player(), abhorrent_spectre(), &CombatType::Slash, 29651, 62)]
-#[case(max_melee_colossal_blade_player(), general_graardor(), &CombatType::Slash, 29651, 64)]
-#[case(max_melee_colossal_blade_player(), rune_dragon(), &CombatType::Slash, 29651, 66)]
-#[case(mid_level_melee_bone_mace_player(), scurrius(), &CombatType::Crush, 21080, 44)]
-#[case(slayer(max_melee_player()), ammonite_crab(), &CombatType::Stab, 39112, 63)]
-#[case(slayer(mid_level_melee_player()), ammonite_crab(), &CombatType::Slash, 28145, 45)]
-#[case(slayer(max_melee_dhl_player()), vorkath(), &CombatType::Stab, 45360, 67)]
-#[case(slayer(max_melee_keris_partisan_player()), kalphite(), &CombatType::Crush, 32333, 66)]
-#[case(slayer(max_melee_blue_keris_partisan_player()), kalphite(), &CombatType::Crush, 43002, 66)]
-#[case(slayer(max_melee_ursine_chainmace_player()), vetion(), &CombatType::Crush, 52149, 87)]
-#[case(slayer(max_melee_silverlight_player()), kril(), &CombatType::Slash, 25032, 64)]
-#[case(slayer(max_melee_darklight_player()), kril(), &CombatType::Slash, 25379, 64)]
-#[case(slayer(max_melee_arclight_player()), kril(), &CombatType::Slash, 49646, 66)]
-#[case(slayer(max_melee_silverlight_player()), duke(), &CombatType::Slash, 25032, 56)]
-#[case(slayer(max_melee_darklight_player()), duke(), &CombatType::Slash, 25379, 56)]
-#[case(slayer(max_melee_arclight_player()), duke(), &CombatType::Slash, 43513, 58)]
-#[case(slayer(mid_level_melee_lbba_player()), kurask(), &CombatType::Slash, 26474, 55)]
-#[case(slayer(max_melee_colossal_blade_player()), aberrant_spectre(), &CombatType::Slash, 34592, 67)]
-#[case(slayer(max_melee_colossal_blade_player()), abhorrent_spectre(), &CombatType::Slash, 34592, 69)]
-#[case(slayer(max_melee_colossal_blade_player()), general_graardor(), &CombatType::Slash, 34592, 71)]
-#[case(slayer(max_melee_colossal_blade_player()), rune_dragon(), &CombatType::Slash, 34592, 73)]
-#[case(slayer(mid_level_melee_bone_mace_player()), scurrius(), &CombatType::Crush, 24593, 49)]
-#[case(salve_ei(max_melee_player()), vorkath(), &CombatType::Stab, 37548, 63)]
-#[case(salve_i(max_melee_player()), vorkath(), &CombatType::Stab, 36505, 61)]
-#[case(salve_ei(mid_level_melee_player()), vorkath(), &CombatType::Slash, 27450, 45)]
-#[case(salve_i(mid_level_melee_player()), vorkath(), &CombatType::Slash, 26687, 44)]
-#[case(salve_ei(max_melee_dhl_player()), vorkath(), &CombatType::Stab, 43416, 68)]
-#[case(salve_ei(max_melee_ursine_chainmace_player()), vetion(), &CombatType::Crush, 49617, 87)]
-#[case(salve_ei(max_melee_colossal_blade_player()), aberrant_spectre(), &CombatType::Slash, 32899, 68)]
-#[case(salve_ei(max_melee_colossal_blade_player()), abhorrent_spectre(), &CombatType::Slash, 32899, 70)]
-#[case(salve_ei(max_melee_colossal_blade_player()), bloat(), &CombatType::Slash, 32899, 74)]
-#[case(salve_ei(slayer(max_melee_dhl_player())), vorkath(), &CombatType::Stab, 43416, 66)]
-#[case(avarice_forinthry(max_melee_player()), revenant_dragon(), &CombatType::Stab, 44253, 74)]
-#[case(avarice_forinthry(max_melee_colossal_blade_player()), revenant_dragon(), &CombatType::Slash, 39023, 84)]
-#[case(avarice_forinthry(max_melee_ursine_chainmace_player()), revenant_dragon(), &CombatType::Crush, 58836, 102)]
-#[case(full_obby_with_sword_player(), ammonite_crab(), &CombatType::Stab, 29174, 47)]
-#[case(salve_ei(full_obby_with_sword_player()), vorkath(), &CombatType::Stab, 31572, 53)]
+#[case(max_melee_player(), ammonite_crab(), CombatType::Stab, 33525, 56)]
+#[case(
+    mid_level_melee_player(),
+    ammonite_crab(),
+    CombatType::Slash,
+    24125,
+    39
+)]
+#[case(max_melee_dhl_player(), vorkath(), CombatType::Stab, 38880, 60)]
+#[case(
+    max_melee_keris_partisan_player(),
+    kalphite(),
+    CombatType::Crush,
+    27714,
+    59
+)]
+#[case(
+    max_melee_blue_keris_partisan_player(),
+    kalphite(),
+    CombatType::Crush,
+    36859,
+    59
+)]
+#[case(
+    mid_level_melee_barronite_player(),
+    chaos_golem(),
+    CombatType::Crush,
+    18600,
+    35
+)]
+#[case(
+    max_melee_ursine_chainmace_player(),
+    vetion(),
+    CombatType::Crush,
+    44700,
+    78
+)]
+#[case(
+    max_melee_ursine_chainmace_player(),
+    ammonite_crab(),
+    CombatType::Crush,
+    29800,
+    52
+)]
+#[case(max_melee_silverlight_player(), kril(), CombatType::Slash, 21456, 59)]
+#[case(max_melee_darklight_player(), kril(), CombatType::Slash, 21754, 59)]
+#[case(max_melee_arclight_player(), kril(), CombatType::Slash, 42554, 61)]
+#[case(max_melee_silverlight_player(), duke(), CombatType::Slash, 21456, 52)]
+#[case(max_melee_darklight_player(), duke(), CombatType::Slash, 21754, 52)]
+#[case(max_melee_arclight_player(), duke(), CombatType::Slash, 37297, 53)]
+#[case(mid_level_melee_lbba_player(), kurask(), CombatType::Slash, 22692, 49)]
+#[case(
+    max_melee_colossal_blade_player(),
+    aberrant_spectre(),
+    CombatType::Slash,
+    29651,
+    60
+)]
+#[case(
+    max_melee_colossal_blade_player(),
+    abhorrent_spectre(),
+    CombatType::Slash,
+    29651,
+    62
+)]
+#[case(
+    max_melee_colossal_blade_player(),
+    general_graardor(),
+    CombatType::Slash,
+    29651,
+    64
+)]
+#[case(
+    max_melee_colossal_blade_player(),
+    rune_dragon(),
+    CombatType::Slash,
+    29651,
+    66
+)]
+#[case(
+    mid_level_melee_bone_mace_player(),
+    scurrius(),
+    CombatType::Crush,
+    21080,
+    44
+)]
+#[case(
+    slayer(max_melee_player()),
+    ammonite_crab(),
+    CombatType::Stab,
+    39112,
+    63
+)]
+#[case(
+    slayer(mid_level_melee_player()),
+    ammonite_crab(),
+    CombatType::Slash,
+    28145,
+    45
+)]
+#[case(slayer(max_melee_dhl_player()), vorkath(), CombatType::Stab, 45360, 67)]
+#[case(
+    slayer(max_melee_keris_partisan_player()),
+    kalphite(),
+    CombatType::Crush,
+    32333,
+    66
+)]
+#[case(
+    slayer(max_melee_blue_keris_partisan_player()),
+    kalphite(),
+    CombatType::Crush,
+    43002,
+    66
+)]
+#[case(
+    slayer(max_melee_ursine_chainmace_player()),
+    vetion(),
+    CombatType::Crush,
+    52149,
+    87
+)]
+#[case(
+    slayer(max_melee_silverlight_player()),
+    kril(),
+    CombatType::Slash,
+    25032,
+    64
+)]
+#[case(
+    slayer(max_melee_darklight_player()),
+    kril(),
+    CombatType::Slash,
+    25379,
+    64
+)]
+#[case(
+    slayer(max_melee_arclight_player()),
+    kril(),
+    CombatType::Slash,
+    49646,
+    66
+)]
+#[case(
+    slayer(max_melee_silverlight_player()),
+    duke(),
+    CombatType::Slash,
+    25032,
+    56
+)]
+#[case(
+    slayer(max_melee_darklight_player()),
+    duke(),
+    CombatType::Slash,
+    25379,
+    56
+)]
+#[case(
+    slayer(max_melee_arclight_player()),
+    duke(),
+    CombatType::Slash,
+    43513,
+    58
+)]
+#[case(
+    slayer(mid_level_melee_lbba_player()),
+    kurask(),
+    CombatType::Slash,
+    26474,
+    55
+)]
+#[case(
+    slayer(max_melee_colossal_blade_player()),
+    aberrant_spectre(),
+    CombatType::Slash,
+    34592,
+    67
+)]
+#[case(
+    slayer(max_melee_colossal_blade_player()),
+    abhorrent_spectre(),
+    CombatType::Slash,
+    34592,
+    69
+)]
+#[case(
+    slayer(max_melee_colossal_blade_player()),
+    general_graardor(),
+    CombatType::Slash,
+    34592,
+    71
+)]
+#[case(
+    slayer(max_melee_colossal_blade_player()),
+    rune_dragon(),
+    CombatType::Slash,
+    34592,
+    73
+)]
+#[case(
+    slayer(mid_level_melee_bone_mace_player()),
+    scurrius(),
+    CombatType::Crush,
+    24593,
+    49
+)]
+#[case(salve_ei(max_melee_player()), vorkath(), CombatType::Stab, 37548, 63)]
+#[case(salve_i(max_melee_player()), vorkath(), CombatType::Stab, 36505, 61)]
+#[case(
+    salve_ei(mid_level_melee_player()),
+    vorkath(),
+    CombatType::Slash,
+    27450,
+    45
+)]
+#[case(
+    salve_i(mid_level_melee_player()),
+    vorkath(),
+    CombatType::Slash,
+    26687,
+    44
+)]
+#[case(
+    salve_ei(max_melee_dhl_player()),
+    vorkath(),
+    CombatType::Stab,
+    43416,
+    68
+)]
+#[case(
+    salve_ei(max_melee_ursine_chainmace_player()),
+    vetion(),
+    CombatType::Crush,
+    49617,
+    87
+)]
+#[case(
+    salve_ei(max_melee_colossal_blade_player()),
+    aberrant_spectre(),
+    CombatType::Slash,
+    32899,
+    68
+)]
+#[case(
+    salve_ei(max_melee_colossal_blade_player()),
+    abhorrent_spectre(),
+    CombatType::Slash,
+    32899,
+    70
+)]
+#[case(
+    salve_ei(max_melee_colossal_blade_player()),
+    bloat(),
+    CombatType::Slash,
+    32899,
+    74
+)]
+#[case(
+    salve_ei(slayer(max_melee_dhl_player())),
+    vorkath(),
+    CombatType::Stab,
+    43416,
+    66
+)]
+#[case(
+    avarice_forinthry(max_melee_player()),
+    revenant_dragon(),
+    CombatType::Stab,
+    44253,
+    74
+)]
+#[case(
+    avarice_forinthry(max_melee_colossal_blade_player()),
+    revenant_dragon(),
+    CombatType::Slash,
+    39023,
+    84
+)]
+#[case(
+    avarice_forinthry(max_melee_ursine_chainmace_player()),
+    revenant_dragon(),
+    CombatType::Crush,
+    58836,
+    102
+)]
+#[case(
+    full_obby_with_sword_player(),
+    ammonite_crab(),
+    CombatType::Stab,
+    29174,
+    47
+)]
+#[case(
+    salve_ei(full_obby_with_sword_player()),
+    vorkath(),
+    CombatType::Stab,
+    31572,
+    53
+)]
 
 fn test_melee_player_rolls(
     #[case] mut player: Player,
     #[case] monster: Monster,
-    #[case] combat_type: &CombatType,
+    #[case] combat_type: CombatType,
     #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
     calc_player_melee_rolls(&mut player, &monster);
-    assert_eq!(player.att_rolls[combat_type], att_roll);
-    assert_eq!(player.max_hits[combat_type], max_hit);
+    assert_eq!(player.att_rolls.get(combat_type), att_roll);
+    assert_eq!(player.max_hits.get(combat_type), max_hit);
 }
 
 #[rstest]
@@ -187,8 +433,8 @@ fn test_ranged_player_rolls(
 ) {
     calc_player_ranged_rolls(&mut player, &monster);
     let combat_type = player.combat_type();
-    assert_eq!(player.att_rolls[&combat_type], att_roll);
-    assert_eq!(player.max_hits[&combat_type], max_hit);
+    assert_eq!(player.att_rolls.get(combat_type), att_roll);
+    assert_eq!(player.max_hits.get(combat_type), max_hit);
 }
 
 #[rstest]
@@ -295,6 +541,6 @@ fn test_magic_player_rolls(
     #[case] max_hit: u32,
 ) {
     calc_player_magic_rolls(&mut player, &monster);
-    assert_eq!(player.att_rolls[&CombatType::Magic], att_roll);
-    assert_eq!(player.max_hits[&CombatType::Magic], max_hit);
+    assert_eq!(player.att_rolls.get(CombatType::Magic), att_roll);
+    assert_eq!(player.max_hits.get(CombatType::Magic), max_hit);
 }
