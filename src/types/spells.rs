@@ -111,27 +111,27 @@ impl StandardSpell {
     pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
             StandardSpell::WindStrike | StandardSpell::WaterStrike | StandardSpell::EarthStrike => {
-                min(8, (player.stats.magic.current + 3) / 4 * 2)
+                strike_spell_max_hit(player)
             }
             StandardSpell::FireStrike => 8,
             StandardSpell::WindBolt | StandardSpell::WaterBolt | StandardSpell::EarthBolt => {
-                min(12, (player.stats.magic.current + 1) / 6 + 6)
+                bolt_spell_max_hit(player)
             }
             StandardSpell::FireBolt => 12,
             StandardSpell::WindBlast | StandardSpell::WaterBlast | StandardSpell::EarthBlast => {
-                min(16, (player.stats.magic.current + 1) / 6 + 6)
+                blast_spell_max_hit(player)
             }
             StandardSpell::CrumbleUndead => 15,
             StandardSpell::FireBlast => 16,
             StandardSpell::WindWave | StandardSpell::WaterWave | StandardSpell::EarthWave => {
-                min(20, player.stats.magic.current / 5 + 5)
+                wave_spell_max_hit(player)
             }
             StandardSpell::FireWave => 20,
             StandardSpell::SaradominStrike => 20,
             StandardSpell::ClawsOfGuthix => 20,
             StandardSpell::FlamesOfZamorak => 20,
             StandardSpell::WindSurge | StandardSpell::WaterSurge | StandardSpell::EarthSurge => {
-                min(24, player.stats.magic.current / 5 + 5)
+                surge_spell_max_hit(player)
             }
             StandardSpell::FireSurge => 24,
             StandardSpell::IbanBlast => 25,
@@ -316,6 +316,26 @@ fn magic_dart_max_hit(player: &Player) -> u32 {
     } else {
         10 + player.stats.magic.current / 10
     }
+}
+
+fn strike_spell_max_hit(player: &Player) -> u32 {
+    min(8, (player.stats.magic.current + 3) / 4 * 2)
+}
+
+fn bolt_spell_max_hit(player: &Player) -> u32 {
+    min(12, (player.stats.magic.current + 1) / 6 + 6)
+}
+
+fn blast_spell_max_hit(player: &Player) -> u32 {
+    min(16, (player.stats.magic.current + 1) / 6 + 6)
+}
+
+fn wave_spell_max_hit(player: &Player) -> u32 {
+    min(20, player.stats.magic.current / 5 + 5)
+}
+
+fn surge_spell_max_hit(player: &Player) -> u32 {
+    min(24, player.stats.magic.current / 5 + 5)
 }
 
 pub fn is_standard_spell(spell: &Spell) -> bool {
