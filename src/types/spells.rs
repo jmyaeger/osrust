@@ -1,5 +1,6 @@
 use crate::types::player::Player;
 use std::cmp::min;
+use strum_macros::Display;
 
 // pub trait Spell: std::fmt::Debug {
 //     fn max_hit(&self, player: &Player) -> u32;
@@ -14,6 +15,17 @@ pub enum Spell {
     Special(SpecialSpell),
 }
 
+impl std::fmt::Display for Spell {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Spell::Standard(spell) => write!(f, "{}", spell),
+            Spell::Ancient(spell) => write!(f, "{}", spell),
+            Spell::Arceuus(spell) => write!(f, "{}", spell),
+            Spell::Special(spell) => write!(f, "{}", spell),
+        }
+    }
+}
+
 impl Spell {
     pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
@@ -23,37 +35,72 @@ impl Spell {
             Spell::Special(spell) => spell.max_hit(player),
         }
     }
+
+    pub fn required_level(&self) -> u32 {
+        match self {
+            Spell::Standard(spell) => spell.required_level(),
+            Spell::Ancient(spell) => spell.required_level(),
+            Spell::Arceuus(spell) => spell.required_level(),
+            Spell::Special(_) => 1,
+        }
+    }
 }
 
-#[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy, Display)]
 pub enum StandardSpell {
     #[default]
     None,
+    #[strum(to_string = "Wind Strike")]
     WindStrike,
+    #[strum(to_string = "Water Strike")]
     WaterStrike,
+    #[strum(to_string = "Earth Strike")]
     EarthStrike,
+    #[strum(to_string = "Fire Strike")]
     FireStrike,
+    #[strum(to_string = "Wind Bolt")]
     WindBolt,
+    #[strum(to_string = "Water Bolt")]
     WaterBolt,
+    #[strum(to_string = "Earth Bolt")]
     EarthBolt,
+    #[strum(to_string = "Fire Bolt")]
     FireBolt,
+    #[strum(to_string = "Wind Blast")]
     WindBlast,
+    #[strum(to_string = "Water Blast")]
     WaterBlast,
+    #[strum(to_string = "Crumble Undead")]
     CrumbleUndead,
+    #[strum(to_string = "Earth Blast")]
     EarthBlast,
+    #[strum(to_string = "Fire Blast")]
     FireBlast,
+    #[strum(to_string = "Wind Wave")]
     WindWave,
+    #[strum(to_string = "Water Wave")]
     WaterWave,
+    #[strum(to_string = "Earth Wave")]
     EarthWave,
+    #[strum(to_string = "Fire Wave")]
     FireWave,
+    #[strum(to_string = "Saradomin Strike")]
     SaradominStrike,
+    #[strum(to_string = "Claws of Guthix")]
     ClawsOfGuthix,
+    #[strum(to_string = "Flames of Zamorak")]
     FlamesOfZamorak,
+    #[strum(to_string = "Wind Surge")]
     WindSurge,
+    #[strum(to_string = "Water Surge")]
     WaterSurge,
+    #[strum(to_string = "Earth Surge")]
     EarthSurge,
+    #[strum(to_string = "Fire Surge")]
     FireSurge,
+    #[strum(to_string = "Iban Blast")]
     IbanBlast,
+    #[strum(to_string = "Magic Dart")]
     MagicDart,
     Bind,
     Snare,
@@ -63,54 +110,224 @@ pub enum StandardSpell {
 impl StandardSpell {
     pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
-            StandardSpell::WindStrike => 2,
-            StandardSpell::WaterStrike => 4,
-            StandardSpell::EarthStrike => 6,
+            StandardSpell::WindStrike => {
+                if player.stats.magic.current < 5 {
+                    2
+                } else if player.stats.magic.current < 9 {
+                    4
+                } else if player.stats.magic.current < 13 {
+                    6
+                } else {
+                    8
+                }
+            }
+            StandardSpell::WaterStrike => {
+                if player.stats.magic.current < 9 {
+                    4
+                } else if player.stats.magic.current < 13 {
+                    6
+                } else {
+                    8
+                }
+            }
+            StandardSpell::EarthStrike => {
+                if player.stats.magic.current < 13 {
+                    6
+                } else {
+                    8
+                }
+            }
             StandardSpell::FireStrike => 8,
-            StandardSpell::WindBolt => 9,
-            StandardSpell::WaterBolt => 10,
-            StandardSpell::EarthBolt => 11,
+            StandardSpell::WindBolt => {
+                if player.stats.magic.current < 23 {
+                    9
+                } else if player.stats.magic.current < 29 {
+                    10
+                } else if player.stats.magic.current < 35 {
+                    11
+                } else {
+                    12
+                }
+            }
+            StandardSpell::WaterBolt => {
+                if player.stats.magic.current < 29 {
+                    10
+                } else if player.stats.magic.current < 35 {
+                    11
+                } else {
+                    12
+                }
+            }
+            StandardSpell::EarthBolt => {
+                if player.stats.magic.current < 35 {
+                    11
+                } else {
+                    12
+                }
+            }
             StandardSpell::FireBolt => 12,
-            StandardSpell::WindBlast => 13,
-            StandardSpell::WaterBlast => 14,
-            StandardSpell::EarthBlast => 15,
+            StandardSpell::WindBlast => {
+                if player.stats.magic.current < 47 {
+                    13
+                } else if player.stats.magic.current < 53 {
+                    14
+                } else if player.stats.magic.current < 59 {
+                    15
+                } else {
+                    16
+                }
+            }
+            StandardSpell::WaterBlast => {
+                if player.stats.magic.current < 53 {
+                    14
+                } else if player.stats.magic.current < 59 {
+                    15
+                } else {
+                    16
+                }
+            }
+            StandardSpell::EarthBlast => {
+                if player.stats.magic.current < 59 {
+                    15
+                } else {
+                    16
+                }
+            }
             StandardSpell::CrumbleUndead => 15,
             StandardSpell::FireBlast => 16,
-            StandardSpell::WindWave => 17,
-            StandardSpell::WaterWave => 18,
-            StandardSpell::EarthWave => 19,
+            StandardSpell::WindWave => {
+                if player.stats.magic.current < 65 {
+                    17
+                } else if player.stats.magic.current < 70 {
+                    18
+                } else if player.stats.magic.current < 75 {
+                    19
+                } else {
+                    20
+                }
+            }
+            StandardSpell::WaterWave => {
+                if player.stats.magic.current < 70 {
+                    18
+                } else if player.stats.magic.current < 75 {
+                    19
+                } else {
+                    20
+                }
+            }
+            StandardSpell::EarthWave => {
+                if player.stats.magic.current < 75 {
+                    19
+                } else {
+                    20
+                }
+            }
             StandardSpell::FireWave => 20,
             StandardSpell::SaradominStrike => 20,
             StandardSpell::ClawsOfGuthix => 20,
             StandardSpell::FlamesOfZamorak => 20,
-            StandardSpell::WindSurge => 21,
-            StandardSpell::WaterSurge => 22,
-            StandardSpell::EarthSurge => 23,
+            StandardSpell::WindSurge => {
+                if player.stats.magic.current < 85 {
+                    21
+                } else if player.stats.magic.current < 90 {
+                    22
+                } else if player.stats.magic.current < 95 {
+                    23
+                } else {
+                    24
+                }
+            }
+            StandardSpell::WaterSurge => {
+                if player.stats.magic.current < 90 {
+                    22
+                } else if player.stats.magic.current < 95 {
+                    23
+                } else {
+                    24
+                }
+            }
+            StandardSpell::EarthSurge => {
+                if player.stats.magic.current < 95 {
+                    23
+                } else {
+                    24
+                }
+            }
             StandardSpell::FireSurge => 24,
             StandardSpell::IbanBlast => 25,
             StandardSpell::MagicDart => magic_dart_max_hit(player),
             _ => 0,
         }
     }
+
+    pub fn required_level(&self) -> u32 {
+        match self {
+            StandardSpell::None => 1,
+            StandardSpell::WindStrike => 1,
+            StandardSpell::WaterStrike => 5,
+            StandardSpell::EarthStrike => 9,
+            StandardSpell::FireStrike => 13,
+            StandardSpell::WindBolt => 17,
+            StandardSpell::WaterBolt => 23,
+            StandardSpell::EarthBolt => 29,
+            StandardSpell::FireBolt => 35,
+            StandardSpell::WindBlast => 41,
+            StandardSpell::WaterBlast => 47,
+            StandardSpell::EarthBlast => 53,
+            StandardSpell::CrumbleUndead => 39,
+            StandardSpell::FireBlast => 59,
+            StandardSpell::WindWave => 62,
+            StandardSpell::WaterWave => 65,
+            StandardSpell::EarthWave => 70,
+            StandardSpell::FireWave => 75,
+            StandardSpell::SaradominStrike
+            | StandardSpell::ClawsOfGuthix
+            | StandardSpell::FlamesOfZamorak => 60,
+            StandardSpell::WindSurge => 81,
+            StandardSpell::WaterSurge => 85,
+            StandardSpell::EarthSurge => 90,
+            StandardSpell::FireSurge => 95,
+            StandardSpell::IbanBlast | StandardSpell::MagicDart => 50,
+            StandardSpell::Bind => 20,
+            StandardSpell::Snare => 50,
+            StandardSpell::Entangle => 79,
+        }
+    }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Display)]
 pub enum AncientSpell {
+    #[strum(to_string = "Smoke Rush")]
     SmokeRush,
+    #[strum(to_string = "Shadow Rush")]
     ShadowRush,
+    #[strum(to_string = "Blood Rush")]
     BloodRush,
+    #[strum(to_string = "Ice Rush")]
     IceRush,
+    #[strum(to_string = "Smoke Burst")]
     SmokeBurst,
+    #[strum(to_string = "Shadow Burst")]
     ShadowBurst,
+    #[strum(to_string = "Blood Burst")]
     BloodBurst,
+    #[strum(to_string = "Ice Burst")]
     IceBurst,
+    #[strum(to_string = "Smoke Blitz")]
     SmokeBlitz,
+    #[strum(to_string = "Shadow Blitz")]
     ShadowBlitz,
+    #[strum(to_string = "Blood Blitz")]
     BloodBlitz,
+    #[strum(to_string = "Ice Blitz")]
     IceBlitz,
+    #[strum(to_string = "Smoke Barrage")]
     SmokeBarrage,
+    #[strum(to_string = "Shadow Barrage")]
     ShadowBarrage,
+    #[strum(to_string = "Blood Barrage")]
     BloodBarrage,
+    #[strum(to_string = "Ice Barrage")]
     IceBarrage,
 }
 
@@ -135,15 +352,42 @@ impl AncientSpell {
             AncientSpell::IceBarrage => 30,
         }
     }
+
+    pub fn required_level(&self) -> u32 {
+        match self {
+            AncientSpell::SmokeRush => 50,
+            AncientSpell::ShadowRush => 52,
+            AncientSpell::BloodRush => 56,
+            AncientSpell::IceRush => 58,
+            AncientSpell::SmokeBurst => 62,
+            AncientSpell::ShadowBurst => 64,
+            AncientSpell::BloodBurst => 68,
+            AncientSpell::IceBurst => 70,
+            AncientSpell::SmokeBlitz => 74,
+            AncientSpell::ShadowBlitz => 76,
+            AncientSpell::BloodBlitz => 80,
+            AncientSpell::IceBlitz => 82,
+            AncientSpell::SmokeBarrage => 86,
+            AncientSpell::ShadowBarrage => 88,
+            AncientSpell::BloodBarrage => 92,
+            AncientSpell::IceBarrage => 94,
+        }
+    }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Display)]
 pub enum ArceuusSpell {
+    #[strum(to_string = "Ghostly Grasp")]
     GhostlyGrasp,
+    #[strum(to_string = "Skeletal Grasp")]
     SkeletalGrasp,
+    #[strum(to_string = "Undead Grasp")]
     UndeadGrasp,
+    #[strum(to_string = "Inferior Demonbane")]
     InferiorDemonbane,
+    #[strum(to_string = "Superior Demonbane")]
     SuperiorDemonbane,
+    #[strum(to_string = "Dark Demonbane")]
     DarkDemonbane,
 }
 
@@ -158,9 +402,20 @@ impl ArceuusSpell {
             ArceuusSpell::DarkDemonbane => 30,
         }
     }
+
+    pub fn required_level(&self) -> u32 {
+        match self {
+            ArceuusSpell::GhostlyGrasp => 35,
+            ArceuusSpell::SkeletalGrasp => 56,
+            ArceuusSpell::UndeadGrasp => 79,
+            ArceuusSpell::InferiorDemonbane => 44,
+            ArceuusSpell::SuperiorDemonbane => 62,
+            ArceuusSpell::DarkDemonbane => 82,
+        }
+    }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Display)]
 pub enum SpecialSpell {
     Invocate,
     Immolate,

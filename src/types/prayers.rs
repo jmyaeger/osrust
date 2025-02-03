@@ -34,6 +34,8 @@ pub enum Prayer {
     HawkEye,
     #[strum(to_string = "Eagle Eye")]
     EagleEye,
+    #[strum(to_string = "Deadeye")]
+    Deadeye,
     #[strum(to_string = "Rigour")]
     Rigour,
     #[strum(to_string = "Mystic Will")]
@@ -42,6 +44,8 @@ pub enum Prayer {
     MysticLore,
     #[strum(to_string = "Mystic Might")]
     MysticMight,
+    #[strum(to_string = "Mystic Vigour")]
+    MysticVigour,
     #[strum(to_string = "Augury")]
     Augury,
 }
@@ -208,6 +212,16 @@ impl PrayerBoost {
                 magic_att: 0,
                 magic_str: 0,
             },
+            Prayer::Deadeye => PrayerBoost {
+                prayer_type: prayer,
+                attack: 0,
+                strength: 0,
+                defence: 5,
+                ranged_att: 18,
+                ranged_str: 18,
+                magic_att: 0,
+                magic_str: 0,
+            },
             Prayer::Rigour => PrayerBoost {
                 prayer_type: prayer,
                 attack: 0,
@@ -248,6 +262,16 @@ impl PrayerBoost {
                 magic_att: 15,
                 magic_str: 2,
             },
+            Prayer::MysticVigour => PrayerBoost {
+                prayer_type: prayer,
+                attack: 0,
+                strength: 0,
+                defence: 5,
+                ranged_att: 0,
+                ranged_str: 0,
+                magic_att: 18,
+                magic_str: 3,
+            },
             Prayer::Augury => PrayerBoost {
                 prayer_type: prayer,
                 attack: 0,
@@ -273,9 +297,16 @@ impl PrayerBoost {
 
     pub fn conflicts_with(&self, p2: &PrayerBoost) -> bool {
         // Check if two prayer boosts conflict on any stats
+
+        // Deadeye and mystic vigour defence stacks with steel skin, etc.
+        let stacks_defence = self.prayer_type == Prayer::Deadeye
+            || p2.prayer_type == Prayer::Deadeye
+            || self.prayer_type == Prayer::MysticVigour
+            || p2.prayer_type == Prayer::MysticVigour;
+
         self.attack > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
             || self.strength > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
-            || self.defence > 0 && p2.defence > 0
+            || !stacks_defence && self.defence > 0 && p2.defence > 0
             || self.ranged_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
             || self.ranged_str > 0 && (p2.strength > 0 || p2.ranged_str > 0 || p2.magic_str > 0)
             || self.magic_att > 0 && (p2.attack > 0 || p2.ranged_att > 0 || p2.magic_att > 0)
@@ -325,7 +356,12 @@ impl PrayerBoosts {
         if let Some(prayers) = &mut self.active_prayers {
             self.attack = prayers.iter().map(|p| p.attack).max().unwrap_or(0);
             self.strength = prayers.iter().map(|p| p.strength).max().unwrap_or(0);
-            self.defence = prayers.iter().map(|p| p.defence).max().unwrap_or(0);
+
+            // Defence boosts can now be additive between Deadeye/Mystic Vigour and Skin prayers
+            // TODO: Write a test to verify that add() is properly eliminating conflicting prayers, as
+            //       otherwise this will result in a higher-than-expected defence boost
+            // TODO: Consider changing all of these to sum() after checking that the above works
+            self.defence = prayers.iter().map(|p| p.defence).sum::<u32>();
             self.ranged_att = prayers.iter().map(|p| p.ranged_att).max().unwrap_or(0);
             self.ranged_str = prayers.iter().map(|p| p.ranged_str).max().unwrap_or(0);
             self.magic_att = prayers.iter().map(|p| p.magic_att).max().unwrap_or(0);

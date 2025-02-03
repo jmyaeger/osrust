@@ -951,6 +951,9 @@ impl Player {
     }
 
     pub fn set_spell(&mut self, spell: spells::Spell) {
+        if spell.required_level() > self.stats.magic.current {
+            panic!("Player does not have enough magic to cast {}.", spell);
+        }
         self.attrs.spell = Some(spell);
     }
 
