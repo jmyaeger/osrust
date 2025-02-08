@@ -45,7 +45,7 @@ impl StatDrain {
 }
 
 // Enum for monster attributes
-#[derive(Debug, Eq, PartialEq, Hash, Clone)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 pub enum Attribute {
     Demon,
     Draconic,
@@ -220,38 +220,14 @@ where
                     .to_string()
                     .replace(')', "");
                 match style.to_lowercase().as_str() {
-                    "stab" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Stab,
-                    },
-                    "slash" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Slash,
-                    },
-                    "crush" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Crush,
-                    },
-                    "melee" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Melee,
-                    },
-                    "magic" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Magic,
-                    },
-                    "ranged" => MonsterMaxHit {
-                        value,
-                        style: AttackType::Ranged,
-                    },
-                    "" => MonsterMaxHit {
-                        value,
-                        style: AttackType::None,
-                    },
-                    _ => MonsterMaxHit {
-                        value,
-                        style: AttackType::Special,
-                    },
+                    "stab" => MonsterMaxHit::new(value, AttackType::Stab),
+                    "slash" => MonsterMaxHit::new(value, AttackType::Slash),
+                    "crush" => MonsterMaxHit::new(value, AttackType::Crush),
+                    "melee" => MonsterMaxHit::new(value, AttackType::Melee),
+                    "magic" => MonsterMaxHit::new(value, AttackType::Magic),
+                    "ranged" => MonsterMaxHit::new(value, AttackType::Ranged),
+                    "" => MonsterMaxHit::new(value, AttackType::None),
+                    _ => MonsterMaxHit::new(value, AttackType::Special),
                 }
             })
             .collect()
@@ -649,67 +625,47 @@ impl Monster {
         (acc_bonus, dmg_bonus)
     }
 
-    pub fn is_dragon(&self) -> bool {
+    fn has_attribute(&self, attr: Attribute) -> bool {
         self.info
             .attributes
             .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Draconic))
+            .is_some_and(|attrs| attrs.contains(&attr))
+    }
+
+    pub fn is_dragon(&self) -> bool {
+        self.has_attribute(Attribute::Draconic)
     }
 
     pub fn is_demon(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Demon))
+        self.has_attribute(Attribute::Demon)
     }
 
     pub fn is_undead(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Undead))
+        self.has_attribute(Attribute::Undead)
     }
 
     pub fn is_kalphite(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Kalphite))
+        self.has_attribute(Attribute::Kalphite)
     }
 
     pub fn is_leafy(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Leafy))
+        self.has_attribute(Attribute::Leafy)
     }
 
     pub fn is_golem(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Golem))
+        self.has_attribute(Attribute::Golem)
     }
 
     pub fn is_rat(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Rat))
+        self.has_attribute(Attribute::Rat)
     }
 
     pub fn is_fiery(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Fiery))
+        self.has_attribute(Attribute::Fiery)
     }
 
     pub fn is_shade(&self) -> bool {
-        self.info
-            .attributes
-            .as_ref()
-            .is_some_and(|attrs| attrs.contains(&Attribute::Shade))
+        self.has_attribute(Attribute::Shade)
     }
 
     pub fn vampyre_tier(&self) -> Option<u8> {
