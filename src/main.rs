@@ -75,13 +75,13 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.lookup_stats("IM Orphion");
-    // player.stats.ranged = Stat::new(92);
-    // player.stats.magic = Stat::new(84);
-    // player.stats.defence = Stat::new(1);
-    // player.stats.hitpoints = Stat::new(90);
-    // player.stats.attack = Stat::new(75);
-    // player.stats.strength = Stat::new(90);
+    // player.lookup_stats("IM Orphion");
+    player.stats.ranged = Stat::new(92);
+    player.stats.magic = Stat::new(92);
+    player.stats.defence = Stat::new(75);
+    player.stats.hitpoints = Stat::new(85);
+    player.stats.attack = Stat::new(78);
+    player.stats.strength = Stat::new(85);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -89,7 +89,7 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
+    player.prayers.add(PrayerBoost::new(Prayer::MysticVigour));
     player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
@@ -100,7 +100,7 @@ fn simulate_hunllef() {
     player.equip("Corrupted bow (perfected)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+    player.prayers.add(PrayerBoost::new(Prayer::Deadeye));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -121,19 +121,19 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 24,
-        eat_strategy: EatStrategy::EatAtHp(68),
+        food_count: 20,
+        eat_strategy: EatStrategy::EatAtHp(65),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Ranged,
             style2: SwitchType::Magic,
         },
-        lost_ticks: 50,
-        logger: FightLogger::new(false, "hunllef"),
+        lost_ticks: 0,
+        logger: FightLogger::new(true, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 100000);
+    let stats = simulate_n_fights(Box::new(fight), 1);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);

@@ -653,3 +653,4 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 ];
 
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
+pub const EAT_DELAY: u32 = 3;
