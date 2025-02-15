@@ -1,8 +1,10 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
+use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::types::{monster::Monster, player::Player};
+use crate::utils::logging::FightLogger;
 use rand::rngs::ThreadRng;
 
 pub struct SingleWayFight {
@@ -10,17 +12,22 @@ pub struct SingleWayFight {
     pub monster: Monster,
     pub limiter: Option<Box<dyn Limiter>>,
     pub rng: ThreadRng,
+    pub mechanics: SingleWayMechanics,
+    pub logger: FightLogger,
 }
 
 impl SingleWayFight {
     pub fn new(player: Player, monster: Monster) -> SingleWayFight {
         let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
         let rng = rand::thread_rng();
+        let monster_name = monster.info.name.clone();
         SingleWayFight {
             player,
             monster,
             limiter,
             rng,
+            mechanics: SingleWayMechanics,
+            logger: FightLogger::new(false, monster_name.as_str()),
         }
     }
 }
@@ -32,6 +39,8 @@ impl Simulation for SingleWayFight {
             &mut self.monster,
             &mut self.rng,
             &self.limiter,
+            &self.mechanics,
+            &mut self.logger,
         )
     }
 
@@ -57,68 +66,29 @@ impl Simulation for SingleWayFight {
     }
 }
 
+#[derive(Debug)]
+pub struct SingleWayMechanics;
+
+impl Mechanics for SingleWayMechanics {}
+
 fn simulate_fight(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
+    mechanics: &SingleWayMechanics,
+    logger: &mut FightLogger,
 ) -> Result<FightResult, SimulationError> {
     let mut vars = FightVars::new();
-    let player_attack = player.attack;
     scale_monster_hp_only(monster);
 
     while monster.stats.hitpoints.current > 0 {
         if vars.tick_counter == vars.attack_tick {
-            // Process player attack
-            let hit = player_attack(player, monster, rng, limiter);
-            player.boosts.first_attack = false;
-            monster.take_damage(hit.damage);
-            scale_monster_hp_only(monster);
-            vars.hit_attempts += 1;
-            vars.hit_count += if hit.success { 1 } else { 0 };
-            vars.hit_amounts.push(hit.damage);
-            vars.attack_tick += player.gear.weapon.speed;
+            mechanics.player_attack(player, monster, rng, limiter, &mut vars, logger);
         }
-
-        // Process effects and apply damage
-        let mut effect_damage = 0;
-        for effect in &mut monster.active_effects {
-            effect_damage += effect.apply();
-        }
-
-        if effect_damage > 0 {
-            monster.take_damage(effect_damage);
-            scale_monster_hp_only(monster);
-        }
-
-        monster.clear_inactive_effects();
-
-        // Decrement freeze duration if it's active
-        if monster.info.freeze_duration > 0 {
-            monster.info.freeze_duration -= 1;
-            if monster.info.freeze_duration == 0 {
-                // 5 tick freeze immunity when it runs out
-                vars.freeze_immunity = 5;
-                monster.immunities.freeze = 100;
-            }
-        }
-
-        // Decrement temporary freeze immunity if applicable
-        if vars.freeze_immunity > 0 {
-            vars.freeze_immunity -= 1;
-            if vars.freeze_immunity == 0 {
-                // Reset freeze resistance to original value when immunity runs out
-                monster.immunities.freeze = vars.freeze_resistance;
-            }
-        }
-
-        // Add the attack cooldown on the last hit (for continuous TTK)
-        if monster.stats.hitpoints.current == 0 {
-            vars.tick_counter = vars.attack_tick;
-        } else {
-            // Increment tick counter
-            vars.tick_counter += 1;
-        }
+        mechanics.process_monster_effects(monster);
+        mechanics.process_freeze(monster, &mut vars);
+        mechanics.increment_tick(monster, &mut vars);
     }
 
     // Convert ttk to seconds
@@ -162,6 +132,7 @@ mod tests {
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
     use crate::types::stats::PlayerStats;
+    use crate::utils::logging::FightLogger;
 
     #[test]
     fn test_simulate_fight() {
@@ -191,7 +162,17 @@ mod tests {
 
         let mut rng = rand::thread_rng();
         let limiter = assign_limiter(&player, &monster);
-        let result = simulate_fight(&mut player, &mut monster, &mut rng, &limiter).unwrap();
+        let mechanics = SingleWayMechanics;
+        let mut logger = FightLogger::new(false, monster.info.name.as_str());
+        let result = simulate_fight(
+            &mut player,
+            &mut monster,
+            &mut rng,
+            &limiter,
+            &mechanics,
+            &mut logger,
+        )
+        .unwrap();
 
         assert!(result.ttk > 0.0);
         assert!(result.hit_attempts > 0);
