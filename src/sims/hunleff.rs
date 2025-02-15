@@ -19,7 +19,7 @@ const PADDLEFISH_HEAL: u32 = 20;
 const PADDLEFISH_DELAY: i32 = 3;
 const HUNLLEF_REGEN_TICKS: i32 = 100;
 const HUNLLEF_ATTACK_SPEED: i32 = 5;
-const ALLOWED_GEAR: [&str; 22] = [
+const ALLOWED_GEAR: [&str; 23] = [
     "Crystal helm (basic)",
     "Crystal helm (attuned)",
     "Crystal helm (perfected)",
@@ -42,6 +42,7 @@ const ALLOWED_GEAR: [&str; 22] = [
     "Corrupted bow (basic)",
     "Corrupted bow (attuned)",
     "Corrupted bow (perfected)",
+    "Unarmed",
 ];
 
 #[derive(Debug, PartialEq, Clone)]
@@ -84,9 +85,9 @@ pub enum AttackStrategy {
         style2: SwitchType,
     },
     FiveToOne {
-        style1: SwitchType,
-        style2: SwitchType,
-        style3: SwitchType,
+        main_style: SwitchType,
+        other_style1: SwitchType,
+        other_style2: SwitchType,
     },
 }
 
@@ -194,6 +195,54 @@ impl HunllefMechanics {
         state.hunllef_attack_tick += HUNLLEF_ATTACK_SPEED;
         state.hunllef_attack_count += 1;
     }
+
+    fn handle_eating(
+        &self,
+        state: &mut HunllefState,
+        vars: &mut FightVars,
+        player: &mut Player,
+        eat_strategy: &EatStrategy,
+        logger: &mut FightLogger,
+    ) {
+        // Handle eating based on set strategy
+        match eat_strategy {
+            EatStrategy::EatAtHp(threshold) => {
+                // Eat if at or below the provided threshold and force the player to skip the next attack
+                if player.stats.hitpoints.current <= *threshold
+                    && vars.eat_delay == 0
+                    && state.food_count > 0
+                {
+                    self.eat_food(player, PADDLEFISH_HEAL, None, vars, logger);
+                    state.food_count -= 1;
+                    vars.attack_tick += PADDLEFISH_DELAY;
+                }
+            }
+            EatStrategy::TickEatOnly => {
+                if state.queued_damage.is_some()
+                    && player.stats.hitpoints.current < 14
+                    && vars.eat_delay == 0
+                    && state.food_count > 0
+                {
+                    self.eat_food(player, PADDLEFISH_HEAL, None, vars, logger);
+                    state.food_count -= 1;
+                    vars.attack_tick += PADDLEFISH_DELAY;
+                }
+            }
+            EatStrategy::EatToFullDuringNadoes => {
+                if ((state.tornado_timer > 0
+                    && player.stats.hitpoints.base - player.stats.hitpoints.current
+                        >= PADDLEFISH_HEAL)
+                    || player.stats.hitpoints.current < 14)
+                    && vars.eat_delay == 0
+                    && state.food_count > 0
+                {
+                    self.eat_food(player, PADDLEFISH_HEAL, None, vars, logger);
+                    state.food_count -= 1;
+                    vars.attack_tick += PADDLEFISH_DELAY;
+                }
+            }
+        }
+    }
 }
 
 pub struct HunllefFight {
@@ -290,62 +339,13 @@ impl HunllefFight {
                     self.mechanics.decrement_eat_delay(&mut vars);
 
                     // Handle eating based on set strategy
-                    match self.config.eat_strategy {
-                        EatStrategy::EatAtHp(threshold) => {
-                            // Eat if at or below the provided threshold and force the player to skip the next attack
-                            if self.player.stats.hitpoints.current <= threshold
-                                && vars.eat_delay == 0
-                                && state.food_count > 0
-                            {
-                                self.mechanics.eat_food(
-                                    &mut self.player,
-                                    PADDLEFISH_HEAL,
-                                    None,
-                                    &mut vars,
-                                    &mut self.config.logger,
-                                );
-                                state.food_count -= 1;
-                                vars.attack_tick += PADDLEFISH_DELAY;
-                            }
-                        }
-                        EatStrategy::TickEatOnly => {
-                            if state.queued_damage.is_some()
-                                && self.player.stats.hitpoints.current < 14
-                                && vars.eat_delay == 0
-                                && state.food_count > 0
-                            {
-                                self.mechanics.eat_food(
-                                    &mut self.player,
-                                    PADDLEFISH_HEAL,
-                                    None,
-                                    &mut vars,
-                                    &mut self.config.logger,
-                                );
-                                state.food_count -= 1;
-                                vars.attack_tick += PADDLEFISH_DELAY;
-                            }
-                        }
-                        EatStrategy::EatToFullDuringNadoes => {
-                            if ((state.tornado_timer > 0
-                                && self.player.stats.hitpoints.base
-                                    - self.player.stats.hitpoints.current
-                                    >= PADDLEFISH_HEAL)
-                                || self.player.stats.hitpoints.current < 14)
-                                && vars.eat_delay == 0
-                                && state.food_count > 0
-                            {
-                                self.mechanics.eat_food(
-                                    &mut self.player,
-                                    PADDLEFISH_HEAL,
-                                    None,
-                                    &mut vars,
-                                    &mut self.config.logger,
-                                );
-                                state.food_count -= 1;
-                                vars.attack_tick += PADDLEFISH_DELAY;
-                            }
-                        }
-                    }
+                    self.mechanics.handle_eating(
+                        &mut state,
+                        &mut vars,
+                        &mut self.player,
+                        &self.config.eat_strategy,
+                        &mut self.config.logger,
+                    );
 
                     // Apply any queued damage to the player
                     self.mechanics.apply_queued_damage(
@@ -413,11 +413,130 @@ impl HunllefFight {
                 }
             }
             AttackStrategy::FiveToOne {
-                style1: _,
-                style2: _,
-                style3: _,
+                main_style,
+                other_style1,
+                other_style2,
             } => {
-                unimplemented!()
+                // 5:1, where the other two styles are ordered by preference (e.g., T2 ranged 2nd and punching 3rd)
+
+                // Start off with the main style—assumes resetting the run if hunllef is praying against it
+                let mut current_style = *main_style;
+                let mut next_style = *other_style1;
+                let mut other_style = *other_style2;
+
+                // Ensure the player is switched to the correct starting style
+                self.player.switch(current_style);
+                self.config
+                    .logger
+                    .log_gear_switch(vars.tick_counter, current_style);
+
+                // Combat loop
+                while self.hunllef.stats.hitpoints.current > 0 {
+                    // Regen 1 HP for Hunllef every 100 ticks
+                    if vars.tick_counter % HUNLLEF_REGEN_TICKS == 0 {
+                        self.mechanics.monster_regen_hp(
+                            &mut self.hunllef,
+                            &vars,
+                            &mut self.config.logger,
+                        );
+                    }
+
+                    // Regen 1 HP for player every 100 ticks
+                    if vars.tick_counter % constants::PLAYER_REGEN_TICKS == 0 {
+                        self.mechanics.player_regen(
+                            &mut self.player,
+                            &vars,
+                            &mut self.config.logger,
+                        );
+                    }
+
+                    // Decrement the tornado timer if active
+                    state.tornado_timer = state.tornado_timer.saturating_sub(1);
+
+                    // Decrement eat delay timer if there is one active
+                    self.mechanics.decrement_eat_delay(&mut vars);
+
+                    // Handle eating based on set strategy
+                    self.mechanics.handle_eating(
+                        &mut state,
+                        &mut vars,
+                        &mut self.player,
+                        &self.config.eat_strategy,
+                        &mut self.config.logger,
+                    );
+
+                    // Apply any queued damage to the player
+                    self.mechanics.apply_queued_damage(
+                        &mut state,
+                        &mut self.player,
+                        &mut self.config.logger,
+                        &mut vars,
+                    );
+
+                    if vars.tick_counter == vars.attack_tick {
+                        self.mechanics.player_attack(
+                            &mut self.player,
+                            &mut self.hunllef,
+                            &mut self.rng,
+                            &self.limiter,
+                            &mut vars,
+                            &mut self.config.logger,
+                        );
+
+                        // Increment attack count and switch to melee every 5 attacks
+                        state.player_attack_count += 1;
+                        if state.player_attack_count == 5 {
+                            std::mem::swap(&mut current_style, &mut next_style);
+                            self.player.switch(current_style);
+                            self.config
+                                .logger
+                                .log_gear_switch(vars.tick_counter, current_style);
+                        }
+                        if state.player_attack_count == 6 {
+                            state.player_attack_count = 0;
+                            std::mem::swap(&mut current_style, &mut next_style);
+                            std::mem::swap(&mut next_style, &mut other_style);
+                            self.player.switch(current_style);
+                            self.config
+                                .logger
+                                .log_gear_switch(vars.tick_counter, current_style);
+                        }
+                    }
+
+                    // No combat effects are possible here, so that section is omitted
+
+                    // Process Hunllef's attack
+                    if vars.tick_counter == state.hunllef_attack_tick {
+                        // Roll for tornado spawn if off cooldown and not about to switch styles
+                        let tornado_proc = self.mechanics.process_tornadoes(
+                            &mut state,
+                            &mut vars,
+                            &mut self.rng,
+                            &mut self.config.logger,
+                        );
+                        if !tornado_proc {
+                            self.mechanics.hunllef_attack(
+                                &mut self.hunllef,
+                                &mut self.player,
+                                &mut state,
+                                &mut vars,
+                                &mut self.rng,
+                                &mut self.config.logger,
+                            );
+                        }
+                    }
+
+                    // Increment tick counter
+                    vars.tick_counter += 1;
+
+                    if self.player.stats.hitpoints.current == 0 {
+                        return self.mechanics.process_player_death(
+                            &vars,
+                            &self.hunllef,
+                            &mut self.config.logger,
+                        );
+                    }
+                }
             }
         }
 
@@ -498,7 +617,7 @@ fn has_valid_gear(player: &Player) -> bool {
 mod tests {
     use super::*;
     use crate::calc::rolls::calc_active_player_rolls;
-    use crate::types::equipment::CombatStyle;
+    use crate::types::equipment::{CombatStyle, Weapon};
     use crate::types::monster::Monster;
     use crate::types::player::{GearSwitch, Player, SwitchType};
     use crate::types::prayers::{Prayer, PrayerBoost};
@@ -533,16 +652,39 @@ mod tests {
         calc_active_player_rolls(&mut player, &hunllef);
 
         let ranged_switch = GearSwitch::from(&player);
+
+        player.gear.weapon = Weapon::default();
+        player.update_bonuses();
+        player.set_active_style(CombatStyle::Kick);
+        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+
+        calc_active_player_rolls(&mut player, &hunllef);
+
+        let melee_switch = GearSwitch::from(&player);
         player.switches.push(mage_switch);
         player.switches.push(ranged_switch);
+        player.switches.push(melee_switch);
+
+        // let fight_config = HunllefConfig {
+        //     food_count: 0,
+        //     eat_strategy: EatStrategy::EatAtHp(15),
+        //     redemption_attempts: 0,
+        //     attack_strategy: AttackStrategy::TwoT3Weapons {
+        //         style1: SwitchType::Magic,
+        //         style2: SwitchType::Ranged,
+        //     },
+        //     lost_ticks: 0,
+        //     logger: FightLogger::new(false, "hunllef"),
+        // };
 
         let fight_config = HunllefConfig {
-            food_count: 0,
+            food_count: 20,
             eat_strategy: EatStrategy::EatAtHp(15),
             redemption_attempts: 0,
-            attack_strategy: AttackStrategy::TwoT3Weapons {
-                style1: SwitchType::Magic,
-                style2: SwitchType::Ranged,
+            attack_strategy: AttackStrategy::FiveToOne {
+                main_style: SwitchType::Magic,
+                other_style1: SwitchType::Ranged,
+                other_style2: SwitchType::Melee,
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),

@@ -1,5 +1,5 @@
 use osrs::combat::simulation::simulate_n_fights;
-use osrs::types::equipment::CombatStyle;
+use osrs::types::equipment::{CombatStyle, Weapon};
 // use osrs::equipment_db;
 use osrs::types::monster::Monster;
 use osrs::utils::loadouts;
@@ -75,13 +75,12 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    // player.lookup_stats("IM Orphion");
-    player.stats.ranged = Stat::new(92);
-    player.stats.magic = Stat::new(92);
-    player.stats.defence = Stat::new(75);
-    player.stats.hitpoints = Stat::new(85);
-    player.stats.attack = Stat::new(78);
-    player.stats.strength = Stat::new(85);
+    player.stats.ranged = Stat::new(70);
+    player.stats.magic = Stat::new(70);
+    player.stats.defence = Stat::new(70);
+    player.stats.hitpoints = Stat::new(70);
+    player.stats.attack = Stat::new(70);
+    player.stats.strength = Stat::new(70);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -97,7 +96,8 @@ fn simulate_hunllef() {
 
     let mage_switch = GearSwitch::from(&player);
 
-    player.equip("Corrupted bow (perfected)", None);
+    // player.equip("Corrupted bow (perfected)", None);
+    player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
@@ -106,9 +106,11 @@ fn simulate_hunllef() {
 
     let ranged_switch = GearSwitch::from(&player);
 
-    player.equip("Corrupted halberd (perfected)", None);
+    player.gear.weapon = Weapon::default();
+    player.set_active_style(CombatStyle::Kick);
+    // player.equip("Corrupted halberd (perfected)", None);
+    // player.set_active_style(CombatStyle::Jab);
     player.update_bonuses();
-    player.set_active_style(CombatStyle::Jab);
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
 
     calc_active_player_rolls(&mut player, &hunllef);
@@ -120,15 +122,27 @@ fn simulate_hunllef() {
 
     player.switch(SwitchType::Ranged);
 
+    // let fight_config = HunllefConfig {
+    //     food_count: 24,
+    //     eat_strategy: EatStrategy::EatAtHp(15),
+    //     redemption_attempts: 0,
+    //     attack_strategy: AttackStrategy::TwoT3Weapons {
+    //         style1: SwitchType::Melee,
+    //         style2: SwitchType::Ranged,
+    //     },
+    //     lost_ticks: 0,
+    //     logger: FightLogger::new(false, "hunllef"),
+    // };
     let fight_config = HunllefConfig {
-        food_count: 15,
+        food_count: 24,
         eat_strategy: EatStrategy::EatAtHp(15),
         redemption_attempts: 0,
-        attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Ranged,
-            style2: SwitchType::Magic,
+        attack_strategy: AttackStrategy::FiveToOne {
+            main_style: SwitchType::Magic,
+            other_style1: SwitchType::Ranged,
+            other_style2: SwitchType::Melee,
         },
-        lost_ticks: 10,
+        lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef"),
     };
 
