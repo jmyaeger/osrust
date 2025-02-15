@@ -1023,6 +1023,15 @@ impl Player {
         self.stats.hitpoints.restore(amount, overheal_hp);
     }
 
+    pub fn regen_all_stats(&mut self) {
+        self.stats.hitpoints.restore(1, None);
+        self.stats.attack.restore(1, None);
+        self.stats.strength.restore(1, None);
+        self.stats.defence.restore(1, None);
+        self.stats.ranged.restore(1, None);
+        self.stats.magic.restore(1, None);
+    }
+
     pub fn take_damage(&mut self, amount: u32) {
         // Takes damage, capping at 0 HP
         self.stats.hitpoints.drain(amount, Some(0));

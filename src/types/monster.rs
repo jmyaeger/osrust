@@ -707,6 +707,14 @@ impl Monster {
         self.immunities.freeze != 100 && !self.info.freeze_duration == 0
     }
 
+    pub fn regen_stats(&mut self) {
+        self.stats.attack.restore(1, None);
+        self.stats.strength.restore(1, None);
+        self.stats.defence.restore(1, None);
+        self.stats.ranged.restore(1, None);
+        self.stats.magic.restore(1, None);
+    }
+
     pub fn drain_stat(&mut self, stat: CombatStat, amount: u32, cap: Option<u32>) -> u32 {
         let mut amount = amount;
         let mut remainder = 0;

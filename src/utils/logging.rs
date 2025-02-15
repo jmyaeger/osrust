@@ -219,20 +219,34 @@ impl FightLogger {
 
     pub fn log_monster_attack(
         &mut self,
+        monster: &Monster,
         tick: i32,
         damage: u32,
         success: bool,
-        style: AttackType,
-        name: &str,
+        style: Option<AttackType>,
     ) {
+        let style = if let Some(style) = style {
+            style
+        } else if monster
+            .info
+            .attack_styles
+            .as_ref()
+            .is_some_and(|x| x.len() == 1)
+        {
+            monster.info.attack_styles.as_ref().unwrap()[0]
+        } else {
+            AttackType::None
+        };
+        let name = monster.info.name.as_str();
+
         if self.enabled {
             if success {
                 debug!(
                     "[Tick {}] {} hit with {} for {} damage",
-                    name, tick, style, damage
+                    tick, name, style, damage
                 );
             } else {
-                debug!("[Tick {}] {} missed with {}", name, tick, style);
+                debug!("[Tick {}] {} missed with {}", tick, name, style);
             }
         }
     }
@@ -241,7 +255,7 @@ impl FightLogger {
         if self.enabled {
             debug!(
                 "[Tick {}] {} took {} damage ({} hp remaining)",
-                name, tick, damage, hp
+                tick, name, damage, hp
             );
         }
     }
@@ -265,14 +279,20 @@ impl FightLogger {
         if self.enabled {
             debug!(
                 "[Tick {}] {} regenerated 1 hp ({} hp remaining)",
-                name, tick, hp
+                tick, name, hp
             );
+        }
+    }
+
+    pub fn log_stats_regen(&mut self, tick: i32, name: &str) {
+        if self.enabled {
+            debug!("[Tick {}] {} regenerated stats by 1", tick, name);
         }
     }
 
     pub fn log_monster_death(&mut self, tick: i32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} has died.", name, tick);
+            debug!("[Tick {}] {} has died.", tick, name);
         }
     }
 
@@ -284,13 +304,19 @@ impl FightLogger {
 
     pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} took {} effect damage", name, tick, damage);
+            debug!("[Tick {}] {} took {} effect damage", tick, name, damage);
         }
     }
 
     pub fn log_custom(&mut self, tick: i32, message: &str) {
         if self.enabled {
             debug!("[Tick {}] {}", tick, message);
+        }
+    }
+
+    pub fn log_freeze_end(&mut self, tick: i32, name: &str) {
+        if self.enabled {
+            debug!("[Tick {}] {} is no longer frozen", tick, name);
         }
     }
 }

@@ -89,7 +89,7 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(PrayerBoost::new(Prayer::MysticVigour));
+    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
     player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
@@ -100,7 +100,7 @@ fn simulate_hunllef() {
     player.equip("Corrupted bow (perfected)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::Deadeye));
+    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -121,19 +121,19 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 20,
-        eat_strategy: EatStrategy::EatAtHp(65),
+        food_count: 15,
+        eat_strategy: EatStrategy::EatAtHp(15),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Ranged,
             style2: SwitchType::Magic,
         },
-        lost_ticks: 0,
-        logger: FightLogger::new(true, "hunllef"),
+        lost_ticks: 10,
+        logger: FightLogger::new(false, "hunllef"),
     };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 1);
+    let stats = simulate_n_fights(Box::new(fight), 100000);
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);

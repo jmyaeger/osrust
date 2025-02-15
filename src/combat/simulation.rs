@@ -139,6 +139,9 @@ pub struct FightVars {
     pub attack_tick: i32,
     pub freeze_immunity: i32,
     pub freeze_resistance: u32,
+    pub food_eaten: u32,
+    pub damage_taken: u32,
+    pub eat_delay: u32,
 }
 
 impl FightVars {

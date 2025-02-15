@@ -1,5 +1,4 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
-use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
@@ -86,39 +85,12 @@ fn simulate_fight(
         if vars.tick_counter == vars.attack_tick {
             mechanics.player_attack(player, monster, rng, limiter, &mut vars, logger);
         }
-        mechanics.process_monster_effects(monster);
-        mechanics.process_freeze(monster, &mut vars);
+        mechanics.process_monster_effects(monster, &vars, logger);
+        mechanics.process_freeze(monster, &mut vars, logger);
         mechanics.increment_tick(monster, &mut vars);
     }
 
-    // Convert ttk to seconds
-    let ttk = vars.tick_counter as f64 * 0.6;
-
-    let leftover_burn = {
-        if let Some(CombatEffect::Burn {
-            tick_counter: _,
-            stacks,
-        }) = monster
-            .active_effects
-            .iter()
-            .find(|item| matches!(item, &CombatEffect::Burn { .. }))
-        {
-            stacks.iter().sum()
-        } else {
-            0
-        }
-    };
-
-    // Player can never die here, so the result is always Ok(FightResult)
-    Ok(FightResult {
-        ttk,
-        hit_attempts: vars.hit_attempts,
-        hit_count: vars.hit_count,
-        hit_amounts: vars.hit_amounts,
-        food_eaten: 0,
-        damage_taken: 0,
-        leftover_burn,
-    })
+    mechanics.get_fight_result(monster, &vars, logger)
 }
 
 #[cfg(test)]
