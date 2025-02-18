@@ -1,4 +1,5 @@
 pub mod equipment;
+pub mod food;
 pub mod monster;
 pub mod player;
 pub mod potions;
