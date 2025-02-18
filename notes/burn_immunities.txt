@@ -1,0 +1,44 @@
+Normal burn immunity:
+- Cerberus
+- Lava dragon
+- Inferno NPCs:
+    - JalTok-Jad
+    - Jal-Im-Kot
+    - Jal-Nib
+    - Jal-MejRah
+    - Jak-Ak (unconfirmed)
+    - Jal-Xil (unconfirmed)
+    - Jal-Zek (unconfirmed)
+    - TzKal-Zuk (unconfirmed)
+- Pyrelord
+- Galvek
+
+Weak burn immunity:
+- Infernal Mage
+- Brutal black dragon
+- Brutal blue dragon
+- Brutal red dragon
+- Brutal green dragon
+- Hellhound
+- Pyrefiend
+- Fire giant
+- Fire wizard
+- Green dragon
+- Red dragon
+- King Black Dragon
+- Blue dragon
+- Black dragon
+- Malevolent Mage
+- Tz-Kih
+- Tz-Kek
+- Tok-Xil
+- Yt-MejKot
+- Ket-Zek
+- Yt-HurKot
+- Skeleton Hellhound (NMZ)
+
+Practical burn immunity due to damage immunity (i.e., burns do 0 damage but still show hitsplats):
+- Dusk
+- Tekton
+- Glowing Crystal
+- Cyclops

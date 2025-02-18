@@ -2,7 +2,7 @@ use crate::calc::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::attacks::standard::{base_attack, damage_roll, AttackFn, AttackInfo, Hit};
 use crate::combat::limiters::Limiter;
-use crate::constants::{IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
+use crate::constants::{IMMUNE_TO_MAGIC_MONSTERS, IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::types::equipment::CombatType;
 use crate::types::monster::{CombatStat, Monster, StatDrain};
 use crate::types::player::Player;
@@ -1317,7 +1317,7 @@ pub fn sara_sword_spec(
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
 
-    // Boost max hit by 15%
+    // Boost max hit by 10%
     info.max_hit = info.max_hit * 11 / 10;
 
     // Rolls against slash
@@ -1325,7 +1325,7 @@ pub fn sara_sword_spec(
 
     let mut hit = base_attack(&info, rng);
 
-    if hit.success {
+    if hit.success && !IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or_default()) {
         // Add a random amount between 1 and 16 to damage
         hit.damage += rng.gen_range(1..=16);
         hit.apply_transforms(player, monster, rng, limiter);
