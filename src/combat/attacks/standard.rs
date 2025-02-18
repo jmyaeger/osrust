@@ -942,7 +942,11 @@ pub fn atlatl_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
-    if hit.success && player.set_effects.full_eclipse_moon && rng.gen_range(0..5) == 0 {
+    if hit.success
+        && !monster.is_immune_to_normal_burn()
+        && player.set_effects.full_eclipse_moon
+        && rng.gen_range(0..5) == 0
+    {
         // Roll 20% chance to add a burn stack if full set is equipped
         monster.add_burn_stack(10);
     }

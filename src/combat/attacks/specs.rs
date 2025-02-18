@@ -1159,7 +1159,7 @@ pub fn burning_claw_spec(
 
         // 15% chance for each hit to apply a burn
         for _ in 0..3 {
-            if rng.gen::<f64>() <= 0.15 {
+            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.15 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1184,7 +1184,7 @@ pub fn burning_claw_spec(
 
         // 30% chance for each hit to apply a burn
         for _ in 0..3 {
-            if rng.gen::<f64>() <= 0.3 {
+            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.3 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1209,7 +1209,7 @@ pub fn burning_claw_spec(
 
         // 45% chance for each hit to apply a burn
         for _ in 0..3 {
-            if rng.gen::<f64>() <= 0.45 {
+            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.45 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1562,7 +1562,7 @@ pub fn scorching_bow_spec(
         hit.apply_transforms(player, monster, rng, limiter);
 
         // Freezes demons for 20 ticks and adds a 5-damage burn stack
-        if monster.is_demon() {
+        if monster.is_demon() && !monster.is_immune_to_normal_burn() {
             monster.add_burn_stack(5);
 
             if monster.is_freezable() {

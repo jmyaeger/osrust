@@ -707,6 +707,11 @@ impl Monster {
         self.immunities.freeze != 100 && !self.info.freeze_duration == 0
     }
 
+    pub fn is_immune_to_normal_burn(&self) -> bool {
+        IMMUNE_TO_NORMAL_BURN_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            || IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0))
+    }
+
     pub fn regen_stats(&mut self) {
         self.stats.attack.restore(1, None);
         self.stats.strength.restore(1, None);

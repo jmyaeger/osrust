@@ -6,10 +6,10 @@ Normal burn immunity:
     - Jal-Im-Kot
     - Jal-Nib
     - Jal-MejRah
-    - Jak-Ak (unconfirmed)
-    - Jal-Xil (unconfirmed)
+    - Jal-Ak 
+    - Jal-Xil
     - Jal-Zek (unconfirmed)
-    - TzKal-Zuk (unconfirmed)
+    - TzKal-Zuk
 - Pyrelord
 - Galvek
 

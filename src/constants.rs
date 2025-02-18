@@ -150,6 +150,20 @@ pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: &[i32] = &[
     7037, // reanimated aviansie
 ];
 
+pub const IMMUNE_TO_NORMAL_BURN_MONSTERS: &[i32] = &[
+    5862, 5863, 5866, // Cerberus
+    6593, // Lava dragon
+    7700, 7704, 10623, // JalTok-Jad
+    7697,  // Jal-ImKot
+    7691,  // Jal-Nib
+    7692,  // Jal-MejRah
+    7693,  // Jal-Ak
+    7698, 7702, // Jal-Xil
+    7699, 7703, // Jal-Zek
+    6762, 6795, // Pyrelord
+    8094, 8095, 8177, 8097, 8096, 8098, 8178, 8179, // Galvek
+];
+
 pub const DUSK_IDS: &[i32] = &[
     7851, 7854, 7855, 7882, 7883, 7886, // dusk first form
     7887, 7888, 7889, // dusk second form
