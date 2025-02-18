@@ -1528,6 +1528,11 @@ pub fn atlatl_spec(
         }
     }
 
+    // Remove the burn effect if it exists, as all burn stacks have been consumed
+    monster
+        .active_effects
+        .retain(|effect| !matches!(effect, CombatEffect::Burn { .. }));
+
     let mut info = AttackInfo::new(player, monster);
     info.max_hit += stack_damage;
     info.min_hit = stack_damage / 2;
