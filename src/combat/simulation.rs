@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::combat::limiters;
 use crate::constants::HUEYCOATL_TAIL_ID;
 use crate::types::equipment::CombatType;
@@ -9,7 +7,7 @@ use crate::types::spells::{Spell, StandardSpell};
 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct FightResult {
-    pub ttk: f64,
+    pub ttk_ticks: i32,
     pub hit_attempts: u32,
     pub hit_count: u32,
     pub hit_amounts: Vec<u32>,
@@ -21,6 +19,10 @@ pub struct FightResult {
 impl FightResult {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn remove_final_attack_delay(&mut self, attack_speed: i32) {
+        self.ttk_ticks = self.ttk_ticks - attack_speed + 1;
     }
 }
 
@@ -48,14 +50,14 @@ impl std::fmt::Debug for SimulationError {
 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub struct CumulativeResults {
-    pub ttks: Vec<f64>,
+    pub ttks_ticks: Vec<i32>,
     pub hit_attempt_counts: Vec<u32>,
     pub hit_counts: Vec<u32>,
     pub hit_amounts: Vec<u32>,
     pub player_deaths: usize,
-    pub food_eaten: u32,
-    pub damage_taken: u32,
-    pub leftover_burn: u32,
+    pub food_eaten: Vec<u32>,
+    pub damage_taken: Vec<u32>,
+    pub leftover_burn: Vec<u32>,
 }
 
 impl CumulativeResults {
@@ -67,66 +69,10 @@ impl CumulativeResults {
         self.hit_attempt_counts.push(result.hit_attempts);
         self.hit_counts.push(result.hit_count);
         self.hit_amounts.extend(&result.hit_amounts);
-        self.ttks.push(result.ttk);
-        self.food_eaten += result.food_eaten;
-        self.damage_taken += result.damage_taken;
-        self.leftover_burn += result.leftover_burn;
-    }
-}
-
-#[derive(Debug, PartialEq, Clone)]
-pub struct SimulationStats {
-    pub ttk: f64,
-    pub accuracy: f64,
-    pub hit_dist: HashMap<u32, f64>,
-    pub success_rate: f64,
-    pub avg_food_eaten: f64,
-    pub avg_damage_taken: f64,
-    pub avg_leftover_burn: f64,
-    pub total_deaths: u32,
-}
-
-impl SimulationStats {
-    pub fn new(results: &CumulativeResults) -> Self {
-        // Calculate average ttk and accuracy
-        let ttk = results.ttks.iter().sum::<f64>() / results.ttks.len() as f64;
-        let accuracy = results.hit_counts.iter().sum::<u32>() as f64
-            / results.hit_attempt_counts.iter().sum::<u32>() as f64
-            * 100.0;
-
-        // Convert hit amount Vecs to a HashMap counting the number of times each amount appears
-        let hit_counts: HashMap<u32, u32> =
-            results
-                .hit_amounts
-                .iter()
-                .fold(HashMap::new(), |mut acc, &value| {
-                    *acc.entry(value).or_insert(0) += 1;
-                    acc
-                });
-
-        // Convert hit counts into a probability distribution
-        let hit_dist = hit_counts
-            .iter()
-            .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
-            .collect();
-
-        // Calculate success rate and average food eaten
-        let total_fights = results.ttks.len() + results.player_deaths;
-        let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
-        let avg_food_eaten = results.food_eaten as f64 / total_fights as f64;
-        let avg_damage_taken = results.damage_taken as f64 / total_fights as f64;
-        let avg_leftover_burn = results.leftover_burn as f64 / total_fights as f64;
-
-        Self {
-            ttk,
-            accuracy,
-            hit_dist,
-            success_rate,
-            avg_food_eaten,
-            avg_damage_taken,
-            avg_leftover_burn,
-            total_deaths: results.player_deaths as u32,
-        }
+        self.ttks_ticks.push(result.ttk_ticks);
+        self.food_eaten.push(result.food_eaten);
+        self.damage_taken.push(result.damage_taken);
+        self.leftover_burn.push(result.leftover_burn);
     }
 }
 
@@ -233,7 +179,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     None
 }
 
-pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> SimulationStats {
+pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> CumulativeResults {
     // Check if the monster is immune before running simulations
     if simulation.is_immune() {
         panic!("The monster is immune to the player in this setup");
@@ -258,9 +204,9 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
                     results.hit_amounts.extend(&result.hit_amounts);
                     results.hit_attempt_counts.push(result.hit_attempts);
                     results.hit_counts.push(result.hit_count);
-                    results.food_eaten += result.food_eaten;
-                    results.damage_taken += result.damage_taken;
-                    results.leftover_burn += result.leftover_burn;
+                    results.food_eaten.push(result.food_eaten);
+                    results.damage_taken.push(result.damage_taken);
+                    results.leftover_burn.push(result.leftover_burn);
                 }
                 SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
             },
@@ -268,13 +214,16 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Simulat
         simulation.reset();
     }
 
+    results
+
     // Return a struct with average ttk, average accuracy, and hit distribution
-    SimulationStats::new(&results)
+    // SimulationStats::new(&results)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::calc::analysis::SimulationStats;
     use crate::calc::rolls::calc_player_melee_rolls;
     use crate::sims::single_way::SingleWayFight;
     use crate::types::equipment::CombatStyle;
@@ -308,7 +257,8 @@ mod tests {
         let monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let simulation = SingleWayFight::new(player, monster);
-        let stats = simulate_n_fights(Box::new(simulation), 100000);
+        let results = simulate_n_fights(Box::new(simulation), 100000);
+        let stats = SimulationStats::new(&results);
 
         assert!(num::abs(stats.ttk - 10.2) < 0.1);
         assert!(num::abs(stats.accuracy - 99.04) < 0.1);

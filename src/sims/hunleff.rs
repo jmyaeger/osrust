@@ -540,8 +540,14 @@ impl HunllefFight {
             }
         }
 
-        self.mechanics
-            .get_fight_result(&self.hunllef, &vars, &mut self.config.logger)
+        let remove_final_attack_delay = true;
+        self.mechanics.get_fight_result(
+            &self.player,
+            &self.hunllef,
+            &vars,
+            &mut self.config.logger,
+            remove_final_attack_delay,
+        )
     }
 }
 
@@ -697,7 +703,7 @@ mod tests {
         fight.reset();
 
         if let Ok(result) = result {
-            assert!(result.ttk > 0.0);
+            assert!(result.ttk_ticks > 0);
         }
     }
 }

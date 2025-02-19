@@ -90,7 +90,8 @@ fn simulate_fight(
         mechanics.increment_tick(monster, &mut vars);
     }
 
-    mechanics.get_fight_result(monster, &vars, logger)
+    let remove_final_attack_delay = true;
+    mechanics.get_fight_result(player, monster, &vars, logger, remove_final_attack_delay)
 }
 
 #[cfg(test)]
@@ -146,7 +147,7 @@ mod tests {
         )
         .unwrap();
 
-        assert!(result.ttk > 0.0);
+        assert!(result.ttk_ticks > 0);
         assert!(result.hit_attempts > 0);
         assert!(result.hit_count > 0);
         assert!(!result.hit_amounts.is_empty());

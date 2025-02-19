@@ -132,23 +132,30 @@ pub trait Mechanics {
 
     fn get_fight_result(
         &self,
+        player: &Player,
         monster: &Monster,
         fight_vars: &FightVars,
         logger: &mut FightLogger,
+        remove_final_attack_delay: bool,
     ) -> Result<FightResult, SimulationError> {
         logger.log_monster_death(fight_vars.tick_counter, monster.info.name.as_str());
-        let ttk = fight_vars.tick_counter as f64 * 0.6;
+        let ttk_ticks = fight_vars.tick_counter;
         let leftover_burn = calc_leftover_burn(monster);
-
-        Ok(FightResult {
-            ttk,
+        let mut result = FightResult {
+            ttk_ticks,
             hit_attempts: fight_vars.hit_attempts,
             hit_count: fight_vars.hit_count,
             hit_amounts: fight_vars.hit_amounts.clone(),
             food_eaten: fight_vars.food_eaten,
             damage_taken: fight_vars.damage_taken,
             leftover_burn,
-        })
+        };
+
+        if remove_final_attack_delay {
+            result.remove_final_attack_delay(player.gear.weapon.speed);
+        }
+
+        Ok(result)
     }
 
     fn process_player_death(
@@ -161,7 +168,7 @@ pub trait Mechanics {
         let leftover_burn = calc_leftover_burn(monster);
 
         Err(SimulationError::PlayerDeathError(FightResult {
-            ttk: fight_vars.tick_counter as f64 * 0.6,
+            ttk_ticks: fight_vars.tick_counter,
             hit_attempts: fight_vars.hit_attempts,
             hit_count: fight_vars.hit_count,
             hit_amounts: fight_vars.hit_amounts.clone(),

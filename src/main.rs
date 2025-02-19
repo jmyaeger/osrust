@@ -1,3 +1,4 @@
+use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
 use osrs::combat::simulation::simulate_n_fights;
 use osrs::types::equipment::{CombatStyle, Weapon};
 // use osrs::equipment_db;
@@ -28,34 +29,23 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 }
 
 #[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
-    player.equip("Atlatl dart", None);
-    player.equip("Dizana's quiver", Some("Uncharged"));
+    player.equip("Scythe of vitur", Some("Charged"));
+    player.equip("Amulet of rancour", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-    player.add_potion(Potion::Ranging);
+    player.set_active_style(CombatStyle::Chop);
+    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.add_potion(Potion::SuperCombat);
 
-    player.set_effects.full_eclipse_moon = false;
-
-    let monster = Monster::new("Ammonite Crab", None).unwrap();
-    // monster.bonuses.defence.standard = -63;
-    // monster.def_rolls = monster_def_rolls(&monster);
-    // monster.stats.hitpoints = 200;
-    // monster.info.toa_level = 300;
-    // monster.scale_toa();
+    let monster = Monster::new("Manticore", None).unwrap();
 
     calc_active_player_rolls(&mut player, &monster);
     println!("Max hit: {}", player.max_hits.get(player.combat_type()));
@@ -65,11 +55,14 @@ fn simulate_single_way() {
     );
 
     let simulation = SingleWayFight::new(player, monster);
-    let stats = simulate_n_fights(Box::new(simulation), 1000000);
+    let results = simulate_n_fights(Box::new(simulation), 100000);
+    let stats = SimulationStats::new(&results);
 
     println!("Ttk: {}", stats.ttk);
     println!("Acc: {}", stats.accuracy);
-    println!("Avg. leftover burn damage: {}", stats.avg_leftover_burn)
+
+    plot_ttk_dist(&results, TtkUnits::Ticks, true);
+    plot_ttk_cdf(&results, TtkUnits::Ticks, true);
 }
 
 #[allow(unused)]
@@ -147,7 +140,9 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let stats = simulate_n_fights(Box::new(fight), 100000);
+    let results = simulate_n_fights(Box::new(fight), 100000);
+    let stats = SimulationStats::new(&results);
+
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
     println!("Success rate: {:.2}%", stats.success_rate * 100.0);
@@ -159,6 +154,9 @@ fn simulate_hunllef() {
         "Average damage taken per kill: {:.2}",
         stats.avg_damage_taken
     );
+
+    plot_ttk_dist(&results, TtkUnits::Seconds, true);
+    plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]
@@ -192,7 +190,8 @@ fn simulate_door_altar_graardor() {
 
     let fight = GraardorFight::new(player, fight_config);
 
-    let stats = simulate_n_fights(Box::new(fight), 1000000);
+    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
