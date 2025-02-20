@@ -18,7 +18,9 @@ pub enum CombatEffect {
         damage: u32,
     },
     DelayedHeal {
-        tick_delay: Option<i32>,
+        tick_delay: i32,
+        tick_counter: Option<i32>,
+        num_heals: u32,
         heal: u32,
     },
     DamageOverTime {
@@ -46,7 +48,12 @@ impl CombatEffect {
                 ref mut stacks,
             } => apply_burn(tick_counter, stacks),
             Self::DelayedAttack { tick_delay, damage } => apply_delayed_attack(tick_delay, damage),
-            Self::DelayedHeal { tick_delay, heal } => apply_delayed_heal(tick_delay, heal),
+            Self::DelayedHeal {
+                tick_delay,
+                tick_counter,
+                num_heals,
+                heal,
+            } => apply_delayed_heal(*tick_delay, tick_counter, num_heals, heal),
             Self::DamageOverTime {
                 tick_counter,
                 tick_interval,
@@ -148,7 +155,7 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
 
 fn apply_delayed_attack(tick_delay: &mut Option<i32>, damage: &mut u32) -> u32 {
     if let Some(delay) = tick_delay {
-        if *delay == 0 {
+        if *delay == 1 {
             *tick_delay = None;
             *damage
         } else {
@@ -160,13 +167,26 @@ fn apply_delayed_attack(tick_delay: &mut Option<i32>, damage: &mut u32) -> u32 {
     }
 }
 
-fn apply_delayed_heal(tick_delay: &mut Option<i32>, heal: &mut u32) -> u32 {
-    if let Some(delay) = tick_delay {
-        if *delay == 0 {
-            *tick_delay = None;
+fn apply_delayed_heal(
+    tick_delay: i32,
+    tick_counter: &mut Option<i32>,
+    num_heals: &mut u32,
+    heal: &mut u32,
+) -> u32 {
+    // Effect is only active when tick counter is Some
+    if let Some(counter) = tick_counter {
+        if *counter == 1 {
+            if *num_heals == 1 {
+                // Set tick counter to None to indicate all heals are done
+                *tick_counter = None;
+            } else {
+                // Reset tick counter to max delay and decrement the number of remaining heals
+                *tick_counter = Some(tick_delay);
+                *num_heals = num_heals.saturating_sub(1);
+            }
             *heal
         } else {
-            *delay -= 1;
+            *counter -= 1;
             0
         }
     } else {

@@ -1043,7 +1043,7 @@ impl Player {
             CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
-            CombatEffect::DelayedHeal { tick_delay, .. } => tick_delay.is_some(),
+            CombatEffect::DelayedHeal { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
         })
     }

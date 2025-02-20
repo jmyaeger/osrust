@@ -156,7 +156,9 @@ pub fn ancient_gs_spec(
             damage: 25,
         });
         player.active_effects.push(CombatEffect::DelayedHeal {
-            tick_delay: Some(9),
+            tick_delay: 9,
+            tick_counter: Some(9),
+            num_heals: 1,
             heal: 25,
         })
     }
