@@ -1047,125 +1047,125 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use crate::combat::assign_limiter;
-//     use crate::equipment::CombatStyle;
-//     use crate::loadouts::*;
-//     use crate::monster::Monster;
-//     use crate::potions::Potion;
-//     use crate::prayers::{Prayer, PrayerBoost};
-//     use crate::rolls::{calc_active_player_rolls, monster_def_rolls};
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::calc::rolls::{calc_active_player_rolls, monster_def_rolls};
+    use crate::combat::simulation::assign_limiter;
+    use crate::types::equipment::CombatStyle;
+    use crate::types::monster::Monster;
+    use crate::types::potions::Potion;
+    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::stats::Stat;
+    use crate::utils::loadouts::*;
 
-//     #[test]
-//     fn test_atlatl_dps() {
-//         let mut player = max_melee_player();
-//         player.equip("Eclipse atlatl", None);
-//         player.equip("Eclipse moon helm", None);
-//         player.equip("Eclipse moon chestplate", None);
-//         player.equip("Eclipse moon tassets", None);
-//         player.equip("Atlatl dart", None);
-//         player.update_bonuses();
-//         player.update_set_effects();
-//         player.set_active_style(CombatStyle::Rapid);
-//         player.prayers.add(PrayerBoost::new(Prayer::Rigour));
-//         player.add_potion(Potion::Ranging);
+    #[test]
+    fn test_atlatl_dps() {
+        let mut player = max_melee_player();
+        player.equip("Eclipse atlatl", None);
+        player.equip("Eclipse moon helm", None);
+        player.equip("Eclipse moon chestplate", None);
+        player.equip("Eclipse moon tassets", None);
+        player.equip("Atlatl dart", None);
+        player.update_bonuses();
+        player.update_set_effects();
+        player.set_active_style(CombatStyle::Rapid);
+        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.add_potion(Potion::Ranging);
 
-//         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
-//         monster.live_stats.defence = 1;
-//         monster.stats.defence = 1;
-//         monster.bonuses.defence.standard = -63;
+        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        monster.stats.defence = Stat::new(1);
+        monster.bonuses.defence.standard = -63;
 
-//         calc_active_player_rolls(&mut player, &monster);
-//         monster.def_rolls = monster_def_rolls(&monster);
-//         let limiter = assign_limiter(&player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
+        monster.def_rolls = monster_def_rolls(&monster);
+        let limiter = assign_limiter(&player, &monster);
 
-//         let mut rng = rand::thread_rng();
-//         let mut hit_damage = 0;
-//         let mut burn_damage = 0;
-//         let n = 100000000;
-//         let mut hit_counter = 0i64;
-//         let mut tick_counter = 0i64;
-//         let mut attack_tick = 0;
-//         let mut accurate_hits = 0i64;
-//         let mut num_stacks = Vec::new();
+        let mut rng = rand::thread_rng();
+        let mut hit_damage = 0;
+        let mut burn_damage = 0;
+        let n = 100000000;
+        let mut hit_counter = 0i64;
+        let mut tick_counter = 0i64;
+        let mut attack_tick = 0;
+        let mut accurate_hits = 0i64;
+        let mut num_stacks = Vec::new();
 
-//         while hit_counter < n {
-//             if tick_counter == attack_tick {
-//                 let hit = atlatl_attack(&mut player, &mut monster, &mut rng, &limiter);
-//                 if hit.success {
-//                     accurate_hits += 1;
-//                 }
-//                 hit_damage += hit.damage as u64;
-//                 hit_counter += 1;
-//                 attack_tick += player.gear.weapon.speed as i64;
-//             }
-//             for effect in &mut monster.active_effects {
-//                 let burn = effect.apply();
-//                 burn_damage += burn as u64;
-//             }
-//             monster.clear_inactive_effects();
+        while hit_counter < n {
+            if tick_counter == attack_tick {
+                let hit = atlatl_attack(&mut player, &mut monster, &mut rng, &limiter);
+                if hit.success {
+                    accurate_hits += 1;
+                }
+                hit_damage += hit.damage as u64;
+                hit_counter += 1;
+                attack_tick += player.gear.weapon.speed as i64;
+            }
+            for effect in &mut monster.active_effects {
+                let burn = effect.apply();
+                burn_damage += burn as u64;
+            }
+            monster.clear_inactive_effects();
 
-//             if let Some(CombatEffect::Burn {
-//                 tick_counter: _,
-//                 stacks,
-//             }) = monster
-//                 .active_effects
-//                 .iter()
-//                 .find(|item| matches!(item, &CombatEffect::Burn { .. }))
-//             {
-//                 num_stacks.push(stacks.len());
-//             } else {
-//                 num_stacks.push(0);
-//             }
+            if let Some(CombatEffect::Burn {
+                tick_counter: _,
+                stacks,
+            }) = monster
+                .active_effects
+                .iter()
+                .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+            {
+                num_stacks.push(stacks.len());
+            } else {
+                num_stacks.push(0);
+            }
 
-//             tick_counter += 1;
-//         }
+            tick_counter += 1;
+        }
 
-//         let mut remaining_burn_damage = 0;
-//         if let Some(CombatEffect::Burn {
-//             tick_counter: _,
-//             stacks,
-//         }) = monster
-//             .active_effects
-//             .iter()
-//             .find(|item| matches!(item, &CombatEffect::Burn { .. }))
-//         {
-//             remaining_burn_damage += stacks.iter().sum::<u32>();
-//         }
-//         burn_damage += remaining_burn_damage as u64;
+        let mut remaining_burn_damage = 0;
+        if let Some(CombatEffect::Burn {
+            tick_counter: _,
+            stacks,
+        }) = monster
+            .active_effects
+            .iter()
+            .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+        {
+            remaining_burn_damage += stacks.iter().sum::<u32>();
+        }
+        burn_damage += remaining_burn_damage as u64;
 
-//         let dps = hit_damage as f64 / (n as f64 * 1.8);
-//         let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
-//         let acc = accurate_hits as f64 / n as f64;
-//         println!(
-//             "dps: {:.3}, dps with burn: {:.3}, acc: {:.5}",
-//             dps, dps_with_burn, acc
-//         );
+        let dps = hit_damage as f64 / (n as f64 * 1.8);
+        let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
+        let acc = accurate_hits as f64 / n as f64;
+        println!(
+            "dps: {:.3}, dps with burn: {:.3}, acc: {:.5}",
+            dps, dps_with_burn, acc
+        );
 
-//         let prob_zero_stacks =
-//             num_stacks.iter().filter(|s| **s == 0).count() as f64 / tick_counter as f64;
-//         let prob_one_stack =
-//             num_stacks.iter().filter(|s| **s == 1).count() as f64 / tick_counter as f64;
-//         let prob_two_stacks =
-//             num_stacks.iter().filter(|s| **s == 2).count() as f64 / tick_counter as f64;
-//         let prob_three_stacks =
-//             num_stacks.iter().filter(|s| **s == 3).count() as f64 / tick_counter as f64;
-//         let prob_four_stacks =
-//             num_stacks.iter().filter(|s| **s == 4).count() as f64 / tick_counter as f64;
-//         let prob_five_stacks =
-//             num_stacks.iter().filter(|s| **s == 5).count() as f64 / tick_counter as f64;
+        let prob_zero_stacks =
+            num_stacks.iter().filter(|s| **s == 0).count() as f64 / tick_counter as f64;
+        let prob_one_stack =
+            num_stacks.iter().filter(|s| **s == 1).count() as f64 / tick_counter as f64;
+        let prob_two_stacks =
+            num_stacks.iter().filter(|s| **s == 2).count() as f64 / tick_counter as f64;
+        let prob_three_stacks =
+            num_stacks.iter().filter(|s| **s == 3).count() as f64 / tick_counter as f64;
+        let prob_four_stacks =
+            num_stacks.iter().filter(|s| **s == 4).count() as f64 / tick_counter as f64;
+        let prob_five_stacks =
+            num_stacks.iter().filter(|s| **s == 5).count() as f64 / tick_counter as f64;
 
-//         println!("Probability of zero stacks: {:.6}", prob_zero_stacks);
-//         println!("Probability of one stack: {:.6}", prob_one_stack);
-//         println!("Probability of two stacks: {:.6}", prob_two_stacks);
-//         println!("Probability of three stacks: {:.6}", prob_three_stacks);
-//         println!("Probability of four stacks: {:.6}", prob_four_stacks);
-//         println!("Probability of five stacks: {:.6}", prob_five_stacks);
+        println!("Probability of zero stacks: {:.6}", prob_zero_stacks);
+        println!("Probability of one stack: {:.6}", prob_one_stack);
+        println!("Probability of two stacks: {:.6}", prob_two_stacks);
+        println!("Probability of three stacks: {:.6}", prob_three_stacks);
+        println!("Probability of four stacks: {:.6}", prob_four_stacks);
+        println!("Probability of five stacks: {:.6}", prob_five_stacks);
 
-//         let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
-//         println!("Average number of stacks: {:.6}", avg_stacks);
-//         assert!(dps_with_burn > dps);
-//     }
-// }
+        let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
+        println!("Average number of stacks: {:.6}", avg_stacks);
+        assert!(dps_with_burn > dps);
+    }
+}

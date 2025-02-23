@@ -1,8 +1,9 @@
 use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
+use osrs::calc::rolls;
 use osrs::combat::simulation::simulate_n_fights;
 use osrs::types::equipment::{CombatStyle, Weapon};
 // use osrs::equipment_db;
-use osrs::types::monster::Monster;
+use osrs::types::monster::{CombatStat, Monster};
 use osrs::utils::loadouts;
 use osrs::utils::logging::FightLogger;
 // use osrs::monster_db;
@@ -36,16 +37,35 @@ fn main() {
 
 #[allow(unused)]
 fn simulate_single_way() {
-    let mut player = loadouts::max_melee_player();
-    player.equip("Scythe of vitur", Some("Charged"));
-    player.equip("Amulet of rancour", None);
+    // let mut player = loadouts::max_melee_player();
+    let mut player = loadouts::bowfa_crystal_player();
+    player.equip("Eclipse moon helm", None);
+    player.equip("Eclipse moon chestplate", None);
+    player.equip("Eclipse moon tassets", None);
+    player.equip("Eclipse atlatl", None);
+    player.equip("Atlatl dart", None);
+    player.equip("Amulet of strength", None);
+
+    player.equip("Berserker ring (i)", None);
+    player.equip("Mixed hide boots", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Ava's assembler", None);
+    player.stats.ranged = Stat::new(90);
+    player.stats.strength = Stat::new(90);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Chop);
-    player.prayers.add(PrayerBoost::new(Prayer::Piety));
-    player.add_potion(Potion::SuperCombat);
+    player.set_active_style(CombatStyle::Rapid);
+    player.prayers.add(PrayerBoost::new(Prayer::Deadeye));
+    player.add_potion(Potion::SmellingSalts);
+    // player.add_potion(Potion::SuperCombat);
 
-    let monster = Monster::new("Manticore", None).unwrap();
+    let mut monster = Monster::new("Zebak", None).unwrap();
+    monster.drain_stat(CombatStat::Defence, 20, None);
+    monster.base_def_rolls = rolls::monster_def_rolls(&monster);
+    monster.def_rolls.clone_from(&monster.base_def_rolls);
+    monster.info.toa_level = 300;
+    monster.info.toa_path_level = 1;
+    monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
     println!("Max hit: {}", player.max_hits.get(player.combat_type()));
@@ -60,9 +80,10 @@ fn simulate_single_way() {
 
     println!("Ttk: {}", stats.ttk);
     println!("Acc: {}", stats.accuracy);
+    println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
 
-    plot_ttk_dist(&results, TtkUnits::Ticks, true);
-    plot_ttk_cdf(&results, TtkUnits::Ticks, true);
+    // plot_ttk_dist(&results, TtkUnits::Ticks, true);
+    // plot_ttk_cdf(&results, TtkUnits::Ticks, true);
 }
 
 #[allow(unused)]

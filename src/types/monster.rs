@@ -563,15 +563,12 @@ impl Monster {
         let level_scaled_hp = self.stats.hitpoints.base * toa_level_bonus / 100;
 
         // If the NPC is affected by path scaling, apply it
-        self.stats.hitpoints.base = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
+        self.stats.hitpoints.current = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
             round_toa_hp(path_scaled_hp)
         } else {
             round_toa_hp(level_scaled_hp)
         };
-
-        // Set the live HP to the scaled base HP
-        self.stats.hitpoints.current = self.stats.hitpoints.base;
     }
 
     fn scale_toa_defence(&mut self) {
@@ -773,6 +770,7 @@ impl Monster {
             }
         }
 
+        self.scale_toa();
         remainder
     }
 
@@ -793,7 +791,7 @@ impl Monster {
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         self.base_def_rolls = rolls::monster_def_rolls(self);
-        self.scale_toa_defence();
+        self.scale_toa();
         self.active_effects = Vec::new();
     }
 
@@ -898,6 +896,12 @@ impl Monster {
         // Freeze the monster for the specified duration, reduced by freeze resistance
         self.info.freeze_duration = duration - duration * self.immunities.freeze / 100;
     }
+
+    pub fn set_toa_level(&mut self, level: u32, path: u32) {
+        self.info.toa_level = level;
+        self.info.toa_path_level = path;
+        self.scale_toa();
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {
@@ -927,9 +931,8 @@ mod tests {
     #[test]
     fn test_toa_scaling() {
         let mut baba = Monster::new("Ba-Ba", None).unwrap();
-        baba.info.toa_level = 400;
-        baba.scale_toa();
-        assert_eq!(baba.stats.hitpoints.base, 990);
+        baba.set_toa_level(400, 0);
+        assert_eq!(baba.stats.hitpoints.current, 990);
         assert_eq!(baba.def_rolls.get(CombatType::Stab), 33321);
     }
 
@@ -995,5 +998,31 @@ mod tests {
         );
         assert_eq!(graardor.max_hits.as_ref().unwrap()[1].value, 35);
         assert_eq!(graardor.max_hits.unwrap()[1].style, AttackType::Ranged);
+    }
+
+    #[test]
+    fn test_drain_stat() {
+        let mut zebak = Monster::new("Zebak", None).unwrap();
+        zebak.stats.defence.drain(20, None);
+        assert_eq!(zebak.stats.defence.current, 50);
+    }
+
+    #[test]
+    fn test_drain_stat_min_cap() {
+        let mut zebak = Monster::new("Zebak", None).unwrap();
+        zebak.stats.defence.drain(30, Some(50));
+        assert_eq!(zebak.stats.defence.current, 50);
+    }
+
+    #[test]
+    fn test_toa_scaling_with_drain() {
+        let mut zebak = Monster::new("Zebak", None).unwrap();
+        let initial_def_roll = zebak.def_rolls.get(CombatType::Standard);
+        zebak.drain_stat(CombatStat::Defence, 20, None);
+        assert_ne!(zebak.def_rolls.get(CombatType::Ranged), initial_def_roll);
+        let drained_roll = zebak.def_rolls.get(CombatType::Standard);
+        zebak.info.toa_level = 400;
+        zebak.scale_toa();
+        assert_ne!(drained_roll, zebak.def_rolls.get(CombatType::Standard));
     }
 }

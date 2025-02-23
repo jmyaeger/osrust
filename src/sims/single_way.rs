@@ -90,7 +90,7 @@ fn simulate_fight(
         mechanics.increment_tick(monster, &mut vars);
     }
 
-    let remove_final_attack_delay = true;
+    let remove_final_attack_delay = false;
     mechanics.get_fight_result(player, monster, &vars, logger, remove_final_attack_delay)
 }
 
