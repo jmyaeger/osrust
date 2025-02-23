@@ -30,16 +30,16 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
             | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword" => {
                 Fraction::new(2, 1)
             }
-            "Elder maul"
-            | "Accursed sceptre"
-            | "Accursed sceptre (a)"
-            | "Volatile nightmare staff" => Fraction::new(3, 2),
+            "Accursed sceptre" | "Accursed sceptre (a)" | "Volatile nightmare staff" => {
+                Fraction::new(3, 2)
+            }
             "Dragon dagger" => Fraction::new(115, 100),
-            "Abyssal dagger" => Fraction::new(5, 4),
+            "Abyssal dagger" | "Dragon mace" | "Dragon sword" | "Elder maul" => Fraction::new(5, 4),
             "Soulreaper axe" => {
                 Fraction::new(100 + 6 * player.boosts.soulreaper_stacks as i32, 100)
             }
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
+            "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
             _ => Fraction::new(1, 1),
         };
         max_att_roll = att_roll_factor.multiply_to_int(max_att_roll);
@@ -190,6 +190,9 @@ fn get_dot_expected(player: &Player, monster: &Monster, using_spec: bool) -> f64
             } else {
                 1.0
             }
+        } else if player.is_wearing("Ancient godsword", None) {
+            let accuracy = get_hit_chance(player, monster, true);
+            accuracy * 25.0
         } else {
             0.0
         }
@@ -337,6 +340,7 @@ pub fn get_distribution(
         let mut hit_count = 1;
         if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Abyssal dagger")
+            || player.is_wearing_any_version("Dragon knife")
             || player.is_wearing_any(MAGIC_SHORTBOWS)
         {
             hit_count = 2;
@@ -347,6 +351,19 @@ pub fn get_distribution(
         dist = AttackDistribution::default();
         for _ in 0..hit_count {
             dist.add_dist(standard_hit_dist.clone());
+        }
+    }
+
+    // Saradomin sword spec
+    if using_spec && player.is_wearing("Saradomin sword", None) {
+        let magic_hit = HitDistribution::linear(1.0, 1, 16);
+        if !IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
+            dist = dist.transform(
+                &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&magic_hit),
+                &TransformOpts {
+                    transform_inaccurate: false,
+                },
+            );
         }
     }
 
@@ -677,10 +694,15 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
             )
         }
         "Saradomin godsword" | "Zamorak godsword" | "Ancient godsword" | "Dragon halberd"
-        | "Crystal halberd" => (0, base_max_hit * 11 / 10),
+        | "Crystal halberd" | "Saradomin sword" => (0, base_max_hit * 11 / 10),
         "Armadyl godsword" => (0, (base_max_hit * 11 / 10) * 5 / 4),
         "Bandos godsword" => (0, (base_max_hit * 11 / 10) * 11 / 10),
-        "Dragon warhammer" | "Toxic blowpipe" => (0, base_max_hit * 3 / 2),
+        "Dragon sword"
+        | "Dragon longsword"
+        | "Saradomin's blessed sword"
+        | "Heavy ballista"
+        | "Light ballista" => (0, base_max_hit * 5 / 4),
+        "Dragon warhammer" | "Toxic blowpipe" | "Dragon mace" => (0, base_max_hit * 3 / 2),
         "Voidwaker" => (base_max_hit / 2, base_max_hit * 3 / 2),
         "Dragon dagger" => (0, base_max_hit * 23 / 20),
         "Abyssal dagger" => (0, base_max_hit * 17 / 20),
