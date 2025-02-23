@@ -164,6 +164,10 @@ pub const IMMUNE_TO_NORMAL_BURN_MONSTERS: &[i32] = &[
     8094, 8095, 8177, 8097, 8096, 8098, 8178, 8179, // Galvek
 ];
 
+pub const IMMUNE_TO_STRONG_BURN_MONSTERS: &[i32] = &[
+    7706, // zuk
+];
+
 pub const DUSK_IDS: &[i32] = &[
     7851, 7854, 7855, 7882, 7883, 7886, // dusk first form
     7887, 7888, 7889, // dusk second form

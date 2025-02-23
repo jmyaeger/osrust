@@ -1576,6 +1576,55 @@ pub fn scorching_bow_spec(
     hit
 }
 
+pub fn elder_maul_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Store defence drain amount (35% of current level)
+    let def_drain = monster.stats.defence.current * 35 / 100;
+
+    if monster.info.name.contains("Tekton") {
+        // DWH spec always hits on first attack on Tekton
+        if player.boosts.first_attack {
+            let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
+            monster.drain_stat(CombatStat::Defence, def_drain, None);
+            hit.apply_transforms(player, monster, rng, limiter);
+
+            hit
+        } else {
+            let mut hit = base_attack(&info, rng);
+            if hit.success {
+                hit.apply_transforms(player, monster, rng, limiter);
+                monster.drain_stat(CombatStat::Defence, def_drain, None);
+            } else {
+                // DWH spec still drains 5% of Tekton's defence on a miss
+                monster.drain_stat(
+                    CombatStat::Defence,
+                    monster.stats.defence.current / 20,
+                    None,
+                );
+            }
+
+            hit
+        }
+    } else {
+        let mut hit = base_attack(&info, rng);
+        if hit.success {
+            hit.apply_transforms(player, monster, rng, limiter);
+
+            if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
+                monster.drain_stat(CombatStat::Defence, def_drain, None);
+            }
+        }
+
+        hit
+    }
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
@@ -1629,6 +1678,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Dual macuahuitl" => dual_macuahuitl_spec,
         "Eclipse atlatl" => atlatl_spec,
         "Scorching bow" => scorching_bow_spec,
+        "Elder maul" => elder_maul_spec,
         _ => player.attack,
     }
 }
