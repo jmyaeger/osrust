@@ -870,6 +870,7 @@ impl Monster {
         {
             Some(CombatEffect::Burn { stacks, .. }) => {
                 if stacks.len() < 5 {
+                    // New stacks are ignored when there are already 5 stacks
                     stacks.push(burn_ticks); // 10 hits per stack
                 }
             }

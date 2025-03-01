@@ -1075,7 +1075,8 @@ mod tests {
 
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         monster.stats.defence = Stat::new(1);
-        monster.bonuses.defence.standard = -63;
+        monster.bonuses.defence.standard = -64;
+        player.bonuses.attack.ranged = 10000;
 
         calc_active_player_rolls(&mut player, &monster);
         monster.def_rolls = monster_def_rolls(&monster);
@@ -1084,7 +1085,7 @@ mod tests {
         let mut rng = rand::thread_rng();
         let mut hit_damage = 0;
         let mut burn_damage = 0;
-        let n = 100000000;
+        let n = 1000000000;
         let mut hit_counter = 0i64;
         let mut tick_counter = 0i64;
         let mut attack_tick = 0;
@@ -1139,10 +1140,7 @@ mod tests {
         let dps = hit_damage as f64 / (n as f64 * 1.8);
         let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
         let acc = accurate_hits as f64 / n as f64;
-        println!(
-            "dps: {:.3}, dps with burn: {:.3}, acc: {:.5}",
-            dps, dps_with_burn, acc
-        );
+        println!("DPS from burn: {:.5}, acc: {:.5}", dps_with_burn - dps, acc);
 
         let prob_zero_stacks =
             num_stacks.iter().filter(|s| **s == 0).count() as f64 / tick_counter as f64;
@@ -1156,13 +1154,40 @@ mod tests {
             num_stacks.iter().filter(|s| **s == 4).count() as f64 / tick_counter as f64;
         let prob_five_stacks =
             num_stacks.iter().filter(|s| **s == 5).count() as f64 / tick_counter as f64;
+        let prob_six_stacks =
+            num_stacks.iter().filter(|s| **s == 6).count() as f64 / tick_counter as f64;
+        let prob_seven_stacks =
+            num_stacks.iter().filter(|s| **s == 7).count() as f64 / tick_counter as f64;
+        let prob_eight_stacks =
+            num_stacks.iter().filter(|s| **s == 8).count() as f64 / tick_counter as f64;
+        let prob_nine_stacks =
+            num_stacks.iter().filter(|s| **s == 9).count() as f64 / tick_counter as f64;
+        let prob_ten_stacks =
+            num_stacks.iter().filter(|s| **s == 10).count() as f64 / tick_counter as f64;
+        let prob_eleven_stacks =
+            num_stacks.iter().filter(|s| **s == 11).count() as f64 / tick_counter as f64;
+        let prob_twelve_stacks =
+            num_stacks.iter().filter(|s| **s == 12).count() as f64 / tick_counter as f64;
+        let prob_thirteen_stacks =
+            num_stacks.iter().filter(|s| **s == 13).count() as f64 / tick_counter as f64;
 
-        println!("Probability of zero stacks: {:.6}", prob_zero_stacks);
-        println!("Probability of one stack: {:.6}", prob_one_stack);
-        println!("Probability of two stacks: {:.6}", prob_two_stacks);
-        println!("Probability of three stacks: {:.6}", prob_three_stacks);
-        println!("Probability of four stacks: {:.6}", prob_four_stacks);
-        println!("Probability of five stacks: {:.6}", prob_five_stacks);
+        println!("Probability of zero stacks: {:.10}", prob_zero_stacks);
+        println!("Probability of one stack: {:.10}", prob_one_stack);
+        println!("Probability of two stacks: {:.10}", prob_two_stacks);
+        println!("Probability of three stacks: {:.10}", prob_three_stacks);
+        println!("Probability of four stacks: {:.10}", prob_four_stacks);
+        println!("Probability of five stacks: {:.10}", prob_five_stacks);
+        println!("Probability of six stacks: {:.10}", prob_six_stacks);
+        println!("Probability of seven stacks: {:.10}", prob_seven_stacks);
+        println!("Probability of eight stacks: {:.10}", prob_eight_stacks);
+        println!("Probability of nine stacks: {:.10}", prob_nine_stacks);
+        println!("Probability of ten stacks: {:.10}", prob_ten_stacks);
+        println!("Probability of eleven stacks: {:.10}", prob_eleven_stacks);
+        println!("Probability of twelve stacks: {:.10}", prob_twelve_stacks);
+        println!(
+            "Probability of thirteen stacks: {:.10}",
+            prob_thirteen_stacks
+        );
 
         let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
         println!("Average number of stacks: {:.6}", avg_stacks);
