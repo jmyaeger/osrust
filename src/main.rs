@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
 use osrs::calc::rolls;
 use osrs::combat::simulation::simulate_n_fights;
@@ -30,9 +31,9 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 }
 
 #[allow(unused)]
@@ -89,12 +90,12 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(76);
-    player.stats.magic = Stat::new(78);
-    player.stats.defence = Stat::new(75);
-    player.stats.hitpoints = Stat::new(81);
-    player.stats.attack = Stat::new(75);
-    player.stats.strength = Stat::new(82);
+    player.stats.ranged = Stat::new(99);
+    player.stats.magic = Stat::new(99);
+    player.stats.defence = Stat::new(99);
+    player.stats.hitpoints = Stat::new(99);
+    player.stats.attack = Stat::new(99);
+    player.stats.strength = Stat::new(99);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -102,8 +103,8 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
-    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+    player.prayers.add(PrayerBoost::new(Prayer::Augury));
+    // player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
@@ -114,7 +115,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -137,12 +138,12 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 24,
-        eat_strategy: EatStrategy::EatAtHp(61),
+        food_count: 12,
+        eat_strategy: EatStrategy::TickEatOnly,
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Magic,
-            style2: SwitchType::Melee,
+            style1: SwitchType::Melee,
+            style2: SwitchType::Ranged,
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef"),
@@ -161,7 +162,7 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 100000);
+    let results = simulate_n_fights(Box::new(fight), 1000000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
@@ -176,8 +177,8 @@ fn simulate_hunllef() {
         stats.avg_damage_taken
     );
 
-    plot_ttk_dist(&results, TtkUnits::Seconds, true);
-    plot_ttk_cdf(&results, TtkUnits::Seconds, true);
+    // plot_ttk_dist(&results, TtkUnits::Seconds, true);
+    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]

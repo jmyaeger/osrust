@@ -433,6 +433,7 @@ impl Monster {
         player: &mut Player,
         attack_type: Option<AttackType>,
         rng: &mut rand::rngs::ThreadRng,
+        cap_hit: bool,
     ) -> Hit {
         // Perform an attack on a player
 
@@ -529,7 +530,9 @@ impl Monster {
             }
         }
 
-        damage = min(damage, player.stats.hitpoints.current);
+        if cap_hit {
+            damage = min(damage, player.stats.hitpoints.current);
+        }
 
         Hit::new(damage, success)
     }
