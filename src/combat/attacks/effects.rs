@@ -129,7 +129,7 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
             damage += stacks.len() as u32;
 
             // Decrease each stack by 1 and remove stacks with 0 values
-            *stacks = stacks.iter().map(|&s| s - 1).collect();
+            *stacks = stacks.iter().map(|&s| s.saturating_sub(1)).collect();
             stacks.retain(|s| *s > 0);
 
             // Burn effect has ended if there are no stacks
@@ -138,7 +138,6 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
                 return damage;
             }
         }
-        *tick_counter = Some(tick_counter.unwrap_or(0) + 1);
     } else if !stacks.is_empty() {
         // If tick counter is None, burn has just been inflicted
         *tick_counter = Some(0);
@@ -150,6 +149,11 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
         *stacks = stacks.iter().map(|&s| s.saturating_sub(1)).collect();
         stacks.retain(|s| *s > 0);
     };
+
+    if let Some(tick) = tick_counter {
+        *tick_counter = Some(*tick + 1);
+    }
+
     damage
 }
 

@@ -943,7 +943,7 @@ pub fn atlatl_attack(
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
     if hit.success
-        && !monster.is_immune_to_normal_burn()
+        && !monster.is_immune_to_strong_burn()
         && player.set_effects.full_eclipse_moon
         && rng.gen_range(0..5) == 0
     {
@@ -1101,6 +1101,7 @@ mod tests {
                 hit_counter += 1;
                 attack_tick += player.gear.weapon.speed as i64;
             }
+
             for effect in &mut monster.active_effects {
                 let burn = effect.apply();
                 burn_damage += burn as u64;
@@ -1123,18 +1124,18 @@ mod tests {
             tick_counter += 1;
         }
 
-        let mut remaining_burn_damage = 0;
-        if let Some(CombatEffect::Burn {
-            tick_counter: _,
-            stacks,
-        }) = monster
-            .active_effects
-            .iter()
-            .find(|item| matches!(item, &CombatEffect::Burn { .. }))
-        {
-            remaining_burn_damage += stacks.iter().sum::<u32>();
-        }
-        burn_damage += remaining_burn_damage as u64;
+        // let mut remaining_burn_damage = 0;
+        // if let Some(CombatEffect::Burn {
+        //     tick_counter: _,
+        //     stacks,
+        // }) = monster
+        //     .active_effects
+        //     .iter()
+        //     .find(|item| matches!(item, &CombatEffect::Burn { .. }))
+        // {
+        //     remaining_burn_damage += stacks.iter().sum::<u32>();
+        // }
+        // burn_damage += remaining_burn_damage as u64;
 
         let dps = hit_damage as f64 / (n as f64 * 1.8);
         let dps_with_burn = (hit_damage + burn_damage) as f64 / (n as f64 * 1.8);
