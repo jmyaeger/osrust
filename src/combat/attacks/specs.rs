@@ -1582,7 +1582,7 @@ pub fn elder_maul_spec(
     rng: &mut ThreadRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut info = AttackInfo::new(player, monster);
+    let info = AttackInfo::new(player, monster);
 
     // Store defence drain amount (35% of current level)
     let def_drain = monster.stats.defence.current * 35 / 100;

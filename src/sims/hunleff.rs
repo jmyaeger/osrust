@@ -11,10 +11,7 @@ use rand::Rng;
 const TORNADO_MAX_TIMER: u32 = 23;
 const TORNADO_COOLDOWN: u32 = 9;
 const TORNADO_BASE_CHANCE: u32 = 6;
-const NO_ARMOR_MAX_HIT: u32 = 16;
-const T1_MAX_HIT: u32 = 13;
-const T2_MAX_HIT: u32 = 10;
-const T3_MAX_HIT: u32 = 8;
+const HUNLLEF_MAX_HIT: u32 = 68;
 const PADDLEFISH_HEAL: u32 = 20;
 const PADDLEFISH_DELAY: i32 = 3;
 const HUNLLEF_REGEN_TICKS: i32 = 100;
@@ -182,7 +179,14 @@ impl HunllefMechanics {
         } else {
             AttackType::Magic
         };
-        let hit = hunllef.attack(player, Some(hunllef_style), rng);
+        let mut hit = hunllef.attack(player, Some(hunllef_style), rng, false);
+
+        // Damage is reduced after it is rolled
+        // Armor reduction occurs first, then protection prayers (source: Mod Arcane in Summit Blue)
+        let base_damage = hit.damage;
+        let armor_reduced = base_damage * (6 - armor_tier(player)) / 6;
+        hit.damage = armor_reduced * 10 / 41; // Prayer reduction is 10/41 (source: Mod Ash tweet)
+
         logger.log_monster_attack(
             hunllef,
             vars.tick_counter,
@@ -260,15 +264,9 @@ impl HunllefFight {
             panic!("Equipped gear is not usable in the Gauntlet.")
         }
         let mut hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
-        let max_hit = match armor_tier(&player) {
-            1 => T1_MAX_HIT,
-            2 => T2_MAX_HIT,
-            3 => T3_MAX_HIT,
-            _ => NO_ARMOR_MAX_HIT,
-        };
         hunllef.max_hits = Some(vec![
-            MonsterMaxHit::new(max_hit, AttackType::Ranged),
-            MonsterMaxHit::new(max_hit, AttackType::Magic),
+            MonsterMaxHit::new(HUNLLEF_MAX_HIT, AttackType::Ranged),
+            MonsterMaxHit::new(HUNLLEF_MAX_HIT, AttackType::Magic),
         ]);
 
         let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
@@ -578,7 +576,7 @@ impl Simulation for HunllefFight {
     }
 }
 
-fn armor_tier(player: &Player) -> i32 {
+fn armor_tier(player: &Player) -> u32 {
     if player.gear.head.is_none() || player.gear.body.is_none() || player.gear.legs.is_none() {
         return 0;
     }
@@ -628,6 +626,8 @@ mod tests {
     use crate::types::player::{GearSwitch, Player, SwitchType};
     use crate::types::prayers::{Prayer, PrayerBoost};
     use crate::types::stats::Stat;
+    use std::collections::HashMap;
+
     #[test]
     fn test_hunllef_sim() {
         let mut player = Player::new();
@@ -705,5 +705,36 @@ mod tests {
         if let Ok(result) = result {
             assert!(result.ttk_ticks > 0);
         }
+    }
+
+    #[test]
+    fn test_t1_hit_ratio() {
+        let mut hits = vec![];
+        let n = 10000000;
+        for _ in 0..n {
+            let mut rng = rand::thread_rng();
+            let base_damage = rng.gen_range(0..=68);
+            let armor_reduced = base_damage * 5 / 6;
+            let final_damage = armor_reduced * 10 / 41;
+            hits.push(final_damage);
+        }
+
+        let hit_counts: HashMap<i32, i32> = hits.iter().fold(HashMap::new(), |mut acc, &value| {
+            *acc.entry(value).or_insert(0) += 1;
+            acc
+        });
+        let hit_dist: HashMap<i32, f64> = hit_counts
+            .iter()
+            .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<i32>() as f64))
+            .collect();
+
+        for n in 0..=13 {
+            println!("{}: {}", n, hit_dist[&n]);
+        }
+
+        println!(
+            "Expected hit: {}",
+            hits.iter().sum::<i32>() as f64 / hits.len() as f64
+        )
     }
 }

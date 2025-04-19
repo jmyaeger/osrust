@@ -51,7 +51,7 @@ pub trait Mechanics {
         logger: &mut FightLogger,
     ) {
         // Note: does not increment monster attack tick for flexibility
-        let hit = monster.attack(player, attack_type, rng);
+        let hit = monster.attack(player, attack_type, rng, true);
         logger.log_monster_attack(
             monster,
             fight_vars.tick_counter,

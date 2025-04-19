@@ -433,6 +433,7 @@ impl Monster {
         player: &mut Player,
         attack_type: Option<AttackType>,
         rng: &mut rand::rngs::ThreadRng,
+        cap_hit: bool,
     ) -> Hit {
         // Perform an attack on a player
 
@@ -529,7 +530,9 @@ impl Monster {
             }
         }
 
-        damage = min(damage, player.stats.hitpoints.current);
+        if cap_hit {
+            damage = min(damage, player.stats.hitpoints.current);
+        }
 
         Hit::new(damage, success)
     }
@@ -874,6 +877,7 @@ impl Monster {
         {
             Some(CombatEffect::Burn { stacks, .. }) => {
                 if stacks.len() < 5 {
+                    // New stacks are ignored when there are already 5 stacks
                     stacks.push(burn_ticks); // 10 hits per stack
                 }
             }
