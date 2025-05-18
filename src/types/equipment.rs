@@ -336,7 +336,7 @@ pub struct Weapon {
     pub attack_range: i8,
     pub is_two_handed: bool,
     #[serde(default)]
-    pub spec_cost: u8, // Not implemented for anything yet
+    pub spec_cost: Option<u8>, // Not implemented for anything yet
     #[serde(default)]
     pub poison_severity: u8, // May be restructured to use Poison/Venom struct, or removed
     #[serde(rename(deserialize = "category"))]
@@ -360,6 +360,12 @@ impl Equipment for Weapon {
         // Set base speed and item slot
         weapon.base_speed = weapon.speed;
         weapon.slot = GearSlot::Weapon;
+
+        // Set spec cost, if applicable
+        let spec_cost = SPEC_COSTS.iter().find(|w| w.0 == weapon.name);
+        if let Some(cost) = spec_cost {
+            weapon.spec_cost = Some(cost.1);
+        }
 
         *self = weapon;
 
@@ -389,7 +395,7 @@ impl Default for Weapon {
             base_speed: 5,
             attack_range: 0,
             is_two_handed: false,
-            spec_cost: 0,
+            spec_cost: None,
             poison_severity: 0,
             combat_styles: Weapon::get_styles_from_weapon_type("Unarmed"),
             is_staff: false,
@@ -876,7 +882,7 @@ mod tests {
         assert_eq!(weapon.base_speed, 0);
         assert_eq!(weapon.attack_range, 0);
         assert!(!weapon.is_two_handed);
-        assert_eq!(weapon.spec_cost, 0);
+        assert_eq!(weapon.spec_cost, None);
         assert_eq!(weapon.slot, GearSlot::Weapon);
         let combat_style = weapon.combat_styles.get(&CombatStyle::Punch).unwrap();
         assert_eq!(combat_style.combat_type, CombatType::Crush);
@@ -918,5 +924,11 @@ mod tests {
                 ranged: 80,
             }
         );
+    }
+
+    #[test]
+    fn test_spec_cost() {
+        let voidwaker = Weapon::new("Voidwaker", None);
+        assert_eq!(voidwaker.spec_cost, Some(50));
     }
 }
