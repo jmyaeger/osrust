@@ -1,17 +1,17 @@
 #![allow(unused_imports)]
 use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
 use osrs::calc::rolls;
+use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::combat::simulation::simulate_n_fights;
 use osrs::types::equipment::{CombatStyle, Weapon};
-// use osrs::equipment_db;
 use osrs::types::monster::{CombatStat, Monster};
-use osrs::utils::loadouts;
-use osrs::utils::logging::FightLogger;
-// use osrs::monster_db;
-use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
+use osrs::utils::equipment_db;
+use osrs::utils::loadouts;
+use osrs::utils::logging::FightLogger;
+use osrs::utils::monster_db;
 // use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
@@ -19,21 +19,21 @@ use osrs::sims::single_way::SingleWayFight;
 use osrs::types::stats::Stat;
 
 fn main() {
-    // match monster_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match monster_db::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
-    // match equipment_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match equipment_db::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
     // simulate_door_altar_graardor();
 
     // simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 }
 
 #[allow(unused)]
@@ -90,17 +90,17 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(99);
-    player.stats.magic = Stat::new(99);
-    player.stats.defence = Stat::new(99);
-    player.stats.hitpoints = Stat::new(99);
-    player.stats.attack = Stat::new(99);
-    player.stats.strength = Stat::new(99);
+    player.stats.ranged = Stat::new(92);
+    player.stats.magic = Stat::new(92);
+    player.stats.defence = Stat::new(75);
+    player.stats.hitpoints = Stat::new(85);
+    player.stats.attack = Stat::new(78);
+    player.stats.strength = Stat::new(85);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
-    player.equip("Crystal helm (basic)", None);
-    player.equip("Crystal body (basic)", None);
-    player.equip("Crystal legs (basic)", None);
+    player.equip("Crystal helm (attuned)", None);
+    player.equip("Crystal body (attuned)", None);
+    player.equip("Crystal legs (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
     player.prayers.add(PrayerBoost::new(Prayer::Augury));
@@ -138,8 +138,8 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 12,
-        eat_strategy: EatStrategy::TickEatOnly,
+        food_count: 30,
+        eat_strategy: EatStrategy::EatAtHp(65),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Melee,

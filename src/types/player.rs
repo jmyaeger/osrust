@@ -707,6 +707,8 @@ impl Player {
                 && self.is_using_standard_spell()
             {
                 4
+            } else if self.is_wearing("Twinflame staff", None) {
+                6
             } else {
                 5
             }
@@ -1085,6 +1087,18 @@ impl Player {
     pub fn is_wearing_ogre_bow(&self) -> bool {
         self.is_wearing_any(OGRE_BOWS)
     }
+
+    pub fn gets_second_twinflame_hit(&self) -> bool {
+        self.is_wearing("Twinflame staff", None) && {
+            if let Some(spell) = self.attrs.spell {
+                spells::is_blast_spell(&spell)
+                    || spells::is_bolt_spell(&spell)
+                    || spells::is_wave_spell(&spell)
+            } else {
+                false
+            }
+        }
+    }
 }
 
 fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
@@ -1144,6 +1158,7 @@ mod test {
     use crate::types::equipment::{CombatStyle, StrengthBonus, StyleBonus};
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::spells::{Spell, StandardSpell};
 
     #[test]
     fn test_default_player() {
@@ -1325,5 +1340,16 @@ mod test {
         assert_eq!(player.prayers.attack, 20);
         assert_eq!(player.prayers.strength, 23);
         assert_eq!(player.prayers.defence, 25);
+    }
+
+    #[test]
+    fn test_twinflame_detection() {
+        let mut player = Player::new();
+        player.equip("Twinflame staff", None);
+        player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
+        assert!(player.gets_second_twinflame_hit());
+
+        player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
+        assert!(!player.gets_second_twinflame_hit());
     }
 }

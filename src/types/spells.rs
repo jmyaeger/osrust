@@ -462,6 +462,36 @@ pub fn is_grasp_spell(spell: &Spell) -> bool {
     )
 }
 
+pub fn is_bolt_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::WindBolt)
+            | Spell::Standard(StandardSpell::EarthBolt)
+            | Spell::Standard(StandardSpell::WaterBolt)
+            | Spell::Standard(StandardSpell::FireBolt)
+    )
+}
+
+pub fn is_blast_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::WindBlast)
+            | Spell::Standard(StandardSpell::EarthBlast)
+            | Spell::Standard(StandardSpell::WaterBlast)
+            | Spell::Standard(StandardSpell::FireBlast)
+    )
+}
+
+pub fn is_wave_spell(spell: &Spell) -> bool {
+    matches!(
+        spell,
+        Spell::Standard(StandardSpell::WindWave)
+            | Spell::Standard(StandardSpell::EarthWave)
+            | Spell::Standard(StandardSpell::WaterWave)
+            | Spell::Standard(StandardSpell::FireWave)
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

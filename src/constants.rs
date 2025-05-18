@@ -595,8 +595,11 @@ pub const ELF_BOWS: [(&str, Option<&str>); 3] = [
     ("Bow of faerdhinen (c)", None),
 ];
 
-pub const SMOKE_STAVES: [(&str, Option<&str>); 2] =
-    [("Smoke battlestaff", None), ("Mystic smoke staff", None)];
+pub const SMOKE_STAVES: [(&str, Option<&str>); 3] = [
+    ("Smoke battlestaff", None),
+    ("Mystic smoke staff", None),
+    ("Twinflame staff", None),
+];
 
 pub const IVANDIS_WEAPONS: [(&str, Option<&str>); 3] = [
     ("Blisterwood flail", None),
