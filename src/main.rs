@@ -24,10 +24,10 @@ fn main() {
         Err(e) => println!("{}", e),
     }
 
-    match equipment_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match equipment_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // simulate_door_altar_graardor();
 

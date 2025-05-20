@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 // Covers any type of effect that gets applied over time
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum CombatEffect {
@@ -243,6 +245,13 @@ fn apply_damage_over_time(
             0
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum BurnType {
+    Weak,
+    Normal,
+    Strong,
 }
 
 // #[cfg(test)]

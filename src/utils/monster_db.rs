@@ -12,7 +12,7 @@ const FLAT_FILE_NAME: &str = "src/databases/monsters_flattened.db";
 const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
 // const IMG_PATH: &str = "src/images/monsters/";
 
-const REQUIRED_PRINTOUTS: [&str; 37] = [
+const REQUIRED_PRINTOUTS: [&str; 38] = [
     "Attack bonus",
     "Attack level",
     "Attack speed",
@@ -24,6 +24,7 @@ const REQUIRED_PRINTOUTS: [&str; 37] = [
     "Freeze resistance",
     "Immune to poison",
     "Immune to venom",
+    "Immune to burn",
     "Magic Damage bonus",
     "Magic attack bonus",
     "Magic defence bonus",
@@ -105,6 +106,7 @@ struct Immunities {
     poison: bool,
     venom: bool,
     freeze: i64,
+    burn: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -222,9 +224,7 @@ fn has_category(category_array: &[serde_json::Value], category: &str) -> bool {
     category_array.iter().any(|c| {
         c.get("fulltext")
             .and_then(|fulltext| fulltext.as_str())
-            .is_some_and(|fulltext| {
-                fulltext == format!("Category:{}", category)
-            })
+            .is_some_and(|fulltext| fulltext == format!("Category:{}", category))
     })
 }
 
@@ -281,6 +281,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             immunities_poison BOOLEAN,
             immunities_venom BOOLEAN,
             immunities_freeze INTEGER,
+            immunities_burn TEXT,
             flat_armour INTEGER
         )",
         [],
@@ -295,10 +296,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             magic, ranged, strength, attack_melee, attack_ranged, attack_magic,
             defence_crush, defence_magic, defence_heavy, defence_standard, defence_light,
             defence_slash, defence_stab, strength_melee, strength_ranged, strength_magic,
-            immunities_poison, immunities_venom, immunities_freeze, flat_armour
+            immunities_poison, immunities_venom, immunities_freeze, immunities_burn, flat_armour
         ) VALUES (
             ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17,
-            ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34
+            ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35
         )",
     )?;
 
@@ -463,6 +464,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 freeze: get_printout_value(&po.get("Immune to freeze").cloned(), false)
                     .and_then(|freeze| freeze.as_i64())
                     .unwrap_or_default(),
+                burn: get_printout_value(&po.get("Immune to burn").cloned(), false)
+                    .map(|burn| burn.to_string().replace("\"", "")),
             },
             max_hit: get_printout_value(&po.get("Max hit").cloned(), true).map(|hit| {
                 hit.as_array()
@@ -563,6 +566,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
+            monster.immunities.burn,
             monster.bonuses.flat_armour,
         ])?;
     }
@@ -619,6 +623,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 poison: false,
                 venom: false,
                 freeze: 0,
+                burn: None,
             },
             max_hit: Some(vec!["26".to_string()]),
         };
@@ -663,6 +668,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             monster.immunities.poison,
             monster.immunities.venom,
             monster.immunities.freeze,
+            monster.immunities.burn,
             monster.bonuses.flat_armour,
         ])?;
 

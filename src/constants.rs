@@ -199,6 +199,7 @@ pub const ALWAYS_MAX_HIT_RANGED: &[i32] = &[
 pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
     11709, 11712, // Baboon brawler
     12816, // Fremennik warband berserker
+    14151, 14150, // Royal titans elementals
 ];
 
 pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
@@ -466,7 +467,7 @@ pub const SLASH_SPEC_WEAPONS: [&str; 13] = [
 
 pub const CRUSH_SPEC_WEAPONS: [&str; 3] = ["Dinh's bulwark", "Ancient mace", "Dragon mace"];
 
-pub const MAGIC_SPEC_WEAPONS: [&str; 1] = ["Saradomin's blessed sword"];
+pub const MAGIC_SPEC_WEAPONS: [&str; 2] = ["Saradomin's blessed sword", "Voidwaker"];
 
 const BURN_PATTERNS: [[u8; 3]; 8] = [
     [0, 0, 0],
@@ -676,7 +677,7 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
 pub const EAT_DELAY: u32 = 3;
 
-pub const SPEC_COSTS: [(&str, u8); 68] = [
+pub const SPEC_COSTS: [(&str, u8); 70] = [
     ("Ancient godsword", 50),
     ("Eldritch nightmare staff", 55),
     ("Keris partisan of the sun", 75),
@@ -689,6 +690,7 @@ pub const SPEC_COSTS: [(&str, u8); 68] = [
     ("Crystal halberd", 30),
     ("Abyssal whip", 25),
     ("Accursed sceptre", 50),
+    ("Accursed sceptre (a)", 50),
     ("Ancient mace", 100),
     ("Bandos godsword", 50),
     ("Barrelchest anchor", 50),
@@ -745,4 +747,5 @@ pub const SPEC_COSTS: [(&str, u8); 68] = [
     ("Ursine chainmace", 50),
     ("Zamorak godsword", 50),
     ("Soulreaper axe", 0),
+    ("Brine sabre", 75),
 ];

@@ -241,6 +241,11 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
         max_hit = player.seercull_spec_max();
     }
 
+    if player.is_wearing("Holy water", None) {
+        max_hit = calc_max_hit(eff_str + 10, player.gear.weapon.bonuses.strength.ranged);
+        if monster.is_demon() {}
+    }
+
     for combat_type in [CombatType::Light, CombatType::Standard, CombatType::Heavy] {
         player.att_rolls.set(combat_type, att_roll);
         player.max_hits.set(combat_type, max_hit);
@@ -941,4 +946,8 @@ fn get_elemental_weakness_boost(player: &Player, monster: &Monster) -> u32 {
     } else {
         0
     }
+}
+
+fn get_demonbane_factor(weapon_boost: u32) -> Fraction {
+    todo!()
 }

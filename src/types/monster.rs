@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 
 use crate::calc::rolls;
-use crate::combat::attacks::effects::CombatEffect;
+use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
 use crate::constants::*;
 use crate::types::equipment::{CombatStyle, CombatType};
@@ -106,6 +106,8 @@ pub struct Immunities {
     #[serde(default)]
     pub thrall: bool,
     pub freeze: u32,
+    #[serde(deserialize_with = "deserialize_burn_immunity")]
+    pub burn: Option<BurnType>,
     #[serde(default)]
     pub melee: bool,
     #[serde(default)]
@@ -258,6 +260,24 @@ where
     }
 
     Ok(attack_types)
+}
+
+fn deserialize_burn_immunity<'de, D>(deserializer: D) -> Result<Option<BurnType>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let burn_immunity: Option<String> = Option::deserialize(deserializer)?;
+    if let Some(burn_type) = burn_immunity {
+        let burn_str = burn_type.as_str();
+        match burn_str {
+            "Immune to weak burns" => Ok(Some(BurnType::Weak)),
+            "Immune to normal burns" => Ok(Some(BurnType::Normal)),
+            "Immune to strong burns" => Ok(Some(BurnType::Strong)),
+            _ => Ok(None),
+        }
+    } else {
+        Ok(None)
+    }
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -707,13 +727,17 @@ impl Monster {
         self.immunities.freeze != 100 && !self.info.freeze_duration == 0
     }
 
+    pub fn is_immune_to_weak_burn(&self) -> bool {
+        self.immunities.burn.is_some()
+    }
+
     pub fn is_immune_to_normal_burn(&self) -> bool {
-        IMMUNE_TO_NORMAL_BURN_MONSTERS.contains(&self.info.id.unwrap_or(0))
-            || IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        self.immunities.burn == Some(BurnType::Normal)
+            || self.immunities.burn == Some(BurnType::Strong)
     }
 
     pub fn is_immune_to_strong_burn(&self) -> bool {
-        IMMUNE_TO_STRONG_BURN_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        self.immunities.burn == Some(BurnType::Strong)
     }
 
     pub fn regen_stats(&mut self) {
@@ -817,6 +841,10 @@ impl Monster {
         }
 
         if self.vampyre_tier() == Some(3) && !player.is_wearing_ivandis_weapon() {
+            return true;
+        }
+
+        if !self.is_demon() && player.is_wearing("Holy water", None) {
             return true;
         }
 
@@ -1032,5 +1060,11 @@ mod tests {
         zebak.info.toa_level = 400;
         zebak.scale_toa();
         assert_ne!(drained_roll, zebak.def_rolls.get(CombatType::Standard));
+    }
+
+    #[test]
+    fn test_burn_immunity() {
+        let cerberus = Monster::new("Cerberus", None).unwrap();
+        assert_eq!(cerberus.immunities.burn.unwrap(), BurnType::Normal);
     }
 }

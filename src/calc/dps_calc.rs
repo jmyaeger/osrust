@@ -27,14 +27,15 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
     if using_spec {
         let att_roll_factor = match &player.gear.weapon.name as &str {
             "Saradomin godsword" | "Bandos godsword" | "Zamorak godsword" | "Armadyl godsword"
-            | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword" => {
-                Fraction::new(2, 1)
-            }
+            | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword"
+            | "Brine sabre" | "Barrelchest anchor" => Fraction::new(2, 1),
             "Accursed sceptre" | "Accursed sceptre (a)" | "Volatile nightmare staff" => {
                 Fraction::new(3, 2)
             }
             "Dragon dagger" => Fraction::new(115, 100),
-            "Abyssal dagger" | "Dragon mace" | "Dragon sword" | "Elder maul" => Fraction::new(5, 4),
+            "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
+                Fraction::new(5, 4)
+            }
             "Soulreaper axe" => {
                 Fraction::new(100 + 6 * player.boosts.soulreaper_stacks as i32, 100)
             }
@@ -709,7 +710,9 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
             )
         }
         "Saradomin godsword" | "Zamorak godsword" | "Ancient godsword" | "Dragon halberd"
-        | "Crystal halberd" | "Saradomin sword" => (0, base_max_hit * 11 / 10),
+        | "Crystal halberd" | "Saradomin sword" | "Barrelchest anchor" => {
+            (0, base_max_hit * 11 / 10)
+        }
         "Armadyl godsword" => (0, (base_max_hit * 11 / 10) * 5 / 4),
         "Bandos godsword" => (0, (base_max_hit * 11 / 10) * 11 / 10),
         "Dragon sword"
@@ -737,6 +740,8 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
             (min_hit, base_max_hit * damage_factor / 10)
         }
         "Accursed sceptre" | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
+        "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
+        | "Seercull" => (0, player.seercull_spec_max()),
         _ => panic!("Spec not implemented for {}", player.gear.weapon.name),
     }
 }
