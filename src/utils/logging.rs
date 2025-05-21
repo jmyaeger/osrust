@@ -155,12 +155,12 @@ impl FightLogger {
 
             debug!("\n");
             debug!("Monster's stats:");
-            debug!("Attack: {}", monster.stats.attack.base);
-            debug!("Strength: {}", monster.stats.strength.base);
-            debug!("Ranged: {}", monster.stats.ranged.base);
-            debug!("Defence: {}", monster.stats.defence.base);
-            debug!("Magic: {}", monster.stats.magic.base);
-            debug!("Hitpoints: {}\n", monster.stats.hitpoints.base);
+            debug!("Attack: {}", monster.stats.attack.current);
+            debug!("Strength: {}", monster.stats.strength.current);
+            debug!("Ranged: {}", monster.stats.ranged.current);
+            debug!("Defence: {}", monster.stats.defence.current);
+            debug!("Magic: {}", monster.stats.magic.current);
+            debug!("Hitpoints: {}\n", monster.stats.hitpoints.current);
 
             debug!(
                 "Monster's max attack rolls: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",

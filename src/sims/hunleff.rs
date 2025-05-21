@@ -45,7 +45,7 @@ const ALLOWED_GEAR: [&str; 23] = [
 #[derive(Debug, PartialEq, Clone)]
 pub struct HunllefConfig {
     pub food_count: u32, // Only normal paddlefish for now
-    pub eat_strategy: EatStrategy,
+    pub eat_strategy: HunllefEatStrategy,
     pub redemption_attempts: u32, // TODO: Attempt to use redemption a certain number of times at the beginning
     pub attack_strategy: AttackStrategy,
     pub lost_ticks: i32,
@@ -56,7 +56,7 @@ impl Default for HunllefConfig {
     fn default() -> Self {
         Self {
             food_count: 20,
-            eat_strategy: EatStrategy::EatAtHp(50),
+            eat_strategy: HunllefEatStrategy::EatAtHp(50),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
                 style1: SwitchType::Ranged,
@@ -69,7 +69,7 @@ impl Default for HunllefConfig {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum EatStrategy {
+pub enum HunllefEatStrategy {
     EatAtHp(u32),          // Eat as soon as HP goes below threshold
     TickEatOnly,           // Allow health to go below max hit and then tick eat
     EatToFullDuringNadoes, // Don't eat until tornadoes unless necessary, then eat to full
@@ -205,12 +205,12 @@ impl HunllefMechanics {
         state: &mut HunllefState,
         vars: &mut FightVars,
         player: &mut Player,
-        eat_strategy: &EatStrategy,
+        eat_strategy: &HunllefEatStrategy,
         logger: &mut FightLogger,
     ) {
         // Handle eating based on set strategy
         match eat_strategy {
-            EatStrategy::EatAtHp(threshold) => {
+            HunllefEatStrategy::EatAtHp(threshold) => {
                 // Eat if at or below the provided threshold and force the player to skip the next attack
                 if player.stats.hitpoints.current <= *threshold
                     && vars.eat_delay == 0
@@ -221,7 +221,7 @@ impl HunllefMechanics {
                     vars.attack_tick += PADDLEFISH_DELAY;
                 }
             }
-            EatStrategy::TickEatOnly => {
+            HunllefEatStrategy::TickEatOnly => {
                 if state.queued_damage.is_some()
                     && player.stats.hitpoints.current < 14
                     && vars.eat_delay == 0
@@ -232,7 +232,7 @@ impl HunllefMechanics {
                     vars.attack_tick += PADDLEFISH_DELAY;
                 }
             }
-            EatStrategy::EatToFullDuringNadoes => {
+            HunllefEatStrategy::EatToFullDuringNadoes => {
                 if ((state.tornado_timer > 0
                     && player.stats.hitpoints.base - player.stats.hitpoints.current
                         >= PADDLEFISH_HEAL)
@@ -673,7 +673,7 @@ mod tests {
 
         // let fight_config = HunllefConfig {
         //     food_count: 0,
-        //     eat_strategy: EatStrategy::EatAtHp(15),
+        //     eat_strategy: HunllefEatStrategy::EatAtHp(15),
         //     redemption_attempts: 0,
         //     attack_strategy: AttackStrategy::TwoT3Weapons {
         //         style1: SwitchType::Magic,
@@ -685,7 +685,7 @@ mod tests {
 
         let fight_config = HunllefConfig {
             food_count: 20,
-            eat_strategy: EatStrategy::EatAtHp(15),
+            eat_strategy: HunllefEatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::FiveToOne {
                 main_style: SwitchType::Magic,

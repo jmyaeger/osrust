@@ -18,7 +18,7 @@ pub fn max_melee_player() -> Player {
     player.equip("Ghrazi rapier", None);
     player.equip("Avernic defender", None);
     player.equip("Rada's blessing 4", None);
-    player.equip("Amulet of torture", None);
+    player.equip("Amulet of rancour", None);
     player.equip("Infernal cape", None);
     player.equip("Ultor ring", None);
 

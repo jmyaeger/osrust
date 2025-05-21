@@ -1,7 +1,7 @@
 // Adapted from the wiki DPS calc - credit to the wiki team
 
-use crate::calc::rolls::monster_def_rolls;
-use crate::types::monster::Monster;
+use crate::calc::rolls::{calc_max_hit, monster_def_rolls};
+use crate::types::monster::{AttackType, Monster};
 
 pub fn scale_monster_hp_only(monster: &mut Monster) {
     // Currently only used for Vardorvis, but this allows for future expansion
@@ -28,6 +28,18 @@ fn apply_vard_scaling(monster: &mut Monster) {
         vard_ranges.def[0],
         vard_ranges.def[1],
     ) as u32;
+
+    // Recalculate Vardorvis' max hit (Note: must be initialized first)
+    monster.max_hits.as_mut().and_then(|hits| {
+        hits.iter_mut()
+            .find(|h| h.style == AttackType::Slash)
+            .map(|h| {
+                h.value = calc_max_hit(
+                    monster.stats.strength.current + 9,
+                    monster.bonuses.strength.melee,
+                )
+            })
+    });
     monster.def_rolls = monster_def_rolls(monster);
 }
 

@@ -123,7 +123,7 @@ fn calc_roll(eff_lvl: u32, bonus: i32) -> i32 {
     max(0, eff_lvl as i32 * (bonus + 64))
 }
 
-fn calc_max_hit(eff_lvl: u32, bonus: i32) -> u32 {
+pub fn calc_max_hit(eff_lvl: u32, bonus: i32) -> u32 {
     max(0, (eff_lvl as i32 * (bonus + 64) + 320) / 640) as u32
 }
 

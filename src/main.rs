@@ -2,7 +2,7 @@
 use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
 use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
-use osrs::combat::simulation::simulate_n_fights;
+use osrs::combat::simulation::{simulate_n_fights, Simulation};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
 use osrs::types::player::{GearSwitch, Player, SwitchType};
@@ -14,15 +14,16 @@ use osrs::utils::logging::FightLogger;
 use osrs::utils::monster_db;
 // use osrs::rolls::monster_def_rolls;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
-use osrs::sims::hunleff::{AttackStrategy, EatStrategy, HunllefConfig, HunllefFight};
+use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
 use osrs::sims::single_way::SingleWayFight;
+use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::stats::Stat;
 
 fn main() {
-    match monster_db::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match monster_db::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // match equipment_db::main() {
     //     Ok(_) => {}
@@ -34,6 +35,8 @@ fn main() {
     // simulate_single_way();
 
     // simulate_hunllef();
+
+    simulate_vardorvis();
 }
 
 #[allow(unused)]
@@ -139,7 +142,7 @@ fn simulate_hunllef() {
 
     let fight_config = HunllefConfig {
         food_count: 30,
-        eat_strategy: EatStrategy::EatAtHp(65),
+        eat_strategy: HunllefEatStrategy::EatAtHp(65),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Melee,
@@ -150,7 +153,7 @@ fn simulate_hunllef() {
     };
     // let fight_config = HunllefConfig {
     //     food_count: 24,
-    //     eat_strategy: EatStrategy::EatAtHp(15),
+    //     eat_strategy: HunllefEatStrategy::EatAtHp(15),
     //     redemption_attempts: 0,
     //     attack_strategy: AttackStrategy::FiveToOne {
     //         main_style: SwitchType::Magic,
@@ -178,6 +181,47 @@ fn simulate_hunllef() {
     );
 
     // plot_ttk_dist(&results, TtkUnits::Seconds, true);
+    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
+}
+
+#[allow(unused)]
+fn simulate_vardorvis() {
+    let mut player = loadouts::max_melee_player();
+    player.equip("Scythe of vitur", Some("Charged"));
+    player.equip("Bandos chestplate", None);
+    player.equip("Bandos tassets", None);
+    player.equip("Neitiznot faceguard", None);
+    player.update_bonuses();
+    player.update_set_effects();
+    player.set_active_style(CombatStyle::Chop);
+    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+
+    let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+    calc_active_player_rolls(&mut player, &vard);
+
+    let fight_config = VardorvisConfig {
+        food_heal_amount: 22,
+        food_eat_delay: 3,
+        eat_strategy: VardorvisEatStrategy::EatAtHp(20),
+        logger: FightLogger::new(false, "vardorvis"),
+    };
+
+    let mut fight = VardorvisFight::new(player, fight_config);
+    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let stats = SimulationStats::new(&results);
+
+    println!("Average ttk: {:.2} seconds", stats.ttk);
+    println!("Average accuracy: {:.2}%", stats.accuracy);
+    println!("Success rate: {:.2}%", stats.success_rate * 100.0);
+    println!(
+        "Average number of food eaten per kill: {:.2}",
+        stats.avg_food_eaten
+    );
+    println!(
+        "Average damage taken per kill: {:.2}",
+        stats.avg_damage_taken
+    );
+
     // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
