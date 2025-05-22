@@ -2,6 +2,7 @@
 use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
 use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
+use osrs::combat::attacks::standard::get_attack_functions;
 use osrs::combat::simulation::{simulate_n_fights, Simulation};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
@@ -187,14 +188,17 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_vardorvis() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Scythe of vitur", Some("Charged"));
+    player.equip("Abyssal tentacle", None);
     player.equip("Bandos chestplate", None);
-    player.equip("Bandos tassets", None);
+    player.equip("Blood moon tassets", None);
     player.equip("Neitiznot faceguard", None);
+    player.equip("Berserker ring (i)", None);
+    // player.equip("Justiciar chestguard", None);
+    // player.equip("Justiciar legguards", None);
+    // player.equip("Justiciar faceguard", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Chop);
-    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.set_active_style(CombatStyle::Lash);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
     calc_active_player_rolls(&mut player, &vard);
@@ -222,7 +226,7 @@ fn simulate_vardorvis() {
         stats.avg_damage_taken
     );
 
-    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
+    plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]

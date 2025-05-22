@@ -1,6 +1,6 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::limiters::Limiter;
-use crate::combat::mechanics::Mechanics;
+use crate::combat::mechanics::{handle_recoil, Mechanics};
 use crate::combat::simulation::{
     assign_limiter, FightResult, FightVars, Simulation, SimulationError,
 };
@@ -79,6 +79,7 @@ impl VardorvisMechanics {
         player.take_damage(hit.damage);
         vars.damage_taken += hit.damage;
         vard.heal(hit.damage / 2);
+        handle_recoil(player, vard, &hit, vars, logger);
         scale_monster_hp_only(vard);
 
         logger.log_custom(
@@ -166,6 +167,7 @@ impl VardorvisFight {
     fn simulate_vardorvis_fight(&mut self) -> Result<FightResult, SimulationError> {
         let mut vars = FightVars::new();
         let mut state = VardorvisState::default();
+        scale_monster_hp_only(&mut self.vard);
         self.config
             .logger
             .log_initial_setup(&self.player, &self.vard);
@@ -223,7 +225,7 @@ impl VardorvisFight {
                 );
             }
         }
-        let remove_final_attack_delay = true;
+        let remove_final_attack_delay = false;
         self.mechanics.get_fight_result(
             &self.player,
             &self.vard,

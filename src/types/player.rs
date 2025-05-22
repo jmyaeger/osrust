@@ -1026,12 +1026,29 @@ impl Player {
     }
 
     pub fn regen_all_stats(&mut self) {
-        self.stats.hitpoints.restore(1, None);
-        self.stats.attack.restore(1, None);
-        self.stats.strength.restore(1, None);
-        self.stats.defence.restore(1, None);
-        self.stats.ranged.restore(1, None);
-        self.stats.magic.restore(1, None);
+        if self.stats.hitpoints.current < self.stats.hitpoints.base {
+            self.stats.hitpoints.restore(1, None);
+        }
+
+        if self.stats.attack.current < self.stats.attack.base {
+            self.stats.attack.restore(1, None);
+        }
+
+        if self.stats.strength.current < self.stats.strength.base {
+            self.stats.strength.restore(1, None);
+        }
+
+        if self.stats.defence.current < self.stats.defence.base {
+            self.stats.defence.restore(1, None);
+        }
+
+        if self.stats.ranged.current < self.stats.ranged.base {
+            self.stats.ranged.restore(1, None);
+        }
+
+        if self.stats.magic.current < self.stats.magic.base {
+            self.stats.magic.restore(1, None);
+        }
     }
 
     pub fn take_damage(&mut self, amount: u32) {

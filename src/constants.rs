@@ -188,6 +188,29 @@ pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
 
 pub const IMMUNE_TO_STAT_DRAIN: &[i32] = &[13011, 13012, 13013];
 
+pub const IMMUNE_TO_RECOIL_MONSTERS: &[i32] = &[
+    6609, // Callisto
+    11482, 11483, // Champion of Scabaras
+    8917, 8918, 8919, 8920, // Fragment of Seren
+    8094, 8095, 8177, 8097, 8096, 8098, 8178, 8179, // Galvek
+    8583, //Hespori
+    10936, 10938, // Judge of Yama (A Kingdom Divided)
+    11492, // Menaphite Akh
+    11278, 11279, 11280, 11281, 11282, // Nex
+    9425, 9426, 9427, 9428, 9429, 9430, 9431, 9432, 9433, 9460, // Nightmare
+    9416, 9417, 9418, 9419, 9420, 9421, 9422, 9424, 11153, 11154, 11155, // PNM
+    8242, 8243, 8244, 8245, 8246, 8247, 8248, // Ranis Drakan
+    7286, // Skotizo
+    4797, // Slug Prince
+    4416, 4417, 3240, // Undead trees
+    9567, 9568, 9569, 9570, 9571, 9632, // Vanstrom Klause
+    6610, // Venenatis
+    6611, 6612, // Vet'ion
+    8059, 8061, 8058, 8060,  // Vorkath
+    12335, // Wighted Leech
+    10954, 10955, 10953, 10956, // Xamphur
+];
+
 pub const FULL_AHRIMS: [(&str, Option<&str>); 4] = [
     ("Ahrim's hood", None),
     ("Ahrim's robetop", None),

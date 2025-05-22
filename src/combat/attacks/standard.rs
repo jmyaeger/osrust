@@ -1057,7 +1057,7 @@ mod tests {
     use crate::types::potions::Potion;
     use crate::types::prayers::{Prayer, PrayerBoost};
     use crate::types::stats::Stat;
-    use crate::utils::loadouts::*;
+    use crate::utils::loadouts::{self, *};
 
     #[test]
     fn test_atlatl_dps() {
@@ -1193,5 +1193,54 @@ mod tests {
         let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
         println!("Average number of stacks: {:.6}", avg_stacks);
         assert!(dps_with_burn > dps);
+    }
+
+    #[test]
+    fn test_soulreaper_stacks() {
+        let mut monster = Monster::new("Ammonite Crab", None).unwrap();
+
+        let mut player = loadouts::max_melee_player();
+        player.equip("Soulreaper axe", None);
+        player.set_active_style(CombatStyle::Hack);
+        player.attack = get_attack_functions(&player);
+        player.update_bonuses();
+        calc_active_player_rolls(&mut player, &monster);
+
+        let mut rng = rand::thread_rng();
+        let mut limiter = assign_limiter(&player, &monster);
+
+        assert_eq!(player.boosts.soulreaper_stacks, 0);
+        assert_eq!(player.stats.hitpoints.current, 99);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 62);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 1);
+        assert_eq!(player.stats.hitpoints.current, 91);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 65);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 2);
+        assert_eq!(player.stats.hitpoints.current, 83);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 67);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 3);
+        assert_eq!(player.stats.hitpoints.current, 75);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 70);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 4);
+        assert_eq!(player.stats.hitpoints.current, 67);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 73);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 5);
+        assert_eq!(player.stats.hitpoints.current, 59);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 76);
+
+        let _ = (player.attack)(&mut player, &mut monster, &mut rng, &mut limiter);
+        assert_eq!(player.boosts.soulreaper_stacks, 5);
+        assert_eq!(player.stats.hitpoints.current, 59);
+        assert_eq!(player.max_hits.get(CombatType::Slash), 76);
     }
 }

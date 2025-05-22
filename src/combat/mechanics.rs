@@ -8,6 +8,9 @@ use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
 use rand::rngs::ThreadRng;
+use rand::Rng;
+
+use super::attacks::standard::Hit;
 
 pub trait Mechanics {
     fn player_attack(
@@ -34,6 +37,9 @@ pub trait Mechanics {
             monster.stats.hitpoints.current,
             monster.info.name.as_str(),
         );
+
+        handle_blood_fury(player, &hit, fight_vars, logger, rng);
+
         scale_monster_hp_only(monster);
         fight_vars.hit_attempts += 1;
         fight_vars.hit_count += if hit.success { 1 } else { 0 };
@@ -66,6 +72,8 @@ pub trait Mechanics {
             player.stats.hitpoints.current,
         );
         fight_vars.damage_taken += hit.damage;
+
+        handle_recoil(player, monster, &hit, fight_vars, logger);
     }
 
     fn process_monster_effects(
@@ -250,5 +258,52 @@ fn calc_leftover_burn(monster: &Monster) -> u32 {
         stacks.iter().sum()
     } else {
         0
+    }
+}
+
+pub fn handle_recoil(
+    player: &Player,
+    monster: &mut Monster,
+    hit: &Hit,
+    fight_vars: &mut FightVars,
+    logger: &mut FightLogger,
+) {
+    if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default()) {
+        if player.is_wearing_any(vec![
+            ("Ring of suffering", Some("Recoil")),
+            ("Ring of suffering (i)", Some("Recoil")),
+            ("Ring of recoil", None),
+        ]) {
+            let recoil_damage = hit.damage / 10 + 1;
+            monster.take_damage(recoil_damage);
+            logger.log_custom(
+                fight_vars.tick_counter,
+                format!("Monster took {recoil_damage} recoil damage").as_str(),
+            );
+        }
+
+        if player.is_wearing("Echo boots", None) && player.is_using_melee() {
+            monster.take_damage(1);
+            logger.log_custom(
+                fight_vars.tick_counter,
+                "Monster took 1 recoil damage from echo boots",
+            );
+        }
+    }
+}
+
+pub fn handle_blood_fury(
+    player: &mut Player,
+    hit: &Hit,
+    fight_vars: &mut FightVars,
+    logger: &mut FightLogger,
+    rng: &mut ThreadRng,
+) {
+    if player.is_wearing("Amulet of blood fury", None) && rng.gen_range(0..5) == 0 {
+        player.heal(hit.damage * 3 / 10, None);
+        logger.log_custom(
+            fight_vars.tick_counter,
+            format!("Blood fury healed for {} HP", hit.damage * 3 / 10).as_str(),
+        );
     }
 }
