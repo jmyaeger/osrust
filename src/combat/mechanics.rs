@@ -269,7 +269,7 @@ pub fn handle_recoil(
     logger: &mut FightLogger,
 ) {
     if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default())
-        && hit.success
+        && hit.damage > 0
     {
         if player.is_wearing_any(vec![
             ("Ring of suffering", Some("Recoil")),
