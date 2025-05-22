@@ -76,38 +76,40 @@ impl VardorvisMechanics {
             hit.success,
             Some(VARDORVIS_ATTACK_STYLE),
         );
-        player.take_damage(hit.damage);
-        vars.damage_taken += hit.damage;
-        vard.heal(hit.damage / 2);
-        handle_recoil(player, vard, &hit, vars, logger);
-        scale_monster_hp_only(vard);
+        if hit.success {
+            player.take_damage(hit.damage);
+            vars.damage_taken += hit.damage;
+            vard.heal(hit.damage / 2);
+            handle_recoil(player, vard, &hit, vars, logger);
+            scale_monster_hp_only(vard);
 
-        logger.log_custom(
-            vars.tick_counter,
-            format!("Vardorvis healed {} HP", hit.damage / 2).as_str(),
-        );
-        scale_monster_hp_only(vard);
-        logger.log_custom(
-            vars.tick_counter,
-            format!("Vardorvis HP: {}", vard.stats.hitpoints.current).as_str(),
-        );
-        logger.log_custom(
-            vars.tick_counter,
-            format!("Vardorvis defence level: {}", vard.stats.defence.current).as_str(),
-        );
-        logger.log_custom(
-            vars.tick_counter,
-            format!("Vardorvis strength level: {}", vard.stats.strength.current).as_str(),
-        );
+            logger.log_custom(
+                vars.tick_counter,
+                format!("Vardorvis healed {} HP", hit.damage / 2).as_str(),
+            );
+            scale_monster_hp_only(vard);
+            logger.log_custom(
+                vars.tick_counter,
+                format!("Vardorvis HP: {}", vard.stats.hitpoints.current).as_str(),
+            );
+            logger.log_custom(
+                vars.tick_counter,
+                format!("Vardorvis defence level: {}", vard.stats.defence.current).as_str(),
+            );
+            logger.log_custom(
+                vars.tick_counter,
+                format!("Vardorvis strength level: {}", vard.stats.strength.current).as_str(),
+            );
 
-        logger.log_custom(
-            vars.tick_counter,
-            format!(
-                "Vardorvis max hit: {}",
-                vard.max_hits.as_ref().unwrap()[0].value
-            )
-            .as_str(),
-        );
+            logger.log_custom(
+                vars.tick_counter,
+                format!(
+                    "Vardorvis max hit: {}",
+                    vard.max_hits.as_ref().unwrap()[0].value
+                )
+                .as_str(),
+            );
+        }
 
         state.vardorvis_attack_tick += VARDORVIS_ATTACK_SPEED;
     }

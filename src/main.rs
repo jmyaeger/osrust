@@ -188,17 +188,21 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_vardorvis() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Abyssal tentacle", None);
+    player.equip("Noxious halberd", None);
+    // player.equip("Amulet of blood fury", None);
+    // player.equip("Bellator ring", None);
     player.equip("Bandos chestplate", None);
-    player.equip("Blood moon tassets", None);
+    player.equip("Bandos tassets", None);
     player.equip("Neitiznot faceguard", None);
-    player.equip("Berserker ring (i)", None);
+    // player.equip("Berserker ring (i)", None);
     // player.equip("Justiciar chestguard", None);
     // player.equip("Justiciar legguards", None);
     // player.equip("Justiciar faceguard", None);
+    // player.equip("Ring of suffering (i)", Some("Recoil"));
+    player.equip("Echo boots", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Lash);
+    player.set_active_style(CombatStyle::Swipe);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
     calc_active_player_rolls(&mut player, &vard);
@@ -211,7 +215,7 @@ fn simulate_vardorvis() {
     };
 
     let mut fight = VardorvisFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let results = simulate_n_fights(Box::new(fight), 100000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
@@ -226,7 +230,7 @@ fn simulate_vardorvis() {
         stats.avg_damage_taken
     );
 
-    plot_ttk_cdf(&results, TtkUnits::Seconds, true);
+    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]

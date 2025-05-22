@@ -268,7 +268,9 @@ pub fn handle_recoil(
     fight_vars: &mut FightVars,
     logger: &mut FightLogger,
 ) {
-    if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default()) {
+    if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default())
+        && hit.success
+    {
         if player.is_wearing_any(vec![
             ("Ring of suffering", Some("Recoil")),
             ("Ring of suffering (i)", Some("Recoil")),
@@ -278,7 +280,7 @@ pub fn handle_recoil(
             monster.take_damage(recoil_damage);
             logger.log_custom(
                 fight_vars.tick_counter,
-                format!("Monster took {recoil_damage} recoil damage").as_str(),
+                format!("{} took {} recoil damage", monster.info.name, recoil_damage).as_str(),
             );
         }
 
@@ -286,7 +288,7 @@ pub fn handle_recoil(
             monster.take_damage(1);
             logger.log_custom(
                 fight_vars.tick_counter,
-                "Monster took 1 recoil damage from echo boots",
+                format!("{} took 1 recoil damage from echo boots", monster.info.name).as_str(),
             );
         }
     }
