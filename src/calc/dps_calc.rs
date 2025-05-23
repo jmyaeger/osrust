@@ -7,7 +7,7 @@ use crate::calc::hit_dist::{
     WeightedHit,
 };
 use crate::calc::monster_scaling;
-use crate::calc::rolls::{calc_active_player_rolls, monster_def_rolls};
+use crate::calc::rolls::{calc_active_player_rolls, get_demonbane_factor, monster_def_rolls};
 use crate::constants::*;
 use crate::dists;
 use crate::dists::bolts::{self, BoltContext};
@@ -528,12 +528,25 @@ pub fn get_distribution(
 
     // Mark of darkness + demonbane distribution
     if player.boosts.mark_of_darkness && player.is_using_demonbane_spell() && monster.is_demon() {
-        let numerator = if player.is_wearing("Purging staff", None) {
-            6
+        let damage_boost = if player.is_wearing("Purging staff", None) {
+            50
         } else {
-            5
+            25
         };
-        dist = dist.scale_damage(Fraction::new(numerator, 4));
+        dist = dist.transform(
+            &|h| {
+                HitDistribution::single(
+                    1.0,
+                    vec![Hitsplat::new(
+                        h.damage
+                            + get_demonbane_factor(100, monster)
+                                .multiply_to_int(h.damage * damage_boost / 100),
+                        h.accurate,
+                    )],
+                )
+            },
+            &TransformOpts::default(),
+        );
     }
 
     // Full Ahrim's + amulet of the damned distribution
