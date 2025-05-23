@@ -737,6 +737,14 @@ fn apply_ranged_weapon_boosts(
     att_roll = att_factor.multiply_to_int(att_roll);
     max_hit = max_hit_factor.multiply_to_int(max_hit);
 
+    if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
+        && player.is_wearing("Twisted bow", None)
+    {
+        // Tbow accuracy bonus is applied a second time at P2 Wardens
+        let (second_acc_bonus, _) = monster.tbow_bonuses();
+        att_roll = att_roll * second_acc_bonus / 100;
+    }
+
     // Apply bone shortbow bonus additively
     if player.is_wearing("Bone shortbow", None) && monster.is_rat() {
         max_hit += 10;
