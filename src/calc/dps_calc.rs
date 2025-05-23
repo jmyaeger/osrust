@@ -340,7 +340,6 @@ pub fn get_distribution(
     if using_spec {
         let mut hit_count = 1;
         if player.is_wearing_any_version("Dragon dagger")
-            || player.is_wearing_any_version("Abyssal dagger")
             || player.is_wearing_any_version("Dragon knife")
             || player.is_wearing_any(MAGIC_SHORTBOWS)
         {
@@ -353,6 +352,17 @@ pub fn get_distribution(
         for _ in 0..hit_count {
             dist.add_dist(standard_hit_dist.clone());
         }
+    }
+
+    // Abyssal dagger spec
+    if using_spec && player.is_wearing_any_version("Abyssal dagger") {
+        let second_hit = HitDistribution::linear(1.0, min_hit, max_hit);
+        dist = dist.transform(
+            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
     }
 
     // Saradomin sword spec
