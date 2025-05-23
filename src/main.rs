@@ -4,21 +4,17 @@ use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::combat::attacks::standard::get_attack_functions;
 use osrs::combat::simulation::{simulate_n_fights, Simulation};
+use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
+use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
+use osrs::sims::single_way::SingleWayFight;
+use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
 use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
-use osrs::utils::equipment_db;
-use osrs::utils::loadouts;
-use osrs::utils::logging::FightLogger;
-use osrs::utils::monster_db;
-// use osrs::rolls::monster_def_rolls;
-use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
-use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
-use osrs::sims::single_way::SingleWayFight;
-use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::stats::Stat;
+use osrs::utils::{equipment_db, loadouts, logging::FightLogger, monster_db};
 
 fn main() {
     // match monster_db::main() {
