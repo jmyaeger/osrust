@@ -316,11 +316,11 @@ pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
             player.boosts.mark_of_darkness,
             player.is_wearing("Purging staff", None),
         ) {
-            (true, true) => Fraction::new(18, 10),
-            (true, false) | (false, true) => Fraction::new(14, 10),
-            (false, false) => Fraction::new(12, 10),
+            (true, true) => get_demonbane_factor(80, monster),
+            (true, false) | (false, true) => get_demonbane_factor(40, monster),
+            (false, false) => get_demonbane_factor(20, monster),
         };
-        att_roll = bonus.multiply_to_int(att_roll);
+        att_roll += bonus.multiply_to_int(att_roll);
     }
 
     // Apply dragonbane boosts - still works for DHL and DHCB when manual casting
@@ -526,7 +526,7 @@ fn apply_melee_weapon_boosts(
     let mut att_roll = att_roll;
     let mut max_hit = max_hit;
 
-    let (mut att_factor, mut max_hit_factor) = match player.gear.weapon.name.as_str() {
+    let (att_factor, max_hit_factor) = match player.gear.weapon.name.as_str() {
         "Dragon hunter lance" if monster.is_dragon() => (Fraction::new(6, 5), Fraction::new(6, 5)),
         "Dragon hunter wand" if monster.is_dragon() => (Fraction::new(3, 2), Fraction::new(6, 5)),
         "Keris partisan of breaching" if monster.is_kalphite() => {
@@ -543,27 +543,23 @@ fn apply_melee_weapon_boosts(
         {
             (Fraction::new(3, 2), Fraction::new(3, 2))
         }
-        "Silverlight" | "Darklight" if monster.is_demon() => {
-            (Fraction::new(0, 1), Fraction::new(3, 5))
-        }
-        "Arclight" | "Emberlight" if monster.is_demon() => {
-            (Fraction::new(7, 10), Fraction::new(7, 10))
-        }
-        "Burning claws" if monster.is_demon() => (Fraction::new(1, 20), Fraction::new(1, 20)),
+        "Silverlight" | "Darklight" if monster.is_demon() => (
+            Fraction::new(1, 1),
+            Fraction::new(1, 1) + get_demonbane_factor(60, monster),
+        ),
+        "Arclight" | "Emberlight" if monster.is_demon() => (
+            Fraction::new(1, 1) + get_demonbane_factor(70, monster),
+            Fraction::new(1, 1) + get_demonbane_factor(70, monster),
+        ),
+        "Burning claws" if monster.is_demon() => (
+            Fraction::new(1, 1) + get_demonbane_factor(5, monster),
+            Fraction::new(1, 1) + get_demonbane_factor(5, monster),
+        ),
         "Leaf-bladed battleaxe" if monster.is_leafy() => {
             (Fraction::new(1, 1), Fraction::new(47, 40))
         }
         _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
     };
-
-    if player.is_wearing_any(DEMONBANE_WEAPONS) && monster.is_demon() {
-        if monster.info.name.contains("Duke Sucellus") {
-            att_factor *= Fraction::new(7, 10);
-            max_hit_factor *= Fraction::new(7, 10);
-        }
-        att_factor += Fraction::new(1, 1);
-        max_hit_factor += Fraction::new(1, 1);
-    }
 
     att_roll = att_factor.multiply_to_int(att_roll);
     max_hit = max_hit_factor.multiply_to_int(max_hit);
@@ -654,8 +650,8 @@ fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction)
             str_gear_bonus += Fraction::new(1, 4);
         } else if player.is_wearing("Scorching bow", None) && monster.is_demon() {
             // Scorching bow boost is applied additively with slayer helm (verified in-game)
-            att_gear_bonus += Fraction::new(3, 10);
-            str_gear_bonus += Fraction::new(3, 10);
+            att_gear_bonus += get_demonbane_factor(30, monster);
+            str_gear_bonus += get_demonbane_factor(30, monster);
         }
     }
 
@@ -716,9 +712,10 @@ fn apply_ranged_weapon_boosts(
                 Fraction::new(tbow_dmg_bonus, 100),
             )
         }
-        "Scorching bow" if monster.is_demon() && mult_boost_applies(player, monster) => {
-            (Fraction::new(13, 10), Fraction::new(13, 10))
-        }
+        "Scorching bow" if monster.is_demon() && mult_boost_applies(player, monster) => (
+            Fraction::new(1, 1) + get_demonbane_factor(30, monster),
+            Fraction::new(1, 1) + get_demonbane_factor(30, monster),
+        ),
 
         // Wildy bow is applied multiplicatively with anything but slayer helm
         _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
@@ -948,6 +945,28 @@ fn get_elemental_weakness_boost(player: &Player, monster: &Monster) -> u32 {
     }
 }
 
-fn get_demonbane_factor(weapon_boost: u32) -> Fraction {
-    todo!()
+pub fn get_demonbane_factor(weapon_boost: i32, monster: &Monster) -> Fraction {
+    DEMONBANE_VULNERABILITY
+        .iter()
+        .find_map(|v| {
+            if v.0 == monster.info.name {
+                Some(Fraction::new(v.1, 100))
+            } else {
+                None
+            }
+        })
+        .map_or(Fraction::from_integer(1), |vuln| {
+            Fraction::new(weapon_boost, 100) * vuln
+        })
+}
+
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_demonbane_factor() {
+        let monster = Monster::new("Yama", Some("Normal")).unwrap();
+        let demonbane_factor = get_demonbane_factor(50, &monster);
+        assert_eq!(demonbane_factor, Fraction::new(60, 100));
+    }
 }

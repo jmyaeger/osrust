@@ -754,3 +754,6 @@ pub const SPEC_COSTS: [(&str, u8); 70] = [
     ("Soulreaper axe", 0),
     ("Brine sabre", 75),
 ];
+
+pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =
+    [("Duke Sucellus", 70), ("Yama", 120), ("Void Flare", 200)];

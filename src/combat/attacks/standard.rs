@@ -1,4 +1,4 @@
-use crate::calc::rolls::calc_player_melee_rolls;
+use crate::calc::rolls::{self, calc_player_melee_rolls};
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
 use crate::constants::*;
@@ -9,6 +9,7 @@ use crate::types::spells::{AncientSpell, Spell};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::cmp::max;
+use std::ops::Mul;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AttackInfo {
@@ -985,6 +986,26 @@ pub fn blue_moon_spear_attack(
         }
     }
 
+    hit
+}
+
+pub fn demonbane_spell_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut hit = standard_attack(player, monster, rng, limiter);
+    if player.boosts.mark_of_darkness {
+        let damage_boost = if player.is_wearing("Purging staff", None) {
+            50
+        } else {
+            25
+        };
+        let added_damage = rolls::get_demonbane_factor(100, monster)
+            .multiply_to_int(hit.damage * damage_boost / 100);
+        hit.damage += added_damage;
+    }
     hit
 }
 
