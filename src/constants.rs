@@ -141,6 +141,8 @@ pub const IMMUNE_TO_MELEE_MONSTERS: &[i32] = &[
     7852, 7853, 7884, 7885, // dawn
     7550, 7553, // Olm mage hand
     7551, 7554, // Olm head,
+    11753, 11754, // Elidinis' Warden P2
+    11756, 11757, // Tumeken's Warden P2
 ];
 
 pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: &[i32] = &[

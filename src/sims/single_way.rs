@@ -1,7 +1,9 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
+use crate::combat::attacks::standard::AttackFn;
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
+use crate::constants::P2_WARDEN_IDS;
 use crate::types::{monster::Monster, player::Player};
 use crate::utils::logging::FightLogger;
 use rand::rngs::ThreadRng;
@@ -56,7 +58,12 @@ impl Simulation for SingleWayFight {
     }
 
     fn set_attack_function(&mut self) {
-        self.player.attack = crate::combat::attacks::standard::get_attack_functions(&self.player);
+        if P2_WARDEN_IDS.contains(&self.monster.info.id.unwrap_or_default()) {
+            self.player.attack = crate::combat::attacks::standard::wardens_p2_attack as AttackFn;
+        } else {
+            self.player.attack =
+                crate::combat::attacks::standard::get_attack_functions(&self.player);
+        }
     }
 
     fn reset(&mut self) {

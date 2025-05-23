@@ -15,7 +15,7 @@ use crate::types::equipment::{CombatStance, CombatType};
 use crate::types::monster::Monster;
 use crate::types::player::Player;
 use crate::types::spells::{Spell, StandardSpell};
-use crate::utils::math::Fraction;
+use crate::utils::math::{lerp, Fraction};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -156,6 +156,7 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
         || (using_spec && player.is_wearing_any(ALWAYS_HITS_SPEC))
+        || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
     {
         return 1.0;
     }
@@ -242,6 +243,8 @@ pub fn get_distribution(
     let combat_type = player.combat_type();
     let (min_hit, max_hit) = if using_spec {
         get_spec_min_max_hit(player, monster)
+    } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default()) {
+        get_wardens_p2_min_max(player, monster)
     } else {
         (0, player.max_hits.get(combat_type))
     };
@@ -1143,6 +1146,21 @@ fn dist_at_hp<'a>(
     // Return the new hp-scaled distribution
     let mut new_dist = get_distribution(player, &monster_copy, using_spec);
     hp_hit_dists.insert(hp, new_dist.get_single_hitsplat().clone());
+}
+
+fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
+    let att_roll = max(
+        0,
+        player.att_rolls.get(player.combat_type())
+            - monster.def_rolls.get(player.combat_type()) / 3,
+    );
+
+    let modifier = max(15, lerp(att_roll, 0, 42000, 15, 40));
+    let base_max_hit = player.max_hits.get(player.combat_type());
+    let min_hit = base_max_hit * modifier as u32 / 100;
+    let max_hit = base_max_hit * (modifier + 20) as u32 / 100;
+
+    (min_hit, max_hit)
 }
 
 #[cfg(test)]

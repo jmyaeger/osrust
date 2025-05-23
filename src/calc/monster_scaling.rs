@@ -2,6 +2,7 @@
 
 use crate::calc::rolls::{calc_max_hit, monster_def_rolls};
 use crate::types::monster::{AttackType, Monster};
+use crate::utils::math::lerp;
 
 pub fn scale_monster_hp_only(monster: &mut Monster) {
     // Currently only used for Vardorvis, but this allows for future expansion
@@ -70,16 +71,4 @@ impl VardNumbers {
             },
         }
     }
-}
-
-fn lerp(
-    current: i32,
-    source_start: i32,
-    source_end: i32,
-    target_start: i32,
-    target_end: i32,
-) -> i32 {
-    // Linear interpolation function
-    target_start
-        + (current - source_start) * (target_end - target_start) / (source_end - source_start)
 }

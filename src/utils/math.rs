@@ -169,3 +169,15 @@ impl FromStr for Fraction {
 pub fn poison_damage(severity: u32) -> u32 {
     (severity + 4) / 5
 }
+
+pub fn lerp(
+    current: i32,
+    source_start: i32,
+    source_end: i32,
+    target_start: i32,
+    target_end: i32,
+) -> i32 {
+    // Linear interpolation function
+    target_start
+        + (current - source_start) * (target_end - target_start) / (source_end - source_start)
+}

@@ -6,6 +6,7 @@ use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::monster::{CombatStat, Monster};
 use crate::types::player::Player;
 use crate::types::spells::{AncientSpell, Spell};
+use crate::utils::math;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::cmp::max;
@@ -1008,6 +1009,28 @@ pub fn demonbane_spell_attack(
     hit
 }
 
+pub fn wardens_p2_attack(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut ThreadRng,
+    _: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let att_roll = max(
+        0,
+        player.att_rolls.get(player.combat_type())
+            - monster.def_rolls.get(player.combat_type()) / 3,
+    );
+
+    let modifier = max(15, math::lerp(att_roll, 0, 42000, 15, 40));
+    let base_max_hit = player.max_hits.get(player.combat_type());
+    let min_hit = base_max_hit * modifier as u32 / 100;
+    let max_hit = base_max_hit * (modifier + 20) as u32 / 100;
+
+    let damage = damage_roll(min_hit, max_hit, rng);
+
+    Hit::accurate(damage)
+}
+
 pub type AttackFn = fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
 
 pub fn get_attack_functions(player: &Player) -> AttackFn {
@@ -1021,6 +1044,8 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         return blood_spell_attack as AttackFn;
     } else if player.is_using_ice_spell() {
         return ice_spell_attack as AttackFn;
+    } else if player.is_using_demonbane_spell() {
+        return demonbane_spell_attack as AttackFn;
     }
 
     if player.is_using_crossbow() && !player.gear.weapon.name.contains("Karil") {
@@ -1063,6 +1088,7 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         "Tonalztics of ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         "Eclipse atlatl" => atlatl_attack as AttackFn,
+        "Blue moon spear" => blue_moon_spear_attack as AttackFn,
         _ => standard_attack as AttackFn,
     }
 }
