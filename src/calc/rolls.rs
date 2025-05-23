@@ -243,7 +243,14 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
 
     if player.is_wearing("Holy water", None) {
         max_hit = calc_max_hit(eff_str + 10, player.gear.weapon.bonuses.strength.ranged);
-        if monster.is_demon() {}
+        if monster.is_demon() {
+            let demonbane_factor = get_demonbane_factor(60, monster);
+            max_hit += demonbane_factor.multiply_to_int(max_hit);
+        }
+
+        if monster.info.name == "Nezikchened" {
+            max_hit += 5;
+        }
     }
 
     for combat_type in [CombatType::Light, CombatType::Standard, CombatType::Heavy] {
@@ -772,14 +779,18 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
     match player.gear.weapon.name.as_str() {
         "Starter staff" => 8,
         "Warped sceptre" => (8 * visible_magic + 96) / 37,
-        "Trident of the seas" | "Trident of the seas (e)" => max(1, visible_magic / 3 - 5),
-        "Thammaron's sceptre" => max(1, visible_magic / 3 - 8),
-        "Accursed sceptre" => max(1, visible_magic / 3 - 6),
-        "Trident of the swamp" | "Trident of the swamp (e)" => max(1, visible_magic / 3 - 2),
-        "Sanguinesti staff" => max(1, visible_magic / 3 - 1),
-        "Dawnbringer" => visible_magic / 6 - 1,
+        "Trident of the seas" | "Trident of the seas (e)" => {
+            max(1, (visible_magic / 3).saturating_sub(5))
+        }
+        "Thammaron's sceptre" => max(1, (visible_magic / 3).saturating_sub(8)),
+        "Accursed sceptre" => max(1, (visible_magic / 3).saturating_sub(6)),
+        "Trident of the swamp" | "Trident of the swamp (e)" => {
+            max(1, (visible_magic / 3).saturating_sub(2))
+        }
+        "Sanguinesti staff" => max(1, (visible_magic / 3).saturating_sub(1)),
+        "Dawnbringer" => max(1, (visible_magic / 6).saturating_sub(1)),
         "Tumeken's shadow" => visible_magic / 3 + 1,
-        "Bone staff" => max(1, visible_magic / 3 - 5) + 10,
+        "Bone staff" => max(1, (visible_magic / 3).saturating_sub(5)) + 10,
         "Crystal staff (basic)" | "Corrupted staff (basic)" => 23,
         "Crystal staff (attuned)" | "Corrupted staff (attuned)" => 31,
         "Crystal staff (perfected)" | "Corrupted staff (perfected)" => 39,
