@@ -9,7 +9,6 @@ use crate::types::spells::{AncientSpell, Spell};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::cmp::max;
-use std::ops::Mul;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AttackInfo {

@@ -835,7 +835,8 @@ impl Monster {
             || (player.is_using_ranged()
                 && IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0)))
             || (player.is_using_melee()
-                && IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0)))
+                && (IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+                    || (self.info.name == "Zulrah" && player.gear.weapon.attack_range < 2)))
         {
             return true;
         }
