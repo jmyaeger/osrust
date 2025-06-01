@@ -1,8 +1,8 @@
 use lazy_static::lazy_static;
 
 use crate::constants::*;
-use rusqlite::{params, Connection, Result};
 use serde::{Deserialize, Deserializer};
+use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
 use std::fs;
@@ -10,11 +10,77 @@ use std::path::PathBuf;
 use strum_macros::{Display, EnumIter};
 
 lazy_static! {
-    static ref EQUIPMENT_DB: PathBuf =
-        fs::canonicalize("src/databases/equipment.db").expect("Failed to get database path");
-    static ref EQUIPMENT_FLAT_DB: PathBuf =
-        fs::canonicalize("src/databases/equipment_flattened.db")
-            .expect("Failed to get database path");
+    static ref EQUIPMENT_JSON: PathBuf =
+        fs::canonicalize("src/databases/equipment.json").expect("Failed to get database path");
+}
+
+// Intermediate struct for JSON deserialization
+#[derive(Debug, Deserialize)]
+struct EquipmentJson {
+    pub name: String,
+    pub version: Option<String>,
+    pub slot: String,
+    pub image: String,
+    pub speed: Option<i32>,
+    pub category: Option<String>,
+    pub bonuses: EquipmentBonuses,
+    pub is_two_handed: Option<bool>,
+    pub attack_range: Option<i8>,
+}
+
+impl EquipmentJson {
+    fn into_weapon(self) -> Result<Weapon, Box<dyn std::error::Error>> {
+        if self.slot != "weapon" {
+            return Err(
+                format!("Item '{}' is not a weapon (slot: {})", self.name, self.slot).into(),
+            );
+        }
+
+        let combat_styles = match self.category {
+            Some(category) => Weapon::get_styles_from_weapon_type(&category),
+            None => return Err("weapon missing category field".into()),
+        };
+
+        let speed = self.speed.ok_or("Weapon missing speed field")?;
+        let attack_range = self
+            .attack_range
+            .ok_or("Weapon missing attack_range field")?;
+        let is_two_handed = self
+            .is_two_handed
+            .ok_or("Weapon missing is_two_handed field")?;
+
+        let weapon = Weapon {
+            name: self.name,
+            version: self.version,
+            bonuses: self.bonuses,
+            slot: GearSlot::Weapon,
+            speed,
+            base_speed: speed,
+            attack_range,
+            is_two_handed,
+            spec_cost: None,
+            poison_severity: 0,
+            combat_styles,
+            is_staff: false,
+            image: self.image,
+        };
+
+        Ok(weapon)
+    }
+
+    fn into_armor(self) -> Result<Armor, Box<dyn std::error::Error>> {
+        if self.slot == "weapon" {
+            return Err(format!("Item '{}' is a weapon, not armor", self.name).into());
+        }
+
+        Ok(Armor {
+            name: self.name,
+            version: self.version,
+            bonuses: self.bonuses,
+            slot: parse_gear_slot(self.slot)?,
+            image: self.image,
+        })
+    }
 }
 
 // Slots in which a player can equip gear
@@ -208,26 +274,18 @@ pub trait Equipment {
         version: Option<&str>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         // Retrieve item data from the SQLite database in a JSON format
-        let conn = Connection::open(EQUIPMENT_DB.as_path())?;
-        let json: String = if version.is_some() {
-            conn.query_row(
-                "SELECT data FROM equipment WHERE name = ?1 AND version = ?2",
-                params![item_name, version.unwrap_or("")],
-                |row| row.get(0),
-            )?
-        } else {
-            conn.query_row(
-                "SELECT data FROM equipment WHERE name = ? AND version IS NULL",
-                params![item_name],
-                |row| row.get(0),
-            )?
-        };
+        let json_content = fs::read_to_string(EQUIPMENT_JSON.as_path())?;
 
         // Pass it to the set_fields_from_json method to set the item stats
-        self.set_fields_from_json(&json)
+        self.set_fields_from_json(&json_content, item_name, version)
     }
 
-    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>>;
+    fn set_fields_from_json(
+        &mut self,
+        json: &str,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), Box<dyn std::error::Error>>;
 }
 
 // Any equippable item that is not a weapon
@@ -236,17 +294,26 @@ pub struct Armor {
     pub name: String,
     pub version: Option<String>,
     pub bonuses: EquipmentBonuses,
-    #[serde(deserialize_with = "parse_gear_slot")]
     pub slot: GearSlot,
     pub image: String,
 }
 
 impl Equipment for Armor {
-    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
-        // Can deserialize directly into an Armor struct from JSON data
-        let armor = serde_json::from_str(json)?;
+    fn set_fields_from_json(
+        &mut self,
+        json: &str,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
+        let version_string = version.map(|v| v.to_string());
+        let matched_item = all_items
+            .into_iter()
+            .find(|a| a.name == item_name && a.version == version_string)
+            .ok_or("Equipment not found")?;
 
-        *self = armor;
+        *self = matched_item.into_armor()?;
+
         Ok(())
     }
 }
@@ -294,15 +361,10 @@ impl Armor {
     }
 }
 
-fn parse_gear_slot<'de, D>(deserializer: D) -> Result<GearSlot, D::Error>
-where
-    D: Deserializer<'de>,
-{
+fn parse_gear_slot(slot: String) -> Result<GearSlot, Box<dyn std::error::Error>> {
     // Translate a gear slot string into an enum
 
-    let s: String = String::deserialize(deserializer)?;
-
-    let trimmed = s.replace('\"', "");
+    let trimmed = slot.replace('\"', "");
 
     match trimmed.as_str() {
         "head" => Ok(GearSlot::Head),
@@ -315,10 +377,8 @@ where
         "hands" => Ok(GearSlot::Hands),
         "ring" => Ok(GearSlot::Ring),
         "ammo" => Ok(GearSlot::Ammo),
-        "weapon" => Err(serde::de::Error::custom(
-            "Tried to create armor from a weapon name",
-        )),
-        _ => Err(serde::de::Error::custom(format!("Unknown slot: {}", s))),
+        "weapon" => Err("Tried to create armor from a weapon name".into()),
+        _ => Err(format!("Unknown slot: {}", slot).into()),
     }
 }
 
@@ -348,9 +408,20 @@ pub struct Weapon {
 }
 
 impl Equipment for Weapon {
-    fn set_fields_from_json(&mut self, json: &str) -> Result<(), Box<dyn std::error::Error>> {
-        // Deserialize the JSON data into a Weapon struct
-        let mut weapon: Weapon = serde_json::from_str(json)?;
+    fn set_fields_from_json(
+        &mut self,
+        json: &str,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
+        let version_string = version.map(|v| v.to_string());
+        let matching_item = all_items
+            .into_iter()
+            .find(|a| a.name == item_name && a.version == version_string)
+            .ok_or("Equipment not found")?;
+
+        let mut weapon = matching_item.into_weapon()?;
 
         // Check if the item is a staff that can cast spells
         if weapon.combat_styles.contains_key(&CombatStyle::Spell) {
@@ -859,14 +930,20 @@ impl Weapon {
 
 pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Error>> {
     // Get the name of the slot for an item (by name)
-    let conn = Connection::open(EQUIPMENT_FLAT_DB.as_path())?;
-    let slot: String = conn.query_row(
-        "SELECT slot FROM equipment WHERE name = ?",
-        params![item_name],
-        |row| row.get(0),
-    )?;
+    let json_content = fs::read_to_string(EQUIPMENT_JSON.as_path())?;
+    let items: Vec<Value> = serde_json::from_str(&json_content)?;
 
-    Ok(slot)
+    for item in items {
+        if let Some(name) = item.get("name").and_then(|v| v.as_str()) {
+            if name == item_name {
+                if let Some(slot) = item.get("slot").and_then(|v| v.as_str()) {
+                    return Ok(slot.to_string());
+                }
+            }
+        }
+    }
+
+    Err(format!("Equipment '{}' not found", item_name).into())
 }
 
 #[cfg(test)]
@@ -878,8 +955,8 @@ mod tests {
         let weapon = Weapon::default();
         assert_eq!(weapon.name, "Unarmed");
         assert_eq!(weapon.bonuses, EquipmentBonuses::default());
-        assert_eq!(weapon.speed, 0);
-        assert_eq!(weapon.base_speed, 0);
+        assert_eq!(weapon.speed, 5);
+        assert_eq!(weapon.base_speed, 5);
         assert_eq!(weapon.attack_range, 0);
         assert!(!weapon.is_two_handed);
         assert_eq!(weapon.spec_cost, None);

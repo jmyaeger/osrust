@@ -974,7 +974,7 @@ pub fn get_demonbane_factor(weapon_boost: i32, monster: &Monster) -> Fraction {
                 None
             }
         })
-        .map_or(Fraction::from_integer(1), |vuln| {
+        .map_or(Fraction::new(weapon_boost, 100), |vuln| {
             Fraction::new(weapon_boost, 100) * vuln
         })
 }
@@ -986,6 +986,13 @@ mod test {
     fn test_demonbane_factor() {
         let monster = Monster::new("Yama", Some("Normal")).unwrap();
         let demonbane_factor = get_demonbane_factor(50, &monster);
+        assert_eq!(demonbane_factor, Fraction::new(60, 100));
+    }
+
+    #[test]
+    fn test_demonbane_factor_default() {
+        let monster = Monster::new("K'ril Tsutsaroth", None).unwrap();
+        let demonbane_factor = get_demonbane_factor(60, &monster);
         assert_eq!(demonbane_factor, Fraction::new(60, 100));
     }
 }

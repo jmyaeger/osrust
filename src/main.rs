@@ -14,18 +14,18 @@ use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::{Prayer, PrayerBoost};
 use osrs::types::stats::Stat;
-use osrs::utils::{equipment_db, loadouts, logging::FightLogger, monster_db};
+use osrs::utils::{equipment_json, loadouts, logging::FightLogger, monster_json};
 
 fn main() {
-    // match monster_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match monster_json::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
-    // match equipment_db::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
+    match equipment_json::main() {
+        Ok(_) => {}
+        Err(e) => println!("{}", e),
+    }
 
     // simulate_door_altar_graardor();
 
@@ -33,7 +33,7 @@ fn main() {
 
     // simulate_hunllef();
 
-    simulate_vardorvis();
+    // simulate_vardorvis();
 }
 
 #[allow(unused)]
@@ -90,21 +90,21 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(92);
-    player.stats.magic = Stat::new(92);
-    player.stats.defence = Stat::new(75);
-    player.stats.hitpoints = Stat::new(85);
-    player.stats.attack = Stat::new(78);
-    player.stats.strength = Stat::new(85);
+    player.stats.ranged = Stat::new(80);
+    player.stats.magic = Stat::new(80);
+    player.stats.defence = Stat::new(80);
+    player.stats.hitpoints = Stat::new(80);
+    player.stats.attack = Stat::new(80);
+    player.stats.strength = Stat::new(80);
     player.reset_current_stats();
     player.equip("Corrupted staff (perfected)", None);
-    player.equip("Crystal helm (attuned)", None);
-    player.equip("Crystal body (attuned)", None);
-    player.equip("Crystal legs (attuned)", None);
+    player.equip("Crystal helm (basic)", None);
+    player.equip("Crystal body (basic)", None);
+    player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(PrayerBoost::new(Prayer::Augury));
-    // player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
+    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
@@ -115,7 +115,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -124,7 +124,7 @@ fn simulate_hunllef() {
     // player.gear.weapon = Weapon::default();
     // player.set_active_style(CombatStyle::Kick);
     player.equip("Corrupted halberd (perfected)", None);
-    player.set_active_style(CombatStyle::Jab);
+    player.set_active_style(CombatStyle::Swipe);
     player.update_bonuses();
     player.prayers.add(PrayerBoost::new(Prayer::Piety));
 
@@ -138,11 +138,11 @@ fn simulate_hunllef() {
     player.switch(SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 30,
-        eat_strategy: HunllefEatStrategy::EatAtHp(65),
+        food_count: 25,
+        eat_strategy: HunllefEatStrategy::EatAtHp(59),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Melee,
+            style1: SwitchType::Magic,
             style2: SwitchType::Ranged,
         },
         lost_ticks: 0,
@@ -162,7 +162,7 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let results = simulate_n_fights(Box::new(fight), 100000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
@@ -184,13 +184,14 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_vardorvis() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Noxious halberd", None);
+    player.equip("Abyssal tentacle", None);
+    player.equip("Dragon defender", None);
     // player.equip("Amulet of blood fury", None);
     // player.equip("Bellator ring", None);
-    player.equip("Bandos chestplate", None);
-    player.equip("Bandos tassets", None);
-    player.equip("Neitiznot faceguard", None);
-    // player.equip("Berserker ring (i)", None);
+    player.equip("Oathplate chest", None);
+    player.equip("Oathplate legs", None);
+    player.equip("Oathplate helm", None);
+    player.equip("Berserker ring (i)", None);
     // player.equip("Justiciar chestguard", None);
     // player.equip("Justiciar legguards", None);
     // player.equip("Justiciar faceguard", None);
@@ -198,7 +199,7 @@ fn simulate_vardorvis() {
     player.equip("Echo boots", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Swipe);
+    player.set_active_style(CombatStyle::Lash);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
     calc_active_player_rolls(&mut player, &vard);

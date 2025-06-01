@@ -16,7 +16,6 @@ plotly = "0.12.1"
 rand = "0.8.5"
 reqwest = { version = "0.12.3", features = ["blocking", "json"] }
 rstest = "0.19.0"
-rusqlite = { version = "0.31.0", features = ["bundled"] } 
 serde = { version = "1.0.199", features = ["derive"] }
 serde_json = "1.0.116"
 simplelog = "0.12.2"
@@ -26,4 +25,4 @@ tokio = { version = "1.37.0", features = ["full"]}
 url = "2.5.0"
 
 [profile.test]
-opt-level = 0
+opt-level = 2

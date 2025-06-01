@@ -7,9 +7,8 @@ use crate::constants::*;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
 use crate::types::stats::MonsterStats;
-use crate::utils::monster_db::ElementalWeakness;
+use crate::utils::monster_json::ElementalWeakness;
 use rand::Rng;
-use rusqlite::{params, Result};
 use serde::Deserialize;
 use std::cmp::{max, min};
 use std::fs;
@@ -17,8 +16,8 @@ use std::path::PathBuf;
 use strum_macros::Display;
 
 lazy_static! {
-    static ref MONSTER_DB: PathBuf =
-        fs::canonicalize("src/databases/monsters.db").expect("Failed to get database path");
+    static ref MONSTER_JSON: PathBuf =
+        fs::canonicalize("src/databases/monsters.json").expect("Failed to get database path");
 }
 
 // Enum for combat stats
@@ -156,7 +155,8 @@ pub struct MonsterInfo {
     #[serde(deserialize_with = "deserialize_attack_styles")]
     pub attack_styles: Option<Vec<AttackType>>,
     pub weakness: Option<ElementalWeakness>,
-    pub attack_speed: u32,
+    #[serde(deserialize_with = "deserialize_attack_speed")]
+    pub attack_speed: Option<u32>,
     #[serde(default)]
     pub poison_severity: u32, // Will likely rework this to use CombatEffects
     #[serde(default)]
@@ -198,6 +198,19 @@ where
             .collect()
     });
     Ok(parsed_attributes)
+}
+
+fn deserialize_attack_speed<'de, D>(deserializer: D) -> Result<Option<u32>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let attack_speed = i32::deserialize(deserializer)?;
+
+    if attack_speed <= 0 {
+        Ok(None)
+    } else {
+        Ok(Some(attack_speed as u32))
+    }
 }
 
 fn deserialize_max_hits<'de, D>(deserializer: D) -> Result<Option<Vec<MonsterMaxHit>>, D::Error>
@@ -386,26 +399,18 @@ pub struct Monster {
 
 impl Monster {
     pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
-        // Create a monster by name and version (optional) via a SQL query and deserialization
+        // Create a monster by name and version (optional)
 
-        // Get the monster's data in JSON form from the SQLite database
-        let conn = rusqlite::Connection::open(MONSTER_DB.as_path())?;
-        let row: String = if version.is_some() {
-            conn.query_row(
-                "SELECT data FROM monsters WHERE name = ?1 AND version = ?2",
-                params![name, version.unwrap()],
-                |row| row.get(0),
-            )?
-        } else {
-            conn.query_row(
-                "SELECT data FROM monsters WHERE name = ?",
-                params![name],
-                |row| row.get(0),
-            )?
-        };
+        // Load the full JSON file and deserialize it into a Vec
+        let string_version = version.map(|v| v.to_string());
+        let json_content = fs::read_to_string(MONSTER_JSON.as_path())?;
+        let all_monsters: Vec<Monster> = serde_json::from_str(json_content.as_str())?;
 
-        // Deserialize the JSON data into a Monster struct
-        let mut monster: Monster = serde_json::from_str(row.as_str())?;
+        // Find the monster matching the given name and version
+        let mut monster = all_monsters
+            .into_iter()
+            .find(|m| m.info.name == name && m.info.version == string_version)
+            .ok_or("Monster not found")?;
 
         // Calculate base defence rolls and copy to live defence rolls
         monster.base_def_rolls = rolls::monster_def_rolls(&monster);
