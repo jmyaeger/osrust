@@ -224,6 +224,7 @@ fn has_category(category_array: &[serde_json::Value], category: &str) -> bool {
     })
 }
 
+#[cfg(feature = "data-generation")]
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let wiki_data = get_monster_data().await?;

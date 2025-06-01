@@ -366,9 +366,11 @@ impl Player {
         Self::default()
     }
 
-    pub fn lookup_stats(&mut self, rsn: &str) {
+    pub async fn lookup_stats(&mut self, rsn: &str) {
         // Fetch stats from OSRS hiscores and set the corresponding fields
-        let stats = fetch_player_data(rsn).expect("Failed to fetch player data");
+        let stats = fetch_player_data(rsn)
+            .await
+            .expect("Failed to fetch player data");
         self.stats = parse_player_data(stats);
         self.attrs.name = Some(rsn.to_string());
     }
@@ -1118,13 +1120,13 @@ impl Player {
     }
 }
 
-fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
+pub async fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
     // Fetches player data from the OSRS hiscores
     let url = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws";
     let params = [("player", rsn)];
-    let client = reqwest::blocking::Client::new();
-    let response = client.get(url).query(&params).send()?;
-    let data = response.text()?;
+    let client = reqwest::Client::new();
+    let response = client.get(url).query(&params).send().await?; // Use .await
+    let data = response.text().await?; // Use .await
     Ok(data)
 }
 
@@ -1197,10 +1199,10 @@ mod test {
         assert!(player.attrs.spell.is_none());
     }
 
-    #[test]
-    fn test_lookup_stats() {
+    #[tokio::test]
+    async fn test_lookup_stats() {
         let mut player = Player::new();
-        player.lookup_stats("Lynx Titan");
+        player.lookup_stats("Lynx Titan").await;
         assert_eq!(player.stats.attack.base, 99);
         assert_eq!(player.stats.defence.base, 99);
         assert_eq!(player.stats.strength.base, 99);

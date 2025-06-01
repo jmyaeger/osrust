@@ -1,5 +1,5 @@
 #![allow(unused_imports)]
-use osrs::calc::analysis::{plot_ttk_cdf, plot_ttk_dist, SimulationStats, TtkUnits};
+use osrs::calc::analysis::SimulationStats;
 use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::combat::attacks::standard::get_attack_functions;
@@ -17,15 +17,15 @@ use osrs::types::stats::Stat;
 use osrs::utils::{equipment_json, loadouts, logging::FightLogger, monster_json};
 
 fn main() {
-    match monster_json::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match monster_json::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
-    match equipment_json::main() {
-        Ok(_) => {}
-        Err(e) => println!("{}", e),
-    }
+    // match equipment_json::main() {
+    //     Ok(_) => {}
+    //     Err(e) => println!("{}", e),
+    // }
 
     // simulate_door_altar_graardor();
 
