@@ -4,7 +4,7 @@ use crate::combat::attacks::specs::{get_spec_attack_function, SpecialAttackFn};
 use crate::combat::attacks::standard::{get_attack_functions, standard_attack, AttackFn};
 use crate::constants::*;
 use crate::types::equipment::{
-    self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Gear, Weapon,
+    self, Armor, CombatStance, CombatStyle, CombatType, EquipmentBonuses, Gear, GearSlot, Weapon,
 };
 use crate::types::monster::Monster;
 use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
@@ -514,6 +514,23 @@ impl Player {
             "feet" => self.gear.feet = Some(Armor::new(item_name, version)),
             "ring" => self.gear.ring = Some(Armor::new(item_name, version)),
             _ => panic!("Slot not found for item {}", item_name),
+        }
+    }
+
+    pub fn unequip_slot(&mut self, slot: &GearSlot) {
+        match slot {
+            GearSlot::Ammo => self.gear.ammo = None,
+            GearSlot::Body => self.gear.body = None,
+            GearSlot::Cape => self.gear.cape = None,
+            GearSlot::Feet => self.gear.feet = None,
+            GearSlot::Hands => self.gear.hands = None,
+            GearSlot::Head => self.gear.head = None,
+            GearSlot::Legs => self.gear.legs = None,
+            GearSlot::Neck => self.gear.neck = None,
+            GearSlot::Ring => self.gear.ring = None,
+            GearSlot::Shield => self.gear.shield = None,
+            GearSlot::Weapon => self.gear.weapon = Weapon::default(),
+            GearSlot::None => {}
         }
     }
 
