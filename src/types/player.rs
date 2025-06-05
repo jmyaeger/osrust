@@ -535,6 +535,80 @@ impl Player {
         }
     }
 
+    pub fn equip_item(
+        &mut self,
+        item: Box<dyn Equipment>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let slot = item.slot();
+        match slot {
+            GearSlot::Weapon => {
+                if let Some(weapon) = item.as_any().downcast_ref::<Weapon>() {
+                    self.gear.weapon = weapon.clone();
+
+                    // Unequip shield if weapon is two handed
+                    if self.gear.weapon.is_two_handed {
+                        self.gear.shield = None;
+                    }
+
+                    // Modify attack speed if weapon is on rapid
+                    if self.attrs.active_style == CombatStyle::Rapid
+                        && self
+                            .gear
+                            .weapon
+                            .combat_styles
+                            .contains_key(&CombatStyle::Rapid)
+                    {
+                        self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+                    }
+
+                    self.set_quiver_bonuses();
+                } else {
+                    return Err("Expected weapon for weapon slot".into());
+                }
+            }
+            GearSlot::Ammo => {
+                // If quiver is equipped and the ammo slot is already full with a different ammo type,
+                // equip the new ammo in the second_ammo slot
+                if self.is_wearing_any_version("Dizana's quiver")
+                    && (self.gear.ammo.is_some()
+                        && !((self.gear.ammo.as_ref().unwrap().is_bolt()
+                            && item.name().contains("bolts"))
+                            || (self.gear.ammo.as_ref().unwrap().is_arrow()
+                                && item.name().contains("arrow"))))
+                {
+                    self.gear.second_ammo = item.as_any().downcast_ref::<Armor>().cloned();
+
+                    self.set_quiver_bonuses();
+                } else {
+                    self.gear.ammo = item.as_any().downcast_ref::<Armor>().cloned();
+
+                    self.set_quiver_bonuses();
+                }
+            }
+            GearSlot::Cape => {
+                self.gear.cape = item.as_any().downcast_ref::<Armor>().cloned();
+                self.set_quiver_bonuses();
+            }
+            GearSlot::Shield => {
+                self.gear.shield = item.as_any().downcast_ref::<Armor>().cloned();
+                if self.gear.weapon.is_two_handed {
+                    self.gear.weapon = Weapon::default();
+                }
+            }
+            GearSlot::Body => self.gear.body = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Feet => self.gear.feet = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Hands => self.gear.hands = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Head => self.gear.head = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Legs => self.gear.legs = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Neck => self.gear.neck = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Ring => self.gear.ring = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::None => {
+                return Err(format!("{} has the slot type 'none'", item.name()).into());
+            }
+        }
+        Ok(())
+    }
+
     pub fn get_slot(
         &self,
         slot: &GearSlot,

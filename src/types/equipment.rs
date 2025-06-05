@@ -3,6 +3,7 @@ use lazy_static::lazy_static;
 use crate::constants::*;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
+use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
 use std::fs;
@@ -15,8 +16,8 @@ lazy_static! {
 }
 
 // Intermediate struct for JSON deserialization
-#[derive(Debug, Deserialize)]
-struct EquipmentJson {
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+pub struct EquipmentJson {
     pub name: String,
     pub version: Option<String>,
     pub slot: String,
@@ -29,7 +30,7 @@ struct EquipmentJson {
 }
 
 impl EquipmentJson {
-    fn into_weapon(self) -> Result<Weapon, Box<dyn std::error::Error>> {
+    pub fn into_weapon(self) -> Result<Weapon, Box<dyn std::error::Error>> {
         if self.slot != "weapon" {
             return Err(
                 format!("Item '{}' is not a weapon (slot: {})", self.name, self.slot).into(),
@@ -68,7 +69,7 @@ impl EquipmentJson {
         Ok(weapon)
     }
 
-    fn into_armor(self) -> Result<Armor, Box<dyn std::error::Error>> {
+    pub fn into_armor(self) -> Result<Armor, Box<dyn std::error::Error>> {
         if self.slot == "weapon" {
             return Err(format!("Item '{}' is a weapon, not armor", self.name).into());
         }
@@ -84,7 +85,7 @@ impl EquipmentJson {
 }
 
 // Slots in which a player can equip gear
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone, Display)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone, Display, Copy)]
 pub enum GearSlot {
     #[default]
     None,
@@ -267,7 +268,7 @@ impl EquipmentBonuses {
 }
 
 // Equipment trait to provide common method for Armor and Weapon structs
-pub trait Equipment {
+pub trait Equipment: Any {
     fn set_info(
         &mut self,
         item_name: &str,
@@ -286,6 +287,10 @@ pub trait Equipment {
         item_name: &str,
         version: Option<&str>,
     ) -> Result<(), Box<dyn std::error::Error>>;
+    fn as_any(&self) -> &dyn Any;
+    fn name(&self) -> &str;
+    fn get_image_path(&self) -> &str;
+    fn slot(&self) -> GearSlot;
 }
 
 // Any equippable item that is not a weapon
@@ -315,6 +320,22 @@ impl Equipment for Armor {
         *self = matched_item.into_armor()?;
 
         Ok(())
+    }
+
+    fn name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn get_image_path(&self) -> &str {
+        self.image.as_str()
+    }
+
+    fn slot(&self) -> GearSlot {
+        self.slot
     }
 }
 
@@ -441,6 +462,22 @@ impl Equipment for Weapon {
         *self = weapon;
 
         Ok(())
+    }
+
+    fn name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn get_image_path(&self) -> &str {
+        self.image.as_str()
+    }
+
+    fn slot(&self) -> GearSlot {
+        self.slot
     }
 }
 
