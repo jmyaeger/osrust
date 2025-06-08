@@ -516,6 +516,8 @@ impl Player {
             "ring" => self.gear.ring = Some(Armor::new(item_name, version)),
             _ => panic!("Slot not found for item {}", item_name),
         }
+        self.update_bonuses();
+        self.update_set_effects();
     }
 
     pub fn unequip_slot(&mut self, slot: &GearSlot) {
@@ -533,6 +535,8 @@ impl Player {
             GearSlot::Weapon => self.gear.weapon = Weapon::default(),
             GearSlot::None => {}
         }
+        self.update_bonuses();
+        self.update_set_effects();
     }
 
     pub fn equip_item(
@@ -606,6 +610,8 @@ impl Player {
                 return Err(format!("{} has the slot type 'none'", item.name()).into());
             }
         }
+        self.update_bonuses();
+        self.update_set_effects();
         Ok(())
     }
 
