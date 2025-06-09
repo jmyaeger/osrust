@@ -1,36 +1,63 @@
 use crate::types::stats::Stat;
+use strum_macros::{Display, EnumIter};
 
 // All types of potions or combat level boosting items
-#[derive(Debug, Default, PartialEq, Copy, Clone)]
+#[derive(Debug, Default, PartialEq, Copy, Clone, Display, EnumIter)]
 pub enum Potion {
     #[default]
+    #[strum(to_string = "None")]
     None,
+    #[strum(to_string = "Attack")]
     Attack,
+    #[strum(to_string = "Strength")]
     Strength,
+    #[strum(to_string = "Defence")]
     Defence,
+    #[strum(to_string = "Ranging")]
     Ranging,
+    #[strum(to_string = "Magic")]
     Magic,
+    #[strum(to_string = "Super attack")]
     SuperAttack,
+    #[strum(to_string = "Super strength")]
     SuperStrength,
+    #[strum(to_string = "Super defence")]
     SuperDefence,
+    #[strum(to_string = "Super combat")]
     SuperCombat,
+    #[strum(to_string = "Super ranging")]
     SuperRanging,
+    #[strum(to_string = "Super magic")]
     SuperMagic,
+    #[strum(to_string = "Overload (-)")]
     OverloadMinus,
+    #[strum(to_string = "Overload")]
     Overload,
+    #[strum(to_string = "Overload (+)")]
     OverloadPlus,
-    ZamorakBrewAtt,
-    ZamorakBrewStr,
+    #[strum(to_string = "Zamorak brew")]
+    ZamorakBrew,
+    #[strum(to_string = "Smelling salts")]
     SmellingSalts,
+    #[strum(to_string = "Dragon battleaxe")]
     DragonBattleaxe,
+    #[strum(to_string = "Saradomin brew")]
     SaradominBrew,
+    #[strum(to_string = "Ancient brew")]
     AncientBrew,
+    #[strum(to_string = "Forgotten brew")]
     ForgottenBrew,
+    #[strum(to_string = "Imbued heart")]
     ImbuedHeart,
+    #[strum(to_string = "Saturated heart")]
     SaturatedHeart,
+    #[strum(to_string = "Ruby harvest")]
     RubyHarvest,
+    #[strum(to_string = "Black warlock")]
     BlackWarlock,
+    #[strum(to_string = "Sapphire glacialis")]
     SapphireGlacialis,
+    #[strum(to_string = "Moonlight")]
     Moonlight,
 }
 
@@ -38,14 +65,14 @@ impl Potion {
     pub fn boosts_attack(&self) -> bool {
         self == &Potion::Attack
             || self == &Potion::SuperAttack
-            || self == &Potion::ZamorakBrewAtt
+            || self == &Potion::ZamorakBrew
             || self == &Potion::RubyHarvest
     }
 
     pub fn boosts_strength(&self) -> bool {
         self == &Potion::Strength
             || self == &Potion::SuperStrength
-            || self == &Potion::ZamorakBrewStr
+            || self == &Potion::ZamorakBrew
             || self == &Potion::DragonBattleaxe
             || self == &Potion::BlackWarlock
     }
@@ -150,17 +177,11 @@ impl PotionBoost {
                 constant: 6,
                 boost: 0,
             },
-            Potion::ZamorakBrewAtt => PotionBoost {
+            Potion::ZamorakBrew => PotionBoost {
                 potion_type: *potion,
-                factor: 20,
-                constant: 2,
-                boost: 0,
-            },
-            Potion::ZamorakBrewStr => PotionBoost {
-                potion_type: *potion,
-                factor: 12,
-                constant: 2,
-                boost: 0,
+                factor: 0,
+                constant: 0,
+                boost: 0, // Custom implementation
             },
             Potion::DragonBattleaxe => PotionBoost {
                 potion_type: *potion,
@@ -285,6 +306,14 @@ impl PotionBoost {
                     self.boost = 3 + combat_level.base / 10;
                 }
             }
+            _ => {}
+        }
+    }
+
+    pub fn calc_zamorak_brew_boost(&mut self, combat_level: Stat, skill: PotionStat) {
+        match skill {
+            PotionStat::Attack => self.boost = 2 + combat_level.base * 20 / 100,
+            PotionStat::Strength => self.boost = 2 + combat_level.base * 12 / 100,
             _ => {}
         }
     }

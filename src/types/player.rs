@@ -774,6 +774,8 @@ impl Player {
                     self.stats.herblore,
                     PotionStat::Attack,
                 );
+            } else if potion.potion_type == Potion::ZamorakBrew {
+                potion.calc_zamorak_brew_boost(self.stats.attack, PotionStat::Attack);
             } else {
                 potion.calc_boost(self.stats.attack);
             }
@@ -792,6 +794,8 @@ impl Player {
                     self.stats.ranged,
                     self.stats.magic,
                 );
+            } else if potion.potion_type == Potion::ZamorakBrew {
+                potion.calc_zamorak_brew_boost(self.stats.strength, PotionStat::Strength);
             } else {
                 potion.calc_boost(self.stats.strength);
             }
@@ -1489,7 +1493,7 @@ mod test {
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut player = Player::new();
-        player.potions.attack = Some(PotionBoost::new(&Potion::ZamorakBrewAtt));
+        player.potions.attack = Some(PotionBoost::new(&Potion::ZamorakBrew));
         player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
         player.potions.magic = Some(PotionBoost::new(&Potion::Magic));
         player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
