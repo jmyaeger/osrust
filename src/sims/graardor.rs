@@ -5,7 +5,8 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
+use rand::SeedableRng;
 
 const GRAARDOR_REGEN_TICKS: i32 = 10;
 const CYCLE_LENGTH: i32 = 24;
@@ -67,7 +68,7 @@ pub struct GraardorFight {
     ranged_minion: Monster,
     mage_minion: Monster,
     limiter: Option<Box<dyn Limiter>>,
-    rng: ThreadRng,
+    rng: SmallRng,
     config: GraardorConfig,
     mechanics: GraardorMechanics,
 }
@@ -79,7 +80,7 @@ impl GraardorFight {
         let ranged_minion = Monster::new("Sergeant Grimspike", None).unwrap();
         let mage_minion = Monster::new("Sergeant Steelwill", None).unwrap();
         let limiter = crate::combat::simulation::assign_limiter(&player, &graardor);
-        let rng = rand::thread_rng();
+        let rng = SmallRng::from_os_rng();
         GraardorFight {
             player,
             graardor,

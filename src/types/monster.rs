@@ -457,7 +457,7 @@ impl Monster {
         &mut self,
         player: &mut Player,
         attack_type: Option<AttackType>,
-        rng: &mut rand::rngs::ThreadRng,
+        rng: &mut rand::rngs::SmallRng,
         cap_hit: bool,
     ) -> Hit {
         // Perform an attack on a player
@@ -496,7 +496,7 @@ impl Monster {
             AttackType::None => panic!("None attack type not supported"),
         };
 
-        let att_roll = rng.gen_range(0..=max_att_roll);
+        let att_roll = rng.random_range(0..=max_att_roll);
 
         let max_def_roll = match attack_type {
             AttackType::Stab => player.def_rolls.get(CombatType::Stab),
@@ -514,18 +514,18 @@ impl Monster {
             AttackType::None => panic!("None attack type not supported"),
         };
 
-        let def_roll = rng.gen_range(0..=max_def_roll);
+        let def_roll = rng.random_range(0..=max_def_roll);
 
         let success = att_roll > def_roll;
 
         let mut damage = if success {
-            rng.gen_range(0..=max_hit.value)
+            rng.random_range(0..=max_hit.value)
         } else {
             0
         };
 
         if success {
-            if player.is_wearing("Elysian spirit shield", None) && rng.gen::<f64>() <= 0.7 {
+            if player.is_wearing("Elysian spirit shield", None) && rng.random::<f64>() <= 0.7 {
                 let reduction = max(1, damage / 4);
                 damage -= reduction;
             } else if player.is_wearing("Dinh's bulwark", None)

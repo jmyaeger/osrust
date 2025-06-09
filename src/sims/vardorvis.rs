@@ -8,7 +8,8 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
+use rand::SeedableRng;
 
 const VARDORVIS_ATTACK_STYLE: AttackType = AttackType::Slash;
 const VARDORVIS_ATTACK_SPEED: i32 = 5;
@@ -62,7 +63,7 @@ impl VardorvisMechanics {
         player: &mut Player,
         state: &mut VardorvisState,
         vars: &mut FightVars,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
         scale_monster_hp_only(vard);
@@ -143,7 +144,7 @@ pub struct VardorvisFight {
     player: Player,
     vard: Monster,
     limiter: Option<Box<dyn Limiter>>,
-    rng: ThreadRng,
+    rng: SmallRng,
     config: VardorvisConfig,
     mechanics: VardorvisMechanics,
 }
@@ -155,7 +156,7 @@ impl VardorvisFight {
         scale_monster_hp_only(&mut vard);
 
         let limiter = assign_limiter(&player, &vard);
-        let rng = rand::thread_rng();
+        let rng = SmallRng::from_os_rng();
         Self {
             player,
             vard,

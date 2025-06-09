@@ -8,12 +8,12 @@ use crate::types::monster::{CombatStat, Monster, StatDrain};
 use crate::types::player::Player;
 use crate::types::spells::{SpecialSpell, Spell};
 use num::clamp;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
 use rand::Rng;
 use std::cmp::max;
 
 pub type SpecialAttackFn =
-    fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
+    fn(&mut Player, &mut Monster, &mut SmallRng, &Option<Box<dyn Limiter>>) -> Hit;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct SpecialAttack {
@@ -24,7 +24,7 @@ pub struct SpecialAttack {
 pub fn fang_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -47,7 +47,7 @@ pub fn fang_spec(
 pub fn dragon_crossbow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -67,7 +67,7 @@ pub fn dragon_crossbow_spec(
 pub fn arclight_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     demonbane_melee_spec(player, monster, rng, limiter, false)
@@ -76,7 +76,7 @@ pub fn arclight_spec(
 pub fn emberlight_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     demonbane_melee_spec(player, monster, rng, limiter, true)
@@ -85,7 +85,7 @@ pub fn emberlight_spec(
 fn demonbane_melee_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
     emberlight: bool,
 ) -> Hit {
@@ -134,7 +134,7 @@ fn demonbane_melee_spec(
 pub fn ancient_gs_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -169,7 +169,7 @@ pub fn ancient_gs_spec(
 pub fn eldritch_staff_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store previous spell if there is one
@@ -202,7 +202,7 @@ pub fn eldritch_staff_spec(
 pub fn blowpipe_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -226,7 +226,7 @@ pub fn blowpipe_spec(
 pub fn sgs_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -255,7 +255,7 @@ pub fn sgs_spec(
 pub fn bgs_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -301,7 +301,7 @@ pub fn bgs_spec(
 pub fn bulwark_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -378,7 +378,7 @@ pub fn bulwark_spec(
 pub fn crystal_halberd_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -413,7 +413,7 @@ pub fn crystal_halberd_spec(
 pub fn abyssal_whip_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -431,7 +431,7 @@ pub fn abyssal_whip_spec(
 pub fn accursed_sceptre_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -464,7 +464,7 @@ pub fn accursed_sceptre_spec(
 pub fn webweaver_bow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -493,7 +493,7 @@ pub fn webweaver_bow_spec(
 pub fn ancient_mace_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -513,7 +513,7 @@ pub fn ancient_mace_spec(
 pub fn barrelchest_anchor_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -544,7 +544,7 @@ pub fn barrelchest_anchor_spec(
 pub fn dorgeshuun_weapon_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
@@ -577,7 +577,7 @@ pub fn dorgeshuun_weapon_spec(
 pub fn dragon_scimitar_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -599,7 +599,7 @@ pub fn dragon_scimitar_spec(
 pub fn dragon_warhammer_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -651,7 +651,7 @@ pub fn dragon_warhammer_spec(
 pub fn seercull_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -677,7 +677,7 @@ pub fn seercull_spec(
 pub fn abyssal_bludgeon_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -697,7 +697,7 @@ pub fn abyssal_bludgeon_spec(
 pub fn acb_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
@@ -721,7 +721,7 @@ pub fn acb_spec(
 pub fn zcb_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
@@ -745,7 +745,7 @@ pub fn zcb_spec(
 pub fn ags_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -768,7 +768,7 @@ pub fn ags_spec(
 pub fn dawnbringer_spec(
     _player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     _limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Rolls 75-150 damage regardless of bonuses or levels, but only on Verzik P1
@@ -782,7 +782,7 @@ pub fn dawnbringer_spec(
 pub fn dragon_longsword_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -804,7 +804,7 @@ pub fn dragon_longsword_spec(
 pub fn dragon_mace_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -827,7 +827,7 @@ pub fn dragon_mace_spec(
 pub fn dragon_sword_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -850,7 +850,7 @@ pub fn dragon_sword_spec(
 pub fn granite_hammer_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -872,7 +872,7 @@ pub fn granite_hammer_spec(
 pub fn ballista_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -892,7 +892,7 @@ pub fn ballista_spec(
 pub fn magic_longbow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Uses the same max hit calc as the seercull spec (only ammo ranged str is used)
@@ -909,7 +909,7 @@ pub fn magic_longbow_spec(
 pub fn sara_blessed_sword_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -931,7 +931,7 @@ pub fn sara_blessed_sword_spec(
 pub fn voidwaker_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Rolls between 50-150% of max hit, always accurate
@@ -947,7 +947,7 @@ pub fn voidwaker_spec(
 pub fn volatile_staff_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store previous spell if there is one
@@ -983,7 +983,7 @@ pub fn volatile_staff_spec(
 pub fn abyssal_dagger_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1011,7 +1011,7 @@ pub fn abyssal_dagger_spec(
 pub fn dark_bow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1053,7 +1053,7 @@ pub fn dark_bow_spec(
 pub fn dragon_claw_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1124,7 +1124,7 @@ pub fn dragon_claw_spec(
     }
 
     // If all accuracy rolls fail
-    if rng.gen_range(0..3) > 0 {
+    if rng.random_range(0..3) > 0 {
         // ~2/3 chance of 0-0-1-1 (NOTE: 2/3 comes from the wiki/GeChallengeM, and in-game testing is close enough)
         let mut hit = Hit::accurate(2);
         hit.apply_transforms(player, monster, rng, limiter);
@@ -1139,7 +1139,7 @@ pub fn dragon_claw_spec(
 pub fn burning_claw_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1161,7 +1161,7 @@ pub fn burning_claw_spec(
 
         // 15% chance for each hit to apply a burn
         for _ in 0..3 {
-            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.15 {
+            if !monster.is_immune_to_normal_burn() && rng.random::<f64>() <= 0.15 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1186,7 +1186,7 @@ pub fn burning_claw_spec(
 
         // 30% chance for each hit to apply a burn
         for _ in 0..3 {
-            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.3 {
+            if !monster.is_immune_to_normal_burn() && rng.random::<f64>() <= 0.3 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1211,7 +1211,7 @@ pub fn burning_claw_spec(
 
         // 45% chance for each hit to apply a burn
         for _ in 0..3 {
-            if !monster.is_immune_to_normal_burn() && rng.gen::<f64>() <= 0.45 {
+            if !monster.is_immune_to_normal_burn() && rng.random::<f64>() <= 0.45 {
                 monster.add_burn_stack(10);
             }
         }
@@ -1220,7 +1220,7 @@ pub fn burning_claw_spec(
     }
 
     // If all accuracy rolls fail
-    let miss_roll = rng.gen_range(0..5);
+    let miss_roll = rng.random_range(0..5);
     if miss_roll < 2 {
         // 2/5 chance of 1-0-0
         let mut hit = Hit::accurate(1);
@@ -1243,7 +1243,7 @@ pub fn burning_claw_spec(
 pub fn dragon_dagger_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1272,7 +1272,7 @@ pub fn dragon_dagger_spec(
 pub fn dragon_knife_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
@@ -1290,7 +1290,7 @@ pub fn dragon_knife_spec(
 pub fn magic_shortbow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Uses same max hit as seercull spec and magic longbow
@@ -1314,7 +1314,7 @@ pub fn magic_shortbow_spec(
 pub fn sara_sword_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1329,7 +1329,7 @@ pub fn sara_sword_spec(
 
     if hit.success && !IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or_default()) {
         // Add a random amount between 1 and 16 to damage
-        hit.damage += rng.gen_range(1..=16);
+        hit.damage += rng.random_range(1..=16);
         hit.apply_transforms(player, monster, rng, limiter);
     }
 
@@ -1339,7 +1339,7 @@ pub fn sara_sword_spec(
 pub fn zgs_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1368,7 +1368,7 @@ pub fn zgs_spec(
 pub fn ursine_chainmace_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1397,7 +1397,7 @@ pub fn ursine_chainmace_spec(
 pub fn soulreaper_axe_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store the number of soulreaper stacks for later
@@ -1428,7 +1428,7 @@ pub fn soulreaper_axe_spec(
 pub fn tonalztics_of_ralos_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1462,7 +1462,7 @@ pub fn tonalztics_of_ralos_spec(
 pub fn dual_macuahuitl_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Only works if the player has full blood moon equipped
@@ -1510,7 +1510,7 @@ pub fn dual_macuahuitl_spec(
 pub fn atlatl_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Only works if the player has full eclipse moon equipped
@@ -1551,7 +1551,7 @@ pub fn atlatl_spec(
 pub fn scorching_bow_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -1579,7 +1579,7 @@ pub fn scorching_bow_spec(
 pub fn elder_maul_spec(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
@@ -1691,6 +1691,7 @@ mod tests {
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
     use crate::utils::loadouts::*;
+    use rand::SeedableRng;
 
     #[test]
     fn test_dragon_dagger() {
@@ -1701,7 +1702,7 @@ mod tests {
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
         let n = 1000000;
 
@@ -1724,7 +1725,7 @@ mod tests {
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
         let n = 1000000;
 
@@ -1747,7 +1748,7 @@ mod tests {
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
         let n = 1000000;
 

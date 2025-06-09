@@ -5,8 +5,9 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::{Player, SwitchType};
 use crate::utils::logging::FightLogger;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
 use rand::Rng;
+use rand::SeedableRng;
 
 const TORNADO_MAX_TIMER: u32 = 23;
 const TORNADO_COOLDOWN: u32 = 9;
@@ -139,12 +140,14 @@ impl HunllefMechanics {
         &self,
         state: &mut HunllefState,
         vars: &mut FightVars,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) -> bool {
         state.tornado_cd = state.tornado_cd.saturating_sub(1);
         if state.tornado_cd == 0 {
-            if rng.gen_range(1..=state.tornado_chance) == 1 && state.hunllef_attack_count % 4 != 3 {
+            if rng.random_range(1..=state.tornado_chance) == 1
+                && state.hunllef_attack_count % 4 != 3
+            {
                 // Tornado procs act like an empty attack
                 logger.log_custom(vars.tick_counter, "Tornadoes spawned.");
                 state.hunllef_attack_tick += HUNLLEF_ATTACK_SPEED;
@@ -170,7 +173,7 @@ impl HunllefMechanics {
         player: &mut Player,
         state: &mut HunllefState,
         vars: &mut FightVars,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
         // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
@@ -253,7 +256,7 @@ pub struct HunllefFight {
     player: Player,
     hunllef: Monster,
     limiter: Option<Box<dyn Limiter>>,
-    rng: ThreadRng,
+    rng: SmallRng,
     config: HunllefConfig,
     mechanics: HunllefMechanics,
 }
@@ -270,7 +273,7 @@ impl HunllefFight {
         ]);
 
         let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
-        let rng = rand::thread_rng();
+        let rng = SmallRng::from_os_rng();
         HunllefFight {
             player,
             hunllef,
@@ -299,7 +302,7 @@ impl HunllefFight {
                 // The normal case - two T3 weapons, no 5:1
 
                 // Start off with a random style and store the other for later
-                let style_choice = self.rng.gen_range(1..3);
+                let style_choice = self.rng.random_range(1..3);
                 let mut current_style = if style_choice == 1 { *style1 } else { *style2 };
                 let mut other_style = if style_choice == 1 { *style2 } else { *style1 };
 
@@ -712,8 +715,8 @@ mod tests {
         let mut hits = vec![];
         let n = 10000000;
         for _ in 0..n {
-            let mut rng = rand::thread_rng();
-            let base_damage = rng.gen_range(0..=68);
+            let mut rng = SmallRng::from_os_rng();
+            let base_damage = rng.random_range(0..=68);
             let armor_reduced = base_damage * 5 / 6;
             let final_damage = armor_reduced * 10 / 41;
             hits.push(final_damage);

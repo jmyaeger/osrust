@@ -7,7 +7,7 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
 use rand::Rng;
 
 use super::attacks::standard::Hit;
@@ -17,7 +17,7 @@ pub trait Mechanics {
         &self,
         player: &mut Player,
         monster: &mut Monster,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         limiter: &Option<Box<dyn Limiter>>,
         fight_vars: &mut FightVars,
         logger: &mut FightLogger,
@@ -53,7 +53,7 @@ pub trait Mechanics {
         player: &mut Player,
         attack_type: Option<AttackType>,
         fight_vars: &mut FightVars,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
         // Note: does not increment monster attack tick for flexibility
@@ -299,9 +299,9 @@ pub fn handle_blood_fury(
     hit: &Hit,
     fight_vars: &mut FightVars,
     logger: &mut FightLogger,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
 ) {
-    if player.is_wearing("Amulet of blood fury", None) && rng.gen_range(0..5) == 0 {
+    if player.is_wearing("Amulet of blood fury", None) && rng.random_range(0..5) == 0 {
         player.heal(hit.damage * 3 / 10, None);
         logger.log_custom(
             fight_vars.tick_counter,

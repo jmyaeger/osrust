@@ -7,7 +7,7 @@ use crate::types::monster::{CombatStat, Monster};
 use crate::types::player::Player;
 use crate::types::spells::{AncientSpell, Spell};
 use crate::utils::math;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
 use rand::Rng;
 use std::cmp::max;
 
@@ -40,10 +40,10 @@ impl AttackInfo {
         }
     }
 
-    fn apply_brimstone_ring(&mut self, player: &Player, rng: &mut ThreadRng) {
+    fn apply_brimstone_ring(&mut self, player: &Player, rng: &mut SmallRng) {
         if self.combat_type == CombatType::Magic
             && player.is_wearing("Brimstone ring", None)
-            && rng.gen_range(0..4) == 0
+            && rng.random_range(0..4) == 0
         {
             self.max_def_roll = self.max_def_roll * 9 / 10;
         }
@@ -65,7 +65,7 @@ impl Hit {
         &mut self,
         player: &mut Player,
         monster: &Monster,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         limiter: &Option<Box<dyn Limiter>>,
     ) {
         self.apply_berserker_necklace(player);
@@ -97,7 +97,7 @@ impl Hit {
         }
     }
 
-    pub fn apply_limiters(&mut self, rng: &mut ThreadRng, limiter: &Option<Box<dyn Limiter>>) {
+    pub fn apply_limiters(&mut self, rng: &mut SmallRng, limiter: &Option<Box<dyn Limiter>>) {
         // Apply a post-roll transform if there is one
         if let Some(limiter) = limiter {
             self.damage = limiter.apply(self.damage, rng);
@@ -117,7 +117,7 @@ impl Hit {
 pub fn standard_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Default attack method for most weapons
@@ -138,7 +138,7 @@ pub fn standard_attack(
     hit
 }
 
-pub fn base_attack(att_info: &AttackInfo, rng: &mut ThreadRng) -> Hit {
+pub fn base_attack(att_info: &AttackInfo, rng: &mut SmallRng) -> Hit {
     let att_roll = accuracy_roll(att_info.max_att_roll, rng);
     let def_roll = defence_roll(att_info.max_def_roll, rng);
 
@@ -154,22 +154,22 @@ pub fn base_attack(att_info: &AttackInfo, rng: &mut ThreadRng) -> Hit {
     Hit::new(damage, success)
 }
 
-fn accuracy_roll(max_att_roll: i32, rng: &mut ThreadRng) -> i32 {
-    rng.gen_range(0..=max_att_roll)
+fn accuracy_roll(max_att_roll: i32, rng: &mut SmallRng) -> i32 {
+    rng.random_range(0..=max_att_roll)
 }
 
-fn defence_roll(max_def_roll: i32, rng: &mut ThreadRng) -> i32 {
-    rng.gen_range(0..=max_def_roll)
+fn defence_roll(max_def_roll: i32, rng: &mut SmallRng) -> i32 {
+    rng.random_range(0..=max_def_roll)
 }
 
-pub fn damage_roll(min_hit: u32, max_hit: u32, rng: &mut ThreadRng) -> u32 {
-    rng.gen_range(min_hit..=max_hit)
+pub fn damage_roll(min_hit: u32, max_hit: u32, rng: &mut SmallRng) -> u32 {
+    rng.random_range(min_hit..=max_hit)
 }
 
 pub fn fang_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
@@ -215,7 +215,7 @@ pub fn fang_attack(
 pub fn ahrims_staff_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
@@ -231,12 +231,12 @@ pub fn ahrims_staff_attack(
 
     let mut hit = base_attack(&info, rng);
 
-    if hit.success && rng.gen_range(0..4) == 0 {
+    if hit.success && rng.random_range(0..4) == 0 {
         // Base set effect rolls a 25% chance to reduce strength by 5
         monster.drain_stat(CombatStat::Strength, 5, None);
     }
 
-    if player.is_wearing_any_version("Amulet of the damned") && rng.gen_range(0..4) == 0 {
+    if player.is_wearing_any_version("Amulet of the damned") && rng.random_range(0..4) == 0 {
         // With amulet of the damned, 25% chance to increase damage 30% post-roll
         hit.damage = hit.damage * 13 / 10;
     }
@@ -251,7 +251,7 @@ pub fn ahrims_staff_attack(
 pub fn dharoks_axe_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
@@ -276,11 +276,11 @@ pub fn dharoks_axe_attack(
 pub fn veracs_flail_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
-    if player.set_effects.full_veracs && rng.gen_range(0..4) == 0 {
+    if player.set_effects.full_veracs && rng.random_range(0..4) == 0 {
         // Set effect rolls 25% chance to guarantee hit (minimum 1 damage)
         let mut hit = Hit::accurate(1 + damage_roll(1, player.max_hits.get(combat_type) + 1, rng));
         hit.apply_transforms(player, monster, rng, limiter);
@@ -293,12 +293,12 @@ pub fn veracs_flail_attack(
 pub fn karils_crossbow_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     if player.set_effects.full_karils
         && player.is_wearing_any_version("Amulet of the damned")
-        && rng.gen_range(0..4) == 0
+        && rng.random_range(0..4) == 0
     {
         // Set effect rolls 25% chance to hit an additional time for half the first hit's damage
         let hit1 = standard_attack(player, monster, rng, limiter);
@@ -312,11 +312,11 @@ pub fn karils_crossbow_attack(
 pub fn guthans_warspear_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
-    if player.set_effects.full_guthans && rng.gen_range(0..4) == 0 {
+    if player.set_effects.full_guthans && rng.random_range(0..4) == 0 {
         // Set effect rolls 25% chance to heal by the damage dealt
         if player.is_wearing_any_version("Amulet of the damned") {
             // Amulet of the damned allows up to 10 HP of overheal
@@ -332,7 +332,7 @@ pub fn guthans_warspear_attack(
 pub fn torags_hammers_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info1 = AttackInfo::new(player, monster);
@@ -362,11 +362,11 @@ pub fn torags_hammers_attack(
 pub fn sang_staff_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
-    if rng.gen_range(0..6) == 0 {
+    if rng.random_range(0..6) == 0 {
         // 1/6 chance to heal by half of the damage dealt
         player.heal(hit.damage / 2, None)
     }
@@ -377,7 +377,7 @@ pub fn sang_staff_attack(
 pub fn dawnbringer_attack(
     player: &mut Player,
     _: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     _: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let max_hit = player.max_hits.get(player.combat_type());
@@ -391,13 +391,13 @@ pub fn dawnbringer_attack(
 pub fn keris_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut hit = standard_attack(player, monster, rng, limiter);
 
     // 1/51 chance to deal triple damage (post-roll)
-    if monster.is_kalphite() && rng.gen_range(0..51) == 0 {
+    if monster.is_kalphite() && rng.random_range(0..51) == 0 {
         hit.damage *= 3;
     }
 
@@ -406,7 +406,7 @@ pub fn keris_attack(
 pub fn yellow_keris_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -436,7 +436,7 @@ pub fn yellow_keris_attack(
 pub fn opal_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(OPAL_PROC_CHANCE);
@@ -448,7 +448,7 @@ pub fn opal_bolt_attack(
     };
 
     // Guaranteed hit if the bolt effect procs (verified in-game)
-    if rng.gen::<f64>() <= proc_chance {
+    if rng.random::<f64>() <= proc_chance {
         // Bolt effect adds on flat damage based on visible ranged level
         let att_info = AttackInfo::new(player, monster);
         let mut hit = base_attack(&att_info, rng);
@@ -463,7 +463,7 @@ pub fn opal_bolt_attack(
 pub fn pearl_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(PEARL_PROC_CHANCE);
@@ -477,7 +477,7 @@ pub fn pearl_bolt_attack(
     let extra_damage = player.stats.ranged.current / denominator;
 
     // Same implementation as opal bolts (accurate hit on procs, flat damage added)
-    if rng.gen::<f64>() <= proc_chance {
+    if rng.random::<f64>() <= proc_chance {
         let att_info = AttackInfo::new(player, monster);
         let mut hit = base_attack(&att_info, rng);
         hit.damage += extra_damage;
@@ -491,7 +491,7 @@ pub fn pearl_bolt_attack(
 pub fn emerald_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(EMERALD_PROC_CHANCE);
@@ -504,7 +504,7 @@ pub fn emerald_bolt_attack(
 
     let hit = standard_attack(player, monster, rng, limiter);
 
-    if hit.success && rng.gen::<f64>() <= proc_chance {
+    if hit.success && rng.random::<f64>() <= proc_chance {
         // TODO: Change this to use a CombatEffect
         monster.info.poison_severity = poison_severity;
     }
@@ -515,7 +515,7 @@ pub fn emerald_bolt_attack(
 pub fn ruby_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(RUBY_PROC_CHANCE);
@@ -527,7 +527,7 @@ pub fn ruby_bolt_attack(
         (monster.stats.hitpoints.current / 5).clamp(1, 100)
     };
 
-    if rng.gen::<f64>() <= proc_chance {
+    if rng.random::<f64>() <= proc_chance {
         // Bolt proc ignores defense and deals fixed amount of damage
         player.take_damage(player.stats.hitpoints.current / 10);
         let damage = if limiter.is_some() && !monster.info.name.contains("Corporeal Beast") {
@@ -548,7 +548,7 @@ pub fn ruby_bolt_attack(
 pub fn diamond_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(DIAMOND_PROC_CHANCE);
@@ -560,7 +560,7 @@ pub fn diamond_bolt_attack(
         base_max_hit * 115 / 100
     };
 
-    if rng.gen::<f64>() <= proc_chance {
+    if rng.random::<f64>() <= proc_chance {
         // Bolt proc ignores defense and boosts max hit
         let mut hit = Hit::accurate(damage_roll(0, max_hit, rng));
         hit.apply_transforms(player, monster, rng, limiter);
@@ -573,7 +573,7 @@ pub fn diamond_bolt_attack(
 pub fn onyx_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(ONYX_PROC_CHANCE);
@@ -587,7 +587,7 @@ pub fn onyx_bolt_attack(
 
     let mut hit = standard_attack(player, monster, rng, limiter);
 
-    if hit.success && !monster.is_undead() && rng.gen::<f64>() <= proc_chance {
+    if hit.success && !monster.is_undead() && rng.random::<f64>() <= proc_chance {
         // Bolt proc boosts max hit but does not ignore defense
         hit.damage = damage_roll(0, max_hit, rng);
         hit.apply_transforms(player, monster, rng, limiter);
@@ -602,7 +602,7 @@ pub fn onyx_bolt_attack(
 pub fn dragonstone_bolt_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let proc_chance = player.bolt_proc_chance(DRAGONSTONE_PROC_CHANCE);
@@ -620,7 +620,7 @@ pub fn dragonstone_bolt_attack(
     if hit.success {
         // Only dragons that are also "fiery" are immune
         // Bolt proc requires accurate hit and adds flat damage
-        if rng.gen::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
+        if rng.random::<f64>() <= proc_chance && !(monster.is_dragon() && monster.is_fiery()) {
             hit.damage += extra_damage;
         }
 
@@ -633,7 +633,7 @@ pub fn dragonstone_bolt_attack(
 pub fn smoke_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Assuming that it always applies poison if the monster is not immune
@@ -670,7 +670,7 @@ pub fn smoke_spell_attack(
 pub fn shadow_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Drain amounts are the percentages multiplied by 1000 to avoid floating point math
@@ -734,7 +734,7 @@ pub fn shadow_spell_attack(
 pub fn blood_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Heal factor is (percentage of damage) * 1000
@@ -761,7 +761,7 @@ pub fn blood_spell_attack(
 pub fn ice_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     if monster.is_freezable() {
@@ -799,7 +799,7 @@ pub fn ice_spell_attack(
 pub fn scythe_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit1 = standard_attack(player, monster, rng, limiter);
@@ -830,7 +830,7 @@ pub fn scythe_attack(
 pub fn soulreaper_axe_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
@@ -850,14 +850,14 @@ pub fn soulreaper_axe_attack(
 pub fn gadderhammer_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut hit = standard_attack(player, monster, rng, limiter);
 
     if hit.success && monster.is_shade() {
         // 25% damage boost with 5% chance to double unboosted damage on shades (all post-roll)
-        if rng.gen_range(0..20) == 0 {
+        if rng.random_range(0..20) == 0 {
             hit.damage *= 2;
         } else {
             hit.damage = hit.damage * 5 / 4;
@@ -870,7 +870,7 @@ pub fn gadderhammer_attack(
 pub fn tonalztics_of_ralos_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info = AttackInfo::new(player, monster);
@@ -897,7 +897,7 @@ pub fn tonalztics_of_ralos_attack(
 pub fn dual_macuahuitl_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut info1 = AttackInfo::new(player, monster);
@@ -927,8 +927,8 @@ pub fn dual_macuahuitl_attack(
 
     // Roll 33% chance for next attack to be one tick faster if the full set is equipped
     if player.set_effects.full_blood_moon
-        && ((hit1.success && rng.gen_range(0..3) == 0)
-            || (hit2.success && rng.gen_range(0..3) == 0))
+        && ((hit1.success && rng.random_range(0..3) == 0)
+            || (hit2.success && rng.random_range(0..3) == 0))
     {
         player.gear.weapon.speed = 3;
     }
@@ -939,14 +939,14 @@ pub fn dual_macuahuitl_attack(
 pub fn atlatl_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
     if hit.success
         && !monster.is_immune_to_strong_burn()
         && player.set_effects.full_eclipse_moon
-        && rng.gen_range(0..5) == 0
+        && rng.random_range(0..5) == 0
     {
         // Roll 20% chance to add a burn stack if full set is equipped
         monster.add_burn_stack(10);
@@ -958,7 +958,7 @@ pub fn atlatl_attack(
 pub fn blue_moon_spear_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let hit = standard_attack(player, monster, rng, limiter);
@@ -970,7 +970,7 @@ pub fn blue_moon_spear_attack(
 
         // Grasp spells have 50% chance while other binds have 20% chance
         let range_max = if player.is_using_grasp_spell() { 2 } else { 5 };
-        if rng.gen_range(0..range_max) == 0 {
+        if rng.random_range(0..range_max) == 0 {
             player.set_active_style(CombatStyle::Swipe); // Specific melee style unknown, assuming aggressive
             let melee_hit = standard_attack(player, monster, rng, limiter);
             if melee_hit.success {
@@ -992,7 +992,7 @@ pub fn blue_moon_spear_attack(
 pub fn demonbane_spell_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let mut hit = standard_attack(player, monster, rng, limiter);
@@ -1012,7 +1012,7 @@ pub fn demonbane_spell_attack(
 pub fn wardens_p2_attack(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     _: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let att_roll = max(
@@ -1031,7 +1031,7 @@ pub fn wardens_p2_attack(
     Hit::accurate(damage)
 }
 
-pub type AttackFn = fn(&mut Player, &mut Monster, &mut ThreadRng, &Option<Box<dyn Limiter>>) -> Hit;
+pub type AttackFn = fn(&mut Player, &mut Monster, &mut SmallRng, &Option<Box<dyn Limiter>>) -> Hit;
 
 pub fn get_attack_functions(player: &Player) -> AttackFn {
     // Dispatch attack function based on player's weapon
@@ -1095,6 +1095,8 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
 
 #[cfg(test)]
 mod tests {
+    use rand::SeedableRng;
+
     use super::*;
     use crate::calc::rolls::{calc_active_player_rolls, monster_def_rolls};
     use crate::combat::simulation::assign_limiter;
@@ -1128,7 +1130,7 @@ mod tests {
         monster.def_rolls = monster_def_rolls(&monster);
         let limiter = assign_limiter(&player, &monster);
 
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let mut hit_damage = 0;
         let mut burn_damage = 0;
         let n = 1000000000;
@@ -1252,7 +1254,7 @@ mod tests {
         player.update_bonuses();
         calc_active_player_rolls(&mut player, &monster);
 
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let mut limiter = assign_limiter(&player, &monster);
 
         assert_eq!(player.boosts.soulreaper_stacks, 0);

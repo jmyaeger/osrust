@@ -6,13 +6,14 @@ use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationEr
 use crate::constants::P2_WARDEN_IDS;
 use crate::types::{monster::Monster, player::Player};
 use crate::utils::logging::FightLogger;
-use rand::rngs::ThreadRng;
+use rand::rngs::SmallRng;
+use rand::SeedableRng;
 
 pub struct SingleWayFight {
     pub player: Player,
     pub monster: Monster,
     pub limiter: Option<Box<dyn Limiter>>,
-    pub rng: ThreadRng,
+    pub rng: SmallRng,
     pub mechanics: SingleWayMechanics,
     pub logger: FightLogger,
 }
@@ -20,7 +21,7 @@ pub struct SingleWayFight {
 impl SingleWayFight {
     pub fn new(player: Player, monster: Monster) -> SingleWayFight {
         let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
-        let rng = rand::thread_rng();
+        let rng = SmallRng::from_os_rng();
         let monster_name = monster.info.name.clone();
         SingleWayFight {
             player,
@@ -80,7 +81,7 @@ impl Mechanics for SingleWayMechanics {}
 fn simulate_fight(
     player: &mut Player,
     monster: &mut Monster,
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
     mechanics: &SingleWayMechanics,
     logger: &mut FightLogger,
@@ -140,7 +141,7 @@ mod tests {
         let mut monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
 
-        let mut rng = rand::thread_rng();
+        let mut rng = SmallRng::from_os_rng();
         let limiter = assign_limiter(&player, &monster);
         let mechanics = SingleWayMechanics;
         let mut logger = FightLogger::new(false, monster.info.name.as_str());
