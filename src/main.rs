@@ -176,9 +176,6 @@ fn simulate_hunllef() {
         "Average damage taken per kill: {:.2}",
         stats.avg_damage_taken
     );
-
-    // plot_ttk_dist(&results, TtkUnits::Seconds, true);
-    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]
@@ -226,8 +223,6 @@ fn simulate_vardorvis() {
         "Average damage taken per kill: {:.2}",
         stats.avg_damage_taken
     );
-
-    // plot_ttk_cdf(&results, TtkUnits::Seconds, true);
 }
 
 #[allow(unused)]
