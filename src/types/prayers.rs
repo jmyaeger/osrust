@@ -2,7 +2,7 @@ use std::fmt;
 use strum_macros::Display;
 
 // Most combat-related prayers (excluding protection prayers)
-#[derive(Debug, Default, PartialEq, Eq, Clone, Display)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Display)]
 pub enum Prayer {
     #[default]
     None,
@@ -51,7 +51,7 @@ pub enum Prayer {
 }
 
 // Contains the type of prayer, and the percentage boost to each style
-#[derive(Debug, Default, PartialEq, Clone, Eq)]
+#[derive(Debug, Default, PartialEq, Clone, Copy, Eq)]
 pub struct PrayerBoost {
     pub prayer_type: Prayer,
     pub attack: u32,
