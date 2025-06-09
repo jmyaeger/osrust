@@ -1103,7 +1103,7 @@ mod tests {
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
     use crate::types::potions::Potion;
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
     use crate::types::stats::Stat;
     use crate::utils::loadouts::{self, *};
 
@@ -1118,7 +1118,7 @@ mod tests {
         player.update_bonuses();
         player.update_set_effects();
         player.set_active_style(CombatStyle::Rapid);
-        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.prayers.add(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();

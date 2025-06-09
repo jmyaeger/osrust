@@ -274,12 +274,12 @@ mod tests {
     use crate::types::equipment::CombatStyle;
     use crate::types::player::Player;
     use crate::types::potions::Potion;
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
 
     #[test]
     fn test_simulate_door_altar_fight() {
         let mut player = Player::default();
-        player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+        player.prayers.add(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
         player.equip("Bow of faerdhinen (c)", None);

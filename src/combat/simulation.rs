@@ -230,14 +230,14 @@ mod tests {
     use crate::types::monster::Monster;
     use crate::types::player::Player;
     use crate::types::potions::Potion;
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
     use crate::types::stats::PlayerStats;
 
     #[test]
     fn test_simulate_n_fights() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        player.prayers.add(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Torva full helm", None);

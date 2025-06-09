@@ -1,13 +1,13 @@
 use crate::types::equipment::CombatStyle;
 use crate::types::player::Player;
 use crate::types::potions::Potion;
-use crate::types::prayers::{Prayer, PrayerBoost};
+use crate::types::prayers::Prayer;
 use crate::types::stats::PlayerStats;
 
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.prayers.add(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
     player.equip("Torva full helm", None);
@@ -31,7 +31,7 @@ pub fn max_melee_player() -> Player {
 pub fn max_ranged_zcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(PrayerBoost::new(Prayer::Rigour));
+    player.prayers.add(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
 
     player.equip("Masori mask (f)", None);
@@ -55,7 +55,7 @@ pub fn max_ranged_zcb_player() -> Player {
 pub fn max_mage_sang_staff_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(PrayerBoost::new(Prayer::Augury));
+    player.prayers.add(Prayer::Augury);
     player.add_potion(Potion::SaturatedHeart);
 
     player.equip("Ancestral hat", None);

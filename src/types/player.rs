@@ -1344,7 +1344,7 @@ mod test {
     use super::*;
     use crate::types::equipment::{CombatStyle, StrengthBonus, StyleBonus};
     use crate::types::potions::Potion;
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
     use crate::types::spells::{Spell, StandardSpell};
 
     #[test]
@@ -1519,11 +1519,11 @@ mod test {
     #[test]
     fn test_prayer_boost() {
         let mut player = Player::new();
-        player.prayers.add(PrayerBoost::new(Prayer::Chivalry));
+        player.prayers.add(Prayer::Chivalry);
         assert_eq!(player.prayers.attack, 15);
         assert_eq!(player.prayers.strength, 18);
         assert_eq!(player.prayers.defence, 20);
-        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        player.prayers.add(Prayer::Piety);
         assert_eq!(player.prayers.attack, 20);
         assert_eq!(player.prayers.strength, 23);
         assert_eq!(player.prayers.defence, 25);

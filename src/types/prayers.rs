@@ -2,7 +2,7 @@ use std::fmt;
 use strum_macros::Display;
 
 // Most combat-related prayers (excluding protection prayers)
-#[derive(Debug, Default, PartialEq, Clone, Display)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Display)]
 pub enum Prayer {
     #[default]
     None,
@@ -51,7 +51,7 @@ pub enum Prayer {
 }
 
 // Contains the type of prayer, and the percentage boost to each style
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Debug, Default, PartialEq, Clone, Eq)]
 pub struct PrayerBoost {
     pub prayer_type: Prayer,
     pub attack: u32,
@@ -328,24 +328,26 @@ pub struct PrayerBoosts {
 }
 
 impl PrayerBoosts {
-    pub fn add(&mut self, prayer: PrayerBoost) {
+    pub fn add(&mut self, prayer: Prayer) {
+        let prayer_boost = PrayerBoost::new(prayer);
         match &mut self.active_prayers {
             Some(active_prayers) => {
                 // Remove any conflicting prayer boosts first
-                active_prayers.retain(|p| !p.conflicts_with(&prayer));
-                active_prayers.push(prayer);
+                active_prayers.retain(|p| !p.conflicts_with(&prayer_boost));
+                active_prayers.push(prayer_boost);
             }
             None => {
-                self.active_prayers = Some(vec![prayer]);
+                self.active_prayers = Some(vec![prayer_boost]);
             }
         }
 
         self.update_prayer_boosts();
     }
 
-    pub fn remove(&mut self, prayer: PrayerBoost) {
+    pub fn remove(&mut self, prayer: Prayer) {
+        let prayer_boost = PrayerBoost::new(prayer);
         if let Some(active_prayers) = &mut self.active_prayers {
-            active_prayers.retain(|p| p != &prayer);
+            active_prayers.retain(|p| p != &prayer_boost);
 
             self.update_prayer_boosts();
         }
@@ -367,5 +369,24 @@ impl PrayerBoosts {
             self.magic_att = prayers.iter().map(|p| p.magic_att).max().unwrap_or(0);
             self.magic_str = prayers.iter().map(|p| p.magic_str).max().unwrap_or(0);
         }
+    }
+
+    pub fn contains_prayer(&self, prayer: Prayer) -> bool {
+        self.active_prayers
+            .as_ref()
+            .is_some_and(|prayers| prayers.iter().any(|p| p.prayer_type == prayer))
+    }
+}
+
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_contains_prayer() {
+        let mut prayers = PrayerBoosts::default();
+        prayers.add(Prayer::Augury);
+        assert!(prayers.contains_prayer(Prayer::Augury));
+        prayers.remove(Prayer::Augury);
+        assert!(!prayers.contains_prayer(Prayer::Augury));
     }
 }

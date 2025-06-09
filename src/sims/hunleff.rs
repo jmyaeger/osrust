@@ -627,7 +627,7 @@ mod tests {
     use crate::types::equipment::{CombatStyle, Weapon};
     use crate::types::monster::Monster;
     use crate::types::player::{GearSwitch, Player, SwitchType};
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
     use crate::types::stats::Stat;
     use std::collections::HashMap;
 
@@ -644,8 +644,8 @@ mod tests {
         player.equip("Crystal legs (basic)", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Accurate);
-        player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
-        player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+        player.prayers.add(Prayer::MysticMight);
+        player.prayers.add(Prayer::SteelSkin);
 
         let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
         calc_active_player_rolls(&mut player, &hunllef);
@@ -655,8 +655,8 @@ mod tests {
         player.equip("Corrupted bow (perfected)", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
-        player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-        player.prayers.remove(PrayerBoost::new(Prayer::MysticMight));
+        player.prayers.add(Prayer::EagleEye);
+        player.prayers.remove(Prayer::MysticMight);
 
         calc_active_player_rolls(&mut player, &hunllef);
 
@@ -665,7 +665,7 @@ mod tests {
         player.gear.weapon = Weapon::default();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Kick);
-        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        player.prayers.add(Prayer::Piety);
 
         calc_active_player_rolls(&mut player, &hunllef);
 

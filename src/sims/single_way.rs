@@ -111,7 +111,7 @@ mod tests {
     use crate::types::monster::Monster;
     use crate::types::player::Player;
     use crate::types::potions::Potion;
-    use crate::types::prayers::{Prayer, PrayerBoost};
+    use crate::types::prayers::Prayer;
     use crate::types::stats::PlayerStats;
     use crate::utils::logging::FightLogger;
 
@@ -119,7 +119,7 @@ mod tests {
     fn test_simulate_fight() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(PrayerBoost::new(Prayer::Piety));
+        player.prayers.add(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Gear {

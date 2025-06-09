@@ -12,7 +12,7 @@ use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
 use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
-use osrs::types::prayers::{Prayer, PrayerBoost};
+use osrs::types::prayers::Prayer;
 use osrs::types::stats::Stat;
 use osrs::utils::{equipment_json, loadouts, logging::FightLogger, monster_json};
 
@@ -56,7 +56,7 @@ fn simulate_single_way() {
     player.update_bonuses();
     player.update_set_effects();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::Deadeye));
+    player.prayers.add(Prayer::Deadeye);
     player.add_potion(Potion::SmellingSalts);
     // player.add_potion(Potion::SuperCombat);
 
@@ -103,8 +103,8 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(PrayerBoost::new(Prayer::MysticMight));
-    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+    player.prayers.add(Prayer::MysticMight);
+    player.prayers.add(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
@@ -115,7 +115,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
+    player.prayers.add(Prayer::EagleEye);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -126,7 +126,7 @@ fn simulate_hunllef() {
     player.equip("Corrupted halberd (perfected)", None);
     player.set_active_style(CombatStyle::Swipe);
     player.update_bonuses();
-    player.prayers.add(PrayerBoost::new(Prayer::Piety));
+    player.prayers.add(Prayer::Piety);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -231,8 +231,8 @@ fn simulate_door_altar_graardor() {
     player.stats.ranged = Stat::new(87);
     player.stats.defence = Stat::new(80);
     player.reset_current_stats();
-    player.prayers.add(PrayerBoost::new(Prayer::EagleEye));
-    player.prayers.add(PrayerBoost::new(Prayer::SteelSkin));
+    player.prayers.add(Prayer::EagleEye);
+    player.prayers.add(Prayer::SteelSkin);
     player.equip("Barrows gloves", None);
     player.equip("Zamorak d'hide boots", None);
     player.equip("Ava's assembler", None);
