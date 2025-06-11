@@ -51,11 +51,11 @@ pub enum Potion {
     ImbuedHeart,
     #[strum(to_string = "Saturated heart")]
     SaturatedHeart,
-    #[strum(to_string = "Ruby harvest")]
+    #[strum(to_string = "Ruby Harvest")]
     RubyHarvest,
-    #[strum(to_string = "Black warlock")]
+    #[strum(to_string = "Black Warlock")]
     BlackWarlock,
-    #[strum(to_string = "Sapphire glacialis")]
+    #[strum(to_string = "Sapphire Glacialis")]
     SapphireGlacialis,
     #[strum(to_string = "Moonlight")]
     Moonlight,
@@ -322,11 +322,31 @@ impl PotionBoost {
 // Collection of active potion boosts, separated by combat type
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct PotionBoosts {
-    pub attack: Option<PotionBoost>,
-    pub strength: Option<PotionBoost>,
-    pub defence: Option<PotionBoost>,
-    pub ranged: Option<PotionBoost>,
-    pub magic: Option<PotionBoost>,
+    pub attack: Option<Vec<PotionBoost>>,
+    pub strength: Option<Vec<PotionBoost>>,
+    pub defence: Option<Vec<PotionBoost>>,
+    pub ranged: Option<Vec<PotionBoost>>,
+    pub magic: Option<Vec<PotionBoost>>,
+}
+
+impl PotionBoosts {
+    pub fn remove_potion(&mut self, potion: Potion) {
+        if let Some(ref mut attack) = self.attack {
+            attack.retain(|p| p.potion_type != potion);
+        }
+        if let Some(ref mut strength) = self.strength {
+            strength.retain(|p| p.potion_type != potion);
+        }
+        if let Some(ref mut defence) = self.defence {
+            defence.retain(|p| p.potion_type != potion);
+        }
+        if let Some(ref mut ranged) = self.ranged {
+            ranged.retain(|p| p.potion_type != potion);
+        }
+        if let Some(ref mut magic) = self.magic {
+            magic.retain(|p| p.potion_type != potion);
+        }
+    }
 }
 
 #[cfg(test)]

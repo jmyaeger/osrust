@@ -767,74 +767,89 @@ impl Player {
 
     pub fn calc_potion_boosts(&mut self) {
         // Calculate all of the selected potion boosts
-        if let Some(potion) = &mut self.potions.attack {
-            if potion.potion_type == Potion::Moonlight {
-                potion.calc_moonlight_boost(
-                    self.stats.attack,
-                    self.stats.herblore,
-                    PotionStat::Attack,
-                );
-            } else if potion.potion_type == Potion::ZamorakBrew {
-                potion.calc_zamorak_brew_boost(self.stats.attack, PotionStat::Attack);
-            } else {
-                potion.calc_boost(self.stats.attack);
+        if let Some(potions) = &mut self.potions.attack {
+            for potion in potions {
+                if potion.potion_type == Potion::Moonlight {
+                    potion.calc_moonlight_boost(
+                        self.stats.attack,
+                        self.stats.herblore,
+                        PotionStat::Attack,
+                    );
+                } else if potion.potion_type == Potion::ZamorakBrew {
+                    potion.calc_zamorak_brew_boost(self.stats.attack, PotionStat::Attack);
+                } else {
+                    potion.calc_boost(self.stats.attack);
+                }
             }
         }
-        if let Some(potion) = &mut self.potions.strength {
-            if potion.potion_type == Potion::Moonlight {
-                potion.calc_moonlight_boost(
-                    self.stats.strength,
-                    self.stats.herblore,
-                    PotionStat::Strength,
-                );
-            } else if potion.potion_type == Potion::DragonBattleaxe {
-                potion.calc_dragon_battleaxe_boost(
-                    self.stats.attack,
-                    self.stats.defence,
-                    self.stats.ranged,
-                    self.stats.magic,
-                );
-            } else if potion.potion_type == Potion::ZamorakBrew {
-                potion.calc_zamorak_brew_boost(self.stats.strength, PotionStat::Strength);
-            } else {
-                potion.calc_boost(self.stats.strength);
+        if let Some(potions) = &mut self.potions.strength {
+            for potion in potions {
+                if potion.potion_type == Potion::Moonlight {
+                    potion.calc_moonlight_boost(
+                        self.stats.strength,
+                        self.stats.herblore,
+                        PotionStat::Strength,
+                    );
+                } else if potion.potion_type == Potion::DragonBattleaxe {
+                    potion.calc_dragon_battleaxe_boost(
+                        self.stats.attack,
+                        self.stats.defence,
+                        self.stats.ranged,
+                        self.stats.magic,
+                    );
+                } else if potion.potion_type == Potion::ZamorakBrew {
+                    potion.calc_zamorak_brew_boost(self.stats.strength, PotionStat::Strength);
+                } else {
+                    potion.calc_boost(self.stats.strength);
+                }
             }
         }
-        if let Some(potion) = &mut self.potions.defence {
-            if potion.potion_type == Potion::Moonlight {
-                potion.calc_moonlight_boost(
-                    self.stats.defence,
-                    self.stats.herblore,
-                    PotionStat::Defence,
-                );
-            } else {
-                potion.calc_boost(self.stats.defence);
+        if let Some(potions) = &mut self.potions.defence {
+            for potion in potions {
+                if potion.potion_type == Potion::Moonlight {
+                    potion.calc_moonlight_boost(
+                        self.stats.defence,
+                        self.stats.herblore,
+                        PotionStat::Defence,
+                    );
+                } else {
+                    potion.calc_boost(self.stats.defence);
+                }
             }
         }
-        if let Some(potion) = &mut self.potions.ranged {
-            potion.calc_boost(self.stats.ranged);
+        if let Some(potions) = &mut self.potions.ranged {
+            for potion in potions {
+                potion.calc_boost(self.stats.ranged);
+            }
         }
-        if let Some(potion) = &mut self.potions.magic {
-            potion.calc_boost(self.stats.magic);
+        if let Some(potions) = &mut self.potions.magic {
+            for potion in potions {
+                potion.calc_boost(self.stats.magic);
+            }
         }
     }
 
     fn apply_potion_boosts(&mut self) {
         // Apply all of the selected potion boosts to the player's live stats
-        if let Some(potion) = &self.potions.attack {
-            self.stats.attack.boost(potion.boost);
+        if let Some(potions) = &self.potions.attack {
+            let max_boost = potions.iter().map(|p| p.boost).max().unwrap_or_default();
+            self.stats.attack.boost(max_boost);
         }
-        if let Some(potion) = &self.potions.strength {
-            self.stats.strength.boost(potion.boost);
+        if let Some(potions) = &self.potions.strength {
+            let max_boost = potions.iter().map(|p| p.boost).max().unwrap_or_default();
+            self.stats.strength.boost(max_boost);
         }
-        if let Some(potion) = &self.potions.defence {
-            self.stats.defence.boost(potion.boost);
+        if let Some(potions) = &self.potions.defence {
+            let max_boost = potions.iter().map(|p| p.boost).max().unwrap_or_default();
+            self.stats.defence.boost(max_boost);
         }
-        if let Some(potion) = &self.potions.ranged {
-            self.stats.ranged.boost(potion.boost);
+        if let Some(potions) = &self.potions.ranged {
+            let max_boost = potions.iter().map(|p| p.boost).max().unwrap_or_default();
+            self.stats.ranged.boost(max_boost);
         }
-        if let Some(potion) = &self.potions.magic {
-            self.stats.magic.boost(potion.boost);
+        if let Some(potions) = &self.potions.magic {
+            let max_boost = potions.iter().map(|p| p.boost).max().unwrap_or_default();
+            self.stats.magic.boost(max_boost);
         }
     }
 
@@ -1136,27 +1151,72 @@ impl Player {
     pub fn add_potion(&mut self, potion: Potion) {
         // Add a potion to the correct slot, calc boosts, and reset live stats
         if potion.boosts_attack() {
-            self.potions.attack = Some(PotionBoost::new(&potion));
+            self.potions
+                .attack
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_strength() {
-            self.potions.strength = Some(PotionBoost::new(&potion));
+            self.potions
+                .strength
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_defence() {
-            self.potions.defence = Some(PotionBoost::new(&potion));
+            self.potions
+                .defence
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_ranged() {
-            self.potions.ranged = Some(PotionBoost::new(&potion));
+            self.potions
+                .ranged
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_magic() {
-            self.potions.magic = Some(PotionBoost::new(&potion));
+            self.potions
+                .magic
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_all_melee() {
-            self.potions.attack = Some(PotionBoost::new(&potion));
-            self.potions.strength = Some(PotionBoost::new(&potion));
-            self.potions.defence = Some(PotionBoost::new(&potion));
+            self.potions
+                .attack
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .strength
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .defence
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         } else if potion.boosts_all() {
-            self.potions.attack = Some(PotionBoost::new(&potion));
-            self.potions.strength = Some(PotionBoost::new(&potion));
-            self.potions.defence = Some(PotionBoost::new(&potion));
-            self.potions.ranged = Some(PotionBoost::new(&potion));
-            self.potions.magic = Some(PotionBoost::new(&potion));
+            self.potions
+                .attack
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .strength
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .defence
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .ranged
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
+            self.potions
+                .magic
+                .get_or_insert_with(Vec::new)
+                .push(PotionBoost::new(&potion));
         }
 
+        self.calc_potion_boosts();
+        self.reset_current_stats();
+    }
+
+    pub fn remove_potion(&mut self, potion: Potion) {
+        self.potions.remove_potion(potion);
         self.calc_potion_boosts();
         self.reset_current_stats();
     }
@@ -1302,7 +1362,7 @@ pub async fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
     Ok(data)
 }
 
-fn parse_player_data(data: String) -> PlayerStats {
+pub fn parse_player_data(data: String) -> PlayerStats {
     // Parses player data and creates a PlayerStats struct from it
     let skills = [
         "attack",
@@ -1474,11 +1534,11 @@ mod test {
     fn test_potion_boosts() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.potions.attack = Some(PotionBoost::new(&Potion::SuperAttack));
-        player.potions.strength = Some(PotionBoost::new(&Potion::SuperStrength));
-        player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
-        player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
-        player.potions.magic = Some(PotionBoost::new(&Potion::SaturatedHeart));
+        player.add_potion(Potion::SuperAttack);
+        player.add_potion(Potion::SuperStrength);
+        player.add_potion(Potion::SuperDefence);
+        player.add_potion(Potion::Ranging);
+        player.add_potion(Potion::SaturatedHeart);
 
         player.calc_potion_boosts();
         player.reset_current_stats();
@@ -1493,24 +1553,13 @@ mod test {
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut player = Player::new();
-        player.potions.attack = Some(PotionBoost::new(&Potion::ZamorakBrew));
-        player.potions.defence = Some(PotionBoost::new(&Potion::SuperDefence));
-        player.potions.magic = Some(PotionBoost::new(&Potion::Magic));
-        player.potions.ranged = Some(PotionBoost::new(&Potion::Ranging));
-        player.potions.strength = Some(PotionBoost::new(&Potion::DragonBattleaxe));
+        player.add_potion(Potion::ZamorakBrew);
+        player.add_potion(Potion::SuperDefence);
+        player.add_potion(Potion::Magic);
+        player.add_potion(Potion::Ranging);
+        player.add_potion(Potion::DragonBattleaxe);
         player.calc_potion_boosts();
         player.reset_current_stats();
-        player
-            .potions
-            .strength
-            .as_mut()
-            .unwrap()
-            .calc_dragon_battleaxe_boost(
-                player.stats.attack,
-                player.stats.defence,
-                player.stats.ranged,
-                player.stats.magic,
-            );
         player.reset_current_stats();
 
         assert_eq!(player.stats.attack.current, 120);
