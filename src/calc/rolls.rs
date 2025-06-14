@@ -979,7 +979,7 @@ pub fn get_demonbane_factor(weapon_boost: i32, monster: &Monster) -> Fraction {
         })
 }
 
-mod test {
+mod tests {
     use super::*;
 
     #[test]
