@@ -138,17 +138,18 @@ pub const IMMUNE_TO_MELEE_MONSTERS: &[i32] = &[
     7706, // zuk
     7708, // Jal-MejJak
     12214, 12215, 12219, // leviathan
-    7852, 7853, 7884, 7885, // dawn
     7550, 7553, // Olm mage hand
     7551, 7554, // Olm head,
     11753, 11754, // Elidinis' Warden P2
     11756, 11757, // Tumeken's Warden P2
 ];
 
-pub const IMMUNE_TO_NON_SALAMANDER_MELEE_DAMAGE_MONSTERS: &[i32] = &[
+pub const IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS: &[i32] = &[
     3169, 3170, 3171, 3172, 3173, 3174, 3175, 3176, 3177, 3178, 3179, 3180, 3181, 3182,
     3183, // aviansie
     7037, // reanimated aviansie
+    7852, 7853, 7884, 7885, // dawn
+    2042, 2043, 2044, // zulrah
 ];
 
 pub const DUSK_IDS: &[i32] = &[

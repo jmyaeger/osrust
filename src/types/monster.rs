@@ -846,6 +846,13 @@ impl Monster {
             return true;
         }
 
+        if player.is_using_melee()
+            && player.gear.weapon.attack_range < 2
+            && IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        {
+            return true;
+        }
+
         if self.vampyre_tier() == Some(3) && !player.is_wearing_ivandis_weapon() {
             return true;
         }
