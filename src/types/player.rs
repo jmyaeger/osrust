@@ -615,73 +615,60 @@ impl Player {
         Ok(())
     }
 
-    pub fn get_slot(
-        &self,
-        slot: &GearSlot,
-    ) -> Result<Box<dyn Equipment>, Box<dyn std::error::Error>> {
+    pub fn get_slot(&self, slot: &GearSlot) -> Option<Box<dyn Equipment>> {
         match slot {
-            GearSlot::Weapon => Ok(Box::new(self.gear.weapon.clone())),
+            GearSlot::Weapon => Some(Box::new(self.gear.weapon.clone())),
             GearSlot::Ammo => self
                 .gear
                 .ammo
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Ammo slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Body => self
                 .gear
                 .body
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Body slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Cape => self
                 .gear
                 .cape
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Cape slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Feet => self
                 .gear
                 .feet
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Feet slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Hands => self
                 .gear
                 .hands
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Hands slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Head => self
                 .gear
                 .head
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Head slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Legs => self
                 .gear
                 .legs
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Legs slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Neck => self
                 .gear
                 .neck
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Neck slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Ring => self
                 .gear
                 .ring
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Ring slot is empty".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
             GearSlot::Shield => self
                 .gear
                 .shield
                 .as_ref()
-                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>)
-                .ok_or_else(|| "Shield slot is empty".into()),
-            GearSlot::None => Err("Invalid slot type".into()),
+                .map(|item| Box::new(item.clone()) as Box<dyn Equipment>),
+            GearSlot::None => None,
         }
     }
 
