@@ -617,21 +617,6 @@ pub fn get_distribution(
         }
     }
 
-    if player.gets_second_twinflame_hit() {
-        dist = dist.transform(
-            &|h| {
-                HitDistribution::single(
-                    1.0,
-                    vec![
-                        Hitsplat::new(h.damage, h.accurate),
-                        Hitsplat::new(h.damage * 2 / 5, h.accurate),
-                    ],
-                )
-            },
-            &TransformOpts::default(),
-        )
-    }
-
     let bolt_context = BoltContext::new(
         player.stats.ranged.current,
         max_hit,
@@ -715,6 +700,21 @@ pub fn get_distribution(
                 transform_inaccurate: false,
             },
         );
+    }
+
+    if player.gets_second_twinflame_hit() {
+        dist = dist.transform(
+            &|h| {
+                HitDistribution::single(
+                    1.0,
+                    vec![
+                        Hitsplat::new(h.damage, h.accurate),
+                        Hitsplat::new(h.damage * 2 / 5, h.accurate),
+                    ],
+                )
+            },
+            &TransformOpts::default(),
+        )
     }
 
     apply_limiters(dist, player, monster)

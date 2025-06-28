@@ -31,7 +31,7 @@ fn main() {
 
     // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
     // simulate_vardorvis();
 }
@@ -90,10 +90,10 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(80);
-    player.stats.magic = Stat::new(80);
-    player.stats.defence = Stat::new(80);
-    player.stats.hitpoints = Stat::new(80);
+    player.stats.ranged = Stat::new(93);
+    player.stats.magic = Stat::new(93);
+    player.stats.defence = Stat::new(70);
+    player.stats.hitpoints = Stat::new(90);
     player.stats.attack = Stat::new(80);
     player.stats.strength = Stat::new(80);
     player.reset_current_stats();
@@ -103,7 +103,7 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(Prayer::MysticMight);
+    player.prayers.add(Prayer::MysticVigour);
     player.prayers.add(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
@@ -115,7 +115,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::EagleEye);
+    player.prayers.add(Prayer::Deadeye);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -139,7 +139,7 @@ fn simulate_hunllef() {
 
     let fight_config = HunllefConfig {
         food_count: 25,
-        eat_strategy: HunllefEatStrategy::EatAtHp(59),
+        eat_strategy: HunllefEatStrategy::EatAtHp(69),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Magic,
@@ -162,7 +162,7 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 100000);
+    let results = simulate_n_fights(Box::new(fight), 1000000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
