@@ -186,6 +186,10 @@ pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
     14151, 14150, // Royal titans elementals
 ];
 
+pub const GUARANTEED_ACCURACY_MONSTERS: &[i32] = &[
+    5916, // Spawn (abyssal sire)
+];
+
 pub const IMMUNE_TO_MAGIC_MONSTERS: &[i32] = DUSK_IDS;
 
 pub const IMMUNE_TO_STAT_DRAIN: &[i32] = &[13011, 13012, 13013];

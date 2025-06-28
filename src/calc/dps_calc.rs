@@ -157,6 +157,7 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
             && player.combat_stance() != CombatStance::ManualCast)
         || (using_spec && player.is_wearing_any(ALWAYS_HITS_SPEC))
         || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
+        || GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or_default())
     {
         return 1.0;
     }
@@ -241,13 +242,18 @@ pub fn get_distribution(
     // Get the attack distribution for the given player and monster
     let acc = get_hit_chance(player, monster, using_spec);
     let combat_type = player.combat_type();
-    let (min_hit, max_hit) = if using_spec {
+    let (mut min_hit, max_hit) = if using_spec {
         get_spec_min_max_hit(player, monster)
     } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default()) {
         get_wardens_p2_min_max(player, monster)
     } else {
         (0, player.max_hits.get(combat_type))
     };
+
+    // Players will always hit at least half their max against sire vents
+    if monster.info.name == "Respiratory system" {
+        min_hit = max_hit / 2;
+    }
 
     let standard_hit_dist = HitDistribution::linear(acc, min_hit, max_hit);
     let mut dist = AttackDistribution::new(vec![standard_hit_dist.clone()]);
@@ -258,6 +264,14 @@ pub fn get_distribution(
         return AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             vec![Hitsplat::new(monster.stats.hitpoints.base, true)],
+        )]);
+    }
+
+    // Sire vents always die in one hit if the player is using a demonbane weapon
+    if monster.info.name == "Respiratory system" && player.is_using_demonbane() {
+        return AttackDistribution::new(vec![HitDistribution::single(
+            acc,
+            vec![Hitsplat::new(monster.stats.hitpoints.current, true)],
         )]);
     }
 

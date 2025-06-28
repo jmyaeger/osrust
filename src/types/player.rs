@@ -1114,6 +1114,10 @@ impl Player {
                 .contains("bolt")
     }
 
+    pub fn is_using_demonbane(&self) -> bool {
+        self.is_using_demonbane_spell() || self.is_wearing_any(DEMONBANE_WEAPONS)
+    }
+
     pub fn is_using_corpbane_weapon(&self) -> bool {
         // Check if the player's weapon does full damage to Corp
         let weapon_name = &self.gear.weapon.name;
