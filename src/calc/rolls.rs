@@ -606,9 +606,8 @@ fn inquisitor_boost(player: &Player) -> u32 {
 }
 
 fn crystal_bonus(player: &Player) -> u32 {
-    player
-        .is_wearing_elf_bow()
-        .then(|| {
+    if player.is_wearing_elf_bow() {
+        {
             [
                 ("Crystal helm", 25),
                 ("Crystal body", 75),
@@ -618,8 +617,10 @@ fn crystal_bonus(player: &Player) -> u32 {
             .filter(|(item, _)| player.is_wearing(item, Some("Active")))
             .map(|(_, bonus)| bonus)
             .sum()
-        })
-        .unwrap_or(0)
+        }
+    } else {
+        0
+    }
 }
 
 fn ranged_gear_bonus(player: &Player, monster: &Monster) -> (Fraction, Fraction) {

@@ -3,7 +3,6 @@
 use reqwest;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use std::fs::File;
 use url::Url;
 
 const FILE_NAME: &str = "src/databases/monsters.json";

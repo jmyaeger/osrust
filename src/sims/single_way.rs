@@ -3,6 +3,7 @@ use crate::combat::attacks::standard::AttackFn;
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
+use crate::combat::thralls::Thrall;
 use crate::constants::P2_WARDEN_IDS;
 use crate::types::{monster::Monster, player::Player};
 use crate::utils::logging::FightLogger;
@@ -16,10 +17,16 @@ pub struct SingleWayFight {
     pub rng: SmallRng,
     pub mechanics: SingleWayMechanics,
     pub logger: FightLogger,
+    pub config: SingleWayConfig,
 }
 
 impl SingleWayFight {
-    pub fn new(player: Player, monster: Monster) -> SingleWayFight {
+    pub fn new(
+        player: Player,
+        monster: Monster,
+        config: SingleWayConfig,
+        use_logger: bool,
+    ) -> SingleWayFight {
         let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
         let rng = SmallRng::from_os_rng();
         let monster_name = monster.info.name.clone();
@@ -29,7 +36,8 @@ impl SingleWayFight {
             limiter,
             rng,
             mechanics: SingleWayMechanics,
-            logger: FightLogger::new(false, monster_name.as_str()),
+            logger: FightLogger::new(use_logger, monster_name.as_str()),
+            config,
         }
     }
 }
@@ -43,6 +51,7 @@ impl Simulation for SingleWayFight {
             &self.limiter,
             &self.mechanics,
             &mut self.logger,
+            &self.config,
         )
     }
 
@@ -73,6 +82,11 @@ impl Simulation for SingleWayFight {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct SingleWayConfig {
+    pub thralls: Option<Thrall>,
+}
+
 #[derive(Debug)]
 pub struct SingleWayMechanics;
 
@@ -85,6 +99,7 @@ fn simulate_fight(
     limiter: &Option<Box<dyn Limiter>>,
     mechanics: &SingleWayMechanics,
     logger: &mut FightLogger,
+    config: &SingleWayConfig,
 ) -> Result<FightResult, SimulationError> {
     let mut vars = FightVars::new();
     scale_monster_hp_only(monster);
@@ -93,6 +108,13 @@ fn simulate_fight(
         if vars.tick_counter == vars.attack_tick {
             mechanics.player_attack(player, monster, rng, limiter, &mut vars, logger);
         }
+
+        if let Some(thrall) = config.thralls {
+            if vars.tick_counter == vars.thrall_attack_tick {
+                mechanics.thrall_attack(monster, thrall, &mut vars, rng, logger);
+            }
+        }
+
         mechanics.process_monster_effects(monster, &vars, logger);
         mechanics.process_freeze(monster, &mut vars, logger);
         mechanics.increment_tick(monster, &mut vars);
@@ -145,6 +167,7 @@ mod tests {
         let limiter = assign_limiter(&player, &monster);
         let mechanics = SingleWayMechanics;
         let mut logger = FightLogger::new(false, monster.info.name.as_str());
+        let config = SingleWayConfig::default();
         let result = simulate_fight(
             &mut player,
             &mut monster,
@@ -152,6 +175,7 @@ mod tests {
             &limiter,
             &mechanics,
             &mut logger,
+            &config,
         )
         .unwrap();
 

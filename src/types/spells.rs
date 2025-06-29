@@ -18,10 +18,10 @@ pub enum Spell {
 impl std::fmt::Display for Spell {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Spell::Standard(spell) => write!(f, "{}", spell),
-            Spell::Ancient(spell) => write!(f, "{}", spell),
-            Spell::Arceuus(spell) => write!(f, "{}", spell),
-            Spell::Special(spell) => write!(f, "{}", spell),
+            Spell::Standard(spell) => write!(f, "{spell}"),
+            Spell::Ancient(spell) => write!(f, "{spell}"),
+            Spell::Arceuus(spell) => write!(f, "{spell}"),
+            Spell::Special(spell) => write!(f, "{spell}"),
         }
     }
 }
@@ -319,7 +319,7 @@ fn magic_dart_max_hit(player: &Player) -> u32 {
 }
 
 fn strike_spell_max_hit(player: &Player) -> u32 {
-    min(8, (player.stats.magic.current + 3) / 4 * 2)
+    min(8, player.stats.magic.current.div_ceil(4) * 2)
 }
 
 fn bolt_spell_max_hit(player: &Player) -> u32 {

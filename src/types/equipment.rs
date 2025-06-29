@@ -399,7 +399,7 @@ fn parse_gear_slot(slot: String) -> Result<GearSlot, Box<dyn std::error::Error>>
         "ring" => Ok(GearSlot::Ring),
         "ammo" => Ok(GearSlot::Ammo),
         "weapon" => Err("Tried to create armor from a weapon name".into()),
-        _ => Err(format!("Unknown slot: {}", slot).into()),
+        _ => Err(format!("Unknown slot: {slot}").into()),
     }
 }
 
@@ -980,7 +980,7 @@ pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Erro
         }
     }
 
-    Err(format!("Equipment '{}' not found", item_name).into())
+    Err(format!("Equipment '{item_name}' not found").into())
 }
 
 #[cfg(test)]

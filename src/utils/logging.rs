@@ -15,17 +15,17 @@ impl FightLogger {
     pub fn new(enabled: bool, name: &str) -> Self {
         if enabled {
             std::fs::create_dir_all("logs").unwrap_or_else(|e| {
-                eprintln!("Failed to create log directory: {}", e);
+                eprintln!("Failed to create log directory: {e}");
             });
 
             let timestamp = Local::now().format("%Y%m%d_%H%M%S").to_string();
-            let filename = format!("logs/{}_{}.log", name, timestamp);
+            let filename = format!("logs/{name}_{timestamp}.log");
 
             WriteLogger::init(
                 LevelFilter::Debug,
                 Config::default(),
                 File::create(filename).unwrap_or_else(|e| {
-                    eprintln!("Failed to create log file: {}", e);
+                    eprintln!("Failed to create log file: {e}",);
                     panic!("Failed to create log file");
                 }),
             )
@@ -65,7 +65,7 @@ impl FightLogger {
             debug!("Active prayers:");
             if let Some(prayers) = &player.prayers.active_prayers {
                 for prayer in prayers {
-                    debug!("{}", prayer);
+                    debug!("{prayer}");
                 }
             } else {
                 debug!("None\n");
@@ -198,22 +198,22 @@ impl FightLogger {
     pub fn log_player_attack(&mut self, tick: i32, damage: u32, success: bool, style: CombatType) {
         if self.enabled {
             if success {
-                debug!(
-                    "[Tick {}] Player hit with {} for {} damage",
-                    tick, style, damage
-                );
+                debug!("[Tick {tick}] Player hit with {style} for {damage} damage");
             } else {
-                debug!("[Tick {}] Player missed with {}", tick, style);
+                debug!("[Tick {tick}] Player missed with {style}");
             }
         }
     }
 
     pub fn log_player_damage(&mut self, tick: i32, damage: u32, hp: u32) {
         if self.enabled {
-            debug!(
-                "[Tick {}] Player took {} damage ({} hp remaining)",
-                tick, damage, hp
-            );
+            debug!("[Tick {tick}] Player took {damage} damage ({hp} hp remaining)");
+        }
+    }
+
+    pub fn log_thrall_attack(&mut self, tick: i32, damage: u32) {
+        if self.enabled {
+            debug!("[Tick {tick}] Thrall hit for {damage} damage");
         }
     }
 
@@ -241,82 +241,70 @@ impl FightLogger {
 
         if self.enabled {
             if success {
-                debug!(
-                    "[Tick {}] {} hit with {} for {} damage",
-                    tick, name, style, damage
-                );
+                debug!("[Tick {tick}] {name} hit with {style} for {damage} damage");
             } else {
-                debug!("[Tick {}] {} missed with {}", tick, name, style);
+                debug!("[Tick {tick}] {name} missed with {style}");
             }
         }
     }
 
     pub fn log_monster_damage(&mut self, tick: i32, damage: u32, hp: u32, name: &str) {
         if self.enabled {
-            debug!(
-                "[Tick {}] {} took {} damage ({} hp remaining)",
-                tick, name, damage, hp
-            );
+            debug!("[Tick {tick}] {name} took {damage} damage ({hp} hp remaining)");
         }
     }
 
     pub fn log_gear_switch(&mut self, tick: i32, style: SwitchType) {
         if self.enabled {
-            debug!("[Tick {}] Player switched to a {} setup", tick, style);
+            debug!("[Tick {tick}] Player switched to a {style} setup");
         }
     }
 
     pub fn log_food_eaten(&mut self, tick: i32, heal_amount: u32, hp: u32) {
         if self.enabled {
-            debug!(
-                "[Tick {}] Player ate food for {} hp ({} hp remaining)",
-                tick, heal_amount, hp
-            );
+            debug!("[Tick {tick}] Player ate food for {heal_amount} hp ({hp} hp remaining)");
         }
     }
 
     pub fn log_hp_regen(&mut self, tick: i32, hp: u32, name: &str) {
         if self.enabled {
-            debug!(
-                "[Tick {}] {} regenerated 1 hp ({} hp remaining)",
-                tick, name, hp
-            );
+            debug!("[Tick {tick}] {name} regenerated 1 hp ({hp} hp remaining)");
         }
     }
 
     pub fn log_stats_regen(&mut self, tick: i32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} regenerated stats by 1", tick, name);
+            debug!("[Tick {tick}] {name} regenerated stats by 1");
         }
     }
 
     pub fn log_monster_death(&mut self, tick: i32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} has died.", tick, name);
+            debug!("[Tick {tick}] {name} has died.");
         }
     }
 
     pub fn log_player_death(&mut self, tick: i32) {
         if self.enabled {
-            debug!("[Tick {}] Player has died, ending the fight", tick);
+            debug!("[Tick {tick}] Player has died, ending the fight");
         }
     }
 
     pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} took {} effect damage", tick, name, damage);
+            debug!("[Tick {tick}] {name} took {damage} effect damage");
         }
     }
 
     pub fn log_custom(&mut self, tick: i32, message: &str) {
         if self.enabled {
-            debug!("[Tick {}] {}", tick, message);
+            debug!("[Tick {tick}] {message}");
         }
     }
 
     pub fn log_freeze_end(&mut self, tick: i32, name: &str) {
         if self.enabled {
-            debug!("[Tick {}] {} is no longer frozen", tick, name);
+            debug!("[Tick {tick}] {name} is no longer frozen");
         }
     }
 }

@@ -3,6 +3,7 @@ use lazy_static::lazy_static;
 use crate::calc::rolls;
 use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
+use crate::combat::thralls::Thrall;
 use crate::constants::*;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
@@ -193,7 +194,7 @@ where
                 "vampyre2" => Attribute::Vampyre(2),
                 "vampyre3" => Attribute::Vampyre(3),
                 "xerician" => Attribute::Xerician,
-                _ => panic!("Unknown attribute: {}", attr),
+                _ => panic!("Unknown attribute: {attr}"),
             })
             .collect()
     });
@@ -898,6 +899,20 @@ impl Monster {
 
         if !self.info.name.contains("Verzik") && player.is_wearing("Dawnbringer", None) {
             // Dawnbringer is only usable inside the Verzik room (should check if usable on crabs)
+            return true;
+        }
+
+        false
+    }
+
+    pub fn is_immune_to_thrall(&self, thrall: Thrall) -> bool {
+        if thrall.attack_type() == AttackType::Melee
+            && IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            || thrall.attack_type() == AttackType::Ranged
+                && IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            || thrall.attack_type() == AttackType::Magic
+                && IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        {
             return true;
         }
 

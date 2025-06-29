@@ -167,7 +167,7 @@ impl FromStr for Fraction {
 }
 
 pub fn poison_damage(severity: u32) -> u32 {
-    (severity + 4) / 5
+    severity.div_ceil(5)
 }
 
 pub fn lerp(

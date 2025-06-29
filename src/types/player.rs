@@ -450,7 +450,7 @@ impl Player {
     pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
         // Equip the specified item in the correct slot
         let slot_name = equipment::get_slot_name(item_name)
-            .unwrap_or_else(|_| panic!("Slot not found for item {}", item_name));
+            .unwrap_or_else(|_| panic!("Slot not found for item {item_name}"));
 
         match slot_name.as_str() {
             "head" => self.gear.head = Some(Armor::new(item_name, version)),
@@ -514,7 +514,7 @@ impl Player {
             "hands" => self.gear.hands = Some(Armor::new(item_name, version)),
             "feet" => self.gear.feet = Some(Armor::new(item_name, version)),
             "ring" => self.gear.ring = Some(Armor::new(item_name, version)),
-            _ => panic!("Slot not found for item {}", item_name),
+            _ => panic!("Slot not found for item {item_name}"),
         }
         self.update_bonuses();
         self.update_set_effects();
@@ -1134,7 +1134,7 @@ impl Player {
 
     pub fn set_spell(&mut self, spell: spells::Spell) {
         if spell.required_level() > self.stats.magic.current {
-            panic!("Player does not have enough magic to cast {}.", spell);
+            panic!("Player does not have enough magic to cast {spell}.");
         }
         self.attrs.spell = Some(spell);
     }

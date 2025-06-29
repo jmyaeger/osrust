@@ -4,9 +4,10 @@ use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::combat::attacks::standard::get_attack_functions;
 use osrs::combat::simulation::{simulate_n_fights, Simulation};
+use osrs::combat::thralls::Thrall;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
-use osrs::sims::single_way::SingleWayFight;
+use osrs::sims::single_way::{SingleWayConfig, SingleWayFight};
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
@@ -29,44 +30,43 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 
     // simulate_vardorvis();
 }
 
 #[allow(unused)]
 fn simulate_single_way() {
-    // let mut player = loadouts::max_melee_player();
-    let mut player = loadouts::bowfa_crystal_player();
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
-    player.equip("Eclipse atlatl", None);
-    player.equip("Atlatl dart", None);
-    player.equip("Amulet of strength", None);
+    let mut player = loadouts::max_melee_player();
+    // let mut player = loadouts::bowfa_crystal_player();
+    // player.equip("Eclipse moon helm", None);
+    // player.equip("Eclipse moon chestplate", None);
+    // player.equip("Eclipse moon tassets", None);
+    // player.equip("Eclipse atlatl", None);
+    // player.equip("Atlatl dart", None);
+    // player.equip("Amulet of strength", None);
 
-    player.equip("Berserker ring (i)", None);
-    player.equip("Mixed hide boots", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Ava's assembler", None);
-    player.stats.ranged = Stat::new(90);
-    player.stats.strength = Stat::new(90);
-    player.update_bonuses();
-    player.update_set_effects();
-    player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::Deadeye);
-    player.add_potion(Potion::SmellingSalts);
-    // player.add_potion(Potion::SuperCombat);
+    // player.equip("Berserker ring (i)", None);
+    // player.equip("Mixed hide boots", None);
+    // player.equip("Barrows gloves", None);
+    // player.equip("Ava's assembler", None);
+    // player.stats.ranged = Stat::new(90);
+    // player.stats.strength = Stat::new(90);
+    // player.update_bonuses();
+    // player.update_set_effects();
+    // player.set_active_style(CombatStyle::Rapid);
+    // player.prayers.add(Prayer::Deadeye);
+    // player.add_potion(Potion::SmellingSalts);
 
-    let mut monster = Monster::new("Zebak", None).unwrap();
-    monster.drain_stat(CombatStat::Defence, 20, None);
-    monster.base_def_rolls = rolls::monster_def_rolls(&monster);
-    monster.def_rolls.clone_from(&monster.base_def_rolls);
-    monster.info.toa_level = 300;
-    monster.info.toa_path_level = 1;
-    monster.scale_toa();
+    let mut monster = Monster::new("Nex", None).unwrap();
+    // monster.drain_stat(CombatStat::Defence, 20, None);
+    // monster.base_def_rolls = rolls::monster_def_rolls(&monster);
+    // monster.def_rolls.clone_from(&monster.base_def_rolls);
+    // monster.info.toa_level = 300;
+    // monster.info.toa_path_level = 1;
+    // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
     println!("Max hit: {}", player.max_hits.get(player.combat_type()));
@@ -75,16 +75,17 @@ fn simulate_single_way() {
         player.att_rolls.get(player.combat_type())
     );
 
-    let simulation = SingleWayFight::new(player, monster);
+    let config = SingleWayConfig {
+        thralls: Some(Thrall::GreaterMagic),
+    };
+
+    let simulation = SingleWayFight::new(player, monster, config, false);
     let results = simulate_n_fights(Box::new(simulation), 100000);
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {}", stats.ttk);
     println!("Acc: {}", stats.accuracy);
-    println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
-
-    // plot_ttk_dist(&results, TtkUnits::Ticks, true);
-    // plot_ttk_cdf(&results, TtkUnits::Ticks, true);
+    // println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
 }
 
 #[allow(unused)]

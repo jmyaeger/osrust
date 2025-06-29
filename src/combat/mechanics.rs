@@ -3,7 +3,8 @@ use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
 use crate::combat::simulation::FightVars;
 use crate::combat::simulation::{FightResult, SimulationError};
-use crate::constants;
+use crate::combat::thralls::Thrall;
+use crate::constants::{self, THRALL_ATTACK_SPEED};
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
@@ -74,6 +75,44 @@ pub trait Mechanics {
         fight_vars.damage_taken += hit.damage;
 
         handle_recoil(player, monster, &hit, fight_vars, logger);
+    }
+
+    fn thrall_attack(
+        &self,
+        monster: &mut Monster,
+        thrall: Thrall,
+        fight_vars: &mut FightVars,
+        rng: &mut SmallRng,
+        logger: &mut FightLogger,
+    ) {
+        if monster.is_immune_to_thrall(thrall) {
+            logger.log_custom(
+                fight_vars.tick_counter,
+                format!(
+                    "Thrall hit for 0 damage because {} is immune to it.",
+                    monster.info.name
+                )
+                .as_str(),
+            );
+            return;
+        }
+
+        let thrall_hit = std::cmp::min(
+            rng.random_range(0..=thrall.max_hit()),
+            monster.stats.hitpoints.current,
+        );
+        logger.log_thrall_attack(fight_vars.tick_counter, thrall_hit);
+        monster.take_damage(thrall_hit);
+        logger.log_monster_damage(
+            fight_vars.tick_counter,
+            thrall_hit,
+            monster.stats.hitpoints.current,
+            monster.info.name.as_str(),
+        );
+        scale_monster_hp_only(monster);
+
+        fight_vars.thrall_attack_tick += THRALL_ATTACK_SPEED;
+        fight_vars.thrall_damage += thrall_hit;
     }
 
     fn process_monster_effects(
@@ -157,6 +196,7 @@ pub trait Mechanics {
             food_eaten: fight_vars.food_eaten,
             damage_taken: fight_vars.damage_taken,
             leftover_burn,
+            thrall_damage: fight_vars.thrall_damage,
         };
 
         if remove_final_attack_delay {
@@ -183,6 +223,7 @@ pub trait Mechanics {
             food_eaten: fight_vars.food_eaten,
             damage_taken: fight_vars.damage_taken,
             leftover_burn,
+            thrall_damage: fight_vars.thrall_damage,
         }))
     }
 

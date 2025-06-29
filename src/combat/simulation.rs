@@ -14,6 +14,7 @@ pub struct FightResult {
     pub food_eaten: u32,
     pub damage_taken: u32,
     pub leftover_burn: u32,
+    pub thrall_damage: u32,
 }
 
 impl FightResult {
@@ -37,7 +38,7 @@ impl std::fmt::Display for SimulationError {
             SimulationError::PlayerDeathError(_) => {
                 write!(f, "Player died before the monster did.")
             }
-            SimulationError::ConfigError(msg) => write!(f, "{}", msg),
+            SimulationError::ConfigError(msg) => write!(f, "{msg}"),
         }
     }
 }
@@ -58,6 +59,7 @@ pub struct CumulativeResults {
     pub food_eaten: Vec<u32>,
     pub damage_taken: Vec<u32>,
     pub leftover_burn: Vec<u32>,
+    pub thrall_damage: Vec<u32>,
 }
 
 impl CumulativeResults {
@@ -73,6 +75,7 @@ impl CumulativeResults {
         self.food_eaten.push(result.food_eaten);
         self.damage_taken.push(result.damage_taken);
         self.leftover_burn.push(result.leftover_burn);
+        self.thrall_damage.push(result.thrall_damage);
     }
 }
 
@@ -83,16 +86,21 @@ pub struct FightVars {
     pub hit_count: u32,
     pub hit_amounts: Vec<u32>,
     pub attack_tick: i32,
+    pub thrall_attack_tick: i32,
     pub freeze_immunity: i32,
     pub freeze_resistance: u32,
     pub food_eaten: u32,
     pub damage_taken: u32,
     pub eat_delay: u32,
+    pub thrall_damage: u32,
 }
 
 impl FightVars {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            thrall_attack_tick: 1,
+            ..Default::default()
+        }
     }
 }
 
@@ -207,8 +215,9 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Cumulat
                     results.food_eaten.push(result.food_eaten);
                     results.damage_taken.push(result.damage_taken);
                     results.leftover_burn.push(result.leftover_burn);
+                    results.thrall_damage.push(result.thrall_damage);
                 }
-                SimulationError::ConfigError(e) => panic!("Configuration error: {}", e),
+                SimulationError::ConfigError(e) => panic!("Configuration error: {e}"),
             },
         }
         simulation.reset();
@@ -225,7 +234,7 @@ mod tests {
     use super::*;
     use crate::calc::analysis::SimulationStats;
     use crate::calc::rolls::calc_player_melee_rolls;
-    use crate::sims::single_way::SingleWayFight;
+    use crate::sims::single_way::{SingleWayConfig, SingleWayFight};
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
     use crate::types::player::Player;
@@ -256,7 +265,7 @@ mod tests {
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
-        let simulation = SingleWayFight::new(player, monster);
+        let simulation = SingleWayFight::new(player, monster, SingleWayConfig::default(), false);
         let results = simulate_n_fights(Box::new(simulation), 100000);
         let stats = SimulationStats::new(&results);
 
