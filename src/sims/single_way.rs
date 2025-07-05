@@ -317,28 +317,28 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
 
     while fight.monster.stats.hitpoints.current > 0 {
         if vars.tick_counter == vars.attack_tick {
-            if let Some(ref mut specs) = &mut fight.spec_config
-                && fight.player.stats.spec.value() >= specs.lowest_cost.unwrap_or(101)
-            {
-                fight.mechanics.player_special_attack(
-                    &mut fight.player,
-                    &mut fight.monster,
-                    &mut fight.rng,
-                    &fight.limiter,
-                    &mut vars,
-                    specs,
-                    &mut fight.logger,
-                );
-            } else {
-                fight.mechanics.player_attack(
-                    &mut fight.player,
-                    &mut fight.monster,
-                    &mut fight.rng,
-                    &fight.limiter,
-                    &mut vars,
-                    &mut fight.logger,
-                );
-            }
+            // if let Some(ref mut specs) = &mut fight.spec_config
+            //     && fight.player.stats.spec.value() >= specs.lowest_cost.unwrap_or(101)
+            // {
+            //     fight.mechanics.player_special_attack(
+            //         &mut fight.player,
+            //         &mut fight.monster,
+            //         &mut fight.rng,
+            //         &fight.limiter,
+            //         &mut vars,
+            //         specs,
+            //         &mut fight.logger,
+            //     );
+            // } else {
+            fight.mechanics.player_attack(
+                &mut fight.player,
+                &mut fight.monster,
+                &mut fight.rng,
+                &fight.limiter,
+                &mut vars,
+                &mut fight.logger,
+            );
+            // }
         }
 
         if let Some(thrall) = fight.config.thralls {
