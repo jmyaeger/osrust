@@ -184,6 +184,7 @@ fn simulate_hunllef() {
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef"),
+        armor_tier: 0,
     };
     // let fight_config = HunllefConfig {
     //     food_count: 24,

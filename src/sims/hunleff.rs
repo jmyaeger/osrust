@@ -51,6 +51,7 @@ pub struct HunllefConfig {
     pub attack_strategy: AttackStrategy,
     pub lost_ticks: i32,
     pub logger: FightLogger,
+    pub armor_tier: u32,
 }
 
 impl Default for HunllefConfig {
@@ -65,6 +66,7 @@ impl Default for HunllefConfig {
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
+            armor_tier: 0,
         }
     }
 }
@@ -172,9 +174,9 @@ impl HunllefMechanics {
         hunllef: &mut Monster,
         player: &mut Player,
         state: &mut HunllefState,
+        config: &mut HunllefConfig,
         vars: &mut FightVars,
         rng: &mut SmallRng,
-        logger: &mut FightLogger,
     ) {
         // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
         let hunllef_style = if (state.hunllef_attack_count / 4) % 2 == 0 {
@@ -187,10 +189,10 @@ impl HunllefMechanics {
         // Damage is reduced after it is rolled
         // Armor reduction occurs first, then protection prayers (source: Mod Arcane in Summit Blue)
         let base_damage = hit.damage;
-        let armor_reduced = base_damage * (6 - armor_tier(player)) / 6;
+        let armor_reduced = base_damage * (6 - config.armor_tier) / 6;
         hit.damage = armor_reduced * 10 / 41; // Prayer reduction is 10/41 (source: Mod Ash tweet)
 
-        logger.log_monster_attack(
+        config.logger.log_monster_attack(
             hunllef,
             vars.tick_counter,
             hit.damage,
@@ -262,7 +264,7 @@ pub struct HunllefFight {
 }
 
 impl HunllefFight {
-    pub fn new(player: Player, config: HunllefConfig) -> HunllefFight {
+    pub fn new(player: Player, mut config: HunllefConfig) -> HunllefFight {
         if !has_valid_gear(&player) {
             panic!("Equipped gear is not usable in the Gauntlet.")
         }
@@ -274,6 +276,7 @@ impl HunllefFight {
 
         let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
         let rng = SmallRng::from_os_rng();
+        config.armor_tier = armor_tier(&player);
         HunllefFight {
             player,
             hunllef,
@@ -297,7 +300,9 @@ impl HunllefFight {
             .logger
             .log_initial_setup(&self.player, &self.hunllef);
 
-        match &self.config.attack_strategy {
+        let attack_strategy = self.config.attack_strategy.clone();
+
+        match &attack_strategy {
             AttackStrategy::TwoT3Weapons { style1, style2 } => {
                 // The normal case - two T3 weapons, no 5:1
 
@@ -394,9 +399,9 @@ impl HunllefFight {
                                 &mut self.hunllef,
                                 &mut self.player,
                                 &mut state,
+                                &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                                &mut self.config.logger,
                             );
                         }
                     }
@@ -520,9 +525,9 @@ impl HunllefFight {
                                 &mut self.hunllef,
                                 &mut self.player,
                                 &mut state,
+                                &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                                &mut self.config.logger,
                             );
                         }
                     }
@@ -697,6 +702,7 @@ mod tests {
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
+            armor_tier: 0,
         };
 
         let mut fight = HunllefFight::new(player, fight_config);
