@@ -1220,26 +1220,23 @@ mod tests {
         let prob_thirteen_stacks =
             num_stacks.iter().filter(|s| **s == 13).count() as f64 / tick_counter as f64;
 
-        println!("Probability of zero stacks: {:.10}", prob_zero_stacks);
-        println!("Probability of one stack: {:.10}", prob_one_stack);
-        println!("Probability of two stacks: {:.10}", prob_two_stacks);
-        println!("Probability of three stacks: {:.10}", prob_three_stacks);
-        println!("Probability of four stacks: {:.10}", prob_four_stacks);
-        println!("Probability of five stacks: {:.10}", prob_five_stacks);
-        println!("Probability of six stacks: {:.10}", prob_six_stacks);
-        println!("Probability of seven stacks: {:.10}", prob_seven_stacks);
-        println!("Probability of eight stacks: {:.10}", prob_eight_stacks);
-        println!("Probability of nine stacks: {:.10}", prob_nine_stacks);
-        println!("Probability of ten stacks: {:.10}", prob_ten_stacks);
-        println!("Probability of eleven stacks: {:.10}", prob_eleven_stacks);
-        println!("Probability of twelve stacks: {:.10}", prob_twelve_stacks);
-        println!(
-            "Probability of thirteen stacks: {:.10}",
-            prob_thirteen_stacks
-        );
+        println!("Probability of zero stacks: {prob_zero_stacks:.10}");
+        println!("Probability of one stack: {prob_one_stack:.10}");
+        println!("Probability of two stacks: {prob_two_stacks:.10}");
+        println!("Probability of three stacks: {prob_three_stacks:.10}");
+        println!("Probability of four stacks: {prob_four_stacks:.10}");
+        println!("Probability of five stacks: {prob_five_stacks:.10}");
+        println!("Probability of six stacks: {prob_six_stacks:.10}");
+        println!("Probability of seven stacks: {prob_seven_stacks:.10}");
+        println!("Probability of eight stacks: {prob_eight_stacks:.10}");
+        println!("Probability of nine stacks: {prob_nine_stacks:.10}");
+        println!("Probability of ten stacks: {prob_ten_stacks:.10}");
+        println!("Probability of eleven stacks: {prob_eleven_stacks:.10}");
+        println!("Probability of twelve stacks: {prob_twelve_stacks:.10}");
+        println!("Probability of thirteen stacks: {prob_thirteen_stacks:.10}");
 
         let avg_stacks = num_stacks.iter().sum::<usize>() as f64 / num_stacks.len() as f64;
-        println!("Average number of stacks: {:.6}", avg_stacks);
+        println!("Average number of stacks: {avg_stacks:.6}");
         assert!(dps_with_burn > dps);
     }
 

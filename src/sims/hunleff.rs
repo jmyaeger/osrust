@@ -3,7 +3,7 @@ use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
-use crate::types::player::{Player, SwitchType};
+use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
 use rand::rngs::SmallRng;
 use rand::Rng;
@@ -60,8 +60,8 @@ impl Default for HunllefConfig {
             eat_strategy: HunllefEatStrategy::EatAtHp(50),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
-                style1: SwitchType::Ranged,
-                style2: SwitchType::Magic,
+                style1: "Ranged".to_string(),
+                style2: "Magic".to_string(),
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
@@ -79,13 +79,13 @@ pub enum HunllefEatStrategy {
 #[derive(Debug, PartialEq, Clone)]
 pub enum AttackStrategy {
     TwoT3Weapons {
-        style1: SwitchType,
-        style2: SwitchType,
+        style1: String,
+        style2: String,
     },
     FiveToOne {
-        main_style: SwitchType,
-        other_style1: SwitchType,
-        other_style2: SwitchType,
+        main_style: String,
+        other_style1: String,
+        other_style2: String,
     },
 }
 
@@ -303,8 +303,8 @@ impl HunllefFight {
 
                 // Start off with a random style and store the other for later
                 let style_choice = self.rng.random_range(1..3);
-                let mut current_style = if style_choice == 1 { *style1 } else { *style2 };
-                let mut other_style = if style_choice == 1 { *style2 } else { *style1 };
+                let mut current_style = if style_choice == 1 { style1 } else { style2 };
+                let mut other_style = if style_choice == 1 { style2 } else { style1 };
 
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
@@ -421,9 +421,9 @@ impl HunllefFight {
                 // 5:1, where the other two styles are ordered by preference (e.g., T2 ranged 2nd and punching 3rd)
 
                 // Start off with the main style—assumes resetting the run if hunllef is praying against it
-                let mut current_style = *main_style;
-                let mut next_style = *other_style1;
-                let mut other_style = *other_style2;
+                let mut current_style = main_style;
+                let mut next_style = other_style1;
+                let mut other_style = other_style2;
 
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
@@ -626,7 +626,7 @@ mod tests {
     use crate::calc::rolls::calc_active_player_rolls;
     use crate::types::equipment::{CombatStyle, Weapon};
     use crate::types::monster::Monster;
-    use crate::types::player::{GearSwitch, Player, SwitchType};
+    use crate::types::player::{GearSwitch, Player};
     use crate::types::prayers::Prayer;
     use crate::types::stats::Stat;
     use std::collections::HashMap;
@@ -691,9 +691,9 @@ mod tests {
             eat_strategy: HunllefEatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::FiveToOne {
-                main_style: SwitchType::Magic,
-                other_style1: SwitchType::Ranged,
-                other_style2: SwitchType::Melee,
+                main_style: "Magic".to_string(),
+                other_style1: "Ranged".to_string(),
+                other_style2: "Melee".to_string(),
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),

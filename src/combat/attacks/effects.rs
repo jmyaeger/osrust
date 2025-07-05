@@ -90,7 +90,7 @@ fn apply_poison(tick_counter: &mut Option<i32>, severity: &mut u32) -> u32 {
         if tick == 30 {
             *tick_counter = Some(0);
             *severity -= 1;
-            (*severity + 4) / 5
+            (*severity).div_ceil(5)
         } else {
             0
         }
@@ -98,7 +98,7 @@ fn apply_poison(tick_counter: &mut Option<i32>, severity: &mut u32) -> u32 {
         // If severity is nonzero and tick counter is None, poison has just been inflicted
         *tick_counter = Some(0);
         *severity -= 1;
-        (*severity + 4) / 5
+        (*severity).div_ceil(5)
     }
 }
 

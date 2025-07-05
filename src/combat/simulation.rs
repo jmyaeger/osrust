@@ -265,7 +265,8 @@ mod tests {
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
-        let simulation = SingleWayFight::new(player, monster, SingleWayConfig::default(), false);
+        let simulation =
+            SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false);
         let results = simulate_n_fights(Box::new(simulation), 100000);
         let stats = SimulationStats::new(&results);
 

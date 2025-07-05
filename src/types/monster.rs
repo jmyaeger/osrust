@@ -81,6 +81,8 @@ pub struct MonsterDefBonuses {
     pub standard: i32,
     pub heavy: i32,
     pub magic: i32,
+    #[serde(skip)]
+    pub magic_base: i32,
 }
 
 type MonsterStrengthBonus = AttackBonus; // Uses the same fields as AttackBonus
@@ -412,6 +414,9 @@ impl Monster {
             .into_iter()
             .find(|m| m.info.name == name && m.info.version == string_version)
             .ok_or("Monster not found")?;
+
+        // Set base magic def bonus (to allow it to be drained by the eye of ayak)
+        monster.bonuses.defence.magic_base = monster.bonuses.defence.magic;
 
         // Calculate base defence rolls and copy to live defence rolls
         monster.base_def_rolls = rolls::monster_def_rolls(&monster);
@@ -825,6 +830,7 @@ impl Monster {
     pub fn reset(&mut self) {
         // Reset live stats, status effects, and defence rolls
         self.stats.reset_all();
+        self.bonuses.defence.magic = self.bonuses.defence.magic_base;
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         self.base_def_rolls = rolls::monster_def_rolls(self);

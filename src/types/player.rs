@@ -93,20 +93,9 @@ pub struct SetEffects {
     pub bloodbark_pieces: usize,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Display, Hash)]
-pub enum SwitchType {
-    Melee,
-    Ranged,
-    Magic,
-    #[strum(to_string = "Defence-Reducing Spec")]
-    DefSpec,
-    #[strum(to_string = "DPS Spec")]
-    DpsSpec,
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
-    pub switch_type: SwitchType,
+    pub label: String,
     pub gear: Gear,
     pub prayers: PrayerBoosts,
     pub spell: Option<spells::Spell>,
@@ -121,7 +110,7 @@ pub struct GearSwitch {
 
 impl GearSwitch {
     pub fn new(
-        switch_type: SwitchType,
+        label: String,
         gear: Gear,
         prayers: PrayerBoosts,
         spell: Option<spells::Spell>,
@@ -142,7 +131,7 @@ impl GearSwitch {
         let spec = get_spec_attack_function(&player);
 
         Self {
-            switch_type,
+            label,
             gear: player.gear,
             prayers: player.prayers,
             spell,
@@ -159,17 +148,17 @@ impl GearSwitch {
 
 impl From<&Player> for GearSwitch {
     fn from(player: &Player) -> Self {
-        let switch_type = match player.combat_type() {
-            CombatType::Crush | CombatType::Slash | CombatType::Stab => SwitchType::Melee,
+        let label = match player.combat_type() {
+            CombatType::Crush | CombatType::Slash | CombatType::Stab => "Melee".to_string(),
             CombatType::Ranged | CombatType::Heavy | CombatType::Light | CombatType::Standard => {
-                SwitchType::Ranged
+                "Ranged".to_string()
             }
-            CombatType::Magic => SwitchType::Magic,
-            _ => panic!("Unable to determine switch type"),
+            CombatType::Magic => "Magic".to_string(),
+            _ => "Unknown".to_string(),
         };
 
         Self {
-            switch_type,
+            label,
             gear: player.gear.clone(),
             prayers: player.prayers.clone(),
             spell: player.attrs.spell,
@@ -338,6 +327,7 @@ pub struct Player {
     pub attack: AttackFn,
     pub spec: SpecialAttackFn,
     pub switches: Vec<GearSwitch>,
+    pub current_switch: Option<String>,
 }
 
 impl Default for Player {
@@ -358,6 +348,7 @@ impl Default for Player {
             attack: standard_attack,
             spec: standard_attack,
             switches: Vec::new(),
+            current_switch: None,
         }
     }
 }
@@ -893,9 +884,9 @@ impl Player {
         }
     }
 
-    pub fn switch(&mut self, switch_type: SwitchType) {
+    pub fn switch(&mut self, switch_label: &String) {
         for switch in &self.switches {
-            if switch.switch_type == switch_type {
+            if &switch.label == switch_label {
                 self.gear = switch.gear.clone();
                 self.prayers = switch.prayers.clone();
                 self.attrs.spell = switch.spell;
@@ -906,6 +897,7 @@ impl Player {
                 self.att_rolls = switch.att_rolls;
                 self.max_hits = switch.max_hits;
                 self.def_rolls = switch.def_rolls;
+                self.current_switch = Some(switch.label.clone());
 
                 return;
             }

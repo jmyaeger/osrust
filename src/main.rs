@@ -11,7 +11,7 @@ use osrs::sims::single_way::{SingleWayConfig, SingleWayFight};
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
-use osrs::types::player::{GearSwitch, Player, SwitchType};
+use osrs::types::player::{GearSwitch, Player};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::Prayer;
 use osrs::types::stats::Stat;
@@ -79,7 +79,7 @@ fn simulate_single_way() {
         thralls: Some(Thrall::GreaterMagic),
     };
 
-    let simulation = SingleWayFight::new(player, monster, config, false);
+    let simulation = SingleWayFight::new(player, monster, config, None, false);
     let results = simulate_n_fights(Box::new(simulation), 100000);
     let stats = SimulationStats::new(&results);
 
@@ -136,15 +136,15 @@ fn simulate_hunllef() {
     player.switches.push(ranged_switch);
     player.switches.push(melee_switch);
 
-    player.switch(SwitchType::Ranged);
+    player.switch(&"Ranged".to_string());
 
     let fight_config = HunllefConfig {
         food_count: 25,
         eat_strategy: HunllefEatStrategy::EatAtHp(69),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Magic,
-            style2: SwitchType::Ranged,
+            style1: "Magic".to_string(),
+            style2: "Ranged".to_string(),
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef"),
