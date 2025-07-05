@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 // Adapted from the wiki DPS calc - credit to the wiki team
 
 use std::collections::HashMap;

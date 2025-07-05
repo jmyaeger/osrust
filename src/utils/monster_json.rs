@@ -1,3 +1,4 @@
+#![allow(unused)]
 // Adapted from the wiki DPS calc - credit to the wiki team
 
 use reqwest;

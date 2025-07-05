@@ -423,7 +423,7 @@ pub fn yellow_keris_attack(
     if monster.stats.hitpoints.current.saturating_sub(hit.damage) == 0 && monster.is_toa_monster() {
         // Killing a ToA monster heals the player by 12 and costs 5 prayer points
         player.heal(12, Some(player.stats.hitpoints.base / 5));
-        player.stats.prayer.drain(5, None);
+        player.stats.prayer.drain(5);
     }
 
     if hit.success {
@@ -1122,7 +1122,7 @@ mod tests {
         player.add_potion(Potion::Ranging);
 
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
-        monster.stats.defence = Stat::new(1);
+        monster.stats.defence = Stat::new(1, None);
         monster.bonuses.defence.standard = -64;
         player.bonuses.attack.ranged = 10000;
 

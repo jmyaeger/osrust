@@ -34,9 +34,8 @@ impl FightLogger {
         Self { enabled }
     }
 
-    pub fn log_initial_setup(&mut self, player: &Player, monster: &Monster) {
+    pub fn log_current_player_rolls(&mut self, player: &Player) {
         if self.enabled {
-            debug!("Initial setup:");
             debug!("Player's active combat style: {}", player.combat_type());
             debug!(
                 "Player's max attack roll: {}",
@@ -54,144 +53,167 @@ impl FightLogger {
                 player.def_rolls.get(CombatType::Ranged),
                 player.def_rolls.get(CombatType::Magic)
             );
-            debug!("Player's stats (with boosts):");
-            debug!("Attack: {}", player.stats.attack.current);
-            debug!("Strength: {}", player.stats.strength.current);
-            debug!("Ranged: {}", player.stats.ranged.current);
-            debug!("Defence: {}", player.stats.defence.current);
-            debug!("Magic: {}", player.stats.magic.current);
-            debug!("Prayer: {}", player.stats.prayer.current);
-            debug!("Hitpoints: {}\n", player.stats.hitpoints.current);
-            debug!("Active prayers:");
-            if let Some(prayers) = &player.prayers.active_prayers {
-                for prayer in prayers {
-                    debug!("{prayer}");
-                }
-            } else {
-                debug!("None\n");
+        }
+    }
+
+    pub fn log_current_gear(&self, player: &Player) {
+        debug!("Player's equipment:");
+        debug!(
+            "Head: {}",
+            player
+                .gear
+                .head
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Neck: {}",
+            player
+                .gear
+                .neck
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Cape: {}",
+            player
+                .gear
+                .cape
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Ammo: {}",
+            player
+                .gear
+                .ammo
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!("Weapon: {}", player.gear.weapon.name);
+        debug!(
+            "Shield: {}",
+            player
+                .gear
+                .shield
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Body: {}",
+            player
+                .gear
+                .body
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Hands: {}",
+            player
+                .gear
+                .hands
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Legs: {}",
+            player
+                .gear
+                .legs
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Feet: {}",
+            player
+                .gear
+                .feet
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+        debug!(
+            "Ring: {}",
+            player
+                .gear
+                .ring
+                .as_ref()
+                .map_or("None".to_string(), |armor| armor.name.clone())
+        );
+    }
+
+    pub fn log_current_player_stats(&self, player: &Player) {
+        debug!("Player's stats (with boosts):");
+        debug!("Attack: {}", player.stats.attack.current);
+        debug!("Strength: {}", player.stats.strength.current);
+        debug!("Ranged: {}", player.stats.ranged.current);
+        debug!("Defence: {}", player.stats.defence.current);
+        debug!("Magic: {}", player.stats.magic.current);
+        debug!("Prayer: {}", player.stats.prayer.current);
+        debug!("Hitpoints: {}", player.stats.hitpoints.current);
+        debug!("Special Attack Energy: {}\n", player.stats.spec.value());
+        debug!("Active prayers:");
+        if let Some(prayers) = &player.prayers.active_prayers {
+            for prayer in prayers {
+                debug!("{prayer}");
             }
-            debug!("Player's equipment:");
+        } else {
+            debug!("None\n");
+        }
+    }
+
+    pub fn log_current_monster_stats(&self, monster: &Monster) {
+        debug!("Monster's stats:");
+        debug!("Attack: {}", monster.stats.attack.current);
+        debug!("Strength: {}", monster.stats.strength.current);
+        debug!("Ranged: {}", monster.stats.ranged.current);
+        debug!("Defence: {}", monster.stats.defence.current);
+        debug!("Magic: {}", monster.stats.magic.current);
+        debug!("Hitpoints: {}\n", monster.stats.hitpoints.current);
+    }
+
+    pub fn log_current_monster_rolls(&self, monster: &Monster) {
+        debug!(
+            "Monster's max attack rolls: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
+            monster.att_rolls.get(CombatType::Stab),
+            monster.att_rolls.get(CombatType::Slash),
+            monster.att_rolls.get(CombatType::Crush),
+            monster.att_rolls.get(CombatType::Ranged),
+            monster.att_rolls.get(CombatType::Magic)
+        );
+        if let Some(max_hits) = &monster.max_hits {
             debug!(
-                "Head: {}",
-                player
-                    .gear
-                    .head
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
+                "Monster's max hit(s): {}\n",
+                max_hits
+                    .iter()
+                    .map(|max_hit| format!("{} ({})", max_hit.value, max_hit.style))
+                    .collect::<Vec<_>>()
+                    .join(", ")
             );
-            debug!(
-                "Neck: {}",
-                player
-                    .gear
-                    .neck
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Cape: {}",
-                player
-                    .gear
-                    .cape
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Ammo: {}",
-                player
-                    .gear
-                    .ammo
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!("Weapon: {}", player.gear.weapon.name);
-            debug!(
-                "Shield: {}",
-                player
-                    .gear
-                    .shield
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Body: {}",
-                player
-                    .gear
-                    .body
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Hands: {}",
-                player
-                    .gear
-                    .hands
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Legs: {}",
-                player
-                    .gear
-                    .legs
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Feet: {}",
-                player
-                    .gear
-                    .feet
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
-            debug!(
-                "Ring: {}",
-                player
-                    .gear
-                    .ring
-                    .as_ref()
-                    .map_or("None".to_string(), |armor| armor.name.clone())
-            );
+        } else {
+            debug!("Monster has no stored max hits.\n");
+        }
+        debug!(
+            "Monster's max defence rolls: {} (Stab), {} (Slash), {} (Crush), {} (Light), {} (Standard), {} (Heavy), {} (Magic)\n",
+            monster.def_rolls.get(CombatType::Stab),
+            monster.def_rolls.get(CombatType::Slash),
+            monster.def_rolls.get(CombatType::Crush),
+            monster.def_rolls.get(CombatType::Light),
+            monster.def_rolls.get(CombatType::Standard),
+            monster.def_rolls.get(CombatType::Heavy),
+            monster.def_rolls.get(CombatType::Magic)
+        );
+    }
+
+    pub fn log_initial_setup(&mut self, player: &Player, monster: &Monster) {
+        if self.enabled {
+            debug!("Initial setup:");
+            self.log_current_player_rolls(player);
+            self.log_current_player_stats(player);
+            self.log_current_gear(player);
 
             debug!("\n");
-            debug!("Monster's stats:");
-            debug!("Attack: {}", monster.stats.attack.current);
-            debug!("Strength: {}", monster.stats.strength.current);
-            debug!("Ranged: {}", monster.stats.ranged.current);
-            debug!("Defence: {}", monster.stats.defence.current);
-            debug!("Magic: {}", monster.stats.magic.current);
-            debug!("Hitpoints: {}\n", monster.stats.hitpoints.current);
-
-            debug!(
-                "Monster's max attack rolls: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
-                monster.att_rolls.get(CombatType::Stab),
-                monster.att_rolls.get(CombatType::Slash),
-                monster.att_rolls.get(CombatType::Crush),
-                monster.att_rolls.get(CombatType::Ranged),
-                monster.att_rolls.get(CombatType::Magic)
-            );
-            if let Some(max_hits) = &monster.max_hits {
-                debug!(
-                    "Monster's max hit(s): {}\n",
-                    max_hits
-                        .iter()
-                        .map(|max_hit| format!("{} ({})", max_hit.value, max_hit.style))
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                );
-            } else {
-                debug!("Monster has no stored max hits.\n");
-            }
-            debug!(
-                "Monster's max defence rolls: {} (Stab), {} (Slash), {} (Crush), {} (Light), {} (Standard), {} (Heavy), {} (Magic)\n",
-                monster.def_rolls.get(CombatType::Stab),
-                monster.def_rolls.get(CombatType::Slash),
-                monster.def_rolls.get(CombatType::Crush),
-                monster.def_rolls.get(CombatType::Light),
-                monster.def_rolls.get(CombatType::Standard),
-                monster.def_rolls.get(CombatType::Heavy),
-                monster.def_rolls.get(CombatType::Magic)
-            );
+            self.log_current_monster_stats(monster);
+            self.log_current_monster_rolls(monster);
         }
     }
 

@@ -574,7 +574,7 @@ impl Simulation for HunllefFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_current_stats();
+        self.player.reset_current_stats(true);
         self.hunllef.reset();
     }
 }
@@ -634,10 +634,10 @@ mod tests {
     #[test]
     fn test_hunllef_sim() {
         let mut player = Player::new();
-        player.stats.defence = Stat::new(70);
-        player.stats.ranged = Stat::new(70);
-        player.stats.magic = Stat::new(70);
-        player.reset_current_stats();
+        player.stats.defence = Stat::new(70, None);
+        player.stats.ranged = Stat::new(70, None);
+        player.stats.magic = Stat::new(70, None);
+        player.reset_current_stats(false);
         player.equip("Corrupted staff (perfected)", None);
         player.equip("Crystal helm (basic)", None);
         player.equip("Crystal body (basic)", None);

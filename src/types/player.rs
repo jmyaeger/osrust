@@ -15,7 +15,6 @@ use crate::types::stats::{PlayerStats, SpecEnergy, Stat};
 use reqwest;
 use std::cmp::max;
 use std::collections::HashMap;
-use strum_macros::Display;
 
 // Struct for holding sunfire rune min hit value
 #[derive(Debug, PartialEq, Default, Clone, Copy)]
@@ -109,39 +108,27 @@ pub struct GearSwitch {
 }
 
 impl GearSwitch {
-    pub fn new(
-        label: String,
-        gear: Gear,
-        prayers: PrayerBoosts,
-        spell: Option<spells::Spell>,
-        active_style: CombatStyle,
-        monster: &Monster,
-    ) -> Self {
-        let mut player = Player::new();
-        player.gear = gear;
-        player.prayers = prayers;
-        player.attrs.spell = spell;
-        player.attrs.active_style = active_style;
+    pub fn new(label: String, player: &Player, monster: &Monster) -> Self {
+        let mut player_copy = player.clone();
+        player_copy.update_bonuses();
+        player_copy.update_set_effects();
+        calc_active_player_rolls(&mut player_copy, monster);
 
-        player.update_bonuses();
-        player.update_set_effects();
-        calc_active_player_rolls(&mut player, monster);
-
-        let attack = get_attack_functions(&player);
-        let spec = get_spec_attack_function(&player);
+        let attack = get_attack_functions(&player_copy);
+        let spec = get_spec_attack_function(&player_copy);
 
         Self {
             label,
-            gear: player.gear,
-            prayers: player.prayers,
-            spell,
-            active_style: player.attrs.active_style,
-            set_effects: player.set_effects,
+            gear: player_copy.gear,
+            prayers: player_copy.prayers,
+            spell: player_copy.attrs.spell,
+            active_style: player_copy.attrs.active_style,
+            set_effects: player_copy.set_effects,
             attack,
             spec,
-            att_rolls: player.att_rolls,
-            max_hits: player.max_hits,
-            def_rolls: player.def_rolls,
+            att_rolls: player_copy.att_rolls,
+            max_hits: player_copy.max_hits,
+            def_rolls: player_copy.def_rolls,
         }
     }
 }
@@ -156,6 +143,8 @@ impl From<&Player> for GearSwitch {
             CombatType::Magic => "Magic".to_string(),
             _ => "Unknown".to_string(),
         };
+        let attack = get_attack_functions(player);
+        let spec = get_spec_attack_function(player);
 
         Self {
             label,
@@ -164,8 +153,8 @@ impl From<&Player> for GearSwitch {
             spell: player.attrs.spell,
             active_style: player.attrs.active_style,
             set_effects: player.set_effects,
-            attack: player.attack,
-            spec: player.spec,
+            attack,
+            spec,
             att_rolls: player.att_rolls,
             max_hits: player.max_hits,
             def_rolls: player.def_rolls,
@@ -367,9 +356,15 @@ impl Player {
         self.attrs.name = Some(rsn.to_string());
     }
 
-    pub fn reset_current_stats(&mut self) {
+    pub fn reset_current_stats(&mut self, include_spec: bool) {
         // Restore to base stats, full spec energy, and reapply potion boosts
-        self.stats.reset_all();
+        if !include_spec {
+            let current_spec = self.stats.spec;
+            self.stats.reset_all();
+            self.stats.spec = current_spec;
+        } else {
+            self.stats.reset_all();
+        }
         if let Some(hp) = self.boosts.current_hp {
             self.stats.hitpoints.current = hp;
         }
@@ -1195,13 +1190,13 @@ impl Player {
         }
 
         self.calc_potion_boosts();
-        self.reset_current_stats();
+        self.reset_current_stats(false);
     }
 
     pub fn remove_potion(&mut self, potion: Potion) {
         self.potions.remove_potion(potion);
         self.calc_potion_boosts();
-        self.reset_current_stats();
+        self.reset_current_stats(false);
     }
 
     pub fn bulwark_bonus(&self) -> i32 {
@@ -1270,7 +1265,7 @@ impl Player {
 
     pub fn take_damage(&mut self, amount: u32) {
         // Takes damage, capping at 0 HP
-        self.stats.hitpoints.drain(amount, Some(0));
+        self.stats.hitpoints.drain(amount);
     }
 
     pub fn clear_inactive_effects(&mut self) {
@@ -1373,15 +1368,15 @@ pub fn parse_player_data(data: String) -> PlayerStats {
     skill_map.insert("herblore", herblore_lvl.parse::<u32>().unwrap());
 
     PlayerStats {
-        hitpoints: Stat::new(skill_map["hitpoints"]),
-        attack: Stat::new(skill_map["attack"]),
-        strength: Stat::new(skill_map["strength"]),
-        defence: Stat::new(skill_map["defence"]),
-        ranged: Stat::new(skill_map["ranged"]),
-        magic: Stat::new(skill_map["magic"]),
-        prayer: Stat::new(skill_map["prayer"]),
-        mining: Stat::new(skill_map["mining"]),
-        herblore: Stat::new(skill_map["herblore"]),
+        hitpoints: Stat::new(skill_map["hitpoints"], None),
+        attack: Stat::new(skill_map["attack"], None),
+        strength: Stat::new(skill_map["strength"], None),
+        defence: Stat::new(skill_map["defence"], None),
+        ranged: Stat::new(skill_map["ranged"], None),
+        magic: Stat::new(skill_map["magic"], None),
+        prayer: Stat::new(skill_map["prayer"], None),
+        mining: Stat::new(skill_map["mining"], None),
+        herblore: Stat::new(skill_map["herblore"], None),
         spec: SpecEnergy::default(),
     }
 }
@@ -1524,7 +1519,7 @@ mod test {
         player.add_potion(Potion::SaturatedHeart);
 
         player.calc_potion_boosts();
-        player.reset_current_stats();
+        player.reset_current_stats(false);
 
         assert_eq!(player.stats.attack.current, 118);
         assert_eq!(player.stats.strength.current, 118);
@@ -1542,8 +1537,8 @@ mod test {
         player.add_potion(Potion::Ranging);
         player.add_potion(Potion::DragonBattleaxe);
         player.calc_potion_boosts();
-        player.reset_current_stats();
-        player.reset_current_stats();
+        player.reset_current_stats(false);
+        player.reset_current_stats(false);
 
         assert_eq!(player.stats.attack.current, 120);
         assert_eq!(player.stats.strength.current, 120);

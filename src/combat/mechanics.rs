@@ -177,6 +177,27 @@ pub trait Mechanics {
         }
     }
 
+    fn increment_spec_timer(
+        &self,
+        player: &mut Player,
+        fight_vars: &mut FightVars,
+        logger: &mut FightLogger,
+    ) {
+        if let Some(ref mut timer) = fight_vars.spec_regen_timer {
+            *timer += 1;
+            if (player.is_wearing("Lightbearer", None) && *timer % 25 == 0) || *timer % 50 == 0 {
+                player.stats.spec.regen();
+                logger.log_custom(
+                    fight_vars.tick_counter,
+                    "Player has regenerated 10 special attack energy",
+                );
+            }
+            if player.stats.spec.is_full() {
+                fight_vars.spec_regen_timer = None;
+            }
+        }
+    }
+
     fn get_fight_result(
         &self,
         player: &Player,

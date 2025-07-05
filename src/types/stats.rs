@@ -129,17 +129,19 @@ impl Default for SpecEnergy {
 pub struct Stat {
     pub base: u32,
     pub current: u32,
+    pub min_cap: u32,
 }
 
 impl Stat {
-    pub fn new(base: u32) -> Self {
+    pub fn new(base: u32, min_cap: Option<u32>) -> Self {
         Self {
             base,
             current: base,
+            min_cap: min_cap.unwrap_or_default(),
         }
     }
     pub fn min_level() -> Self {
-        Self::new(MIN_LEVEL)
+        Self::new(MIN_LEVEL, None)
     }
 
     pub fn restore(&mut self, amount: u32, overboost: Option<u32>) {
@@ -150,9 +152,8 @@ impl Stat {
         self.current = min(level_cap, self.current + amount);
     }
 
-    pub fn drain(&mut self, amount: u32, min_cap: Option<u32>) {
-        let min_level = min_cap.unwrap_or(MIN_LEVEL);
-        self.current = max(min_level, self.current.saturating_sub(amount));
+    pub fn drain(&mut self, amount: u32) {
+        self.current = max(self.min_cap, self.current.saturating_sub(amount));
     }
 
     pub fn boost(&mut self, amount: u32) {
@@ -166,13 +167,13 @@ impl Stat {
 
 impl From<u32> for Stat {
     fn from(value: u32) -> Self {
-        Self::new(value)
+        Self::new(value, None)
     }
 }
 
 impl Default for Stat {
     fn default() -> Self {
-        Self::new(MAX_LEVEL)
+        Self::new(MAX_LEVEL, None)
     }
 }
 
@@ -198,8 +199,13 @@ impl<'de> Deserialize<'de> for Stat {
             StatValue::Number(base) => Ok(Stat {
                 base,
                 current: base,
+                min_cap: 0,
             }),
-            StatValue::Object { base, current } => Ok(Stat { base, current }),
+            StatValue::Object { base, current } => Ok(Stat {
+                base,
+                current,
+                min_cap: 0,
+            }),
         }
     }
 }
@@ -218,7 +224,7 @@ pub struct MonsterStats {
 impl Default for MonsterStats {
     fn default() -> Self {
         Self {
-            hitpoints: Stat::new(MIN_HITPOINTS),
+            hitpoints: Stat::new(MIN_HITPOINTS, None),
             attack: Stat::min_level(),
             strength: Stat::min_level(),
             defence: Stat::min_level(),

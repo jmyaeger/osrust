@@ -261,7 +261,7 @@ impl Simulation for VardorvisFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_current_stats();
+        self.player.reset_current_stats(true);
         self.vard.reset();
     }
 }

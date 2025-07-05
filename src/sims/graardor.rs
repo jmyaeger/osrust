@@ -259,7 +259,7 @@ impl Simulation for GraardorFight {
     }
 
     fn reset(&mut self) {
-        self.player.reset_current_stats();
+        self.player.reset_current_stats(true);
         self.graardor.reset();
         self.melee_minion.reset();
         self.ranged_minion.reset();

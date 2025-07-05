@@ -414,10 +414,10 @@ lazy_static! {
                                     def_boost, Some(def_boost + player.stats.defence.base)
                                 );
 
-                                player.stats.attack.drain(player.stats.attack.current / 10 + 2, None);
-                                player.stats.strength.drain(player.stats.strength.current / 10 + 2, None);
-                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 2, None);
-                                player.stats.magic.drain(player.stats.magic.current / 10 + 2, None);
+                                player.stats.attack.drain(player.stats.attack.current / 10 + 2);
+                                player.stats.strength.drain(player.stats.strength.current / 10 + 2);
+                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 2);
+                                player.stats.magic.drain(player.stats.magic.current / 10 + 2);
                             }
                         )
                         .overheal()
@@ -626,10 +626,10 @@ lazy_static! {
                                     def_boost, Some(def_boost + player.stats.defence.base)
                                 );
 
-                                player.stats.attack.drain(player.stats.attack.current * 7 / 100 + 1, None);
-                                player.stats.strength.drain(player.stats.strength.current * 7 / 100 + 1, None);
-                                player.stats.ranged.drain(player.stats.ranged.current * 7 / 100 + 1, None);
-                                player.stats.magic.drain(player.stats.magic.current * 7 / 100 + 1, None);
+                                player.stats.attack.drain(player.stats.attack.current * 7 / 100 + 1);
+                                player.stats.strength.drain(player.stats.strength.current * 7 / 100 + 1);
+                                player.stats.ranged.drain(player.stats.ranged.current * 7 / 100 + 1);
+                                player.stats.magic.drain(player.stats.magic.current * 7 / 100 + 1);
                             }
                         )
                         .overheal()
@@ -651,10 +651,10 @@ lazy_static! {
                                     def_boost, Some(def_boost + player.stats.defence.base)
                                 );
 
-                                player.stats.attack.drain(player.stats.attack.current * 9 / 100 + 2, None);
-                                player.stats.strength.drain(player.stats.strength.current * 9 / 100 + 2, None);
-                                player.stats.ranged.drain(player.stats.ranged.current * 9 / 100 + 2, None);
-                                player.stats.magic.drain(player.stats.magic.current * 9 / 100 + 2, None);
+                                player.stats.attack.drain(player.stats.attack.current * 9 / 100 + 2);
+                                player.stats.strength.drain(player.stats.strength.current * 9 / 100 + 2);
+                                player.stats.ranged.drain(player.stats.ranged.current * 9 / 100 + 2);
+                                player.stats.magic.drain(player.stats.magic.current * 9 / 100 + 2);
                             }
                         )
                         .overheal()
@@ -676,10 +676,10 @@ lazy_static! {
                                     def_boost, Some(def_boost + player.stats.defence.base)
                                 );
 
-                                player.stats.attack.drain(player.stats.attack.current / 10 + 4, None);
-                                player.stats.strength.drain(player.stats.strength.current / 10 + 4, None);
-                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 4, None);
-                                player.stats.magic.drain(player.stats.magic.current / 10 + 4, None);
+                                player.stats.attack.drain(player.stats.attack.current / 10 + 4);
+                                player.stats.strength.drain(player.stats.strength.current / 10 + 4);
+                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 4);
+                                player.stats.magic.drain(player.stats.magic.current / 10 + 4);
                             }
                         )
                         .overheal()
@@ -696,11 +696,11 @@ lazy_static! {
                         .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 3)
                         .stat_effect(
                             |player| {
-                                player.stats.attack.drain(player.stats.attack.current / 20 + 5, None);
-                                player.stats.strength.drain(player.stats.strength.current / 20 + 5, None);
-                                player.stats.defence.drain(player.stats.defence.current / 20 + 5, None);
-                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5, None);
-                                player.stats.magic.drain(player.stats.magic.current / 20 + 5, None);
+                                player.stats.attack.drain(player.stats.attack.current / 20 + 5);
+                                player.stats.strength.drain(player.stats.strength.current / 20 + 5);
+                                player.stats.defence.drain(player.stats.defence.current / 20 + 5);
+                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5);
+                                player.stats.magic.drain(player.stats.magic.current / 20 + 5);
                             }
                         )
                         .overheal()
@@ -717,11 +717,11 @@ lazy_static! {
                         .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 3)
                         .stat_effect(
                             |player| {
-                                player.stats.attack.drain(player.stats.attack.current / 20 + 5, None);
-                                player.stats.strength.drain(player.stats.strength.current / 20 + 5, None);
-                                player.stats.defence.drain(player.stats.defence.current / 20 + 5, None);
-                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5, None);
-                                player.stats.magic.drain(player.stats.magic.current / 20 + 5, None);
+                                player.stats.attack.drain(player.stats.attack.current / 20 + 5);
+                                player.stats.strength.drain(player.stats.strength.current / 20 + 5);
+                                player.stats.defence.drain(player.stats.defence.current / 20 + 5);
+                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5);
+                                player.stats.magic.drain(player.stats.magic.current / 20 + 5);
                             }
                         )
                         .overheal()

@@ -415,6 +415,9 @@ impl Monster {
             .find(|m| m.info.name == name && m.info.version == string_version)
             .ok_or("Monster not found")?;
 
+        // Set defence level floor
+        monster.set_defence_floor();
+
         // Set base magic def bonus (to allow it to be drained by the eye of ayak)
         monster.bonuses.defence.magic_base = monster.bonuses.defence.magic;
 
@@ -731,7 +734,7 @@ impl Monster {
     }
 
     pub fn take_damage(&mut self, amount: u32) {
-        self.stats.hitpoints.drain(amount, Some(0));
+        self.stats.hitpoints.drain(amount);
     }
 
     pub fn is_freezable(&self) -> bool {
@@ -773,7 +776,7 @@ impl Monster {
                     remainder = amount - self.stats.attack.current + 1;
                     self.stats.attack.current = 1;
                 } else {
-                    self.stats.attack.drain(amount, None);
+                    self.stats.attack.drain(amount);
                 }
             }
             CombatStat::Strength => {
@@ -781,7 +784,7 @@ impl Monster {
                     remainder = amount - self.stats.strength.current + 1;
                     self.stats.strength.current = 1;
                 } else {
-                    self.stats.strength.drain(amount, None);
+                    self.stats.strength.drain(amount);
                 }
             }
             CombatStat::Magic => {
@@ -789,7 +792,7 @@ impl Monster {
                     remainder = amount - self.stats.magic.current + 1;
                     self.stats.magic.current = 1;
                 } else {
-                    self.stats.magic.drain(amount, None);
+                    self.stats.magic.drain(amount);
                 }
                 self.def_rolls = rolls::monster_def_rolls(self);
             }
@@ -798,7 +801,7 @@ impl Monster {
                     remainder = amount - self.stats.ranged.current + 1;
                     self.stats.ranged.current = 1;
                 } else {
-                    self.stats.ranged.drain(amount, None);
+                    self.stats.ranged.drain(amount);
                 }
             }
             CombatStat::Defence => {
@@ -806,12 +809,14 @@ impl Monster {
                     remainder = amount - self.stats.defence.current + 1;
                     self.stats.defence.current = 1;
                 } else {
-                    self.stats.defence.drain(amount, None);
+                    self.stats.defence.drain(amount);
                 }
                 self.def_rolls = rolls::monster_def_rolls(self);
             }
         }
 
+        self.base_def_rolls = rolls::monster_def_rolls(self);
+        self.def_rolls.clone_from(&self.base_def_rolls);
         self.scale_toa();
         remainder
     }
@@ -974,6 +979,39 @@ impl Monster {
         self.info.toa_path_level = path;
         self.scale_toa();
     }
+
+    fn set_defence_floor(&mut self) {
+        let floor = match self.info.name.as_str() {
+            "Verzik Vitur" => self.stats.defence.base,
+            "Soteseg" => 100,
+            "The Nightmare" | "Phosani's Nightmare" => 120,
+            "Akkha" => 70,
+            "Ba-Ba" => 60,
+            "Kephri" => 60,
+            "Zebak" => 50,
+            "Tumeken's Warden" | "Elidinis' Warden" => {
+                match self
+                    .info
+                    .version
+                    .as_ref()
+                    .expect("No version found")
+                    .as_str()
+                {
+                    "Active" => self.stats.defence.base,
+                    "Damaged" | "Enraged" => 120,
+                    _ => 0,
+                }
+            }
+            "Obelisk (Tombs of Amascut)" => 60,
+            "Nex" => 250,
+            "Araxxor" => 90,
+            "The Hueycoatl" => 120,
+            "Yama" => 145,
+            _ => 0,
+        };
+
+        self.stats.defence.min_cap = floor;
+    }
 }
 
 fn round_toa_hp(hp: u32) -> u32 {
@@ -1075,14 +1113,14 @@ mod tests {
     #[test]
     fn test_drain_stat() {
         let mut zebak = Monster::new("Zebak", None).unwrap();
-        zebak.stats.defence.drain(20, None);
+        zebak.stats.defence.drain(20);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 
     #[test]
     fn test_drain_stat_min_cap() {
         let mut zebak = Monster::new("Zebak", None).unwrap();
-        zebak.stats.defence.drain(30, Some(50));
+        zebak.stats.defence.drain(30);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 

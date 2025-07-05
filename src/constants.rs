@@ -539,7 +539,7 @@ pub const BURN_EXPECTED: [f64; 3] = {
 
 pub const PLAYER_REGEN_TICKS: i32 = 100;
 pub const MAX_LEVEL: u32 = 99;
-pub const MIN_LEVEL: u32 = 1;
+pub const MIN_LEVEL: u32 = 0;
 pub const MIN_HITPOINTS: u32 = 10;
 pub const FULL_SPEC: u8 = 100;
 pub const SPEC_REGEN: u8 = 10;

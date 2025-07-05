@@ -481,7 +481,7 @@ pub fn get_distribution(
 
                 // Drains defence by 10% of the magic level
                 let def_drain = monster_copy.stats.magic.base / 10;
-                monster_copy.stats.defence.drain(def_drain, None);
+                monster_copy.stats.defence.drain(def_drain);
                 monster_copy.def_rolls = monster_def_rolls(&monster_copy);
 
                 let second_hit_acc = get_hit_chance(player, &monster_copy, using_spec);
