@@ -37,16 +37,58 @@ impl SpecConfig {
         }
     }
 
-    pub fn lowest_cost(&self) -> u8 {
-        if let Some(cost) = self.lowest_cost {
-            cost
-        } else {
-            self.strategies
-                .iter()
-                .map(|s| s.spec_cost)
-                .min()
-                .expect("No special attacks found.")
+    pub fn lowest_cost(&self) -> Option<u8> {
+        self.lowest_cost
+            .or_else(|| self.strategies.iter().map(|s| s.spec_cost).min())
+    }
+
+    pub fn validate(&self) -> Result<(), String> {
+        if self.strategies.is_empty() {
+            return Err("No spec strategies defined".to_string());
         }
+
+        for strategy in &self.strategies {
+            self.validate_conditions(&strategy.conditions)?;
+        }
+
+        Ok(())
+    }
+
+    fn validate_conditions(&self, conditions: &[SpecCondition]) -> Result<(), String> {
+        // Check for HP conflicts
+        let hp_above: Vec<_> = conditions
+            .iter()
+            .filter_map(|c| {
+                if let SpecCondition::MonsterHpAbove(hp) = c {
+                    Some(*hp)
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        let hp_below: Vec<_> = conditions
+            .iter()
+            .filter_map(|c| {
+                if let SpecCondition::MonsterHpBelow(hp) = c {
+                    Some(*hp)
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        for above in &hp_above {
+            for below in &hp_below {
+                if above >= below {
+                    return Err(format!(
+                        "Conflicting HP conditions: above {above} and below {below}"
+                    ));
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -83,6 +125,125 @@ impl SpecStrategy {
     pub fn add_condition(&mut self, condition: SpecCondition) {
         self.conditions.push(condition);
     }
+
+    pub fn can_execute(&self, player: &Player, monster: &Monster) -> bool {
+        if !player.stats.spec.has_enough(self.spec_cost) {
+            return false;
+        }
+        self.conditions
+            .iter()
+            .all(|condition| self.evaluate_condition(condition, player, monster))
+    }
+
+    fn evaluate_condition(
+        &self,
+        condition: &SpecCondition,
+        player: &Player,
+        monster: &Monster,
+    ) -> bool {
+        match condition {
+            SpecCondition::MaxAttempts(attempts) => self.state.attempt_count < *attempts,
+            SpecCondition::MinSuccesses(successes) => self.state.success_count < *successes,
+            SpecCondition::MonsterHpAbove(hp) => monster.stats.hitpoints.current > *hp,
+            SpecCondition::MonsterHpBelow(hp) => monster.stats.hitpoints.current <= *hp,
+            SpecCondition::PlayerHpAbove(hp) => player.stats.hitpoints.current > *hp,
+            SpecCondition::PlayerHpBelow(hp) => player.stats.hitpoints.current <= *hp,
+            SpecCondition::TargetAttackReduction(amt) => {
+                monster
+                    .stats
+                    .attack
+                    .base
+                    .saturating_sub(monster.stats.attack.current)
+                    < *amt
+            }
+            SpecCondition::TargetStrengthReduction(amt) => {
+                monster
+                    .stats
+                    .strength
+                    .base
+                    .saturating_sub(monster.stats.strength.current)
+                    < *amt
+            }
+            SpecCondition::TargetDefenceReduction(amt) => {
+                monster
+                    .stats
+                    .defence
+                    .base
+                    .saturating_sub(monster.stats.defence.current)
+                    < *amt
+            }
+            SpecCondition::TargetRangedReduction(amt) => {
+                monster
+                    .stats
+                    .ranged
+                    .base
+                    .saturating_sub(monster.stats.ranged.current)
+                    < *amt
+            }
+            SpecCondition::TargetMagicReduction(amt) => {
+                monster
+                    .stats
+                    .magic
+                    .base
+                    .saturating_sub(monster.stats.magic.current)
+                    < *amt
+            }
+            SpecCondition::TargetMagicDefReduction(amt) => {
+                monster
+                    .bonuses
+                    .defence
+                    .magic_base
+                    .saturating_sub(monster.bonuses.defence.magic)
+                    < *amt
+            }
+        }
+    }
+
+    pub fn builder(gear: &GearSwitch) -> SpecStrategyBuilder {
+        SpecStrategyBuilder::new(gear)
+    }
+}
+
+#[derive(Debug)]
+pub struct SpecStrategyBuilder {
+    strategy: SpecStrategy,
+}
+
+impl SpecStrategyBuilder {
+    pub fn new(gear: &GearSwitch) -> Self {
+        Self {
+            strategy: SpecStrategy::new(gear, None),
+        }
+    }
+
+    fn with_condition(mut self, condition: SpecCondition) -> Self {
+        self.strategy.add_condition(condition);
+        self
+    }
+
+    pub fn with_max_attempts(self, attempts: u8) -> Self {
+        self.with_condition(SpecCondition::MaxAttempts(attempts))
+    }
+
+    pub fn with_min_successes(self, successes: u8) -> Self {
+        self.with_condition(SpecCondition::MinSuccesses(successes))
+    }
+
+    pub fn with_monster_hp_below(self, hp: u32) -> Self {
+        self.with_condition(SpecCondition::MonsterHpBelow(hp))
+    }
+
+    pub fn with_monster_hp_above(self, hp: u32) -> Self {
+        self.with_condition(SpecCondition::MonsterHpAbove(hp))
+    }
+
+    pub fn with_target_def_reduction(self, amount: u32) -> Self {
+        self.with_condition(SpecCondition::TargetDefenceReduction(amount))
+    }
+
+    pub fn build(self) -> SpecStrategy {
+        self.strategy
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -105,17 +266,12 @@ pub enum SpecCondition {
 pub struct SpecStrategyState {
     pub attempt_count: u8,
     pub success_count: u8,
-    pub defence_reduced: u32,
-    pub magic_reduced: u32,
-    pub magic_def_reduced: u32,
-    pub attack_reduced: u32,
-    pub strength_reduced: u32,
-    pub ranged_reduced: u32,
 }
 
 impl SpecStrategyState {
     pub fn reset(&mut self) {
-        *self = SpecStrategyState::default();
+        self.attempt_count = 0;
+        self.success_count = 0;
     }
 }
 
@@ -213,156 +369,82 @@ impl SingleWayMechanics {
     fn player_special_attack(fight: &mut SingleWayFight, fight_vars: &mut FightVars) -> bool {
         if let Some(ref mut spec_config) = fight.spec_config {
             for strategy in &mut spec_config.strategies {
-                let all_conditions_met =
-                    strategy.conditions.iter().all(|condition| match condition {
-                        SpecCondition::MaxAttempts(attempts) => {
-                            strategy.state.attempt_count < *attempts
-                        }
-                        SpecCondition::MinSuccesses(successes) => {
-                            strategy.state.success_count < *successes
-                        }
-                        SpecCondition::MonsterHpAbove(hp) => {
-                            fight.monster.stats.hitpoints.current > *hp
-                        }
-                        SpecCondition::MonsterHpBelow(hp) => {
-                            fight.monster.stats.hitpoints.current <= *hp
-                        }
-                        SpecCondition::PlayerHpAbove(hp) => {
-                            fight.player.stats.hitpoints.current > *hp
-                        }
-                        SpecCondition::PlayerHpBelow(hp) => {
-                            fight.player.stats.hitpoints.current <= *hp
-                        }
-                        SpecCondition::TargetAttackReduction(amt) => {
-                            fight
-                                .monster
-                                .stats
-                                .attack
-                                .base
-                                .saturating_sub(fight.monster.stats.attack.current)
-                                < *amt
-                        }
-                        SpecCondition::TargetStrengthReduction(amt) => {
-                            fight
-                                .monster
-                                .stats
-                                .strength
-                                .base
-                                .saturating_sub(fight.monster.stats.strength.current)
-                                < *amt
-                        }
-                        SpecCondition::TargetDefenceReduction(amt) => {
-                            fight
-                                .monster
-                                .stats
-                                .defence
-                                .base
-                                .saturating_sub(fight.monster.stats.defence.current)
-                                < *amt
-                        }
-                        SpecCondition::TargetRangedReduction(amt) => {
-                            fight
-                                .monster
-                                .stats
-                                .ranged
-                                .base
-                                .saturating_sub(fight.monster.stats.ranged.current)
-                                < *amt
-                        }
-                        SpecCondition::TargetMagicReduction(amt) => {
-                            fight
-                                .monster
-                                .stats
-                                .magic
-                                .base
-                                .saturating_sub(fight.monster.stats.magic.current)
-                                < *amt
-                        }
-                        SpecCondition::TargetMagicDefReduction(amt) => {
-                            fight
-                                .monster
-                                .bonuses
-                                .defence
-                                .magic_base
-                                .saturating_sub(fight.monster.bonuses.defence.magic)
-                                < *amt
-                        }
-                    });
-
-                if all_conditions_met && fight.player.stats.spec.has_enough(strategy.spec_cost) {
-                    // Make sure the current set of gear is added to the player's gear switches to allow switching back
-                    if fight.player.current_switch.is_none() {
-                        let current_gear = GearSwitch::from(&fight.player.clone());
-                        fight.player.switches.push(current_gear);
-                    }
-
-                    // Store the previous gear set's label for switching back after the spec
-                    let previous_switch = fight.player.current_switch.clone().unwrap();
-
-                    // Switch to the spec gear and perform the attack
-                    fight.player.switch(&strategy.label);
-                    fight
-                        .logger
-                        .log_gear_switch(fight_vars.tick_counter, &strategy.label);
-                    fight.logger.log_current_player_rolls(&fight.player);
-                    fight.logger.log_current_player_stats(&fight.player);
-                    fight.logger.log_current_gear(&fight.player);
-
-                    let hit = (fight.player.spec)(
-                        &mut fight.player,
-                        &mut fight.monster,
-                        &mut fight.rng,
-                        &mut fight.limiter,
-                    );
-                    fight.logger.log_player_spec(
-                        fight_vars.tick_counter,
-                        hit.damage,
-                        hit.success,
-                        strategy.label.clone(),
-                    );
-                    fight.player.boosts.first_attack = false;
-                    fight.monster.take_damage(hit.damage);
-                    fight.logger.log_monster_damage(
-                        fight_vars.tick_counter,
-                        hit.damage,
-                        fight.monster.stats.hitpoints.current,
-                        fight.monster.info.name.as_str(),
-                    );
-                    fight.logger.log_current_monster_stats(&fight.monster);
-                    fight.logger.log_current_monster_rolls(&fight.monster);
-
-                    strategy.state.attempt_count += 1;
-                    if hit.success {
-                        strategy.state.success_count += 1;
-                    }
-
-                    handle_blood_fury(
-                        &mut fight.player,
-                        &hit,
-                        fight_vars,
-                        &mut fight.logger,
-                        &mut fight.rng,
-                    );
-                    scale_monster_hp_only(&mut fight.monster);
-                    fight_vars.hit_attempts += 1;
-                    fight_vars.hit_count += if hit.success { 1 } else { 0 };
-                    fight_vars.hit_amounts.push(hit.damage);
-                    fight_vars.attack_tick += fight.player.gear.weapon.speed;
-
-                    fight.player.stats.spec.drain(strategy.spec_cost);
-                    if fight_vars.spec_regen_timer.is_none() {
-                        fight_vars.spec_regen_timer = Some(0);
-                    }
-
-                    // Switch back to the previous set of gear
-                    fight.player.switch(&previous_switch);
-                    fight
-                        .logger
-                        .log_gear_switch(fight_vars.tick_counter, &previous_switch);
-                    fight.logger.log_current_player_rolls(&fight.player);
-
-                    return true;
+                if !strategy.can_execute(&fight.player, &fight.monster) {
+                    continue;
                 }
+
+                // Make sure the current set of gear is added to the player's gear switches to allow switching back
+                if fight.player.current_switch.is_none() {
+                    let current_gear = GearSwitch::from(&fight.player.clone());
+                    fight.player.switches.push(current_gear);
+                }
+
+                // Store the previous gear set's label for switching back after the spec
+                let previous_switch = fight.player.current_switch.clone().unwrap();
+
+                // Switch to the spec gear and perform the attack
+                fight.player.switch(&strategy.label);
+                fight
+                    .logger
+                    .log_gear_switch(fight_vars.tick_counter, &strategy.label);
+                fight.logger.log_current_player_rolls(&fight.player);
+                fight.logger.log_current_player_stats(&fight.player);
+                fight.logger.log_current_gear(&fight.player);
+
+                let hit = (fight.player.spec)(
+                    &mut fight.player,
+                    &mut fight.monster,
+                    &mut fight.rng,
+                    &mut fight.limiter,
+                );
+                fight.logger.log_player_spec(
+                    fight_vars.tick_counter,
+                    hit.damage,
+                    hit.success,
+                    strategy.label.clone(),
+                );
+                fight.player.boosts.first_attack = false;
+                fight.monster.take_damage(hit.damage);
+                fight.logger.log_monster_damage(
+                    fight_vars.tick_counter,
+                    hit.damage,
+                    fight.monster.stats.hitpoints.current,
+                    fight.monster.info.name.as_str(),
+                );
+                fight.logger.log_current_monster_stats(&fight.monster);
+                fight.logger.log_current_monster_rolls(&fight.monster);
+
+                strategy.state.attempt_count += 1;
+                if hit.success {
+                    strategy.state.success_count += 1;
+                }
+
+                handle_blood_fury(
+                    &mut fight.player,
+                    &hit,
+                    fight_vars,
+                    &mut fight.logger,
+                    &mut fight.rng,
+                );
+                scale_monster_hp_only(&mut fight.monster);
+                fight_vars.hit_attempts += 1;
+                fight_vars.hit_count += if hit.success { 1 } else { 0 };
+                fight_vars.hit_amounts.push(hit.damage);
+                fight_vars.attack_tick += fight.player.gear.weapon.speed;
+
+                fight.player.stats.spec.drain(strategy.spec_cost);
+                if fight_vars.spec_regen_timer.is_none() {
+                    fight_vars.spec_regen_timer = Some(0);
+                }
+
+                // Switch back to the previous set of gear
+                fight.player.switch(&previous_switch);
+                fight
+                    .logger
+                    .log_gear_switch(fight_vars.tick_counter, &previous_switch);
+                fight.logger.log_current_player_rolls(&fight.player);
+
+                return true;
             }
         }
         false
@@ -372,6 +454,12 @@ impl SingleWayMechanics {
 impl Mechanics for SingleWayMechanics {}
 
 fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationError> {
+    if let Some(ref spec_config) = fight.spec_config {
+        if let Err(e) = spec_config.validate() {
+            return Err(SimulationError::ConfigError(e));
+        }
+    }
+
     fight
         .logger
         .log_initial_setup(&fight.player, &fight.monster);
@@ -380,21 +468,21 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
 
     while fight.monster.stats.hitpoints.current > 0 {
         if vars.tick_counter == vars.attack_tick {
-            if let Some(specs) = &mut fight.spec_config
-                && fight.player.stats.spec.value() >= specs.lowest_cost.unwrap_or(101)
-            {
-                let did_spec = SingleWayMechanics::player_special_attack(fight, &mut vars);
-                if !did_spec {
-                    fight.mechanics.player_attack(
-                        &mut fight.player,
-                        &mut fight.monster,
-                        &mut fight.rng,
-                        &fight.limiter,
-                        &mut vars,
-                        &mut fight.logger,
-                    );
+            let did_spec = if let Some(ref spec_config) = fight.spec_config {
+                if let Some(lowest) = spec_config.lowest_cost() {
+                    if fight.player.stats.spec.value() >= lowest {
+                        SingleWayMechanics::player_special_attack(fight, &mut vars)
+                    } else {
+                        false
+                    }
+                } else {
+                    false
                 }
             } else {
+                false
+            };
+
+            if !did_spec {
                 fight.mechanics.player_attack(
                     &mut fight.player,
                     &mut fight.monster,

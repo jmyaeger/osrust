@@ -103,18 +103,17 @@ fn simulate_single_way() {
     player.equip("Bandos godsword", None);
     player.set_active_style(CombatStyle::Slash);
     let bgs_switch = GearSwitch::new("BGS spec".to_string(), &player, &monster);
-    let bgs_spec_strategy = SpecStrategy::new(
-        &bgs_switch,
-        vec![
-            SpecCondition::TargetDefenceReduction(20),
-            SpecCondition::MaxAttempts(2),
-        ]
-        .into(),
-    );
+    let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
+        .with_target_def_reduction(20)
+        .with_max_attempts(2)
+        .build();
     player.switches.push(bgs_switch);
 
     player.switch(&"Main hand".to_string());
-    let spec_config = SpecConfig::new(vec![vw_spec_strategy], SpecRestorePolicy::RestoreEveryKill);
+    let spec_config = SpecConfig::new(
+        vec![bgs_spec_strategy, vw_spec_strategy],
+        SpecRestorePolicy::RestoreEveryKill,
+    );
 
     let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);
     let results = simulate_n_fights(Box::new(simulation), 1_000_000);
