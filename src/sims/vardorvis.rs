@@ -88,7 +88,6 @@ impl VardorvisMechanics {
                 vars.tick_counter,
                 format!("Vardorvis healed {} HP", hit.damage / 2).as_str(),
             );
-            scale_monster_hp_only(vard);
             logger.log_custom(
                 vars.tick_counter,
                 format!("Vardorvis HP: {}", vard.stats.hitpoints.current).as_str(),
