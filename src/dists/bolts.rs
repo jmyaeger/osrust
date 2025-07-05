@@ -33,11 +33,7 @@ impl<'a> BoltContext<'_> {
 }
 
 fn kandarin_factor(ctx: &BoltContext) -> f64 {
-    if ctx.kandarin_diary {
-        1.1
-    } else {
-        1.0
-    }
+    if ctx.kandarin_diary { 1.1 } else { 1.0 }
 }
 
 fn bonus_damage_transform<'a>(

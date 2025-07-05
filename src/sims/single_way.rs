@@ -1,16 +1,16 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::attacks::standard::AttackFn;
 use crate::combat::limiters::Limiter;
-use crate::combat::mechanics::handle_blood_fury;
 use crate::combat::mechanics::Mechanics;
+use crate::combat::mechanics::handle_blood_fury;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::combat::thralls::Thrall;
 use crate::constants;
 use crate::constants::P2_WARDEN_IDS;
 use crate::types::{monster::Monster, player::GearSwitch, player::Player};
 use crate::utils::logging::FightLogger;
-use rand::rngs::SmallRng;
 use rand::SeedableRng;
+use rand::rngs::SmallRng;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct SpecConfig {

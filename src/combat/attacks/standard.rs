@@ -7,8 +7,8 @@ use crate::types::monster::{CombatStat, Monster};
 use crate::types::player::Player;
 use crate::types::spells::{AncientSpell, Spell};
 use crate::utils::math;
-use rand::rngs::SmallRng;
 use rand::Rng;
+use rand::rngs::SmallRng;
 use std::cmp::max;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
@@ -1053,15 +1053,15 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
             "Opal bolts (e)" | "Opal dragon bolts (e)" => return opal_bolt_attack as AttackFn,
             "Pearl bolts (e)" | "Pearl dragon bolts (e)" => return pearl_bolt_attack as AttackFn,
             "Emerald bolts (e)" | "Emerald dragon bolts (e)" => {
-                return emerald_bolt_attack as AttackFn
+                return emerald_bolt_attack as AttackFn;
             }
             "Ruby bolts (e)" | "Ruby dragon bolts (e)" => return ruby_bolt_attack as AttackFn,
             "Diamond bolts (e)" | "Diamond dragon bolts (e)" => {
-                return diamond_bolt_attack as AttackFn
+                return diamond_bolt_attack as AttackFn;
             }
             "Onyx bolts (e)" | "Onyx dragon bolts (e)" => return onyx_bolt_attack as AttackFn,
             "Dragonstone bolts (e)" | "Dragonstone dragon bolts (e)" => {
-                return dragonstone_bolt_attack as AttackFn
+                return dragonstone_bolt_attack as AttackFn;
             }
             _ => return standard_attack as AttackFn,
         }

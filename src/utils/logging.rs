@@ -2,7 +2,7 @@ use crate::types::equipment::CombatType;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use chrono::Local;
-use log::{debug, LevelFilter};
+use log::{LevelFilter, debug};
 use simplelog::{Config, WriteLogger};
 use std::fs::File;
 
@@ -47,7 +47,7 @@ impl FightLogger {
                 player.max_hits.get(player.combat_type())
             );
             debug!(
-                "Player's max defence rolls\n: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n", 
+                "Player's max defence rolls\n: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
                 player.def_rolls.get(CombatType::Stab),
                 player.def_rolls.get(CombatType::Slash),
                 player.def_rolls.get(CombatType::Crush),
@@ -183,7 +183,7 @@ impl FightLogger {
                 debug!("Monster has no stored max hits.\n");
             }
             debug!(
-                "Monster's max defence rolls: {} (Stab), {} (Slash), {} (Crush), {} (Light), {} (Standard), {} (Heavy), {} (Magic)\n", 
+                "Monster's max defence rolls: {} (Stab), {} (Slash), {} (Crush), {} (Light), {} (Standard), {} (Heavy), {} (Magic)\n",
                 monster.def_rolls.get(CombatType::Stab),
                 monster.def_rolls.get(CombatType::Slash),
                 monster.def_rolls.get(CombatType::Crush),

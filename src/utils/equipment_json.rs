@@ -128,7 +128,7 @@ async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::E
     let mut offset = 0;
 
     loop {
-        println!("Fetching equipment info: {}", offset);
+        println!("Fetching equipment info: {offset}");
 
         let query = format!(
             "[[Equipment slot::+]][[Item ID::+]]|?{}|limit=500|offset={}",
@@ -139,7 +139,7 @@ async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::E
             API_BASE,
             &[("action", "ask"), ("format", "json"), ("query", &query)],
         )
-        .map_err(|e| format!("Failed to parse URL: {}", e))?;
+        .map_err(|e| format!("Failed to parse URL: {e}"))?;
 
         let client = reqwest::Client::new();
         let response = client

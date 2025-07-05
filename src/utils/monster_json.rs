@@ -147,7 +147,7 @@ async fn get_monster_data() -> Result<serde_json::Value, Box<dyn std::error::Err
     let mut offset = 0;
 
     loop {
-        println!("Fetching monster info: {}", offset);
+        println!("Fetching monster info: {offset}");
 
         let query = format!(
             "[[Uses infobox::Monster]]|?{}|limit=500|offset={}",
@@ -158,7 +158,7 @@ async fn get_monster_data() -> Result<serde_json::Value, Box<dyn std::error::Err
             API_BASE,
             &[("action", "ask"), ("format", "json"), ("query", &query)],
         )
-        .map_err(|e| format!("Failed to parse URL: {}", e))?;
+        .map_err(|e| format!("Failed to parse URL: {e}"))?;
 
         let client = reqwest::Client::new();
         let response = client
@@ -219,7 +219,7 @@ fn has_category(category_array: &[serde_json::Value], category: &str) -> bool {
     category_array.iter().any(|c| {
         c.get("fulltext")
             .and_then(|fulltext| fulltext.as_str())
-            .is_some_and(|fulltext| fulltext == format!("Category:{}", category))
+            .is_some_and(|fulltext| fulltext == format!("Category:{category}"))
     })
 }
 

@@ -1,5 +1,5 @@
 use dyn_clone::DynClone;
-use rand::{rngs::SmallRng, Rng};
+use rand::{Rng, rngs::SmallRng};
 use std::cmp::{max, min};
 
 // Trait for any post-roll damage transforms applied by the opponent

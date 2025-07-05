@@ -2,9 +2,9 @@
 
 use crate::calc::hit_dist::flat_limit_transformer;
 use crate::calc::hit_dist::{
+    AttackDistribution, HitDistribution, Hitsplat, TransformOpts, WeightedHit,
     capped_reroll_transformer, division_transformer, flat_add_transformer, linear_min_transformer,
-    multiply_transformer, AttackDistribution, HitDistribution, Hitsplat, TransformOpts,
-    WeightedHit,
+    multiply_transformer,
 };
 use crate::calc::monster_scaling;
 use crate::calc::rolls::{calc_active_player_rolls, get_demonbane_factor, monster_def_rolls};
@@ -15,7 +15,7 @@ use crate::types::equipment::{CombatStance, CombatType};
 use crate::types::monster::Monster;
 use crate::types::player::Player;
 use crate::types::spells::{Spell, StandardSpell};
-use crate::utils::math::{lerp, Fraction};
+use crate::utils::math::{Fraction, lerp};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -188,11 +188,7 @@ fn get_dot_expected(player: &Player, monster: &Monster, using_spec: bool) -> f64
         if player.is_wearing("Burning claws", None) {
             burning_claw_dot(player, monster)
         } else if player.is_wearing("Scorching bow", None) {
-            if monster.is_demon() {
-                5.0
-            } else {
-                1.0
-            }
+            if monster.is_demon() { 5.0 } else { 1.0 }
         } else if player.is_wearing("Ancient godsword", None) {
             let accuracy = get_hit_chance(player, monster, true);
             accuracy * 25.0
@@ -209,11 +205,7 @@ fn get_dot_max(player: &Player, monster: &Monster, using_spec: bool) -> u32 {
         if player.is_wearing("Burning claws", None) {
             29
         } else if player.is_wearing("Scorching bow", None) {
-            if monster.is_demon() {
-                5
-            } else {
-                1
-            }
+            if monster.is_demon() { 5 } else { 1 }
         } else {
             0
         }

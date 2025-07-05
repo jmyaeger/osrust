@@ -5,8 +5,8 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::SmallRng;
 use rand::SeedableRng;
+use rand::rngs::SmallRng;
 
 const GRAARDOR_REGEN_TICKS: i32 = 10;
 const CYCLE_LENGTH: i32 = 24;

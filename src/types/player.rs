@@ -1,7 +1,7 @@
 use crate::calc::rolls::calc_active_player_rolls;
 use crate::combat::attacks::effects::CombatEffect;
-use crate::combat::attacks::specs::{get_spec_attack_function, SpecialAttackFn};
-use crate::combat::attacks::standard::{get_attack_functions, standard_attack, AttackFn};
+use crate::combat::attacks::specs::{SpecialAttackFn, get_spec_attack_function};
+use crate::combat::attacks::standard::{AttackFn, get_attack_functions, standard_attack};
 use crate::constants::*;
 use crate::types::equipment::{
     self, Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear,

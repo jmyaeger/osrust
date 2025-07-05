@@ -1,6 +1,6 @@
 use crate::calc::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
 use crate::combat::attacks::effects::CombatEffect;
-use crate::combat::attacks::standard::{base_attack, damage_roll, AttackFn, AttackInfo, Hit};
+use crate::combat::attacks::standard::{AttackFn, AttackInfo, Hit, base_attack, damage_roll};
 use crate::combat::limiters::Limiter;
 use crate::constants::{IMMUNE_TO_MAGIC_MONSTERS, IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::types::equipment::CombatType;
@@ -8,8 +8,8 @@ use crate::types::monster::{CombatStat, Monster, StatDrain};
 use crate::types::player::Player;
 use crate::types::spells::{SpecialSpell, Spell};
 use num::clamp;
-use rand::rngs::SmallRng;
 use rand::Rng;
+use rand::rngs::SmallRng;
 use std::cmp::max;
 
 pub type SpecialAttackFn =

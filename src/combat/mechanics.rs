@@ -8,8 +8,8 @@ use crate::constants::{self, THRALL_ATTACK_SPEED};
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::SmallRng;
 use rand::Rng;
+use rand::rngs::SmallRng;
 
 use super::attacks::standard::Hit;
 

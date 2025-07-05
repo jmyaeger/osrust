@@ -1,15 +1,15 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::limiters::Limiter;
-use crate::combat::mechanics::{handle_recoil, Mechanics};
+use crate::combat::mechanics::{Mechanics, handle_recoil};
 use crate::combat::simulation::{
-    assign_limiter, FightResult, FightVars, Simulation, SimulationError,
+    FightResult, FightVars, Simulation, SimulationError, assign_limiter,
 };
 use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::SmallRng;
 use rand::SeedableRng;
+use rand::rngs::SmallRng;
 
 const VARDORVIS_ATTACK_STYLE: AttackType = AttackType::Slash;
 const VARDORVIS_ATTACK_SPEED: i32 = 5;

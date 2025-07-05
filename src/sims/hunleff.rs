@@ -5,9 +5,9 @@ use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
-use rand::rngs::SmallRng;
 use rand::Rng;
 use rand::SeedableRng;
+use rand::rngs::SmallRng;
 
 const TORNADO_MAX_TIMER: u32 = 23;
 const TORNADO_COOLDOWN: u32 = 9;

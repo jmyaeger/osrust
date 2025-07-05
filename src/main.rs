@@ -3,7 +3,7 @@ use osrs::calc::analysis::SimulationStats;
 use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::combat::attacks::standard::get_attack_functions;
-use osrs::combat::simulation::{simulate_n_fights, Simulation};
+use osrs::combat::simulation::{Simulation, simulate_n_fights};
 use osrs::combat::thralls::Thrall;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};

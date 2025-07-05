@@ -38,16 +38,16 @@ impl CombatEffect {
     pub fn apply(&mut self) -> u32 {
         match self {
             Self::Poison {
-                ref mut tick_counter,
-                ref mut severity,
+                tick_counter,
+                severity,
             } => apply_poison(tick_counter, severity),
             Self::Venom {
-                ref mut tick_counter,
-                ref mut damage,
+                tick_counter,
+                damage,
             } => apply_venom(tick_counter, damage),
             Self::Burn {
-                ref mut tick_counter,
-                ref mut stacks,
+                tick_counter,
+                stacks,
             } => apply_burn(tick_counter, stacks),
             Self::DelayedAttack { tick_delay, damage } => apply_delayed_attack(tick_delay, damage),
             Self::DelayedHeal {
@@ -84,7 +84,7 @@ fn apply_poison(tick_counter: &mut Option<i32>, severity: &mut u32) -> u32 {
     if *severity == 0 {
         *tick_counter = None;
         0
-    } else if let Some(mut tick) = tick_counter {
+    } else if let &mut Some(mut tick) = tick_counter {
         // Otherwise, increment tick counter, apply poison damage every 30 ticks, and increase severity
         tick += 1;
         if tick == 30 {
@@ -103,7 +103,7 @@ fn apply_poison(tick_counter: &mut Option<i32>, severity: &mut u32) -> u32 {
 }
 
 fn apply_venom(tick_counter: &mut Option<i32>, damage: &mut u32) -> u32 {
-    if let Some(mut tick) = tick_counter {
+    if let &mut Some(mut tick) = tick_counter {
         // Increment tick counter, apply venom damage every 30 ticks, and increase damage
         tick += 1;
         if tick == 30 {
