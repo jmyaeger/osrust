@@ -366,7 +366,7 @@ pub struct SingleWayConfig {
 pub struct SingleWayMechanics;
 
 impl SingleWayMechanics {
-    fn player_special_attack(fight: &mut SingleWayFight, fight_vars: &mut FightVars) -> bool {
+    pub fn player_special_attack(fight: &mut SingleWayFight, fight_vars: &mut FightVars) -> bool {
         if let Some(ref mut spec_config) = fight.spec_config {
             for strategy in &mut spec_config.strategies {
                 if !strategy.can_execute(&fight.player, &fight.monster) {
