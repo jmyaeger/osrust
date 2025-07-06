@@ -1,6 +1,6 @@
 use crate::types::equipment::CombatType;
 use crate::types::monster::{AttackType, Monster};
-use crate::types::player::Player;
+use crate::types::player::{Player, SwitchType};
 use chrono::Local;
 use log::{LevelFilter, debug};
 use simplelog::{Config, WriteLogger};
@@ -227,8 +227,15 @@ impl FightLogger {
         }
     }
 
-    pub fn log_player_spec(&mut self, tick: i32, damage: u32, success: bool, label: String) {
+    pub fn log_player_spec(
+        &mut self,
+        tick: i32,
+        damage: u32,
+        success: bool,
+        switch_type: &SwitchType,
+    ) {
         if self.enabled {
+            let label = switch_type.label();
             if success {
                 debug!(
                     "[Tick {tick}] Player hit with special attack '{label}' for {damage} damage"
@@ -288,8 +295,9 @@ impl FightLogger {
         }
     }
 
-    pub fn log_gear_switch(&mut self, tick: i32, label: &String) {
+    pub fn log_gear_switch(&mut self, tick: i32, switch_type: &SwitchType) {
         if self.enabled {
+            let label = switch_type.label();
             debug!("[Tick {tick}] Player switched to a {label} setup");
         }
     }

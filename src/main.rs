@@ -14,7 +14,7 @@ use osrs::sims::single_way::{
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::equipment::{CombatStyle, Weapon};
 use osrs::types::monster::{CombatStat, Monster};
-use osrs::types::player::{GearSwitch, Player};
+use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::Prayer;
 use osrs::types::stats::Stat;
@@ -33,9 +33,9 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
     // simulate_vardorvis();
 }
@@ -85,31 +85,38 @@ fn simulate_single_way() {
     let config = SingleWayConfig { thralls: None };
 
     let mut main_hand = GearSwitch::from(&player);
-    main_hand.label = "Main hand".to_string();
     player.switches.push(main_hand);
 
     player.equip("Voidwaker", None);
     player.set_active_style(CombatStyle::Slash);
-    let vw_switch = GearSwitch::new("Voidwaker spec".to_string(), &player, &monster);
+    let vw_switch = GearSwitch::new(
+        SwitchType::Spec("Voidwaker spec".to_string()),
+        &player,
+        &monster,
+    );
     let vw_spec_strategy = SpecStrategy::new(&vw_switch, None);
     player.switches.push(vw_switch);
 
     player.equip("Burning claws", None);
     player.set_active_style(CombatStyle::Lunge);
-    let bclaws_switch = GearSwitch::new("Burning claws spec".to_string(), &player, &monster);
+    let bclaws_switch = GearSwitch::new(
+        SwitchType::Spec("Burning claws spec".to_string()),
+        &player,
+        &monster,
+    );
     let bclaws_spec_strategy = SpecStrategy::new(&bclaws_switch, None);
     player.switches.push(bclaws_switch);
 
     player.equip("Bandos godsword", None);
     player.set_active_style(CombatStyle::Slash);
-    let bgs_switch = GearSwitch::new("BGS spec".to_string(), &player, &monster);
+    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
     let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
         .with_target_def_reduction(20)
         .with_max_attempts(2)
         .build();
     player.switches.push(bgs_switch);
 
-    player.switch(&"Main hand".to_string());
+    player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
         vec![bgs_spec_strategy, vw_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
@@ -172,18 +179,19 @@ fn simulate_hunllef() {
     player.switches.push(ranged_switch);
     player.switches.push(melee_switch);
 
-    player.switch(&"Ranged".to_string());
+    player.switch(&SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 25,
+        food_count: 16,
         eat_strategy: HunllefEatStrategy::EatAtHp(69),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: "Magic".to_string(),
-            style2: "Ranged".to_string(),
+            style1: SwitchType::Magic,
+            style2: SwitchType::Ranged,
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef"),
+        armor_tier: 0,
     };
     // let fight_config = HunllefConfig {
     //     food_count: 24,
@@ -199,7 +207,7 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let results = simulate_n_fights(Box::new(fight), 1_000_000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);

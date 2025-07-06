@@ -93,8 +93,29 @@ pub struct SetEffects {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum SwitchType {
+    Melee,
+    Ranged,
+    Magic,
+    Spec(String),
+    Custom(String),
+}
+
+impl SwitchType {
+    pub fn label(&self) -> String {
+        match self {
+            SwitchType::Melee => "Melee".to_string(),
+            SwitchType::Ranged => "Ranged".to_string(),
+            SwitchType::Magic => "Magic".to_string(),
+            SwitchType::Spec(spec_label) => format!("{spec_label} spec"),
+            SwitchType::Custom(custom_label) => custom_label.clone(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
-    pub label: String,
+    pub switch_type: SwitchType,
     pub gear: Gear,
     pub prayers: PrayerBoosts,
     pub spell: Option<spells::Spell>,
@@ -108,7 +129,7 @@ pub struct GearSwitch {
 }
 
 impl GearSwitch {
-    pub fn new(label: String, player: &Player, monster: &Monster) -> Self {
+    pub fn new(switch_type: SwitchType, player: &Player, monster: &Monster) -> Self {
         let mut player_copy = player.clone();
         player_copy.update_bonuses();
         player_copy.update_set_effects();
@@ -118,7 +139,7 @@ impl GearSwitch {
         let spec = get_spec_attack_function(&player_copy);
 
         Self {
-            label,
+            switch_type,
             gear: player_copy.gear,
             prayers: player_copy.prayers,
             spell: player_copy.attrs.spell,
@@ -135,19 +156,19 @@ impl GearSwitch {
 
 impl From<&Player> for GearSwitch {
     fn from(player: &Player) -> Self {
-        let label = match player.combat_type() {
-            CombatType::Crush | CombatType::Slash | CombatType::Stab => "Melee".to_string(),
+        let switch_type = match player.combat_type() {
+            CombatType::Crush | CombatType::Slash | CombatType::Stab => SwitchType::Melee,
             CombatType::Ranged | CombatType::Heavy | CombatType::Light | CombatType::Standard => {
-                "Ranged".to_string()
+                SwitchType::Ranged
             }
-            CombatType::Magic => "Magic".to_string(),
-            _ => "Unknown".to_string(),
+            CombatType::Magic => SwitchType::Magic,
+            _ => SwitchType::Custom("Unknown".to_string()),
         };
         let attack = get_attack_functions(player);
         let spec = get_spec_attack_function(player);
 
         Self {
-            label,
+            switch_type,
             gear: player.gear.clone(),
             prayers: player.prayers.clone(),
             spell: player.attrs.spell,
@@ -316,7 +337,7 @@ pub struct Player {
     pub attack: AttackFn,
     pub spec: SpecialAttackFn,
     pub switches: Vec<GearSwitch>,
-    pub current_switch: Option<String>,
+    pub current_switch: Option<SwitchType>,
 }
 
 impl Default for Player {
@@ -879,9 +900,9 @@ impl Player {
         }
     }
 
-    pub fn switch(&mut self, switch_label: &String) {
+    pub fn switch(&mut self, switch_type: &SwitchType) {
         for switch in &self.switches {
-            if &switch.label == switch_label {
+            if &switch.switch_type == switch_type {
                 self.gear = switch.gear.clone();
                 self.prayers = switch.prayers.clone();
                 self.attrs.spell = switch.spell;
@@ -892,7 +913,7 @@ impl Player {
                 self.att_rolls = switch.att_rolls;
                 self.max_hits = switch.max_hits;
                 self.def_rolls = switch.def_rolls;
-                self.current_switch = Some(switch.label.clone());
+                self.current_switch = Some(switch.switch_type.clone());
 
                 return;
             }

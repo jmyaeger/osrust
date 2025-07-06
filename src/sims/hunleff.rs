@@ -3,7 +3,7 @@ use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
-use crate::types::player::Player;
+use crate::types::player::{Player, SwitchType};
 use crate::utils::logging::FightLogger;
 use rand::Rng;
 use rand::SeedableRng;
@@ -51,6 +51,7 @@ pub struct HunllefConfig {
     pub attack_strategy: AttackStrategy,
     pub lost_ticks: i32,
     pub logger: FightLogger,
+    pub armor_tier: u32,
 }
 
 impl Default for HunllefConfig {
@@ -60,11 +61,12 @@ impl Default for HunllefConfig {
             eat_strategy: HunllefEatStrategy::EatAtHp(50),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
-                style1: "Ranged".to_string(),
-                style2: "Magic".to_string(),
+                style1: SwitchType::Ranged,
+                style2: SwitchType::Magic,
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
+            armor_tier: 0,
         }
     }
 }
@@ -79,13 +81,13 @@ pub enum HunllefEatStrategy {
 #[derive(Debug, PartialEq, Clone)]
 pub enum AttackStrategy {
     TwoT3Weapons {
-        style1: String,
-        style2: String,
+        style1: SwitchType,
+        style2: SwitchType,
     },
     FiveToOne {
-        main_style: String,
-        other_style1: String,
-        other_style2: String,
+        main_style: SwitchType,
+        other_style1: SwitchType,
+        other_style2: SwitchType,
     },
 }
 
@@ -172,9 +174,9 @@ impl HunllefMechanics {
         hunllef: &mut Monster,
         player: &mut Player,
         state: &mut HunllefState,
+        config: &mut HunllefConfig,
         vars: &mut FightVars,
         rng: &mut SmallRng,
-        logger: &mut FightLogger,
     ) {
         // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
         let hunllef_style = if (state.hunllef_attack_count / 4) % 2 == 0 {
@@ -187,10 +189,10 @@ impl HunllefMechanics {
         // Damage is reduced after it is rolled
         // Armor reduction occurs first, then protection prayers (source: Mod Arcane in Summit Blue)
         let base_damage = hit.damage;
-        let armor_reduced = base_damage * (6 - armor_tier(player)) / 6;
+        let armor_reduced = base_damage * (6 - config.armor_tier) / 6;
         hit.damage = armor_reduced * 10 / 41; // Prayer reduction is 10/41 (source: Mod Ash tweet)
 
-        logger.log_monster_attack(
+        config.logger.log_monster_attack(
             hunllef,
             vars.tick_counter,
             hit.damage,
@@ -262,7 +264,7 @@ pub struct HunllefFight {
 }
 
 impl HunllefFight {
-    pub fn new(player: Player, config: HunllefConfig) -> HunllefFight {
+    pub fn new(player: Player, mut config: HunllefConfig) -> HunllefFight {
         if !has_valid_gear(&player) {
             panic!("Equipped gear is not usable in the Gauntlet.")
         }
@@ -274,6 +276,7 @@ impl HunllefFight {
 
         let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
         let rng = SmallRng::from_os_rng();
+        config.armor_tier = armor_tier(&player);
         HunllefFight {
             player,
             hunllef,
@@ -297,7 +300,9 @@ impl HunllefFight {
             .logger
             .log_initial_setup(&self.player, &self.hunllef);
 
-        match &self.config.attack_strategy {
+        let attack_strategy = self.config.attack_strategy.clone();
+
+        match &attack_strategy {
             AttackStrategy::TwoT3Weapons { style1, style2 } => {
                 // The normal case - two T3 weapons, no 5:1
 
@@ -394,9 +399,9 @@ impl HunllefFight {
                                 &mut self.hunllef,
                                 &mut self.player,
                                 &mut state,
+                                &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                                &mut self.config.logger,
                             );
                         }
                     }
@@ -520,9 +525,9 @@ impl HunllefFight {
                                 &mut self.hunllef,
                                 &mut self.player,
                                 &mut state,
+                                &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                                &mut self.config.logger,
                             );
                         }
                     }
@@ -691,12 +696,13 @@ mod tests {
             eat_strategy: HunllefEatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::FiveToOne {
-                main_style: "Magic".to_string(),
-                other_style1: "Ranged".to_string(),
-                other_style2: "Melee".to_string(),
+                main_style: SwitchType::Magic,
+                other_style1: SwitchType::Ranged,
+                other_style2: SwitchType::Melee,
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
+            armor_tier: 0,
         };
 
         let mut fight = HunllefFight::new(player, fight_config);
