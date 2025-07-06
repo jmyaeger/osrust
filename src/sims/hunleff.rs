@@ -3,7 +3,7 @@ use crate::combat::mechanics::Mechanics;
 use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
 use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
-use crate::types::player::Player;
+use crate::types::player::{Player, SwitchType};
 use crate::utils::logging::FightLogger;
 use rand::Rng;
 use rand::SeedableRng;
@@ -61,8 +61,8 @@ impl Default for HunllefConfig {
             eat_strategy: HunllefEatStrategy::EatAtHp(50),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::TwoT3Weapons {
-                style1: "Ranged".to_string(),
-                style2: "Magic".to_string(),
+                style1: SwitchType::Ranged,
+                style2: SwitchType::Magic,
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),
@@ -81,13 +81,13 @@ pub enum HunllefEatStrategy {
 #[derive(Debug, PartialEq, Clone)]
 pub enum AttackStrategy {
     TwoT3Weapons {
-        style1: String,
-        style2: String,
+        style1: SwitchType,
+        style2: SwitchType,
     },
     FiveToOne {
-        main_style: String,
-        other_style1: String,
-        other_style2: String,
+        main_style: SwitchType,
+        other_style1: SwitchType,
+        other_style2: SwitchType,
     },
 }
 
@@ -696,9 +696,9 @@ mod tests {
             eat_strategy: HunllefEatStrategy::EatAtHp(15),
             redemption_attempts: 0,
             attack_strategy: AttackStrategy::FiveToOne {
-                main_style: "Magic".to_string(),
-                other_style1: "Ranged".to_string(),
-                other_style2: "Melee".to_string(),
+                main_style: SwitchType::Magic,
+                other_style1: SwitchType::Ranged,
+                other_style2: SwitchType::Melee,
             },
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef"),

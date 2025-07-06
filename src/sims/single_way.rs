@@ -7,6 +7,7 @@ use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationEr
 use crate::combat::thralls::Thrall;
 use crate::constants;
 use crate::constants::P2_WARDEN_IDS;
+use crate::types::player::SwitchType;
 use crate::types::{monster::Monster, player::GearSwitch, player::Player};
 use crate::utils::logging::FightLogger;
 use rand::SeedableRng;
@@ -103,7 +104,7 @@ pub enum SpecRestorePolicy {
 pub struct SpecStrategy {
     pub conditions: Vec<SpecCondition>,
     pub state: SpecStrategyState,
-    pub label: String,
+    pub switch_type: SwitchType,
     pub spec_cost: u8,
 }
 
@@ -114,10 +115,11 @@ impl SpecStrategy {
             .find(|w| w.0 == gear.gear.weapon.name)
             .expect("Spec cost not found")
             .1;
+
         Self {
             conditions: conditions.unwrap_or_default(),
             state: SpecStrategyState::default(),
-            label: gear.label.clone(),
+            switch_type: gear.switch_type.clone(),
             spec_cost,
         }
     }
@@ -383,10 +385,10 @@ impl SingleWayMechanics {
                 let previous_switch = fight.player.current_switch.clone().unwrap();
 
                 // Switch to the spec gear and perform the attack
-                fight.player.switch(&strategy.label);
+                fight.player.switch(&strategy.switch_type);
                 fight
                     .logger
-                    .log_gear_switch(fight_vars.tick_counter, &strategy.label);
+                    .log_gear_switch(fight_vars.tick_counter, &strategy.switch_type);
                 fight.logger.log_current_player_rolls(&fight.player);
                 fight.logger.log_current_player_stats(&fight.player);
                 fight.logger.log_current_gear(&fight.player);
@@ -401,7 +403,7 @@ impl SingleWayMechanics {
                     fight_vars.tick_counter,
                     hit.damage,
                     hit.success,
-                    strategy.label.clone(),
+                    &strategy.switch_type,
                 );
                 fight.player.boosts.first_attack = false;
                 fight.monster.take_damage(hit.damage);
