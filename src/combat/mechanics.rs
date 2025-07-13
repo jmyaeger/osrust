@@ -5,6 +5,7 @@ use crate::combat::simulation::FightVars;
 use crate::combat::simulation::{FightResult, SimulationError};
 use crate::combat::thralls::Thrall;
 use crate::constants::{self, THRALL_ATTACK_SPEED};
+use crate::sims::single_way::{DeathCharge, SingleWayState, SpecConfig};
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;
@@ -177,15 +178,19 @@ pub trait Mechanics {
         }
     }
 
-    fn increment_spec_timer(
+    fn increment_spec(
         &self,
         player: &mut Player,
         fight_vars: &mut FightVars,
+        state: &mut SingleWayState,
         logger: &mut FightLogger,
     ) {
-        if let Some(ref mut timer) = fight_vars.spec_regen_timer {
-            *timer += 1;
-            if (player.is_wearing("Lightbearer", None) && *timer % 25 == 0) || *timer % 50 == 0 {
+        if state.spec_regen_timer.is_active() {
+            state.spec_regen_timer.increment();
+            if (player.is_wearing("Lightbearer", None)
+                && state.spec_regen_timer.counter() % 25 == 0)
+                || state.spec_regen_timer.counter() % 50 == 0
+            {
                 player.stats.spec.regen();
                 logger.log_custom(
                     fight_vars.tick_counter,
@@ -193,7 +198,7 @@ pub trait Mechanics {
                 );
             }
             if player.stats.spec.is_full() {
-                fight_vars.spec_regen_timer = None;
+                state.spec_regen_timer.reset();
             }
         }
     }
@@ -288,6 +293,11 @@ pub trait Mechanics {
         }
     }
 
+    fn increment_timers(&self, state: &mut SingleWayState) {
+        state.death_charge_cd.increment();
+        state.surge_potion_cd.increment();
+    }
+
     fn eat_food(
         &self,
         player: &mut Player,
@@ -305,6 +315,47 @@ pub trait Mechanics {
         );
         fight_vars.food_eaten += 1;
         fight_vars.eat_delay = constants::EAT_DELAY;
+    }
+
+    fn process_death_charge(
+        &self,
+        player: &mut Player,
+        spec_config: &Option<SpecConfig>,
+        state: &mut SingleWayState,
+    ) {
+        if let Some(config) = spec_config {
+            if state.death_charge_cd.is_active() {
+                let max_procs = match config.death_charge {
+                    Some(DeathCharge::Single) => 1,
+                    Some(DeathCharge::Double) => 2,
+                    None => 0,
+                };
+                if max_procs < state.death_charge_procs {
+                    player.stats.spec.death_charge();
+                    state.death_charge_procs += 1;
+                }
+            } else if config.death_charge.is_some() {
+                player.stats.spec.death_charge();
+                state.death_charge_procs += 1;
+                state.death_charge_cd.activate();
+            }
+        }
+    }
+
+    fn process_surge_potion(
+        &self,
+        player: &mut Player,
+        spec_config: &Option<SpecConfig>,
+        state: &mut SingleWayState,
+    ) {
+        if let Some(config) = spec_config
+            && config.surge_potion
+            && player.stats.spec.value() <= 75
+            && !state.surge_potion_cd.is_active()
+        {
+            player.stats.spec.surge_potion();
+            state.surge_potion_cd.activate();
+        }
     }
 }
 

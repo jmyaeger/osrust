@@ -8,8 +8,8 @@ use osrs::combat::thralls::Thrall;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
 use osrs::sims::single_way::{
-    SingleWayConfig, SingleWayFight, SpecCondition, SpecConfig, SpecRestorePolicy, SpecStrategy,
-    SpecStrategyState,
+    DeathCharge, SingleWayConfig, SingleWayFight, SpecCondition, SpecConfig, SpecRestorePolicy,
+    SpecStrategy, SpecStrategyState,
 };
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
 use osrs::types::equipment::{CombatStyle, Weapon};
@@ -120,6 +120,8 @@ fn simulate_single_way() {
     let spec_config = SpecConfig::new(
         vec![bgs_spec_strategy, vw_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
+        None,
+        false,
     );
 
     let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);

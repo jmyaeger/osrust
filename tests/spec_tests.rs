@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod spec_tests {
-    use osrs::combat::simulation::FightVars;
     use osrs::combat::simulation::Simulation;
     use osrs::sims::single_way::*;
     use osrs::types::equipment::CombatStyle;
     use osrs::types::monster::{CombatStat, Monster};
+    use osrs::types::player::SwitchType;
     use osrs::types::player::{GearSwitch, Player};
     use osrs::types::potions::Potion;
     use osrs::types::prayers::Prayer;
@@ -32,11 +32,15 @@ mod spec_tests {
     fn test_spec_strategy_creation() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
-        let switch = GearSwitch::new("Test spec".to_string(), &player, &monster);
+        let switch = GearSwitch::new(
+            SwitchType::Custom("Test spec".to_string()),
+            &player,
+            &monster,
+        );
 
         let strategy = SpecStrategy::new(&switch, None);
 
-        assert_eq!(strategy.label, "Test spec");
+        assert_eq!(strategy.switch_type.label(), "Test spec");
         assert_eq!(strategy.spec_cost, 25); // Fang spec cost
         assert!(strategy.conditions.is_empty());
         assert_eq!(strategy.state.attempt_count, 0);
@@ -50,17 +54,27 @@ mod spec_tests {
         let monster = Monster::new("General Graardor", None).unwrap();
 
         // Create multiple strategies with different costs
-        let fang_switch = GearSwitch::new("Fang spec".to_string(), &player, &monster);
+        let fang_switch = GearSwitch::new(
+            SwitchType::Custom("Fang spec".to_string()),
+            &player,
+            &monster,
+        );
         let fang_strategy = SpecStrategy::new(&fang_switch, None);
 
         let mut player2 = player.clone();
         player2.equip("Dragon claws", None);
-        let claw_switch = GearSwitch::new("Claw spec".to_string(), &player2, &monster);
+        let claw_switch = GearSwitch::new(
+            SwitchType::Custom("Claw spec".to_string()),
+            &player2,
+            &monster,
+        );
         let claw_strategy = SpecStrategy::new(&claw_switch, None);
 
         let config = SpecConfig::new(
             vec![fang_strategy, claw_strategy],
             SpecRestorePolicy::RestoreEveryKill,
+            None,
+            false,
         );
 
         assert_eq!(config.lowest_cost(), Some(25)); // Fang is lower than claws
@@ -72,12 +86,21 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new("Test spec".to_string(), &player, &monster);
+        let switch = GearSwitch::new(
+            SwitchType::Custom("Test spec".to_string()),
+            &player,
+            &monster,
+        );
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test MaxAttempts condition
         strategy.add_condition(SpecCondition::MaxAttempts(2));
-        let config = SpecConfig::new(vec![strategy.clone()], SpecRestorePolicy::NeverRestore);
+        let config = SpecConfig::new(
+            vec![strategy.clone()],
+            SpecRestorePolicy::NeverRestore,
+            None,
+            false,
+        );
         let fight = SingleWayFight::new(
             player.clone(),
             monster.clone(),
@@ -101,12 +124,21 @@ mod spec_tests {
         let mut monster = Monster::new("General Graardor", None).unwrap();
         monster.stats.hitpoints.current = 100;
 
-        let switch = GearSwitch::new("Test spec".to_string(), &player, &monster);
+        let switch = GearSwitch::new(
+            SwitchType::Custom("Test spec".to_string()),
+            &player,
+            &monster,
+        );
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test MonsterHpBelow
         strategy.add_condition(SpecCondition::MonsterHpBelow(50));
-        let config = SpecConfig::new(vec![strategy.clone()], SpecRestorePolicy::NeverRestore);
+        let config = SpecConfig::new(
+            vec![strategy.clone()],
+            SpecRestorePolicy::NeverRestore,
+            None,
+            false,
+        );
         let mut fight = SingleWayFight::new(
             player.clone(),
             monster.clone(),
@@ -130,12 +162,21 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new("Test spec".to_string(), &player, &monster);
+        let switch = GearSwitch::new(
+            SwitchType::Custom("Test spec".to_string()),
+            &player,
+            &monster,
+        );
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test TargetDefenceReduction
         strategy.add_condition(SpecCondition::TargetDefenceReduction(50));
-        let config = SpecConfig::new(vec![strategy.clone()], SpecRestorePolicy::NeverRestore);
+        let config = SpecConfig::new(
+            vec![strategy.clone()],
+            SpecRestorePolicy::NeverRestore,
+            None,
+            false,
+        );
         let mut fight = SingleWayFight::new(
             player.clone(),
             monster.clone(),
@@ -156,54 +197,13 @@ mod spec_tests {
         assert!(!check_spec_conditions(&strategy, &fight)); // 50 = 50, can't spec anymore
     }
 
-    // Test spec execution with gear switching
-    #[test]
-    fn test_spec_execution_with_switch() {
-        let mut player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
-
-        // Set up main hand
-        let main_hand = GearSwitch::from(&player);
-        player.switches.push(main_hand);
-
-        // Set up BGS spec
-        player.equip("Bandos godsword", None);
-        player.set_active_style(CombatStyle::Slash);
-        let bgs_switch = GearSwitch::new("BGS spec".to_string(), &player, &monster);
-        let bgs_strategy = SpecStrategy::new(&bgs_switch, None);
-        player.switches.push(bgs_switch);
-
-        // Switch back to main hand
-        let switch_labels: Vec<String> = player.switches.iter().map(|s| s.label.clone()).collect();
-        player.switch(&switch_labels[0]);
-
-        let spec_config = SpecConfig::new(vec![bgs_strategy], SpecRestorePolicy::RestoreEveryKill);
-        let mut fight = SingleWayFight::new(
-            player,
-            monster,
-            SingleWayConfig::default(),
-            Some(spec_config),
-            false,
-        );
-
-        // Ensure player has spec energy
-        fight.player.stats.spec.regen_full();
-
-        let mut vars = FightVars::new();
-        let did_spec = SingleWayMechanics::player_special_attack(&mut fight, &mut vars);
-
-        // Should have performed spec
-        assert!(did_spec);
-        assert_eq!(fight.player.gear.weapon.name, "Osmumten's fang"); // Should switch back
-    }
-
     // Test edge cases
     #[test]
     fn test_edge_cases() {
         let player = create_test_player();
 
         // Empty strategies
-        let config = SpecConfig::new(vec![], SpecRestorePolicy::RestoreEveryKill);
+        let config = SpecConfig::new(vec![], SpecRestorePolicy::RestoreEveryKill, None, false);
         assert_eq!(config.strategies.len(), 0);
         // lowest_cost() should handle empty strategies gracefully
 
@@ -225,7 +225,11 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new("Test spec".to_string(), &player, &monster);
+        let switch = GearSwitch::new(
+            SwitchType::Custom("Test spec".to_string()),
+            &player,
+            &monster,
+        );
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Modify state

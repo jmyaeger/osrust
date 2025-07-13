@@ -110,6 +110,10 @@ impl SpecEnergy {
         self.0 = min(self.0 + DEATH_CHARGE, FULL_SPEC);
     }
 
+    pub fn surge_potion(&mut self) {
+        self.0 = min(self.0 + SURGE_POTION, FULL_SPEC);
+    }
+
     pub fn drain(&mut self, amount: u8) {
         self.0 = max(0, self.0.saturating_sub(amount));
     }

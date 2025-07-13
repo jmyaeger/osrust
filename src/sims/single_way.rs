@@ -8,24 +8,40 @@ use crate::combat::thralls::Thrall;
 use crate::constants;
 use crate::constants::P2_WARDEN_IDS;
 use crate::types::player::SwitchType;
+use crate::types::timers::Timer;
 use crate::types::{monster::Monster, player::GearSwitch, player::Player};
 use crate::utils::logging::FightLogger;
 use rand::SeedableRng;
 use rand::rngs::SmallRng;
 
+#[derive(Debug, Clone, PartialEq, Copy)]
+pub enum DeathCharge {
+    Single,
+    Double,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct SpecConfig {
     pub strategies: Vec<SpecStrategy>,
     pub restore_policy: SpecRestorePolicy,
+    pub death_charge: Option<DeathCharge>,
+    pub surge_potion: bool,
     lowest_cost: Option<u8>,
 }
 
 impl SpecConfig {
-    pub fn new(strategies: Vec<SpecStrategy>, restore_policy: SpecRestorePolicy) -> Self {
+    pub fn new(
+        strategies: Vec<SpecStrategy>,
+        restore_policy: SpecRestorePolicy,
+        death_charge: Option<DeathCharge>,
+        surge_potion: bool,
+    ) -> Self {
         let lowest_cost = strategies.iter().map(|s| s.spec_cost).min();
         Self {
             strategies,
             restore_policy,
+            death_charge,
+            surge_potion,
             lowest_cost,
         }
     }
@@ -277,6 +293,37 @@ impl SpecStrategyState {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct SingleWayState {
+    pub kill_counter: u32,
+    pub death_charge_procs: u8,
+    pub death_charge_cd: Timer,
+    pub surge_potion_cd: Timer,
+    pub spec_regen_timer: Timer,
+}
+
+impl Default for SingleWayState {
+    fn default() -> Self {
+        Self {
+            kill_counter: 0,
+            death_charge_procs: 0,
+            death_charge_cd: Timer::new(constants::DEATH_CHARGE_CD),
+            surge_potion_cd: Timer::new(constants::SURGE_POTION_CD),
+            spec_regen_timer: Timer::new(constants::FULL_SPEC_REGEN_TIME),
+        }
+    }
+}
+
+impl SingleWayState {
+    pub fn reset(&mut self) {
+        self.kill_counter = 0;
+        self.death_charge_procs = 0;
+        self.death_charge_cd.reset();
+        self.surge_potion_cd.reset();
+        self.spec_regen_timer.reset();
+    }
+}
+
 pub struct SingleWayFight {
     pub player: Player,
     pub monster: Monster,
@@ -286,6 +333,7 @@ pub struct SingleWayFight {
     pub logger: FightLogger,
     pub config: SingleWayConfig,
     pub spec_config: Option<SpecConfig>,
+    pub state: SingleWayState,
 }
 
 impl SingleWayFight {
@@ -308,6 +356,7 @@ impl SingleWayFight {
             logger: FightLogger::new(use_logger, monster_name.as_str()),
             config,
             spec_config,
+            state: SingleWayState::default(),
         }
     }
 }
@@ -341,12 +390,16 @@ impl Simulation for SingleWayFight {
     }
 
     fn reset(&mut self) {
-        if let Some(spec_config) = &self.spec_config
-            && spec_config.restore_policy != SpecRestorePolicy::NeverRestore
-        {
-            self.player.reset_current_stats(true);
-        } else {
-            self.player.reset_current_stats(false);
+        if let Some(spec_config) = &self.spec_config {
+            let restore_spec = match spec_config.restore_policy {
+                SpecRestorePolicy::NeverRestore => false,
+                SpecRestorePolicy::RestoreAfter(kills) => self.state.kill_counter >= kills,
+                SpecRestorePolicy::RestoreEveryKill => true,
+            };
+            self.player.reset_current_stats(restore_spec);
+            if restore_spec {
+                self.state.reset();
+            }
         }
 
         if let Some(ref mut spec_config) = self.spec_config {
@@ -435,8 +488,8 @@ impl SingleWayMechanics {
                 fight_vars.attack_tick += fight.player.gear.weapon.speed;
 
                 fight.player.stats.spec.drain(strategy.spec_cost);
-                if fight_vars.spec_regen_timer.is_none() {
-                    fight_vars.spec_regen_timer = Some(0);
+                if !fight.state.spec_regen_timer.is_active() {
+                    fight.state.spec_regen_timer.activate();
                 }
 
                 // Switch back to the previous set of gear
@@ -517,12 +570,25 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         fight
             .mechanics
             .increment_tick(&mut fight.monster, &mut vars);
-        fight
-            .mechanics
-            .increment_spec_timer(&mut fight.player, &mut vars, &mut fight.logger);
+        fight.mechanics.increment_spec(
+            &mut fight.player,
+            &mut vars,
+            &mut fight.state,
+            &mut fight.logger,
+        );
+        fight.mechanics.increment_timers(&mut fight.state);
+        fight.mechanics.process_surge_potion(
+            &mut fight.player,
+            &fight.spec_config,
+            &mut fight.state,
+        );
     }
 
     let remove_final_attack_delay = false;
+    fight.state.kill_counter += 1;
+    fight
+        .mechanics
+        .process_death_charge(&mut fight.player, &fight.spec_config, &mut fight.state);
     fight.mechanics.get_fight_result(
         &fight.player,
         &fight.monster,

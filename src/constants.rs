@@ -544,6 +544,10 @@ pub const MIN_HITPOINTS: u32 = 10;
 pub const FULL_SPEC: u8 = 100;
 pub const SPEC_REGEN: u8 = 10;
 pub const DEATH_CHARGE: u8 = 15;
+pub const SURGE_POTION: u8 = 25;
+pub const DEATH_CHARGE_CD: u32 = 100;
+pub const SURGE_POTION_CD: u32 = 500;
+pub const FULL_SPEC_REGEN_TIME: u32 = 500;
 
 pub const STAT_NAMES: [&str; 9] = [
     "hitpoints",
