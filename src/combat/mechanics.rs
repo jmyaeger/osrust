@@ -296,6 +296,10 @@ pub trait Mechanics {
     fn increment_timers(&self, state: &mut SingleWayState) {
         state.death_charge_cd.increment();
         state.surge_potion_cd.increment();
+
+        if state.death_charge_cd.counter() == 0 && !state.death_charge_cd.is_active() {
+            state.death_charge_procs = 0;
+        }
     }
 
     fn eat_food(
@@ -330,7 +334,7 @@ pub trait Mechanics {
                     Some(DeathCharge::Double) => 2,
                     None => 0,
                 };
-                if max_procs < state.death_charge_procs {
+                if state.death_charge_procs < max_procs {
                     player.stats.spec.death_charge();
                     state.death_charge_procs += 1;
                 }
