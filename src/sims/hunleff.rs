@@ -593,13 +593,22 @@ fn armor_tier(player: &Player) -> u32 {
     let body = &player.gear.body.as_ref().unwrap().name;
     let legs = &player.gear.legs.as_ref().unwrap().name;
     let all_armour: [&String; 3] = [head, body, legs];
-    if all_armour.iter().any(|s| s.contains("basic")) {
-        1
-    } else if all_armour.iter().any(|s| s.contains("attuned")) {
-        2
-    } else {
-        3
-    }
+    let total_tier = all_armour
+        .iter()
+        .map(|s| {
+            if s.contains("basic") {
+                1
+            } else if s.contains("attuned") {
+                2
+            } else if s.contains("perfected") {
+                3
+            } else {
+                0
+            }
+        })
+        .sum::<u32>();
+
+    total_tier / 3
 }
 
 fn has_valid_gear(player: &Player) -> bool {
@@ -745,5 +754,38 @@ mod tests {
             "Expected hit: {}",
             hits.iter().sum::<i32>() as f64 / hits.len() as f64
         )
+    }
+
+    #[test]
+    fn test_armor_tier() {
+        let mut player = Player::new();
+        assert_eq!(armor_tier(&player), 0);
+
+        player.equip("Crystal helm (basic)", None);
+        player.equip("Crystal body (basic)", None);
+        player.equip("Crystal legs (basic)", None);
+        assert_eq!(armor_tier(&player), 1);
+
+        player.equip("Crystal helm (attuned)", None);
+        assert_eq!(armor_tier(&player), 1);
+
+        player.equip("Crystal body (attuned)", None);
+        assert_eq!(armor_tier(&player), 1);
+
+        player.equip("Crystal legs (attuned)", None);
+        assert_eq!(armor_tier(&player), 2);
+
+        player.equip("Crystal helm (perfected)", None);
+        assert_eq!(armor_tier(&player), 2);
+
+        player.equip("Crystal body (perfected)", None);
+        assert_eq!(armor_tier(&player), 2);
+
+        player.equip("Crystal legs (perfected)", None);
+        assert_eq!(armor_tier(&player), 3);
+
+        player.equip("Crystal body (attuned)", None);
+        player.equip("Crystal legs (basic)", None);
+        assert_eq!(armor_tier(&player), 2);
     }
 }
