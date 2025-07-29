@@ -1,6 +1,8 @@
 use crate::calc::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
 use crate::combat::attacks::effects::CombatEffect;
-use crate::combat::attacks::standard::{AttackFn, AttackInfo, Hit, base_attack, damage_roll};
+use crate::combat::attacks::standard::{
+    AttackFn, AttackInfo, Hit, accuracy_roll, base_attack, damage_roll, defence_roll,
+};
 use crate::combat::limiters::Limiter;
 use crate::constants::{IMMUNE_TO_MAGIC_MONSTERS, IMMUNE_TO_STAT_DRAIN, VERZIK_IDS};
 use crate::types::equipment::CombatType;
@@ -27,17 +29,39 @@ pub fn fang_spec(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut info = AttackInfo::new(player, monster);
-
     // Boost accuracy by 50%
-    info.max_att_roll = info.max_att_roll * 3 / 2;
+    let combat_type = player.combat_type();
+    let max_att_roll = player.att_rolls.get(combat_type) * 3 / 2;
+    let max_def_roll = monster.def_rolls.get(combat_type);
+    let max_hit = player.max_hits.get(combat_type);
+    let min_hit = max_hit * 15 / 100;
 
-    // Spec still has a min hit, as far as I know
-    info.min_hit = info.max_hit * 15 / 100;
+    let att_roll1 = accuracy_roll(max_att_roll, rng);
+    let def_roll1 = defence_roll(max_def_roll, rng);
 
-    let mut hit = base_attack(&info, rng);
+    let (damage, success) = if att_roll1 > def_roll1 {
+        // Skip second roll if first roll was successful
+        (damage_roll(min_hit, max_hit, rng), true)
+    } else {
+        let att_roll2 = accuracy_roll(max_att_roll, rng);
+
+        // Only re-roll defense if in ToA
+        let def_roll2 = if monster.is_toa_monster() {
+            defence_roll(max_def_roll, rng)
+        } else {
+            def_roll1
+        };
+        if att_roll2 > def_roll2 {
+            (damage_roll(min_hit, max_hit, rng), true)
+        } else {
+            (0, false)
+        }
+    };
+
+    let mut hit = Hit::new(damage, success);
 
     if hit.success {
+        // No accurate zeros, so no need to do anything before applying post-roll transforms
         hit.apply_transforms(player, monster, rng, limiter);
     }
 
@@ -94,7 +118,7 @@ fn demonbane_melee_spec(
     // Spec always rolls against stab
     info.max_def_roll = monster.def_rolls.get(CombatType::Stab);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.damage = max(1, hit.damage);
@@ -146,7 +170,7 @@ pub fn ancient_gs_spec(
     // Spec always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         // Add delayed attack and heal if the hit is successful
@@ -211,7 +235,7 @@ pub fn blowpipe_spec(
     info.max_att_roll *= 2;
     info.max_hit = info.max_hit * 3 / 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -238,7 +262,7 @@ pub fn sgs_spec(
     // Spec always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -267,7 +291,7 @@ pub fn bgs_spec(
     // Spec always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     // 0 -> 1 transform happens before drains
     if hit.success {
@@ -312,7 +336,7 @@ pub fn bulwark_spec(
     // Spec always rolls against crush
     info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -320,7 +344,7 @@ pub fn bulwark_spec(
 
     // Second hit and stat drains only occur in multi
     if player.boosts.in_multi {
-        let mut hit2 = base_attack(&info, rng);
+        let mut hit2 = base_attack(&info, rng, false);
         if hit2.success {
             hit2.apply_transforms(player, monster, rng, limiter);
         }
@@ -389,7 +413,7 @@ pub fn crystal_halberd_spec(
     // Spec always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -400,7 +424,7 @@ pub fn crystal_halberd_spec(
         // Second hit is 25% less accurate
         info.max_att_roll = info.max_att_roll * 3 / 4;
 
-        let mut hit2 = base_attack(&info, rng);
+        let mut hit2 = base_attack(&info, rng, false);
         if hit2.success {
             hit2.apply_transforms(player, monster, rng, limiter);
         }
@@ -421,7 +445,7 @@ pub fn abyssal_whip_spec(
     // Boost accuracy by 25%
     info.max_att_roll = info.max_att_roll * 5 / 4;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -440,7 +464,7 @@ pub fn accursed_sceptre_spec(
     info.max_hit = info.max_hit * 3 / 2;
     info.max_att_roll = info.max_att_roll * 3 / 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
 
@@ -480,7 +504,7 @@ pub fn webweaver_bow_spec(
 
     // Hits 4 times, independently rolled
     for _ in 0..4 {
-        let mut hit = base_attack(&info, rng);
+        let mut hit = base_attack(&info, rng, false);
         if hit.success {
             hit.apply_transforms(player, monster, rng, limiter);
         }
@@ -501,7 +525,7 @@ pub fn ancient_mace_spec(
     // Always rolls against crush
     info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
         player.restore_prayer(hit.damage, None);
@@ -520,7 +544,7 @@ pub fn barrelchest_anchor_spec(
     info.max_att_roll *= 2;
     info.max_hit = info.max_hit * 11 / 10;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.damage = max(1, hit.damage);
@@ -553,7 +577,7 @@ pub fn dorgeshuun_weapon_spec(
     let mut hit = if player.state.first_attack {
         Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng))
     } else {
-        base_attack(&info, rng)
+        base_attack(&info, rng, false)
     };
 
     if hit.success {
@@ -588,7 +612,7 @@ pub fn dragon_scimitar_spec(
     // Always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -619,7 +643,7 @@ pub fn dragon_warhammer_spec(
 
             hit
         } else {
-            let mut hit = base_attack(&info, rng);
+            let mut hit = base_attack(&info, rng, false);
             if hit.success {
                 hit.apply_transforms(player, monster, rng, limiter);
                 monster.drain_stat(CombatStat::Defence, def_drain, None);
@@ -635,7 +659,7 @@ pub fn dragon_warhammer_spec(
             hit
         }
     } else {
-        let mut hit = base_attack(&info, rng);
+        let mut hit = base_attack(&info, rng, false);
         if hit.success {
             hit.apply_transforms(player, monster, rng, limiter);
 
@@ -686,7 +710,7 @@ pub fn abyssal_bludgeon_spec(
     let damage_mod = 1000 + 5 * max(0, player.stats.prayer.base - player.stats.prayer.current);
     info.max_hit = info.max_hit * damage_mod / 1000;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -757,7 +781,7 @@ pub fn ags_spec(
     // Always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -793,7 +817,7 @@ pub fn dragon_longsword_spec(
     // Always rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -816,7 +840,7 @@ pub fn dragon_mace_spec(
     // Always rolls against crush
     info.max_def_roll = monster.def_rolls.get(CombatType::Crush);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -839,7 +863,7 @@ pub fn dragon_sword_spec(
     // Always rolls against stab
     info.max_def_roll = monster.def_rolls.get(CombatType::Stab);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -858,7 +882,7 @@ pub fn granite_hammer_spec(
     // Boost accuracy by 50%
     info.max_att_roll = info.max_att_roll * 3 / 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     // Add 5 damage in all cases, even if not originally successful
     hit.damage += 5;
@@ -881,7 +905,7 @@ pub fn ballista_spec(
     info.max_att_roll = info.max_att_roll * 5 / 4;
     info.max_hit = info.max_hit * 5 / 4;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -920,7 +944,8 @@ pub fn sara_blessed_sword_spec(
     // Rolls against magic
     info.max_def_roll = monster.def_rolls.get(CombatType::Magic);
 
-    let mut hit = base_attack(&info, rng);
+    // TODO: find out if this gets the confliction gauntlet passive
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -962,7 +987,7 @@ pub fn volatile_staff_spec(
     // Boost accuracy by 50%
     info.max_att_roll = info.max_att_roll * 3 / 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -995,7 +1020,7 @@ pub fn abyssal_dagger_spec(
     // Rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
 
@@ -1035,12 +1060,12 @@ pub fn dark_bow_spec(
     // Clamp max hit to 48
     let clamp_max = 48;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.damage = clamp(hit.damage, clamp_min, clamp_max);
         hit.apply_transforms(player, monster, rng, limiter);
     }
-    let mut hit2 = base_attack(&info, rng);
+    let mut hit2 = base_attack(&info, rng, false);
     if hit2.success {
         hit2.damage = clamp(hit2.damage, clamp_min, clamp_max);
         hit2.apply_transforms(player, monster, rng, limiter);
@@ -1064,7 +1089,7 @@ pub fn dragon_claw_spec(
     let modified_max_hit = info.max_hit - 1;
 
     // First accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 1: Deal between max hit and max hit * 2 - 1 (100 to ~200% damage) split over 4 hits
         let total_damage = damage_roll(info.max_hit, info.max_hit + modified_max_hit, rng);
         let mut hit1 = Hit::accurate(total_damage / 2);
@@ -1082,7 +1107,7 @@ pub fn dragon_claw_spec(
     }
 
     // Second accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 2: Deal between 75-175% damage split over 3 hits
         let min_hit = info.max_hit * 3 / 4;
         let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
@@ -1098,7 +1123,7 @@ pub fn dragon_claw_spec(
     }
 
     // Third accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 3: Deal between 50-150% damage split over 2 hits
         let min_hit = info.max_hit / 2;
         let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
@@ -1112,7 +1137,7 @@ pub fn dragon_claw_spec(
     }
 
     // Fourth accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // 0-0-0-5: First three hits miss, fourth rolls between 25-125% of max hit
         let min_hit = info.max_hit / 4;
         let total_damage = damage_roll(min_hit, min_hit + modified_max_hit, rng);
@@ -1148,7 +1173,7 @@ pub fn burning_claw_spec(
     info.min_hit = original_min_hit;
 
     // First accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 1: Deal between 75-175% of max hit split over 3 hits (2:1:1 ratio)
         let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
         let mut hit1 = Hit::accurate(total_damage / 2);
@@ -1170,7 +1195,7 @@ pub fn burning_claw_spec(
     }
 
     // Second accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 2: Deal between 50-150% damage split over 3 hits
         info.min_hit = original_min_hit * 2 / 3;
         let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
@@ -1195,7 +1220,7 @@ pub fn burning_claw_spec(
     }
 
     // Third accuracy roll
-    if base_attack(&info, rng).success {
+    if base_attack(&info, rng, false).success {
         // Case 3: Deal between 25-125% damage split over 3 hits
         info.min_hit = original_min_hit / 3;
         let total_damage = damage_roll(info.min_hit, info.max_hit + info.min_hit, rng);
@@ -1256,8 +1281,8 @@ pub fn dragon_dagger_spec(
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
     // Rolls two independent hits
-    let mut hit1 = base_attack(&info, rng);
-    let mut hit2 = base_attack(&info, rng);
+    let mut hit1 = base_attack(&info, rng, false);
+    let mut hit2 = base_attack(&info, rng, false);
 
     if hit1.success {
         hit1.apply_transforms(player, monster, rng, limiter);
@@ -1278,8 +1303,8 @@ pub fn dragon_knife_spec(
     let info = AttackInfo::new(player, monster);
 
     // Rolls two independent hits with no boosts
-    let mut hit1 = base_attack(&info, rng);
-    let mut hit2 = base_attack(&info, rng);
+    let mut hit1 = base_attack(&info, rng, false);
+    let mut hit2 = base_attack(&info, rng, false);
 
     hit1.apply_transforms(player, monster, rng, limiter);
     hit2.apply_transforms(player, monster, rng, limiter);
@@ -1302,8 +1327,8 @@ pub fn magic_shortbow_spec(
     info.max_hit = max_hit;
 
     // Rolls two independent hits
-    let mut hit1 = base_attack(&info, rng);
-    let mut hit2 = base_attack(&info, rng);
+    let mut hit1 = base_attack(&info, rng, false);
+    let mut hit2 = base_attack(&info, rng, false);
 
     hit1.apply_transforms(player, monster, rng, limiter);
     hit2.apply_transforms(player, monster, rng, limiter);
@@ -1325,7 +1350,7 @@ pub fn sara_sword_spec(
     // Rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success && !IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or_default()) {
         // Add a random amount between 1 and 16 to damage
@@ -1351,7 +1376,7 @@ pub fn zgs_spec(
     // Rolls against slash
     info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -1376,7 +1401,7 @@ pub fn ursine_chainmace_spec(
     // Double accuracy
     info.max_att_roll *= 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -1413,7 +1438,7 @@ pub fn soulreaper_axe_spec(
     info.max_hit = info.max_hit * (100 + 6 * current_stacks) / 100;
     info.max_att_roll = info.max_att_roll * (100 + 6 * current_stacks as i32) / 100;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
@@ -1439,7 +1464,7 @@ pub fn tonalztics_of_ralos_spec(
     let drain_cap = Some(monster.stats.defence.base / 2);
     let drain_amount = monster.stats.magic.base / 10;
 
-    let mut hit1 = base_attack(&info, rng);
+    let mut hit1 = base_attack(&info, rng, false);
     if hit1.success {
         hit1.damage = max(1, hit1.damage);
         monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
@@ -1447,7 +1472,7 @@ pub fn tonalztics_of_ralos_spec(
     }
     if player.gear.weapon.matches_version("Charged") {
         // Only the charged version does a second attack
-        let mut hit2 = base_attack(&info, rng);
+        let mut hit2 = base_attack(&info, rng, false);
         if hit2.success {
             hit2.damage = max(1, hit2.damage);
             monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
@@ -1486,13 +1511,13 @@ pub fn dual_macuahuitl_spec(
     player.take_damage(damage);
 
     // Roll two separate hits
-    let mut hit1 = base_attack(&info1, rng);
+    let mut hit1 = base_attack(&info1, rng, false);
     if hit1.success {
         hit1.apply_transforms(player, monster, rng, limiter);
     }
     let mut hit2 = if hit1.success {
         // Only roll the second hit if the first hit was accurate
-        base_attack(&info2, rng)
+        base_attack(&info2, rng, false)
     } else {
         Hit::inaccurate()
     };
@@ -1540,7 +1565,7 @@ pub fn atlatl_spec(
     info.min_hit = stack_damage / 2;
     info.max_att_roll = info.max_att_roll * 3 / 2;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
     }
@@ -1559,7 +1584,7 @@ pub fn scorching_bow_spec(
     // Boost accuracy by 30%
     info.max_att_roll = info.max_att_roll * 13 / 10;
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
     if hit.success {
         hit.apply_transforms(player, monster, rng, limiter);
 
@@ -1596,7 +1621,7 @@ pub fn elder_maul_spec(
 
             hit
         } else {
-            let mut hit = base_attack(&info, rng);
+            let mut hit = base_attack(&info, rng, false);
             if hit.success {
                 hit.apply_transforms(player, monster, rng, limiter);
                 monster.drain_stat(CombatStat::Defence, def_drain, None);
@@ -1612,7 +1637,7 @@ pub fn elder_maul_spec(
             hit
         }
     } else {
-        let mut hit = base_attack(&info, rng);
+        let mut hit = base_attack(&info, rng, false);
         if hit.success {
             hit.apply_transforms(player, monster, rng, limiter);
 

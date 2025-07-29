@@ -128,7 +128,7 @@ pub fn standard_attack(
     // Roll for brimstone ring effect if applicable
     info.apply_brimstone_ring(player, rng);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
 
     if hit.success {
         // Transform any accurate zeros into 1s, then apply post-roll transforms
@@ -138,12 +138,17 @@ pub fn standard_attack(
     hit
 }
 
-pub fn base_attack(att_info: &AttackInfo, rng: &mut SmallRng) -> Hit {
+pub fn base_attack(att_info: &AttackInfo, rng: &mut SmallRng, roll_att_twice: bool) -> Hit {
     let att_roll = accuracy_roll(att_info.max_att_roll, rng);
     let def_roll = defence_roll(att_info.max_def_roll, rng);
 
     // Roll for accuracy
-    let success = att_roll > def_roll;
+    let mut success = att_roll > def_roll;
+
+    if !success && roll_att_twice {
+        let att_roll2 = accuracy_roll(att_info.max_att_roll, rng);
+        success = att_roll2 > def_roll;
+    }
 
     // Roll for damage if successful
     let mut damage = 0;
@@ -154,11 +159,11 @@ pub fn base_attack(att_info: &AttackInfo, rng: &mut SmallRng) -> Hit {
     Hit::new(damage, success)
 }
 
-fn accuracy_roll(max_att_roll: i32, rng: &mut SmallRng) -> i32 {
+pub fn accuracy_roll(max_att_roll: i32, rng: &mut SmallRng) -> i32 {
     rng.random_range(0..=max_att_roll)
 }
 
-fn defence_roll(max_def_roll: i32, rng: &mut SmallRng) -> i32 {
+pub fn defence_roll(max_def_roll: i32, rng: &mut SmallRng) -> i32 {
     rng.random_range(0..=max_def_roll)
 }
 
@@ -229,7 +234,7 @@ pub fn ahrims_staff_attack(
 
     info.apply_brimstone_ring(player, rng);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
 
     if hit.success && rng.random_range(0..4) == 0 {
         // Base set effect rolls a 25% chance to reduce strength by 5
@@ -256,7 +261,7 @@ pub fn dharoks_axe_attack(
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success && player.set_effects.full_dharoks {
         // Set effect damage increase is applied post-roll
@@ -342,8 +347,8 @@ pub fn torags_hammers_attack(
     info2.max_hit = max_hit - max_hit / 2;
 
     // Hammers attack with two independently rolled hits (tested in-game)
-    let mut hit1 = base_attack(&info1, rng);
-    let mut hit2 = base_attack(&info2, rng);
+    let mut hit1 = base_attack(&info1, rng, false);
+    let mut hit2 = base_attack(&info2, rng, false);
 
     // Not implementing the normal set effect because it only applies in PvP
     // Amulet of the damned effect gets implemented in roll calcs
@@ -418,7 +423,7 @@ pub fn yellow_keris_attack(
         info.max_att_roll = info.max_att_roll * 5 / 4;
     }
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if monster.stats.hitpoints.current.saturating_sub(hit.damage) == 0 && monster.is_toa_monster() {
         // Killing a ToA monster heals the player by 12 and costs 5 prayer points
@@ -451,7 +456,7 @@ pub fn opal_bolt_attack(
     if rng.random::<f64>() <= proc_chance {
         // Bolt effect adds on flat damage based on visible ranged level
         let att_info = AttackInfo::new(player, monster);
-        let mut hit = base_attack(&att_info, rng);
+        let mut hit = base_attack(&att_info, rng, false);
         hit.damage += extra_damage;
         hit.apply_transforms(player, monster, rng, limiter);
         hit
@@ -479,7 +484,7 @@ pub fn pearl_bolt_attack(
     // Same implementation as opal bolts (accurate hit on procs, flat damage added)
     if rng.random::<f64>() <= proc_chance {
         let att_info = AttackInfo::new(player, monster);
-        let mut hit = base_attack(&att_info, rng);
+        let mut hit = base_attack(&att_info, rng, false);
         hit.damage += extra_damage;
         hit.apply_transforms(player, monster, rng, limiter);
         hit
@@ -615,7 +620,7 @@ pub fn dragonstone_bolt_attack(
 
     let info = AttackInfo::new(player, monster);
 
-    let mut hit = base_attack(&info, rng);
+    let mut hit = base_attack(&info, rng, false);
 
     if hit.success {
         // Only dragons that are also "fiery" are immune
@@ -773,7 +778,7 @@ pub fn ice_spell_attack(
             info.max_att_roll = info.max_att_roll * 11 / 10;
         }
 
-        let mut hit = base_attack(&info, rng);
+        let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
 
         if hit.success {
             monster.info.freeze_duration =
@@ -810,7 +815,7 @@ pub fn scythe_attack(
 
     let mut info2 = AttackInfo::new(player, monster);
     info2.max_hit /= 2;
-    let mut hit2 = base_attack(&info2, rng);
+    let mut hit2 = base_attack(&info2, rng, false);
     if hit2.success {
         hit2.apply_transforms(player, monster, rng, limiter);
     }
@@ -820,7 +825,7 @@ pub fn scythe_attack(
 
     let mut info3 = AttackInfo::new(player, monster);
     info3.max_hit /= 4;
-    let mut hit3 = base_attack(&info3, rng);
+    let mut hit3 = base_attack(&info3, rng, false);
     if hit3.success {
         hit3.apply_transforms(player, monster, rng, limiter);
     }
@@ -878,13 +883,13 @@ pub fn tonalztics_of_ralos_attack(
     // Rolls up to 3/4 of the "true" max hit for each hit
     info.max_hit = info.max_hit * 3 / 4;
 
-    let mut hit1 = base_attack(&info, rng);
+    let mut hit1 = base_attack(&info, rng, false);
     if hit1.success {
         hit1.apply_transforms(player, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
         // Only the charged version does a second attack
-        let mut hit2 = base_attack(&info, rng);
+        let mut hit2 = base_attack(&info, rng, false);
         if hit2.success {
             hit2.apply_transforms(player, monster, rng, limiter);
         }
@@ -910,13 +915,13 @@ pub fn dual_macuahuitl_attack(
     player.gear.weapon.speed = 4;
 
     // Roll two separate hits
-    let mut hit1 = base_attack(&info1, rng);
+    let mut hit1 = base_attack(&info1, rng, false);
     if hit1.success {
         hit1.apply_transforms(player, monster, rng, limiter);
     }
     let mut hit2 = if hit1.success {
         // Only roll the second hit if the first hit was accurate
-        base_attack(&info2, rng)
+        base_attack(&info2, rng, false)
     } else {
         Hit::inaccurate()
     };
