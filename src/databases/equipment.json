@@ -11352,6 +11352,39 @@
     "attack_range": null
   },
   {
+    "name": "Antler guard",
+    "id": 31081,
+    "version": null,
+    "slot": "shield",
+    "image": "Antler guard.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 15,
+        "slash": 15,
+        "crush": 15,
+        "magic": 9,
+        "ranged": 9
+      },
+      "defence": {
+        "stab": -25,
+        "slash": -25,
+        "crush": -25,
+        "magic": -25,
+        "ranged": -25
+      },
+      "strength": {
+        "melee": 5,
+        "ranged": 2,
+        "magic": 0.0
+      },
+      "prayer": 4
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Apprentice wand",
     "id": 6910,
     "version": null,
@@ -12208,6 +12241,39 @@
     },
     "is_two_handed": null,
     "attack_range": null
+  },
+  {
+    "name": "Arkan blade",
+    "id": 30955,
+    "version": null,
+    "slot": "weapon",
+    "image": "Arkan blade.png",
+    "speed": 4,
+    "category": "Slash Sword",
+    "bonuses": {
+      "attack": {
+        "stab": 55,
+        "slash": 70,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 64,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 1
+    },
+    "is_two_handed": false,
+    "attack_range": 0
   },
   {
     "name": "Armadyl bracers",
@@ -13424,6 +13490,270 @@
         "melee": 8,
         "ranged": 0,
         "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads",
+    "id": 31088,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 4,
+        "ranged": 2,
+        "magic": 1.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (et)",
+    "id": 31093,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (et).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 4,
+        "ranged": 2,
+        "magic": 2.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (max)",
+    "id": 31097,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (max).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 6,
+        "ranged": 3,
+        "magic": 2.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (pe)",
+    "id": 31092,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (pe).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 4,
+        "ranged": 3,
+        "magic": 1.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (pe)(et)",
+    "id": 31096,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (pe)(et).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 4,
+        "ranged": 3,
+        "magic": 2.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (pr)",
+    "id": 31091,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (pr).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 6,
+        "ranged": 2,
+        "magic": 1.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (pr)(et)",
+    "id": 31095,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (pr)(et).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 6,
+        "ranged": 2,
+        "magic": 2.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Avernic treads (pr)(pe)",
+    "id": 31094,
+    "version": null,
+    "slot": "feet",
+    "image": "Avernic treads (pr)(pe).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 11,
+        "ranged": 15
+      },
+      "defence": {
+        "stab": 21,
+        "slash": 25,
+        "crush": 25,
+        "magic": 10,
+        "ranged": 10
+      },
+      "strength": {
+        "melee": 6,
+        "ranged": 3,
+        "magic": 1.0
       },
       "prayer": 0
     },
@@ -36234,6 +36564,39 @@
     "attack_range": 5
   },
   {
+    "name": "Confliction gauntlets",
+    "id": 31106,
+    "version": null,
+    "slot": "hands",
+    "image": "Confliction gauntlets.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 20,
+        "ranged": -4
+      },
+      "defence": {
+        "stab": 15,
+        "slash": 18,
+        "crush": 7,
+        "magic": 5,
+        "ranged": 5
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 7.0
+      },
+      "prayer": 2
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Construct. cape",
     "id": 9790,
     "version": "Trimmed",
@@ -52239,6 +52602,39 @@
     "attack_range": null
   },
   {
+    "name": "Earthbound tecpatl",
+    "id": 30957,
+    "version": null,
+    "slot": "weapon",
+    "image": "Earthbound tecpatl.png",
+    "speed": 4,
+    "category": "Stab Sword",
+    "bonuses": {
+      "attack": {
+        "stab": 72,
+        "slash": 11,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 64,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 2
+    },
+    "is_two_handed": true,
+    "attack_range": 0
+  },
+  {
     "name": "Easter basket",
     "id": 4565,
     "version": null,
@@ -52702,7 +53098,7 @@
   },
   {
     "name": "Echo venator bow",
-    "id": 30434,
+    "id": 30436,
     "version": "Uncharged",
     "slot": "weapon",
     "image": "Echo venator bow (uncharged).png",
@@ -55869,6 +56265,72 @@
     "attack_range": null
   },
   {
+    "name": "Eye of ayak",
+    "id": 31115,
+    "version": "Charged",
+    "slot": "weapon",
+    "image": "Eye of ayak.png",
+    "speed": 3,
+    "category": "Powered Staff",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 30,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 1,
+        "slash": 5,
+        "crush": 5,
+        "magic": 10,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 2
+    },
+    "is_two_handed": false,
+    "attack_range": 6
+  },
+  {
+    "name": "Eye of ayak",
+    "id": 31113,
+    "version": "Uncharged",
+    "slot": "weapon",
+    "image": "Eye of ayak (uncharged).png",
+    "speed": 3,
+    "category": "Powered Staff",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 30,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 1,
+        "slash": 5,
+        "crush": 5,
+        "magic": 10,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 2
+    },
+    "is_two_handed": false,
+    "attack_range": 6
+  },
+  {
     "name": "Facemask",
     "id": 4164,
     "version": null,
@@ -57788,6 +58250,39 @@
     "version": null,
     "slot": "head",
     "image": "Fletching hood.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Fletching knife",
+    "id": 31043,
+    "version": null,
+    "slot": "shield",
+    "image": "Fletching knife.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -66185,7 +66680,7 @@
         "slash": 2,
         "crush": 2,
         "magic": -2,
-        "ranged": 8
+        "ranged": 12
       },
       "strength": {
         "melee": 0,
@@ -66218,7 +66713,7 @@
         "slash": 4,
         "crush": 4,
         "magic": -4,
-        "ranged": 16
+        "ranged": 24
       },
       "strength": {
         "melee": 0,
@@ -66251,7 +66746,7 @@
         "slash": 4,
         "crush": 4,
         "magic": -4,
-        "ranged": 16
+        "ranged": 24
       },
       "strength": {
         "melee": 0,
@@ -66284,7 +66779,7 @@
         "slash": 4,
         "crush": 4,
         "magic": -4,
-        "ranged": 16
+        "ranged": 24
       },
       "strength": {
         "melee": 0,
@@ -67589,6 +68084,237 @@
     "version": null,
     "slot": "head",
     "image": "Green tricorn hat.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31034,
+    "version": "Default",
+    "slot": "head",
+    "image": "Greenman mask.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31042,
+    "version": "Magic",
+    "slot": "head",
+    "image": "Greenman mask (magic).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31040,
+    "version": "Maple",
+    "slot": "head",
+    "image": "Greenman mask (maple).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31037,
+    "version": null,
+    "slot": "head",
+    "image": "Greenman mask (normal).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31038,
+    "version": "Oak",
+    "slot": "head",
+    "image": "Greenman mask (oak).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31039,
+    "version": "Willow",
+    "slot": "head",
+    "image": "Greenman mask (willow).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Greenman mask",
+    "id": 31041,
+    "version": "Yew",
+    "slot": "head",
+    "image": "Greenman mask (yew).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -72367,6 +73093,39 @@
     },
     "is_two_handed": null,
     "attack_range": null
+  },
+  {
+    "name": "Humphrey Dumphrey",
+    "id": 30970,
+    "version": null,
+    "slot": "weapon",
+    "image": "Egg (Humphrey Dumphrey).png",
+    "speed": 4,
+    "category": "blunt",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 1
   },
   {
     "name": "Hunter cape",
@@ -79000,6 +79759,72 @@
     },
     "is_two_handed": false,
     "attack_range": 1
+  },
+  {
+    "name": "Keris partisan of amascut",
+    "id": 30891,
+    "version": null,
+    "slot": "weapon",
+    "image": "Keris partisan of amascut.png",
+    "speed": 4,
+    "category": "Partisan",
+    "bonuses": {
+      "attack": {
+        "stab": 108,
+        "slash": -2,
+        "crush": 57,
+        "magic": 2,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 67,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 3
+    },
+    "is_two_handed": false,
+    "attack_range": null
+  },
+  {
+    "name": "Keris partisan of amascut",
+    "id": 30891,
+    "version": null,
+    "slot": "weapon",
+    "image": "Keris partisan of amascut.png",
+    "speed": 4,
+    "category": "Partisan",
+    "bonuses": {
+      "attack": {
+        "stab": 58,
+        "slash": -2,
+        "crush": 57,
+        "magic": 2,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 45,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 3
+    },
+    "is_two_handed": false,
+    "attack_range": null
   },
   {
     "name": "Keris partisan of breaching",
@@ -92763,6 +93588,39 @@
     "attack_range": null
   },
   {
+    "name": "Orange (hat)",
+    "id": 31117,
+    "version": null,
+    "slot": "head",
+    "image": "Orange (hat).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Orange boater",
     "id": 7321,
     "version": null,
@@ -93996,14 +94854,14 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 0,
+        "magic": 2,
         "ranged": 0
       },
       "defence": {
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 3,
+        "magic": 0,
         "ranged": 0
       },
       "strength": {
@@ -94011,7 +94869,7 @@
         "ranged": 0,
         "magic": 0.0
       },
-      "prayer": 2
+      "prayer": 0
     },
     "is_two_handed": null,
     "attack_range": null
@@ -95813,6 +96671,39 @@
         "crush": 0,
         "magic": 0,
         "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Potato sack",
+    "id": 30947,
+    "version": null,
+    "slot": "head",
+    "image": "Potato sack.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": -1,
+        "slash": -1,
+        "crush": -1,
+        "magic": -1,
+        "ranged": -1
       },
       "defence": {
         "stab": 0,
@@ -102562,6 +103453,39 @@
     },
     "is_two_handed": null,
     "attack_range": null
+  },
+  {
+    "name": "Redwood hiking staff",
+    "id": 31049,
+    "version": null,
+    "slot": "weapon",
+    "image": "Redwood hiking staff.png",
+    "speed": 5,
+    "category": "Blunt",
+    "bonuses": {
+      "attack": {
+        "stab": -4,
+        "slash": -4,
+        "crush": 10,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 0
   },
   {
     "name": "Redwood shield",
@@ -125169,6 +126093,39 @@
     "attack_range": null
   },
   {
+    "name": "Steel ring",
+    "id": 30895,
+    "version": null,
+    "slot": "ring",
+    "image": "Steel ring.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 24,
+        "slash": 24,
+        "crush": 24,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Steel scimitar",
     "id": 1325,
     "version": null,
@@ -129390,7 +130347,7 @@
       "prayer": 2
     },
     "is_two_handed": false,
-    "attack_range": 5
+    "attack_range": 6
   },
   {
     "name": "Tonalztics of ralos",
@@ -129423,7 +130380,7 @@
       "prayer": 2
     },
     "is_two_handed": false,
-    "attack_range": 5
+    "attack_range": 6
   },
   {
     "name": "Top hat",
@@ -145697,7 +146654,7 @@
   {
     "name": "Toxic blowpipe",
     "id": 12926,
-    "version": "Mithril",
+    "version": "Iron",
     "slot": "weapon",
     "image": "Toxic blowpipe.png",
     "speed": 3,
@@ -145719,172 +146676,7 @@
       },
       "strength": {
         "melee": 0,
-        "ranged": 29,
-        "magic": 0.0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 5
-  },
-  {
-    "name": "Toxic blowpipe",
-    "id": 12926,
-    "version": "Bronze",
-    "slot": "weapon",
-    "image": "Toxic blowpipe.png",
-    "speed": 3,
-    "category": "Thrown",
-    "bonuses": {
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 30
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 21,
-        "magic": 0.0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 5
-  },
-  {
-    "name": "Toxic blowpipe",
-    "id": 12926,
-    "version": "Black",
-    "slot": "weapon",
-    "image": "Toxic blowpipe.png",
-    "speed": 3,
-    "category": "Thrown",
-    "bonuses": {
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 30
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 26,
-        "magic": 0.0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 5
-  },
-  {
-    "name": "Toxic blowpipe",
-    "id": 12926,
-    "version": "Dragon",
-    "slot": "weapon",
-    "image": "Toxic blowpipe.png",
-    "speed": 3,
-    "category": "Thrown",
-    "bonuses": {
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 30
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 55,
-        "magic": 0.0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 5
-  },
-  {
-    "name": "Toxic blowpipe",
-    "id": 12926,
-    "version": "Amethyst",
-    "slot": "weapon",
-    "image": "Toxic blowpipe.png",
-    "speed": 3,
-    "category": "Thrown",
-    "bonuses": {
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 30
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 48,
-        "magic": 0.0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 5
-  },
-  {
-    "name": "Toxic blowpipe",
-    "id": 12926,
-    "version": "Adamant",
-    "slot": "weapon",
-    "image": "Toxic blowpipe.png",
-    "speed": 3,
-    "category": "Thrown",
-    "bonuses": {
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 30
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 37,
+        "ranged": 22,
         "magic": 0.0
       },
       "prayer": 0
@@ -145928,7 +146720,7 @@
   {
     "name": "Toxic blowpipe",
     "id": 12926,
-    "version": "Iron",
+    "version": "Dragon",
     "slot": "weapon",
     "image": "Toxic blowpipe.png",
     "speed": 3,
@@ -145950,7 +146742,40 @@
       },
       "strength": {
         "melee": 0,
-        "ranged": 22,
+        "ranged": 55,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Toxic blowpipe",
+    "id": 12926,
+    "version": "Bronze",
+    "slot": "weapon",
+    "image": "Toxic blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 21,
         "magic": 0.0
       },
       "prayer": 0
@@ -145984,6 +146809,138 @@
       "strength": {
         "melee": 0,
         "ranged": 23,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Toxic blowpipe",
+    "id": 12926,
+    "version": "Adamant",
+    "slot": "weapon",
+    "image": "Toxic blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 37,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Toxic blowpipe",
+    "id": 12926,
+    "version": "Black",
+    "slot": "weapon",
+    "image": "Toxic blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 26,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Toxic blowpipe",
+    "id": 12926,
+    "version": "Mithril",
+    "slot": "weapon",
+    "image": "Toxic blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 29,
+        "magic": 0.0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Toxic blowpipe",
+    "id": 12926,
+    "version": "Amethyst",
+    "slot": "weapon",
+    "image": "Toxic blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 48,
         "magic": 0.0
       },
       "prayer": 0

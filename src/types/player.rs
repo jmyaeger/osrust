@@ -1368,7 +1368,7 @@ impl Player {
     pub fn rolls_accuracy_twice(&self) -> bool {
         self.is_wearing("Confliction gauntlets", None)
             && self.combat_type() == CombatType::Magic
-            && self.state.last_attack_hit == false
+            && !self.state.last_attack_hit
     }
 }
 

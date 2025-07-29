@@ -32,6 +32,7 @@ pub trait Mechanics {
             player.combat_type(),
         );
         player.state.first_attack = false;
+        player.state.last_attack_hit = hit.success;
         monster.take_damage(hit.damage);
         logger.log_monster_damage(
             fight_vars.tick_counter,

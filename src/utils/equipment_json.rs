@@ -196,6 +196,8 @@ fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<serde_json::Va
 #[cfg(feature = "data-generation")]
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    use std::fs::File;
+
     let wiki_data = get_equipment_data().await?;
 
     let mut data = vec![];

@@ -409,6 +409,8 @@ impl Simulation for SingleWayFight {
                 .for_each(|s| s.state.reset());
         }
         self.monster.reset();
+        self.player.state.first_attack = true;
+        self.player.state.last_attack_hit = true;
     }
 }
 

@@ -33,9 +33,9 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 
     // simulate_vardorvis();
 }
@@ -49,7 +49,7 @@ fn simulate_single_way() {
     player.equip("Barrows gloves", None);
     player.equip("Dragon defender", None);
     player.equip("Osmumten's fang", None);
-    // player.equip("Lightbearer", None);
+    player.equip("Lightbearer", None);
     // let mut player = loadouts::bowfa_crystal_player();
     // player.equip("Eclipse moon helm", None);
     // player.equip("Eclipse moon chestplate", None);
