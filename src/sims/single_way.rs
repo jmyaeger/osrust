@@ -458,7 +458,7 @@ impl SingleWayMechanics {
                     hit.success,
                     &strategy.switch_type,
                 );
-                fight.player.boosts.first_attack = false;
+                fight.player.state.first_attack = false;
                 fight.monster.take_damage(hit.damage);
                 fight.logger.log_monster_damage(
                     fight_vars.tick_counter,

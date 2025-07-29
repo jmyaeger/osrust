@@ -33,12 +33,10 @@ pub struct StatusBoosts {
     pub charge_active: bool,
     pub kandarin_diary: bool,
     pub mark_of_darkness: bool,
-    pub first_attack: bool,
     pub acb_spec: bool,
     pub zcb_spec: bool,
     pub sunfire: SunfireBoost,
     pub soulreaper_stacks: u32,
-    pub current_hp: Option<u32>,
 }
 
 impl Default for StatusBoosts {
@@ -52,12 +50,10 @@ impl Default for StatusBoosts {
             charge_active: false,
             kandarin_diary: true,
             mark_of_darkness: false,
-            first_attack: true,
             acb_spec: false,
             zcb_spec: false,
             sunfire: SunfireBoost::default(),
             soulreaper_stacks: 0,
-            current_hp: None,
         }
     }
 }
@@ -321,6 +317,23 @@ impl PlayerMaxHits {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct PlayerState {
+    pub first_attack: bool,
+    pub last_attack_hit: bool,
+    pub current_hp: Option<u32>,
+}
+
+impl Default for PlayerState {
+    fn default() -> Self {
+        Self {
+            first_attack: true,
+            last_attack_hit: false,
+            current_hp: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,
     pub gear: Gear,
@@ -338,6 +351,7 @@ pub struct Player {
     pub spec: SpecialAttackFn,
     pub switches: Vec<GearSwitch>,
     pub current_switch: Option<SwitchType>,
+    pub state: PlayerState,
 }
 
 impl Default for Player {
@@ -359,6 +373,7 @@ impl Default for Player {
             spec: standard_attack,
             switches: Vec::new(),
             current_switch: None,
+            state: PlayerState::default(),
         }
     }
 }
@@ -386,7 +401,7 @@ impl Player {
         } else {
             self.stats.reset_all();
         }
-        if let Some(hp) = self.boosts.current_hp {
+        if let Some(hp) = self.state.current_hp {
             self.stats.hitpoints.current = hp;
         }
         self.apply_potion_boosts();

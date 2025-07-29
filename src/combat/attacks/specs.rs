@@ -550,7 +550,7 @@ pub fn dorgeshuun_weapon_spec(
     let info = AttackInfo::new(player, monster);
 
     // Always hits accurately if it's the first attack
-    let mut hit = if player.boosts.first_attack {
+    let mut hit = if player.state.first_attack {
         Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng))
     } else {
         base_attack(&info, rng)
@@ -612,7 +612,7 @@ pub fn dragon_warhammer_spec(
 
     if monster.info.name.contains("Tekton") {
         // DWH spec always hits on first attack on Tekton
-        if player.boosts.first_attack {
+        if player.state.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
             monster.drain_stat(CombatStat::Defence, def_drain, None);
             hit.apply_transforms(player, monster, rng, limiter);
@@ -1589,7 +1589,7 @@ pub fn elder_maul_spec(
 
     if monster.info.name.contains("Tekton") {
         // DWH spec always hits on first attack on Tekton
-        if player.boosts.first_attack {
+        if player.state.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
             monster.drain_stat(CombatStat::Defence, def_drain, None);
             hit.apply_transforms(player, monster, rng, limiter);

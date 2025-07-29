@@ -909,7 +909,7 @@ pub fn full_dharoks_1hp_player() -> Player {
     player.set_active_style(CombatStyle::Hack);
     player.update_set_effects();
     player.update_bonuses();
-    player.boosts.current_hp = Some(1);
+    player.state.current_hp = Some(1);
     player.reset_current_stats(false);
     player
 }
