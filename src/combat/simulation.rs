@@ -148,6 +148,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
             || monster.matches_version("Left claw") && player.is_using_ranged())
         || (monster.info.name.contains("Ice demon")
             && !player.is_using_fire_spell()
+            && !player.is_using_demonbane()
             && player.attrs.spell != Some(Spell::Standard(StandardSpell::FlamesOfZamorak)))
         || (monster.info.name.contains("Slagilith") && !player.gear.weapon.name.contains("pickaxe"))
     {

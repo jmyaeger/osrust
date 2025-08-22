@@ -33,23 +33,28 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
     // simulate_hunllef();
 
-    // simulate_vardorvis();
+    simulate_vardorvis();
 }
 
 #[allow(unused)]
 fn simulate_single_way() {
-    let mut player = loadouts::max_melee_player();
-    player.equip("Neitiznot faceguard", None);
-    player.equip("Bandos chestplate", None);
-    player.equip("Bandos tassets", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Dragon defender", None);
-    player.equip("Osmumten's fang", None);
-    player.equip("Lightbearer", None);
+    let mut player = loadouts::max_ranged_zcb_player();
+    player.equip("Avernic treads (max)", None);
+    player.equip("Ruby dragon bolts (e)", None);
+    // player.equip("Oathplate helm", None);
+    // player.equip("Oathplate chest", None);
+    // player.equip("Oathplate legs", None);
+    // player.equip("Neitiznot faceguard", None);
+    // player.equip("Bandos chestplate", None);
+    // player.equip("Bandos tassets", None);
+    // player.equip("Barrows gloves", None);
+    // player.equip("Dragon defender", None);
+    // player.equip("Osmumten's fang", None);
+    // player.equip("Lightbearer", None);
     // let mut player = loadouts::bowfa_crystal_player();
     // player.equip("Eclipse moon helm", None);
     // player.equip("Eclipse moon chestplate", None);
@@ -66,11 +71,13 @@ fn simulate_single_way() {
     // player.stats.strength = Stat::new(90);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Lunge);
+    player.set_active_style(CombatStyle::Rapid);
     // player.prayers.add(Prayer::Deadeye);
-    // player.add_potion(Potion::SmellingSalts);
+    player.add_potion(Potion::SmellingSalts);
 
-    let mut monster = Monster::new("Ba-Ba", None).unwrap();
+    let mut monster = Monster::new("Zebak", None).unwrap();
+    // let single_shield_hp = monster.stats.hitpoints.base;
+    // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
     monster.info.toa_level = 400;
     monster.info.toa_path_level = 0;
     monster.scale_toa();
@@ -84,47 +91,47 @@ fn simulate_single_way() {
 
     let config = SingleWayConfig { thralls: None };
 
-    let mut main_hand = GearSwitch::from(&player);
-    player.switches.push(main_hand);
+    // let mut main_hand = GearSwitch::from(&player);
+    // player.switches.push(main_hand);
 
-    player.equip("Voidwaker", None);
-    player.set_active_style(CombatStyle::Slash);
-    let vw_switch = GearSwitch::new(
-        SwitchType::Spec("Voidwaker spec".to_string()),
-        &player,
-        &monster,
-    );
-    let vw_spec_strategy = SpecStrategy::new(&vw_switch, None);
-    player.switches.push(vw_switch);
+    // player.equip("Voidwaker", None);
+    // player.set_active_style(CombatStyle::Slash);
+    // let vw_switch = GearSwitch::new(
+    //     SwitchType::Spec("Voidwaker spec".to_string()),
+    //     &player,
+    //     &monster,
+    // );
+    // let vw_spec_strategy = SpecStrategy::new(&vw_switch, None);
+    // player.switches.push(vw_switch);
 
-    player.equip("Burning claws", None);
-    player.set_active_style(CombatStyle::Lunge);
-    let bclaws_switch = GearSwitch::new(
-        SwitchType::Spec("Burning claws spec".to_string()),
-        &player,
-        &monster,
-    );
-    let bclaws_spec_strategy = SpecStrategy::new(&bclaws_switch, None);
-    player.switches.push(bclaws_switch);
+    // player.equip("Burning claws", None);
+    // player.set_active_style(CombatStyle::Lunge);
+    // let bclaws_switch = GearSwitch::new(
+    //     SwitchType::Spec("Burning claws spec".to_string()),
+    //     &player,
+    //     &monster,
+    // );
+    // let bclaws_spec_strategy = SpecStrategy::new(&bclaws_switch, None);
+    // player.switches.push(bclaws_switch);
 
-    player.equip("Bandos godsword", None);
-    player.set_active_style(CombatStyle::Slash);
-    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
-    let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
-        .with_target_def_reduction(20)
-        .with_max_attempts(2)
-        .build();
-    player.switches.push(bgs_switch);
+    // player.equip("Bandos godsword", None);
+    // player.set_active_style(CombatStyle::Slash);
+    // let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
+    // let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
+    //     .with_target_def_reduction(20)
+    //     .with_max_attempts(2)
+    //     .build();
+    // player.switches.push(bgs_switch);
 
-    player.switch(&SwitchType::Melee);
-    let spec_config = SpecConfig::new(
-        vec![bgs_spec_strategy, vw_spec_strategy],
-        SpecRestorePolicy::RestoreEveryKill,
-        None,
-        false,
-    );
+    // player.switch(&SwitchType::Melee);
+    // let spec_config = SpecConfig::new(
+    //     vec![vw_spec_strategy],
+    //     SpecRestorePolicy::RestoreEveryKill,
+    //     None,
+    //     false,
+    // );
 
-    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);
+    let simulation = SingleWayFight::new(player, monster, config, None, false);
     let results = simulate_n_fights(Box::new(simulation), 1_000_000);
     let stats = SimulationStats::new(&results);
 
@@ -228,22 +235,23 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_vardorvis() {
     let mut player = loadouts::max_melee_player();
-    player.equip("Abyssal tentacle", None);
-    player.equip("Dragon defender", None);
-    // player.equip("Amulet of blood fury", None);
-    // player.equip("Bellator ring", None);
-    player.equip("Oathplate chest", None);
-    player.equip("Oathplate legs", None);
-    player.equip("Oathplate helm", None);
-    player.equip("Berserker ring (i)", None);
-    // player.equip("Justiciar chestguard", None);
-    // player.equip("Justiciar legguards", None);
-    // player.equip("Justiciar faceguard", None);
-    // player.equip("Ring of suffering (i)", Some("Recoil"));
-    player.equip("Echo boots", None);
+    player.stats.attack = Stat::new(92, None);
+    player.stats.strength = Stat::new(98, None);
+    player.stats.defence = Stat::new(91, None);
+    player.reset_current_stats(false);
+    player.equip("Noxious halberd", None);
+    // player.equip("Blade of saeldor (c)", None);
+    // player.equip("Dragon defender", None);
+    player.equip("Blood moon chestplate", None);
+    player.equip("Blood moon tassets", None);
+    player.equip("Neitiznot faceguard", None);
+    // player.equip("Berserker ring (i)", None);
+    player.equip("Barrows gloves", None);
+    player.equip("Dragon boots", None);
+    player.equip("Ring of suffering (i)", Some("Recoil"));
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Lash);
+    player.set_active_style(CombatStyle::Swipe);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
     calc_active_player_rolls(&mut player, &vard);
@@ -256,7 +264,7 @@ fn simulate_vardorvis() {
     };
 
     let mut fight = VardorvisFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 100000);
+    let results = simulate_n_fights(Box::new(fight), 1_000_000);
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
