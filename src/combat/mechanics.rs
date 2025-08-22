@@ -126,7 +126,26 @@ pub trait Mechanics {
         // Process effects and apply damage
         let mut effect_damage = 0;
         for effect in &mut monster.active_effects {
-            effect_damage += effect.apply();
+            match effect {
+                CombatEffect::Burn { .. } => {
+                    let mut burn_damage = effect.apply();
+                    let monster_version = monster.info.version.as_ref().map_or("", |s| s.as_str());
+                    let monster_name = monster.info.name.as_str();
+                    if monster_version == "Left claw"
+                        || monster_version == "Right claw"
+                        || monster_name == "Ice demon"
+                    {
+                        burn_damage /= 3;
+                    } else if monster_name == "Corporeal Beast" {
+                        burn_damage /= 2;
+                    }
+
+                    effect_damage += burn_damage;
+                }
+                _ => {
+                    effect_damage += effect.apply();
+                }
+            }
         }
 
         if effect_damage > 0 {
