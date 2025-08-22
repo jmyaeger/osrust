@@ -140,10 +140,11 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::Tekton {}));
     }
 
-    if (monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic)
-        || (monster.matches_version("Left claw")
-            || (monster.info.name.contains("Great Olm") && monster.matches_version("Head"))
-                && player.combat_type() == CombatType::Magic)
+    if ((monster.info.name.contains("Glowing crystal")
+        && player.combat_type() == CombatType::Magic)
+        || ((monster.matches_version("Left claw")
+            || (monster.info.name.contains("Great Olm") && monster.matches_version("Head")))
+            && player.combat_type() == CombatType::Magic))
         || (monster.matches_version("Right claw")
             || monster.matches_version("Left claw") && player.is_using_ranged())
         || (monster.info.name.contains("Ice demon")
