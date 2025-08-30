@@ -10,6 +10,7 @@ pub struct SimulationStats {
     pub hit_dist: HashMap<u32, f64>,
     pub success_rate: f64,
     pub avg_food_eaten: f64,
+    pub food_eaten_dist: HashMap<u32, f64>,
     pub avg_damage_taken: f64,
     pub avg_leftover_burn: f64,
     pub total_deaths: u32,
@@ -60,6 +61,23 @@ impl SimulationStats {
         let total_fights = results.ttks_ticks.len() + results.player_deaths;
         let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
         let avg_food_eaten = results.food_eaten.iter().sum::<u32>() as f64 / total_fights as f64;
+        let food_eaten_counts: HashMap<u32, u64> =
+            results
+                .food_eaten
+                .iter()
+                .fold(HashMap::new(), |mut acc, &value| {
+                    *acc.entry(value).or_insert(0) += 1;
+                    acc
+                });
+        let food_eaten_dist = food_eaten_counts
+            .iter()
+            .map(|(&key, &value)| {
+                (
+                    key,
+                    value as f64 / food_eaten_counts.values().sum::<u64>() as f64,
+                )
+            })
+            .collect();
         let avg_damage_taken =
             results.damage_taken.iter().sum::<u32>() as f64 / total_fights as f64;
         let avg_leftover_burn =
@@ -72,6 +90,7 @@ impl SimulationStats {
             hit_dist,
             success_rate,
             avg_food_eaten,
+            food_eaten_dist,
             avg_damage_taken,
             avg_leftover_burn,
             total_deaths: results.player_deaths as u32,
