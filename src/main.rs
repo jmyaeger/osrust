@@ -33,9 +33,9 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
     // simulate_vardorvis();
 }
@@ -44,25 +44,25 @@ fn main() {
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
     // player.equip("Avernic treads (max)", None);
-    player.equip("Oathplate helm", None);
-    player.equip("Oathplate chest", None);
-    player.equip("Oathplate legs", None);
-    // player.equip("Neitiznot faceguard", None);
-    // player.equip("Bandos chestplate", None);
-    // player.equip("Bandos tassets", None);
-    player.equip("Dragon hunter lance", None);
+    // player.equip("Oathplate helm", None);
+    // player.equip("Oathplate chest", None);
+    // player.equip("Oathplate legs", None);
+    player.equip("Neitiznot faceguard", None);
+    player.equip("Bandos chestplate", None);
+    player.equip("Bandos tassets", None);
+    player.equip("Osmumten's fang", None);
+    // player.equip("Lightbearer", None);
 
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Swipe);
-    player.add_potion(Potion::OverloadPlus);
+    player.set_active_style(CombatStyle::Lunge);
 
-    let mut monster = Monster::new("Great Olm", Some("Left claw")).unwrap();
-    // let single_shield_hp = monster.stats.hitpoints.base;
-    // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
-    // monster.info.toa_level = 400;
-    // monster.info.toa_path_level = 0;
-    // monster.scale_toa();
+    let mut monster = Monster::new("Kephri", Some("Shielded")).unwrap();
+    let single_shield_hp = monster.stats.hitpoints.base;
+    monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
+    monster.info.toa_level = 400;
+    monster.info.toa_path_level = 0;
+    monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
     println!("Max hit: {}", player.max_hits.get(player.combat_type()));
@@ -72,7 +72,7 @@ fn simulate_single_way() {
     );
 
     let config = SingleWayConfig {
-        thralls: Some(Thrall::GreaterMelee),
+        thralls: Some(Thrall::GreaterMagic),
     };
 
     let mut main_hand = GearSwitch::from(&player);
@@ -88,44 +88,42 @@ fn simulate_single_way() {
     // let vw_spec_strategy = SpecStrategy::new(&vw_switch, None);
     // player.switches.push(vw_switch);
 
-    player.equip("Dragon warhammer", None);
-    player.set_active_style(CombatStyle::Pound);
-    let dwh_switch = GearSwitch::new(SwitchType::Spec("DWH spec".to_string()), &player, &monster);
-    let dwh_spec_strategy = SpecStrategy::builder(&dwh_switch)
-        .with_max_attempts(1)
-        .build();
-    player.switches.push(dwh_switch);
+    // player.equip("Dragon warhammer", None);
+    // player.set_active_style(CombatStyle::Pound);
+    // let dwh_switch = GearSwitch::new(SwitchType::Spec("DWH spec".to_string()), &player, &monster);
+    // let dwh_spec_strategy = SpecStrategy::builder(&dwh_switch)
+    //     .with_max_attempts(1)
+    //     .build();
+    // player.switches.push(dwh_switch);
 
     player.equip("Burning claws", None);
-    player.set_active_style(CombatStyle::Slash);
+    player.set_active_style(CombatStyle::Lunge);
     let bclaws_switch = GearSwitch::new(
         SwitchType::Spec("Burning claws spec".to_string()),
         &player,
         &monster,
     );
-    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
-        .with_max_attempts(2)
-        .build();
+    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch).build();
     player.switches.push(bclaws_switch);
 
-    // player.equip("Bandos godsword", None);
-    // player.set_active_style(CombatStyle::Slash);
-    // let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
-    // let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
-    //     .with_target_def_reduction(20)
-    //     .with_max_attempts(2)
-    //     .build();
-    // player.switches.push(bgs_switch);
+    player.equip("Bandos godsword", None);
+    player.set_active_style(CombatStyle::Slash);
+    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
+    let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
+        .with_target_def_reduction(20)
+        .with_max_attempts(2)
+        .build();
+    player.switches.push(bgs_switch);
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![dwh_spec_strategy],
+        vec![bclaws_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
         None,
         false,
     );
 
-    let simulation = SingleWayFight::new(player, monster, config, None, false);
+    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);
     let results = simulate_n_fights(Box::new(simulation), 1_000_000);
     let stats = SimulationStats::new(&results);
 

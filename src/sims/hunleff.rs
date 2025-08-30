@@ -8,6 +8,7 @@ use crate::utils::logging::FightLogger;
 use rand::Rng;
 use rand::SeedableRng;
 use rand::rngs::SmallRng;
+use std::cmp::min;
 
 const TORNADO_MAX_TIMER: u32 = 23;
 const TORNADO_COOLDOWN: u32 = 9;
@@ -191,6 +192,8 @@ impl HunllefMechanics {
         let base_damage = hit.damage;
         let armor_reduced = base_damage * (6 - config.armor_tier) / 6;
         hit.damage = armor_reduced * 10 / 41; // Prayer reduction is 10/41 (source: Mod Ash tweet)
+        let hp_capped_damage = min(hit.damage, player.stats.hitpoints.current);
+        hit.damage = hp_capped_damage;
 
         config.logger.log_monster_attack(
             hunllef,

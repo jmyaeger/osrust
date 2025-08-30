@@ -5,6 +5,7 @@ use std::collections::HashMap;
 #[derive(Debug, PartialEq, Clone)]
 pub struct SimulationStats {
     pub ttk: f64,
+    pub ttk_dist: HashMap<i32, f64>,
     pub accuracy: f64,
     pub hit_dist: HashMap<u32, f64>,
     pub success_rate: f64,
@@ -23,6 +24,18 @@ impl SimulationStats {
             .map(|&ttk| ttk as f64 * 0.6)
             .collect();
         let ttk = ttks_seconds.iter().sum::<f64>() / results.ttks_ticks.len() as f64;
+        let ttk_counts: HashMap<i32, u64> =
+            results
+                .ttks_ticks
+                .iter()
+                .fold(HashMap::new(), |mut acc, &value| {
+                    *acc.entry(value).or_insert(0) += 1;
+                    acc
+                });
+        let ttk_dist = ttk_counts
+            .iter()
+            .map(|(&key, &value)| (key, value as f64 / results.ttks_ticks.len() as f64))
+            .collect();
         let accuracy = results.hit_counts.iter().sum::<u32>() as f64
             / results.hit_attempt_counts.iter().sum::<u32>() as f64
             * 100.0;
@@ -54,6 +67,7 @@ impl SimulationStats {
 
         Self {
             ttk,
+            ttk_dist,
             accuracy,
             hit_dist,
             success_rate,
