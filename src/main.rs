@@ -33,36 +33,37 @@ fn main() {
 
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
     // simulate_hunllef();
 
-    simulate_vardorvis();
+    // simulate_vardorvis();
 }
 
 #[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
     // player.equip("Avernic treads (max)", None);
-    // player.equip("Oathplate helm", None);
-    // player.equip("Oathplate chest", None);
-    // player.equip("Oathplate legs", None);
-    player.equip("Neitiznot faceguard", None);
-    player.equip("Bandos chestplate", None);
-    player.equip("Bandos tassets", None);
-    player.equip("Osmumten's fang", None);
+    player.equip("Oathplate helm", None);
+    player.equip("Oathplate chest", None);
+    player.equip("Oathplate legs", None);
+    // player.equip("Neitiznot faceguard", None);
+    // player.equip("Bandos chestplate", None);
+    // player.equip("Bandos tassets", None);
+    player.equip("Scythe of vitur", Some("Charged"));
     // player.equip("Lightbearer", None);
+    player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Lunge);
+    player.set_active_style(CombatStyle::Chop);
 
-    let mut monster = Monster::new("Kephri", Some("Shielded")).unwrap();
-    let single_shield_hp = monster.stats.hitpoints.base;
-    monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
-    monster.info.toa_level = 400;
-    monster.info.toa_path_level = 0;
-    monster.scale_toa();
+    let mut monster = Monster::new("Great Olm", Some("Left claw")).unwrap();
+    // let single_shield_hp = monster.stats.hitpoints.base;
+    // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
+    // monster.info.toa_level = 400;
+    // monster.info.toa_path_level = 0;
+    // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
     println!("Max hit: {}", player.max_hits.get(player.combat_type()));
@@ -72,7 +73,7 @@ fn simulate_single_way() {
     );
 
     let config = SingleWayConfig {
-        thralls: Some(Thrall::GreaterMagic),
+        thralls: Some(Thrall::GreaterMelee),
     };
 
     let mut main_hand = GearSwitch::from(&player);
@@ -96,15 +97,17 @@ fn simulate_single_way() {
     //     .build();
     // player.switches.push(dwh_switch);
 
-    player.equip("Burning claws", None);
-    player.set_active_style(CombatStyle::Lunge);
-    let bclaws_switch = GearSwitch::new(
-        SwitchType::Spec("Burning claws spec".to_string()),
+    player.equip("Dragon claws", None);
+    player.set_active_style(CombatStyle::Slash);
+    let dclaws_switch = GearSwitch::new(
+        SwitchType::Spec("Dragon claws spec".to_string()),
         &player,
         &monster,
     );
-    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch).build();
-    player.switches.push(bclaws_switch);
+    let dclaws_spec_strategy = SpecStrategy::builder(&dclaws_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(dclaws_switch);
 
     player.equip("Bandos godsword", None);
     player.set_active_style(CombatStyle::Slash);
@@ -115,16 +118,24 @@ fn simulate_single_way() {
         .build();
     player.switches.push(bgs_switch);
 
+    player.equip("Elder maul", None);
+    player.set_active_style(CombatStyle::Pound);
+    let maul_switch = GearSwitch::new(SwitchType::Spec("Elder maul spec".to_string()), &player, &monster);
+    let maul_spec_strategy = SpecStrategy::builder(&maul_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(maul_switch);
+
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![bclaws_spec_strategy],
+        vec![dclaws_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
         None,
         false,
     );
 
-    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);
-    let results = simulate_n_fights(Box::new(simulation), 1_000_000);
+    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), true);
+    let results = simulate_n_fights(Box::new(simulation), 10);
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {}", stats.ttk);
