@@ -417,6 +417,7 @@ impl Simulation for SingleWayFight {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct SingleWayConfig {
     pub thralls: Option<Thrall>,
+    pub remove_final_attack_delay: bool,
 }
 
 #[derive(Debug)]
@@ -586,7 +587,6 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         );
     }
 
-    let remove_final_attack_delay = false;
     fight.state.kill_counter += 1;
     fight
         .mechanics
@@ -596,7 +596,7 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         &fight.monster,
         &vars,
         &mut fight.logger,
-        remove_final_attack_delay,
+        fight.config.remove_final_attack_delay,
     )
 }
 

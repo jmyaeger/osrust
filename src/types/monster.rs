@@ -841,6 +841,7 @@ impl Monster {
         self.info.poison_severity = 0;
         self.info.freeze_duration = 0;
         self.base_def_rolls = rolls::monster_def_rolls(self);
+        self.def_rolls = self.base_def_rolls;
         self.scale_toa();
         self.active_effects = Vec::new();
     }

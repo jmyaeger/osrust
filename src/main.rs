@@ -43,20 +43,20 @@ fn main() {
 #[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
-    // player.equip("Avernic treads (max)", None);
+    player.equip("Avernic treads (max)", None);
     player.equip("Oathplate helm", None);
     player.equip("Oathplate chest", None);
     player.equip("Oathplate legs", None);
     // player.equip("Neitiznot faceguard", None);
     // player.equip("Bandos chestplate", None);
     // player.equip("Bandos tassets", None);
-    player.equip("Scythe of vitur", Some("Charged"));
+    player.equip("Dragon hunter lance", None);
     // player.equip("Lightbearer", None);
     player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Chop);
+    player.set_active_style(CombatStyle::Swipe);
 
     let mut monster = Monster::new("Great Olm", Some("Left claw")).unwrap();
     // let single_shield_hp = monster.stats.hitpoints.base;
@@ -74,6 +74,7 @@ fn simulate_single_way() {
 
     let config = SingleWayConfig {
         thralls: Some(Thrall::GreaterMelee),
+        remove_final_attack_delay: true,
     };
 
     let mut main_hand = GearSwitch::from(&player);
@@ -109,6 +110,18 @@ fn simulate_single_way() {
         .build();
     player.switches.push(dclaws_switch);
 
+    player.equip("Burning claws", None);
+    player.set_active_style(CombatStyle::Slash);
+    let bclaws_switch = GearSwitch::new(
+        SwitchType::Spec("Burning claws spec".to_string()),
+        &player,
+        &monster,
+    );
+    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(bclaws_switch);
+
     player.equip("Bandos godsword", None);
     player.set_active_style(CombatStyle::Slash);
     let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
@@ -120,7 +133,11 @@ fn simulate_single_way() {
 
     player.equip("Elder maul", None);
     player.set_active_style(CombatStyle::Pound);
-    let maul_switch = GearSwitch::new(SwitchType::Spec("Elder maul spec".to_string()), &player, &monster);
+    let maul_switch = GearSwitch::new(
+        SwitchType::Spec("Elder maul spec".to_string()),
+        &player,
+        &monster,
+    );
     let maul_spec_strategy = SpecStrategy::builder(&maul_switch)
         .with_max_attempts(1)
         .build();
@@ -128,14 +145,14 @@ fn simulate_single_way() {
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![dclaws_spec_strategy],
+        vec![bclaws_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
         None,
         false,
     );
 
-    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), true);
-    let results = simulate_n_fights(Box::new(simulation), 10);
+    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false);
+    let results = simulate_n_fights(Box::new(simulation), 1_000_000);
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {}", stats.ttk);
@@ -277,7 +294,7 @@ fn simulate_vardorvis() {
         if ticks < 92 {
             odds_of_gm += prob;
         }
-    };
+    }
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
