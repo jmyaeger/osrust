@@ -4,6 +4,7 @@ use crate::combat::mechanics::{Mechanics, handle_recoil};
 use crate::combat::simulation::{
     FightResult, FightVars, Simulation, SimulationError, assign_limiter,
 };
+use crate::combat::thralls::Thrall;
 use crate::constants;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::Player;
@@ -20,6 +21,7 @@ pub struct VardorvisConfig {
     pub food_heal_amount: u32,
     pub food_eat_delay: i32,
     pub eat_strategy: VardorvisEatStrategy,
+    pub thralls: Option<Thrall>,
     pub logger: FightLogger,
 }
 
@@ -29,6 +31,7 @@ impl Default for VardorvisConfig {
             food_heal_amount: 22,
             food_eat_delay: 3,
             eat_strategy: VardorvisEatStrategy::EatAtHp(20),
+            thralls: None,
             logger: FightLogger::new(false, "vardorvis"),
         }
     }
@@ -200,6 +203,18 @@ impl VardorvisFight {
                     &mut vars,
                     &mut self.config.logger,
                 );
+            }
+
+            if let Some(thrall) = self.config.thralls {
+                if vars.tick_counter == vars.thrall_attack_tick {
+                    self.mechanics.thrall_attack(
+                        &mut self.vard,
+                        thrall,
+                        &mut vars,
+                        &mut self.rng,
+                        &mut self.config.logger,
+                    );
+                }
             }
 
             self.mechanics

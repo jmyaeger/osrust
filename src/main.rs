@@ -35,9 +35,9 @@ fn main() {
 
     // simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 
-    // simulate_vardorvis();
+    simulate_vardorvis();
 }
 
 #[allow(unused)]
@@ -227,23 +227,24 @@ fn simulate_hunllef() {
 #[allow(unused)]
 fn simulate_vardorvis() {
     let mut player = loadouts::max_melee_player();
-    player.stats.attack = Stat::new(92, None);
-    player.stats.strength = Stat::new(98, None);
-    player.stats.defence = Stat::new(91, None);
-    player.reset_current_stats(false);
-    player.equip("Noxious halberd", None);
+    // player.stats.attack = Stat::new(92, None);
+    // player.stats.strength = Stat::new(98, None);
+    // player.stats.defence = Stat::new(91, None);
+    // player.reset_current_stats(false);
+    player.equip("Soulreaper axe", None);
     // player.equip("Blade of saeldor (c)", None);
     // player.equip("Dragon defender", None);
-    player.equip("Blood moon chestplate", None);
-    player.equip("Blood moon tassets", None);
-    player.equip("Neitiznot faceguard", None);
+    player.equip("Oathplate chest", None);
+    player.equip("Oathplate legs", None);
+    player.equip("Oathplate helm", None);
     // player.equip("Berserker ring (i)", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Dragon boots", None);
-    player.equip("Ring of suffering (i)", Some("Recoil"));
+    // player.equip("Barrows gloves", None);
+    // player.equip("Dragon boots", None);
+    player.equip("Bellator ring", None);
+    player.equip("Avernic treads (max)", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Swipe);
+    player.set_active_style(CombatStyle::Hack);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
     calc_active_player_rolls(&mut player, &vard);
@@ -251,13 +252,21 @@ fn simulate_vardorvis() {
     let fight_config = VardorvisConfig {
         food_heal_amount: 22,
         food_eat_delay: 3,
-        eat_strategy: VardorvisEatStrategy::EatAtHp(20),
+        eat_strategy: VardorvisEatStrategy::EatAtHp(10),
+        thralls: Some(Thrall::GreaterMagic),
         logger: FightLogger::new(false, "vardorvis"),
     };
 
     let mut fight = VardorvisFight::new(player, fight_config);
     let results = simulate_n_fights(Box::new(fight), 1_000_000);
     let stats = SimulationStats::new(&results);
+
+    let mut odds_of_gm = 0.0;
+    for (ticks, prob) in stats.ttk_dist {
+        if ticks < 92 {
+            odds_of_gm += prob;
+        }
+    };
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
     println!("Average accuracy: {:.2}%", stats.accuracy);
@@ -270,6 +279,7 @@ fn simulate_vardorvis() {
         "Average damage taken per kill: {:.2}",
         stats.avg_damage_taken
     );
+    println!("Probability of hitting GM time: {odds_of_gm}");
 }
 
 #[allow(unused)]
