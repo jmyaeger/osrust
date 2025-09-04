@@ -21,10 +21,6 @@ impl FightResult {
     pub fn new() -> Self {
         Self::default()
     }
-
-    pub fn remove_final_attack_delay(&mut self, attack_speed: i32) {
-        self.ttk_ticks = self.ttk_ticks - attack_speed + 1;
-    }
 }
 
 pub enum SimulationError {

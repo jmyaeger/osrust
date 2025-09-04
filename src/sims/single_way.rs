@@ -570,9 +570,6 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         fight
             .mechanics
             .process_freeze(&mut fight.monster, &mut vars, &mut fight.logger);
-        fight
-            .mechanics
-            .increment_tick(&mut fight.monster, &mut vars);
         fight.mechanics.increment_spec(
             &mut fight.player,
             &mut vars,
@@ -585,6 +582,8 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
             &fight.spec_config,
             &mut fight.state,
         );
+
+        vars.tick_counter += 1;
     }
 
     fight.state.kill_counter += 1;
@@ -592,7 +591,6 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         .mechanics
         .process_death_charge(&mut fight.player, &fight.spec_config, &mut fight.state);
     fight.mechanics.get_fight_result(
-        &fight.player,
         &fight.monster,
         &vars,
         &mut fight.logger,

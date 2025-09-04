@@ -242,9 +242,8 @@ impl VardorvisFight {
                 );
             }
         }
-        let remove_final_attack_delay = false;
+        let remove_final_attack_delay = true;
         self.mechanics.get_fight_result(
-            &self.player,
             &self.vard,
             &vars,
             &mut self.config.logger,

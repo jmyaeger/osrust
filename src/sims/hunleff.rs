@@ -551,7 +551,6 @@ impl HunllefFight {
 
         let remove_final_attack_delay = true;
         self.mechanics.get_fight_result(
-            &self.player,
             &self.hunllef,
             &vars,
             &mut self.config.logger,

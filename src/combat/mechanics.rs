@@ -188,16 +188,6 @@ pub trait Mechanics {
         }
     }
 
-    fn increment_tick(&self, monster: &mut Monster, fight_vars: &mut FightVars) {
-        // Add the attack cooldown on the last hit (for continuous TTK)
-        if monster.stats.hitpoints.current == 0 {
-            fight_vars.tick_counter = fight_vars.attack_tick;
-        } else {
-            // Increment tick counter
-            fight_vars.tick_counter += 1;
-        }
-    }
-
     fn increment_spec(
         &self,
         player: &mut Player,
@@ -225,16 +215,20 @@ pub trait Mechanics {
 
     fn get_fight_result(
         &self,
-        player: &Player,
         monster: &Monster,
         fight_vars: &FightVars,
         logger: &mut FightLogger,
         remove_final_attack_delay: bool,
     ) -> Result<FightResult, SimulationError> {
         logger.log_monster_death(fight_vars.tick_counter, monster.info.name.as_str());
-        let ttk_ticks = fight_vars.tick_counter;
+        let ttk_ticks = if remove_final_attack_delay {
+            fight_vars.tick_counter
+        } else {
+            fight_vars.attack_tick
+        };
         let leftover_burn = calc_leftover_burn(monster);
-        let mut result = FightResult {
+
+        Ok(FightResult {
             ttk_ticks,
             hit_attempts: fight_vars.hit_attempts,
             hit_count: fight_vars.hit_count,
@@ -243,13 +237,7 @@ pub trait Mechanics {
             damage_taken: fight_vars.damage_taken,
             leftover_burn,
             thrall_damage: fight_vars.thrall_damage,
-        };
-
-        if remove_final_attack_delay {
-            result.remove_final_attack_delay(player.gear.weapon.speed);
-        }
-
-        Ok(result)
+        })
     }
 
     fn process_player_death(

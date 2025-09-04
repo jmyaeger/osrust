@@ -226,7 +226,6 @@ impl GraardorFight {
 
         let remove_final_attack_delay = true;
         self.mechanics.get_fight_result(
-            &self.player,
             &self.graardor,
             &vars,
             &mut self.config.logger,

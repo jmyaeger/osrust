@@ -50,13 +50,13 @@ fn simulate_single_way() {
     // player.equip("Neitiznot faceguard", None);
     // player.equip("Bandos chestplate", None);
     // player.equip("Bandos tassets", None);
-    player.equip("Dragon hunter lance", None);
+    player.equip("Scythe of vitur", Some("Charged"));
     // player.equip("Lightbearer", None);
     player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Swipe);
+    player.set_active_style(CombatStyle::Chop);
 
     let mut monster = Monster::new("Great Olm", Some("Left claw")).unwrap();
     // let single_shield_hp = monster.stats.hitpoints.base;
@@ -66,11 +66,11 @@ fn simulate_single_way() {
     // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
-    println!("Max hit: {}", player.max_hits.get(player.combat_type()));
-    println!(
-        "Max att roll: {}",
-        player.att_rolls.get(player.combat_type())
-    );
+    // println!("Max hit: {}", player.max_hits.get(player.combat_type()));
+    // println!(
+    //     "Max att roll: {}",
+    //     player.att_rolls.get(player.combat_type())
+    // );
 
     let config = SingleWayConfig {
         thralls: Some(Thrall::GreaterMelee),
@@ -145,7 +145,7 @@ fn simulate_single_way() {
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![bclaws_spec_strategy],
+        vec![maul_spec_strategy],
         SpecRestorePolicy::RestoreEveryKill,
         None,
         false,
