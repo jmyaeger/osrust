@@ -304,8 +304,8 @@ pub enum SpecialSpell {
 impl SpecialSpell {
     pub fn max_hit(&self, player: &Player) -> u32 {
         match self {
-            SpecialSpell::Invocate => min((99 + player.stats.magic.current) * 44 / 99, 44),
-            SpecialSpell::Immolate => min((99 + player.stats.magic.current) * 58 / 99, 58),
+            SpecialSpell::Invocate => min((99 + player.stats.magic.current * 44) / 99, 44),
+            SpecialSpell::Immolate => min((99 + player.stats.magic.current * 58) / 99, 58),
         }
     }
 }
