@@ -18,19 +18,9 @@ use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
 use osrs::types::prayers::Prayer;
 use osrs::types::stats::Stat;
-use osrs::utils::{equipment_json, loadouts, logging::FightLogger, monster_json};
+use osrs::utils::{loadouts, logging::FightLogger};
 
 fn main() {
-    // match monster_json::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
-
-    // match equipment_json::main() {
-    //     Ok(_) => {}
-    //     Err(e) => println!("{}", e),
-    // }
-
     // simulate_door_altar_graardor();
 
     simulate_single_way();

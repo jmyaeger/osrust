@@ -7,3 +7,4 @@
 .vscode
 .qodo
 src/.DS_Store
+/python/.venv

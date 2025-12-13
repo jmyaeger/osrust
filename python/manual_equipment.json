@@ -1,0 +1,299 @@
+[
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Bronze",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 21,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Iron",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 22,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Steel",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 23,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Black",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 26,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Mithril",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 29,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Adamant",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 37,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Rune",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 46,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Amethyst",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 48,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    },
+    {
+        "name": "Toxic blowpipe",
+            "id": 12926,
+            "version": "Dragon",
+            "slot": "weapon",
+            "image": "Toxic blowpipe.png",
+            "speed": 3,
+            "category": "Thrown",
+            "bonuses": {
+                "strength": {
+                    "melee": 0,
+                    "ranged": 55,
+                    "magic": 0.0
+                },
+                "attack": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 30
+                },
+                "defence": {
+                    "stab": 0,
+                    "slash": 0,
+                    "crush": 0,
+                    "magic": 0,
+                    "ranged": 0
+                },
+                "prayer": 0
+            },
+            "is_two_handed": true,
+            "attack_range": 5
+    }
+]

@@ -8,7 +8,6 @@ use crate::constants::*;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
 use crate::types::stats::MonsterStats;
-use crate::utils::monster_json::ElementalWeakness;
 use rand::Rng;
 use serde::Deserialize;
 use std::cmp::{max, min};
@@ -288,9 +287,9 @@ where
     if let Some(burn_type) = burn_immunity {
         let burn_str = burn_type.as_str();
         match burn_str {
-            "Immune to weak burns" => Ok(Some(BurnType::Weak)),
-            "Immune to normal burns" => Ok(Some(BurnType::Normal)),
-            "Immune to strong burns" => Ok(Some(BurnType::Strong)),
+            "Weak" => Ok(Some(BurnType::Weak)),
+            "Normal" => Ok(Some(BurnType::Normal)),
+            "Strong" => Ok(Some(BurnType::Strong)),
             _ => Ok(None),
         }
     } else {
@@ -377,6 +376,12 @@ impl MonsterDefRolls {
             CombatType::None => {}
         }
     }
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+pub struct ElementalWeakness {
+    pub element: String,
+    pub severity: i64,
 }
 
 // Overall monster struct
@@ -1081,7 +1086,7 @@ mod tests {
 
     #[test]
     fn test_tbow_olm() {
-        let olm = Monster::new("Great Olm", Some("Head")).unwrap();
+        let olm = Monster::new("Great Olm", Some("Head (Normal)")).unwrap();
         let (tbow_acc_bonus, tbow_dmg_bonus) = olm.tbow_bonuses();
         assert_eq!(tbow_acc_bonus, 140);
         assert_eq!(tbow_dmg_bonus, 215);
@@ -1115,21 +1120,21 @@ mod tests {
 
     #[test]
     fn test_drain_stat() {
-        let mut zebak = Monster::new("Zebak", None).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
         zebak.stats.defence.drain(20);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 
     #[test]
     fn test_drain_stat_min_cap() {
-        let mut zebak = Monster::new("Zebak", None).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
         zebak.stats.defence.drain(30);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 
     #[test]
     fn test_toa_scaling_with_drain() {
-        let mut zebak = Monster::new("Zebak", None).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
         let initial_def_roll = zebak.def_rolls.get(CombatType::Standard);
         zebak.drain_stat(CombatStat::Defence, 20, None);
         assert_ne!(zebak.def_rolls.get(CombatType::Ranged), initial_def_roll);

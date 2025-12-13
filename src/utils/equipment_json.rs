@@ -16,37 +16,41 @@ const API_BASE: &str = "https://oldschool.runescape.wiki/api.php";
 const IMG_PATH: &str = "src/images/equipment/";
 const WIKI_BASE: &str = "https://oldschool.runescape.wiki";
 
-const REQUIRED_PRINTOUTS: [&str; 21] = [
-    "Crush attack bonus",
-    "Crush defence bonus",
-    "Equipment slot",
-    "Item ID",
-    "Image",
-    "Magic Damage bonus",
-    "Magic attack bonus",
-    "Magic defence bonus",
-    "Prayer bonus",
-    "Range attack bonus",
-    "Ranged Strength bonus",
-    "Range defence bonus",
-    "Slash attack bonus",
-    "Slash defence bonus",
-    "Stab attack bonus",
-    "Stab defence bonus",
-    "Strength bonus",
-    "Version anchor",
-    "Weapon attack range",
-    "Weapon attack speed",
-    "Combat style",
+const API_FIELDS: [&str; 25] = [
+    "page_name",
+    "page_name_sub",
+    "item_name",
+    "image",
+    "item_id",
+    "version_anchor",
+    "infobox_bonuses.crush_attack_bonus",
+    "infobox_bonuses.crush_defence_bonus",
+    "infobox_bonuses.equipment_slot",
+    "infobox_bonuses.magic_damage_bonus",
+    "infobox_bonuses.magic_attack_bonus",
+    "infobox_bonuses.magic_defence_bonus",
+    "infobox_bonuses.prayer_bonus",
+    "infobox_bonuses.range_attack_bonus",
+    "infobox_bonuses.ranged_strength_bonus",
+    "infobox_bonuses.range_defence_bonus",
+    "infobox_bonuses.slash_attack_bonus",
+    "infobox_bonuses.slash_defence_bonus",
+    "infobox_bonuses.stab_attack_bonus",
+    "infobox_bonuses.stab_defence_bonus",
+    "infobox_bonuses.strength_bonus",
+    "infobox_bonuses.weapon_attack_range",
+    "infobox_bonuses.weapon_attack_speed",
+    "infobox_bonuses.combat_style",
+    "infobox_bonuses.equipment_slot",
 ];
 
-const ITEMS_TO_SKIP: [&str; 23] = [
+const ITEMS_TO_SKIP: [&str; 26] = [
     "The dogsword",
     "Drygore blowpipe",
     "Amulet of the monarchs",
     "Emperor ring",
-    "Devil\"s element",
-    "Nature\"s reprisal",
+    "Devil's element",
+    "Nature's reprisal",
     "Gloves of the damned",
     "Crystal blessing",
     "Sunlight spear",
@@ -59,23 +63,19 @@ const ITEMS_TO_SKIP: [&str; 23] = [
     "Armadyl chainskirt (or)",
     "Armadyl chestplate (or)",
     "Armadyl helmet (or)",
-    "Dagon\"hai hat (or)",
-    "Dagon\"hai robe bottom (or)",
-    "Dagon\"hai robe top (or)",
+    "Dagon'hai hat (or)",
+    "Dagon'hai robe bottom (or)",
+    "Dagon'hai robe top (or)",
     "Dragon warhammer (or)",
     "Centurion cuirass",
+    "Ruinous powers (item)",
+    "Battlehat",
+    "Zaryte bow",
 ];
 
 #[derive(Debug, Deserialize, Serialize)]
 struct WikiResponse {
-    query: Option<Query>,
-    #[serde(rename = "query-continue-offset")]
-    query_continue_offset: Option<i64>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-struct Query {
-    results: Option<serde_json::Value>,
+    bucket: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -125,21 +125,32 @@ struct Defensive {
     ranged: i64,
 }
 
-async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-    let mut equipment = serde_json::Value::Object(Default::default());
+async fn get_equipment_data() -> Result<Vec<serde_json::Value>, Box<dyn std::error::Error>> {
+    let mut equipment = vec![];
     let mut offset = 0;
 
     loop {
         println!("Fetching equipment info: {offset}");
 
+        let fields = API_FIELDS
+            .iter()
+            .map(|f| format!("'{f}'"))
+            .collect::<Vec<_>>()
+            .join(",");
+
         let query = format!(
-            "[[Equipment slot::+]][[Item ID::+]]|?{}|limit=500|offset={}",
-            REQUIRED_PRINTOUTS.join("|?"),
-            offset
+            "bucket('infobox_item')
+            .select({fields}).limit(500)
+            .offset({offset})
+            .where('infobox_bonuses.equipment_slot', '!=', bucket.Null())
+            .where('item_id', '!=', bucket.Null())
+            .join('infobox_bonuses', 'infobox_bonuses.page_name_sub', 'infobox_item.page_name_sub')
+            .orderBy('page_name_sub', 'asc')
+            .run()",
         );
         let url = Url::parse_with_params(
             API_BASE,
-            &[("action", "ask"), ("format", "json"), ("query", &query)],
+            &[("action", "bucket"), ("format", "json"), ("query", &query)],
         )
         .map_err(|e| format!("Failed to parse URL: {e}"))?;
 
@@ -152,24 +163,17 @@ async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::E
 
         let wiki_response: WikiResponse = response.json().await?;
 
-        if let Some(query) = wiki_response.query {
-            if let Some(results) = query.results {
-                equipment
-                    .as_object_mut()
-                    .unwrap()
-                    .extend(results.as_object().unwrap().clone().into_iter());
-            } else {
-                break;
-            }
-        } else {
-            break;
-        }
+        if let Some(bucket) = wiki_response.bucket {
+            if let Some(arr) = bucket.as_array() {
+                equipment.extend(arr.iter().cloned());
 
-        if let Some(query_continue_offset) = wiki_response.query_continue_offset {
-            if query_continue_offset < offset {
-                break;
+                if arr.len() == 500 {
+                    offset += 500;
+                } else {
+                    break;
+                }
             } else {
-                offset = query_continue_offset;
+                break;
             }
         } else {
             break;
@@ -177,20 +181,6 @@ async fn get_equipment_data() -> Result<serde_json::Value, Box<dyn std::error::E
     }
 
     Ok(equipment)
-}
-
-fn get_printout_value(prop: &Option<serde_json::Value>) -> Option<serde_json::Value> {
-    prop.as_ref().and_then(|values| {
-        if let Some(array) = values.as_array() {
-            if array.is_empty() {
-                None
-            } else {
-                Some(array[0].clone())
-            }
-        } else {
-            Some(values.clone())
-        }
-    })
 }
 
 #[cfg(feature = "data-generation")]
@@ -203,98 +193,127 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut data = vec![];
     let mut required_imgs = Vec::new();
 
-    for (k, v) in wiki_data.as_object().unwrap() {
-        println!("Processing {}", k);
-
-        if v.get("printouts").is_none() {
-            println!("{} is missing SMW printouts - skipping.", k);
-            continue;
+    for v in wiki_data {
+        if let Some(name) = v.get("page_name_sub") {
+            if data
+                .iter()
+                .any(&|eq: &Equipment| eq.name == name.as_str().unwrap())
+            {
+                continue;
+            } else {
+                println!("Processing {name}");
+            }
         }
 
-        let po = v.get("printouts").unwrap();
-        let item_id = get_printout_value(&po.get("Item ID").cloned())
-            .and_then(|v| v.as_i64())
-            .unwrap_or_default();
+        let item_id = match v.get("item_id").and_then(|v| v.as_array()) {
+            Some(arr) if !arr.is_empty() => {
+                match arr[0].as_str().and_then(|s| s.parse::<i64>().ok()) {
+                    Some(id) => Some(id),
+                    None => {
+                        println!("Skipping - invalid item ID (not an int)");
+                        continue;
+                    }
+                }
+            }
+            _ => None,
+        };
 
         let offensive = Offensive {
-            stab: get_printout_value(&po.get("Stab attack bonus").cloned())
+            stab: v
+                .get("infobox_bonuses.stab_attack_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            slash: get_printout_value(&po.get("Slash attack bonus").cloned())
+            slash: v
+                .get("infobox_bonuses.slash_attack_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            crush: get_printout_value(&po.get("Crush attack bonus").cloned())
+            crush: v
+                .get("infobox_bonuses.crush_attack_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            magic: get_printout_value(&po.get("Magic attack bonus").cloned())
+            magic: v
+                .get("infobox_bonuses.magic_attack_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            ranged: get_printout_value(&po.get("Range attack bonus").cloned())
+            ranged: v
+                .get("infobox_bonuses.range_attack_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
         };
 
         let defensive = Defensive {
-            stab: get_printout_value(&po.get("Stab defence bonus").cloned())
+            stab: v
+                .get("infobox_bonuses.stab_defence_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            slash: get_printout_value(&po.get("Slash defence bonus").cloned())
+            slash: v
+                .get("infobox_bonuses.slash_defence_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            crush: get_printout_value(&po.get("Crush defence bonus").cloned())
+            crush: v
+                .get("infobox_bonuses.crush_defence_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            magic: get_printout_value(&po.get("Magic defence bonus").cloned())
+            magic: v
+                .get("infobox_bonuses.magic_defence_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            ranged: get_printout_value(&po.get("Range defence bonus").cloned())
+            ranged: v
+                .get("infobox_bonuses.range_defence_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
         };
 
         let strength_bonuses = StrengthBonuses {
-            melee: get_printout_value(&po.get("Strength bonus").cloned())
+            melee: v
+                .get("infobox_bonuses.strength_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            ranged: get_printout_value(&po.get("Ranged Strength bonus").cloned())
+            ranged: v
+                .get("infobox_bonuses.ranged_strength_bonus")
                 .and_then(|v| v.as_i64())
                 .unwrap_or_default(),
-            magic: get_printout_value(&po.get("Magic Damage bonus").cloned())
+            magic: v
+                .get("infobox_bonuses.magic_damage_bonus")
                 .and_then(|v| v.as_f64())
                 .unwrap_or_default(),
         };
 
         let mut equipment = Equipment {
-            name: k.split('#').next().unwrap().to_string(),
-            id: item_id,
-            version: get_printout_value(&po.get("Version anchor").cloned())
+            name: v.get("page_name").unwrap().to_string(),
+            id: item_id.unwrap_or(-1),
+            version: v
+                .get("version_anchor")
                 .map(|v| v.to_string().replace('\"', "")),
-            image: po
-                .get("Image")
+            image: v
+                .get("image")
                 .and_then(|v| v.as_array())
-                .and_then(|a| a.first())
-                .and_then(|v| v.get("fulltext"))
-                .and_then(|v| v.as_str())
-                .map(|s| s.replace("File:", ""))
+                .and_then(|a| a.last())
+                .map(|v| v.to_string().replace("File:", "").replace('\"', ""))
                 .unwrap_or_default(),
-            slot: get_printout_value(&po.get("Equipment slot").cloned())
+            slot: v
+                .get("infobox_bonuses.equipment_slot")
                 .map(|v| v.to_string())
                 .unwrap_or_default()
                 .replace('\"', ""),
-            speed: get_printout_value(&po.get("Weapon attack speed").cloned())
+            speed: v
+                .get("infobox_bonuses.weapon_attack_speed")
                 .and_then(|v| v.as_i64()),
-            category: get_printout_value(&po.get("Combat style").cloned())
+            category: v
+                .get("infobox_bonuses.combat_style")
                 .map(|v| v.to_string().replace('\"', "")),
             bonuses: Bonuses {
                 attack: offensive,
                 defence: defensive,
                 strength: strength_bonuses,
-                prayer: get_printout_value(&po.get("Prayer bonus").cloned())
+                prayer: v
+                    .get("infobox_bonuses.prayer_bonus")
                     .and_then(|v| v.as_i64())
                     .unwrap_or_default(),
             },
             is_two_handed: None,
-            attack_range: get_printout_value(&po.get("Weapon attack range").cloned())
+            attack_range: v
+                .get("infobox_bonuses.weapon_attack_range")
                 .and_then(|v| v.as_i64()),
         };
 
@@ -453,7 +472,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let file = File::create(FILE_NAME)?;
-    println!("Saving to JSON at file: {}", FILE_NAME);
+    println!("Saving to JSON at file: {FILE_NAME}");
     serde_json::to_writer_pretty(&file, &data)?;
     println!("Equipment JSON file created successfully");
 
@@ -462,7 +481,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut skipped_img_dls = 0;
     let required_imgs: std::collections::HashSet<_> = required_imgs.into_iter().collect();
     for (idx, img) in required_imgs.iter().enumerate() {
-        let img_path = format!("{}{}", IMG_PATH, img);
+        let img_path = format!("{IMG_PATH}{img}");
         if std::path::Path::new(&img_path).exists() {
             skipped_img_dls += 1;
             continue;
@@ -473,7 +492,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             required_imgs.len(),
             img
         );
-        let url = format!("{}/w/Special:Filepath/{}", WIKI_BASE, img);
+        let url = format!("{WIKI_BASE}/w/Special:Filepath/{img}");
         let client = reqwest::Client::new();
         let response = client
             .get(&url)
@@ -486,22 +505,22 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let mut file = File::create(&img_path)?;
                     let content = response.bytes().await?;
                     file.write_all(&content)?;
-                    println!("Saved image: {}", img);
+                    println!("Saved image: {img}");
                     success_img_dls += 1;
                 } else {
-                    println!("Unable to save image: {}", img);
+                    println!("Unable to save image: {img}");
                     failed_img_dls += 1;
                 }
             }
             Err(_) => {
-                println!("Error fetching image for {}", img);
+                println!("Error fetching image for {img}");
                 continue;
             }
         }
     }
-    println!("Total images saved: {}", success_img_dls);
-    println!("Total images skipped (already exists): {}", skipped_img_dls);
-    println!("Total images failed to save: {}", failed_img_dls);
+    println!("Total images saved: {success_img_dls}");
+    println!("Total images skipped (already exists): {skipped_img_dls}");
+    println!("Total images failed to save: {failed_img_dls}");
 
     Ok(())
 }
