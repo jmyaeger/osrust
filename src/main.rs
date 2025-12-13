@@ -23,9 +23,9 @@ use osrs::utils::{loadouts, logging::FightLogger};
 fn main() {
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
     // simulate_vardorvis();
 }
@@ -153,12 +153,12 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(93, None);
-    player.stats.magic = Stat::new(93, None);
-    player.stats.defence = Stat::new(70, None);
-    player.stats.hitpoints = Stat::new(90, None);
-    player.stats.attack = Stat::new(80, None);
-    player.stats.strength = Stat::new(80, None);
+    player.stats.ranged = Stat::new(92, None);
+    player.stats.magic = Stat::new(92, None);
+    player.stats.defence = Stat::new(75, None);
+    player.stats.hitpoints = Stat::new(85, None);
+    player.stats.attack = Stat::new(78, None);
+    player.stats.strength = Stat::new(86, None);
     player.reset_current_stats(false);
     player.equip("Corrupted staff (perfected)", None);
     player.equip("Crystal helm (basic)", None);
@@ -166,8 +166,8 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(Prayer::MysticVigour);
-    player.prayers.add(Prayer::SteelSkin);
+    player.prayers.add(Prayer::MysticMight);
+    // player.prayers.add(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
@@ -178,7 +178,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::Deadeye);
+    player.prayers.add(Prayer::EagleEye);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -201,8 +201,8 @@ fn simulate_hunllef() {
     player.switch(&SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 16,
-        eat_strategy: HunllefEatStrategy::EatAtHp(69),
+        food_count: 30,
+        eat_strategy: HunllefEatStrategy::EatAtHp(64),
         redemption_attempts: 0,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Magic,

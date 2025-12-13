@@ -198,8 +198,8 @@ pub trait Mechanics {
         if state.spec_regen_timer.is_active() {
             state.spec_regen_timer.increment();
             if (player.is_wearing("Lightbearer", None)
-                && state.spec_regen_timer.counter() % 25 == 0)
-                || state.spec_regen_timer.counter() % 50 == 0
+                && state.spec_regen_timer.counter().is_multiple_of(25))
+                || state.spec_regen_timer.counter().is_multiple_of(50)
             {
                 player.stats.spec.regen();
                 logger.log_custom(

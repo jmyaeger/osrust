@@ -971,12 +971,11 @@ pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Erro
     let items: Vec<Value> = serde_json::from_str(&json_content)?;
 
     for item in items {
-        if let Some(name) = item.get("name").and_then(|v| v.as_str()) {
-            if name == item_name {
-                if let Some(slot) = item.get("slot").and_then(|v| v.as_str()) {
-                    return Ok(slot.to_string());
-                }
-            }
+        if let Some(name) = item.get("name").and_then(|v| v.as_str())
+            && name == item_name
+            && let Some(slot) = item.get("slot").and_then(|v| v.as_str())
+        {
+            return Ok(slot.to_string());
         }
     }
 

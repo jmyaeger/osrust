@@ -180,7 +180,7 @@ impl HunllefMechanics {
         rng: &mut SmallRng,
     ) {
         // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
-        let hunllef_style = if (state.hunllef_attack_count / 4) % 2 == 0 {
+        let hunllef_style = if (state.hunllef_attack_count / 4).is_multiple_of(2) {
             AttackType::Ranged
         } else {
             AttackType::Magic

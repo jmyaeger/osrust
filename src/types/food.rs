@@ -93,19 +93,14 @@ pub enum Foods {
     Bream,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
 pub enum FoodType {
+    #[default]
     Normal,
     Combo,
     Potion,
     MultiBite,
     DelayedHeal,
-}
-
-impl Default for FoodType {
-    fn default() -> Self {
-        Self::Normal
-    }
 }
 
 #[derive(Debug, Clone, Default)]

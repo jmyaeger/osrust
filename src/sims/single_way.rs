@@ -512,10 +512,10 @@ impl SingleWayMechanics {
 impl Mechanics for SingleWayMechanics {}
 
 fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationError> {
-    if let Some(ref spec_config) = fight.spec_config {
-        if let Err(e) = spec_config.validate() {
-            return Err(SimulationError::ConfigError(e));
-        }
+    if let Some(ref spec_config) = fight.spec_config
+        && let Err(e) = spec_config.validate()
+    {
+        return Err(SimulationError::ConfigError(e));
     }
 
     fight
@@ -552,16 +552,16 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
             }
         }
 
-        if let Some(thrall) = fight.config.thralls {
-            if vars.tick_counter == vars.thrall_attack_tick {
-                fight.mechanics.thrall_attack(
-                    &mut fight.monster,
-                    thrall,
-                    &mut vars,
-                    &mut fight.rng,
-                    &mut fight.logger,
-                );
-            }
+        if let Some(thrall) = fight.config.thralls
+            && vars.tick_counter == vars.thrall_attack_tick
+        {
+            fight.mechanics.thrall_attack(
+                &mut fight.monster,
+                thrall,
+                &mut vars,
+                &mut fight.rng,
+                &mut fight.logger,
+            );
         }
 
         fight

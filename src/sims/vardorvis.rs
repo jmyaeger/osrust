@@ -205,16 +205,16 @@ impl VardorvisFight {
                 );
             }
 
-            if let Some(thrall) = self.config.thralls {
-                if vars.tick_counter == vars.thrall_attack_tick {
-                    self.mechanics.thrall_attack(
-                        &mut self.vard,
-                        thrall,
-                        &mut vars,
-                        &mut self.rng,
-                        &mut self.config.logger,
-                    );
-                }
+            if let Some(thrall) = self.config.thralls
+                && vars.tick_counter == vars.thrall_attack_tick
+            {
+                self.mechanics.thrall_attack(
+                    &mut self.vard,
+                    thrall,
+                    &mut vars,
+                    &mut self.rng,
+                    &mut self.config.logger,
+                );
             }
 
             self.mechanics
