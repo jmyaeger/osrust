@@ -124,6 +124,38 @@ struct HunllefMechanics;
 impl Mechanics for HunllefMechanics {}
 
 impl HunllefMechanics {
+    fn player_attack(
+        &self,
+        player: &mut Player,
+        monster: &mut Monster,
+        rng: &mut SmallRng,
+        limiter: &Option<Box<dyn Limiter>>,
+        fight_vars: &mut FightVars,
+        logger: &mut FightLogger,
+    ) {
+        let hit = (player.attack)(player, monster, rng, limiter);
+        logger.log_player_attack(
+            fight_vars.tick_counter,
+            hit.damage,
+            hit.success,
+            player.combat_type(),
+        );
+        player.state.first_attack = false;
+        player.state.last_attack_hit = hit.success;
+        monster.take_damage(hit.damage);
+        logger.log_monster_damage(
+            fight_vars.tick_counter,
+            hit.damage,
+            monster.stats.hitpoints.current,
+            monster.info.name.as_str(),
+        );
+
+        fight_vars.hit_attempts += 1;
+        fight_vars.hit_count += if hit.success { 1 } else { 0 };
+        fight_vars.hit_amounts.push(hit.damage);
+        fight_vars.attack_tick += player.gear.weapon.speed;
+    }
+
     fn apply_queued_damage(
         &self,
         state: &mut HunllefState,

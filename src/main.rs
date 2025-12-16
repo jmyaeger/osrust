@@ -21,6 +21,7 @@ use osrs::types::stats::Stat;
 use osrs::utils::{loadouts, logging::FightLogger};
 
 fn main() {
+    let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
     // simulate_single_way();
@@ -28,6 +29,13 @@ fn main() {
     simulate_hunllef();
 
     // simulate_vardorvis();
+
+    let end_time = std::time::Instant::now();
+
+    println!(
+        "Total elapsed time: {:.2} seconds",
+        (end_time - start_time).as_secs_f64()
+    )
 }
 
 #[allow(unused)]

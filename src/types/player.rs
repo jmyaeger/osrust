@@ -352,6 +352,7 @@ pub struct Player {
     pub switches: Vec<GearSwitch>,
     pub current_switch: Option<SwitchType>,
     pub state: PlayerState,
+    combat_type: CombatType,
 }
 
 impl Default for Player {
@@ -374,6 +375,7 @@ impl Default for Player {
             switches: Vec::new(),
             current_switch: None,
             state: PlayerState::default(),
+            combat_type: CombatType::default(),
         }
     }
 }
@@ -559,6 +561,7 @@ impl Player {
         }
         self.update_bonuses();
         self.update_set_effects();
+        self.combat_type = self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
     }
 
     pub fn equip_item(
@@ -869,7 +872,7 @@ impl Player {
 
     pub fn combat_type(&self) -> CombatType {
         // Get combat type (stab, slash, ranged, etc.)
-        self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type
+        self.combat_type
     }
 
     pub fn is_using_melee(&self) -> bool {
@@ -913,6 +916,8 @@ impl Player {
         } else {
             self.gear.weapon.speed = self.gear.weapon.base_speed;
         }
+
+        self.combat_type = self.gear.weapon.combat_styles[&style].combat_type;
     }
 
     pub fn switch(&mut self, switch_type: &SwitchType) {
@@ -929,6 +934,8 @@ impl Player {
                 self.max_hits = switch.max_hits;
                 self.def_rolls = switch.def_rolls;
                 self.current_switch = Some(switch.switch_type.clone());
+                self.combat_type =
+                    self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
 
                 return;
             }
