@@ -9,12 +9,13 @@ use crate::types::equipment::{
 };
 use crate::types::monster::Monster;
 use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
-use crate::types::prayers::PrayerBoosts;
+use crate::types::prayers::{Prayer, PrayerBoosts};
 use crate::types::spells;
 use crate::types::stats::{PlayerStats, SpecEnergy, Stat};
 use reqwest;
 use std::cmp::max;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 // Struct for holding sunfire rune min hit value
 #[derive(Debug, PartialEq, Default, Clone, Copy)]
@@ -93,8 +94,8 @@ pub enum SwitchType {
     Melee,
     Ranged,
     Magic,
-    Spec(String),
-    Custom(String),
+    Spec(Rc<str>),
+    Custom(Rc<str>),
 }
 
 impl SwitchType {
@@ -103,8 +104,8 @@ impl SwitchType {
             SwitchType::Melee => "Melee".to_string(),
             SwitchType::Ranged => "Ranged".to_string(),
             SwitchType::Magic => "Magic".to_string(),
-            SwitchType::Spec(spec_label) => format!("{spec_label} spec"),
-            SwitchType::Custom(custom_label) => custom_label.clone(),
+            SwitchType::Spec(spec_label) => format!("{} spec", *spec_label),
+            SwitchType::Custom(custom_label) => custom_label.to_string(),
         }
     }
 }
@@ -112,8 +113,8 @@ impl SwitchType {
 #[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
     pub switch_type: SwitchType,
-    pub gear: Gear,
-    pub prayers: PrayerBoosts,
+    pub gear: Rc<Gear>,
+    pub prayers: Rc<PrayerBoosts>,
     pub spell: Option<spells::Spell>,
     pub active_style: CombatStyle,
     pub set_effects: SetEffects,
@@ -158,7 +159,7 @@ impl From<&Player> for GearSwitch {
                 SwitchType::Ranged
             }
             CombatType::Magic => SwitchType::Magic,
-            _ => SwitchType::Custom("Unknown".to_string()),
+            _ => SwitchType::Custom("Unknown".into()),
         };
         let attack = get_attack_functions(player);
         let spec = get_spec_attack_function(player);
@@ -336,10 +337,10 @@ impl Default for PlayerState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,
-    pub gear: Gear,
+    pub gear: Rc<Gear>,
     pub bonuses: EquipmentBonuses,
     pub potions: PotionBoosts,
-    pub prayers: PrayerBoosts,
+    pub prayers: Rc<PrayerBoosts>,
     pub boosts: StatusBoosts,
     pub active_effects: Vec<CombatEffect>,
     pub set_effects: SetEffects,
@@ -359,10 +360,10 @@ impl Default for Player {
     fn default() -> Self {
         Self {
             stats: PlayerStats::default(),
-            gear: Gear::default(),
+            gear: Rc::new(Gear::default()),
             bonuses: EquipmentBonuses::default(),
             potions: PotionBoosts::default(),
-            prayers: PrayerBoosts::default(),
+            prayers: Rc::new(PrayerBoosts::default()),
             boosts: StatusBoosts::default(),
             active_effects: Vec::new(),
             set_effects: SetEffects::default(),
@@ -410,65 +411,25 @@ impl Player {
     }
 
     pub fn is_wearing(&self, gear_name: &str, version: Option<&str>) -> bool {
-        // Check if the player is wearing the specified piece of gear
-        let version = version.map(|v| v.to_string());
-
-        self.gear.weapon.name == gear_name && self.gear.weapon.version == version
-            || [
-                &self.gear.head,
-                &self.gear.neck,
-                &self.gear.cape,
-                &self.gear.ammo,
-                &self.gear.shield,
-                &self.gear.body,
-                &self.gear.legs,
-                &self.gear.feet,
-                &self.gear.hands,
-                &self.gear.ring,
-            ]
-            .iter()
-            .filter_map(|slot| slot.as_ref())
-            .any(|armor| armor.name == gear_name && armor.version == version)
+        self.gear.is_wearing(gear_name, version)
     }
 
     pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {
-        // Same as is_wearing() but allows for any version to match
-        self.gear.weapon.name == gear_name
-            || [
-                &self.gear.head,
-                &self.gear.neck,
-                &self.gear.cape,
-                &self.gear.ammo,
-                &self.gear.shield,
-                &self.gear.body,
-                &self.gear.legs,
-                &self.gear.feet,
-                &self.gear.hands,
-                &self.gear.ring,
-            ]
-            .iter()
-            .filter_map(|slot| slot.as_ref())
-            .any(|armor| armor.name == gear_name)
+        self.gear.is_wearing_any_version(gear_name)
     }
 
     pub fn is_wearing_any<I>(&self, gear_names: I) -> bool
     where
         I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
     {
-        // Check if the player is wearing any item in the provided Vec
-        gear_names
-            .into_iter()
-            .any(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
+        self.gear.is_wearing_any(gear_names)
     }
 
     pub fn is_wearing_all<I>(&self, gear_names: I) -> bool
     where
         I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
     {
-        // Check if the player is wearing all items in the provided Vec
-        gear_names
-            .into_iter()
-            .all(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
+        self.gear.is_wearing_all(gear_names)
     }
 
     pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
@@ -476,11 +437,13 @@ impl Player {
         let slot_name = equipment::get_slot_name(item_name)
             .unwrap_or_else(|_| panic!("Slot not found for item {item_name}"));
 
+        let gear = Rc::make_mut(&mut self.gear);
+
         match slot_name.as_str() {
-            "head" => self.gear.head = Some(Armor::new(item_name, version)),
-            "neck" => self.gear.neck = Some(Armor::new(item_name, version)),
+            "head" => gear.head = Some(Armor::new(item_name, version)),
+            "neck" => gear.neck = Some(Armor::new(item_name, version)),
             "cape" => {
-                self.gear.cape = Some(Armor::new(item_name, version));
+                gear.cape = Some(Armor::new(item_name, version));
 
                 // For the quiver, apply extra +10 accuracy and +1 strength if applicable
                 self.set_quiver_bonuses();
@@ -488,56 +451,52 @@ impl Player {
             "ammo" => {
                 // If quiver is equipped and the ammo slot is already full with a different ammo type,
                 // equip the new ammo in the second_ammo slot
-                if self.is_wearing_any_version("Dizana's quiver")
-                    && (self.gear.ammo.is_some()
-                        && !((self.gear.ammo.as_ref().unwrap().is_bolt()
+                if gear.is_wearing_any_version("Dizana's quiver")
+                    && (gear.ammo.is_some()
+                        && !((gear.ammo.as_ref().unwrap().is_bolt()
                             && item_name.contains("bolts"))
-                            || (self.gear.ammo.as_ref().unwrap().is_arrow()
+                            || (gear.ammo.as_ref().unwrap().is_arrow()
                                 && item_name.contains("arrow"))))
                 {
-                    self.gear.second_ammo = Some(Armor::new(item_name, version));
+                    gear.second_ammo = Some(Armor::new(item_name, version));
 
                     self.set_quiver_bonuses();
                 } else {
-                    self.gear.ammo = Some(Armor::new(item_name, version));
+                    gear.ammo = Some(Armor::new(item_name, version));
 
                     self.set_quiver_bonuses();
                 }
             }
             "weapon" => {
-                self.gear.weapon = Weapon::new(item_name, version);
+                gear.weapon = Weapon::new(item_name, version);
 
                 // Unequip shield if weapon is two handed
-                if self.gear.weapon.is_two_handed {
-                    self.gear.shield = None;
+                if gear.weapon.is_two_handed {
+                    gear.shield = None;
                 }
 
                 // Modify attack speed if weapon is on rapid
                 if self.attrs.active_style == CombatStyle::Rapid
-                    && self
-                        .gear
-                        .weapon
-                        .combat_styles
-                        .contains_key(&CombatStyle::Rapid)
+                    && gear.weapon.combat_styles.contains_key(&CombatStyle::Rapid)
                 {
-                    self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+                    gear.weapon.speed = gear.weapon.base_speed - 1;
                 }
 
                 self.set_quiver_bonuses();
             }
             "shield" => {
-                self.gear.shield = Some(Armor::new(item_name, version));
+                gear.shield = Some(Armor::new(item_name, version));
 
                 // Unequip weapon if it is two handed
-                if self.gear.weapon.is_two_handed {
-                    self.gear.weapon = Weapon::default();
+                if gear.weapon.is_two_handed {
+                    gear.weapon = Weapon::default();
                 }
             }
-            "body" => self.gear.body = Some(Armor::new(item_name, version)),
-            "legs" => self.gear.legs = Some(Armor::new(item_name, version)),
-            "hands" => self.gear.hands = Some(Armor::new(item_name, version)),
-            "feet" => self.gear.feet = Some(Armor::new(item_name, version)),
-            "ring" => self.gear.ring = Some(Armor::new(item_name, version)),
+            "body" => gear.body = Some(Armor::new(item_name, version)),
+            "legs" => gear.legs = Some(Armor::new(item_name, version)),
+            "hands" => gear.hands = Some(Armor::new(item_name, version)),
+            "feet" => gear.feet = Some(Armor::new(item_name, version)),
+            "ring" => gear.ring = Some(Armor::new(item_name, version)),
             _ => panic!("Slot not found for item {item_name}"),
         }
         self.update_bonuses();
@@ -545,18 +504,19 @@ impl Player {
     }
 
     pub fn unequip_slot(&mut self, slot: &GearSlot) {
+        let gear = Rc::make_mut(&mut self.gear);
         match slot {
-            GearSlot::Ammo => self.gear.ammo = None,
-            GearSlot::Body => self.gear.body = None,
-            GearSlot::Cape => self.gear.cape = None,
-            GearSlot::Feet => self.gear.feet = None,
-            GearSlot::Hands => self.gear.hands = None,
-            GearSlot::Head => self.gear.head = None,
-            GearSlot::Legs => self.gear.legs = None,
-            GearSlot::Neck => self.gear.neck = None,
-            GearSlot::Ring => self.gear.ring = None,
-            GearSlot::Shield => self.gear.shield = None,
-            GearSlot::Weapon => self.gear.weapon = Weapon::default(),
+            GearSlot::Ammo => gear.ammo = None,
+            GearSlot::Body => gear.body = None,
+            GearSlot::Cape => gear.cape = None,
+            GearSlot::Feet => gear.feet = None,
+            GearSlot::Hands => gear.hands = None,
+            GearSlot::Head => gear.head = None,
+            GearSlot::Legs => gear.legs = None,
+            GearSlot::Neck => gear.neck = None,
+            GearSlot::Ring => gear.ring = None,
+            GearSlot::Shield => gear.shield = None,
+            GearSlot::Weapon => gear.weapon = Weapon::default(),
             GearSlot::None => {}
         }
         self.update_bonuses();
@@ -568,26 +528,23 @@ impl Player {
         &mut self,
         item: Box<dyn Equipment>,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        let gear = Rc::make_mut(&mut self.gear);
         let slot = item.slot();
         match slot {
             GearSlot::Weapon => {
                 if let Some(weapon) = item.as_any().downcast_ref::<Weapon>() {
-                    self.gear.weapon = weapon.clone();
+                    gear.weapon = weapon.clone();
 
                     // Unequip shield if weapon is two handed
-                    if self.gear.weapon.is_two_handed {
-                        self.gear.shield = None;
+                    if gear.weapon.is_two_handed {
+                        gear.shield = None;
                     }
 
                     // Modify attack speed if weapon is on rapid
                     if self.attrs.active_style == CombatStyle::Rapid
-                        && self
-                            .gear
-                            .weapon
-                            .combat_styles
-                            .contains_key(&CombatStyle::Rapid)
+                        && gear.weapon.combat_styles.contains_key(&CombatStyle::Rapid)
                     {
-                        self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+                        gear.weapon.speed = gear.weapon.base_speed - 1;
                     }
 
                     self.set_quiver_bonuses();
@@ -598,39 +555,39 @@ impl Player {
             GearSlot::Ammo => {
                 // If quiver is equipped and the ammo slot is already full with a different ammo type,
                 // equip the new ammo in the second_ammo slot
-                if self.is_wearing_any_version("Dizana's quiver")
-                    && (self.gear.ammo.is_some()
-                        && !((self.gear.ammo.as_ref().unwrap().is_bolt()
+                if gear.is_wearing_any_version("Dizana's quiver")
+                    && (gear.ammo.is_some()
+                        && !((gear.ammo.as_ref().unwrap().is_bolt()
                             && item.name().contains("bolts"))
-                            || (self.gear.ammo.as_ref().unwrap().is_arrow()
+                            || (gear.ammo.as_ref().unwrap().is_arrow()
                                 && item.name().contains("arrow"))))
                 {
-                    self.gear.second_ammo = item.as_any().downcast_ref::<Armor>().cloned();
+                    gear.second_ammo = item.as_any().downcast_ref::<Armor>().cloned();
 
                     self.set_quiver_bonuses();
                 } else {
-                    self.gear.ammo = item.as_any().downcast_ref::<Armor>().cloned();
+                    gear.ammo = item.as_any().downcast_ref::<Armor>().cloned();
 
                     self.set_quiver_bonuses();
                 }
             }
             GearSlot::Cape => {
-                self.gear.cape = item.as_any().downcast_ref::<Armor>().cloned();
+                gear.cape = item.as_any().downcast_ref::<Armor>().cloned();
                 self.set_quiver_bonuses();
             }
             GearSlot::Shield => {
-                self.gear.shield = item.as_any().downcast_ref::<Armor>().cloned();
-                if self.gear.weapon.is_two_handed {
-                    self.gear.weapon = Weapon::default();
+                gear.shield = item.as_any().downcast_ref::<Armor>().cloned();
+                if gear.weapon.is_two_handed {
+                    gear.weapon = Weapon::default();
                 }
             }
-            GearSlot::Body => self.gear.body = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Feet => self.gear.feet = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Hands => self.gear.hands = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Head => self.gear.head = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Legs => self.gear.legs = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Neck => self.gear.neck = item.as_any().downcast_ref::<Armor>().cloned(),
-            GearSlot::Ring => self.gear.ring = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Body => gear.body = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Feet => gear.feet = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Hands => gear.hands = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Head => gear.head = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Legs => gear.legs = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Neck => gear.neck = item.as_any().downcast_ref::<Armor>().cloned(),
+            GearSlot::Ring => gear.ring = item.as_any().downcast_ref::<Armor>().cloned(),
             GearSlot::None => {
                 return Err(format!("{} has the slot type 'none'", item.name()).into());
             }
@@ -698,13 +655,14 @@ impl Player {
     }
 
     fn set_quiver_bonuses(&mut self) {
+        let gear = Rc::make_mut(&mut self.gear);
         // Apply extra +10 accuracy and +1 strength to quiver if applicable
-        if self.is_quiver_bonus_valid() {
-            self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-            self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-        } else if self.is_wearing_any_version("Dizana's quiver") {
-            self.gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-            self.gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
+        if gear.is_quiver_bonus_valid() {
+            gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
+            gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
+        } else if gear.is_wearing_any_version("Dizana's quiver") {
+            gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
+            gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
         }
     }
 
@@ -890,12 +848,14 @@ impl Player {
     pub fn set_active_style(&mut self, style: CombatStyle) {
         // Set the active combat style and make any necessary attack speed adjustments
         self.attrs.active_style = style;
-
         let stance = self.combat_stance();
+        let is_using_standard_spell = self.is_using_standard_spell();
+
+        let gear = Rc::make_mut(&mut self.gear);
 
         // Reduce attack speed by 1 on rapid
         if stance == CombatStance::Rapid {
-            self.gear.weapon.speed = self.gear.weapon.base_speed - 1;
+            gear.weapon.speed = gear.weapon.base_speed - 1;
         } else if [
             CombatStance::DefensiveAutocast,
             CombatStance::Autocast,
@@ -904,23 +864,28 @@ impl Player {
         .contains(&stance)
         {
             // Prevent staff speed from being set to its melee attack speed if player is casting spells
-            self.gear.weapon.speed = if self.is_wearing("Harmonised nightmare staff", None)
-                && self.is_using_standard_spell()
-            {
-                4
-            } else if self.is_wearing("Twinflame staff", None) {
-                6
-            } else {
-                5
-            }
+            gear.weapon.speed =
+                if gear.is_wearing("Harmonised nightmare staff", None) && is_using_standard_spell {
+                    4
+                } else if gear.is_wearing("Twinflame staff", None) {
+                    6
+                } else {
+                    5
+                }
         } else {
-            self.gear.weapon.speed = self.gear.weapon.base_speed;
+            gear.weapon.speed = gear.weapon.base_speed;
         }
 
-        self.combat_type = self.gear.weapon.combat_styles[&style].combat_type;
+        self.combat_type = gear.weapon.combat_styles[&style].combat_type;
     }
 
     pub fn switch(&mut self, switch_type: &SwitchType) {
+        if let Some(current) = &self.current_switch
+            && current == switch_type
+        {
+            return;
+        }
+
         for switch in &self.switches {
             if &switch.switch_type == switch_type {
                 self.gear = switch.gear.clone();
@@ -1242,6 +1207,14 @@ impl Player {
         self.reset_current_stats(false);
     }
 
+    pub fn add_prayer(&mut self, prayer: Prayer) {
+        Rc::make_mut(&mut self.prayers).add(prayer)
+    }
+
+    pub fn remove_prayer(&mut self, prayer: Prayer) {
+        Rc::make_mut(&mut self.prayers).remove(prayer)
+    }
+
     pub fn bulwark_bonus(&self) -> i32 {
         // Calculate additional melee strength bonus from bulwark passive
         max(
@@ -1254,25 +1227,6 @@ impl Player {
                 / 12
                 - 38,
         )
-    }
-
-    pub fn is_quiver_bonus_valid(&self) -> bool {
-        // Check if the player is wearing a quiver and using a weapon with bolts or arrows
-        self.gear.cape.as_ref().is_some_and(|cape| {
-            cape.name == "Dizana's quiver"
-                && cape.matches_version("Charged")
-                && self.gear.weapon.uses_bolts_or_arrows()
-                && (self
-                    .gear
-                    .ammo
-                    .as_ref()
-                    .is_some_and(|ammo| ammo.is_bolt_or_arrow())
-                    || self
-                        .gear
-                        .second_ammo
-                        .as_ref()
-                        .is_some_and(|ammo| ammo.is_bolt_or_arrow()))
-        })
     }
 
     pub fn heal(&mut self, amount: u32, overheal_hp: Option<u32>) {
@@ -1443,10 +1397,10 @@ mod test {
         let player = Player::new();
 
         assert_eq!(player.stats, PlayerStats::default());
-        assert_eq!(player.gear, Gear::default());
+        assert_eq!(player.gear, Rc::new(Gear::default()));
         assert_eq!(player.bonuses, EquipmentBonuses::default());
         assert_eq!(player.potions, PotionBoosts::default());
-        assert_eq!(player.prayers, PrayerBoosts::default());
+        assert_eq!(player.prayers, Rc::new(PrayerBoosts::default()));
         assert_eq!(player.boosts, StatusBoosts::default());
         assert_eq!(player.active_effects, Vec::new());
         assert_eq!(player.set_effects, SetEffects::default());
@@ -1474,8 +1428,9 @@ mod test {
     #[test]
     fn test_is_wearing() {
         let mut player = Player::new();
-        player.gear.head = Some(Armor::default());
-        player.gear.head.as_mut().unwrap().name = "Torva full helm".to_string();
+        let gear = Rc::make_mut(&mut player.gear);
+        gear.head = Some(Armor::default());
+        gear.head.as_mut().unwrap().name = "Torva full helm".to_string();
         assert!(player.is_wearing("Torva full helm", None));
     }
 
@@ -1485,7 +1440,7 @@ mod test {
         player.equip("Torva full helm", None);
         player.update_bonuses();
         let torva_full_helm = Armor::new("Torva full helm", None);
-        assert_eq!(player.gear.head.unwrap(), torva_full_helm);
+        assert_eq!(player.gear.head.clone().unwrap(), torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
     }
 
@@ -1507,7 +1462,7 @@ mod test {
         player.equip("Neitiznot faceguard", None);
         player.update_bonuses();
         let neitiznot_faceguard = Armor::new("Neitiznot faceguard", None);
-        assert_eq!(player.gear.head.unwrap(), neitiznot_faceguard);
+        assert_eq!(player.gear.head.clone().unwrap(), neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
 
@@ -1528,7 +1483,7 @@ mod test {
             feet: Some(Armor::new("Primordial boots", None)),
             ring: Some(Armor::new("Ultor ring", None)),
         };
-        player.gear = max_melee_gear;
+        player.gear = Rc::new(max_melee_gear);
         player.update_bonuses();
 
         let max_melee_bonuses = EquipmentBonuses {
@@ -1599,11 +1554,12 @@ mod test {
     #[test]
     fn test_prayer_boost() {
         let mut player = Player::new();
-        player.prayers.add(Prayer::Chivalry);
-        assert_eq!(player.prayers.attack, 15);
-        assert_eq!(player.prayers.strength, 18);
-        assert_eq!(player.prayers.defence, 20);
-        player.prayers.add(Prayer::Piety);
+        let prayers = Rc::make_mut(&mut player.prayers);
+        prayers.add(Prayer::Chivalry);
+        assert_eq!(prayers.attack, 15);
+        assert_eq!(prayers.strength, 18);
+        assert_eq!(prayers.defence, 20);
+        prayers.add(Prayer::Piety);
         assert_eq!(player.prayers.attack, 20);
         assert_eq!(player.prayers.strength, 23);
         assert_eq!(player.prayers.defence, 25);

@@ -118,6 +118,87 @@ pub struct Gear {
     pub ring: Option<Armor>,
 }
 
+impl Gear {
+    pub fn is_wearing(&self, gear_name: &str, version: Option<&str>) -> bool {
+        // Check if the player is wearing the specified piece of gear
+        let version = version.map(|v| v.to_string());
+
+        self.weapon.name == gear_name && self.weapon.version == version
+            || [
+                &self.head,
+                &self.neck,
+                &self.cape,
+                &self.ammo,
+                &self.shield,
+                &self.body,
+                &self.legs,
+                &self.feet,
+                &self.hands,
+                &self.ring,
+            ]
+            .iter()
+            .filter_map(|slot| slot.as_ref())
+            .any(|armor| armor.name == gear_name && armor.version == version)
+    }
+
+    pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {
+        // Same as is_wearing() but allows for any version to match
+        self.weapon.name == gear_name
+            || [
+                &self.head,
+                &self.neck,
+                &self.cape,
+                &self.ammo,
+                &self.shield,
+                &self.body,
+                &self.legs,
+                &self.feet,
+                &self.hands,
+                &self.ring,
+            ]
+            .iter()
+            .filter_map(|slot| slot.as_ref())
+            .any(|armor| armor.name == gear_name)
+    }
+
+    pub fn is_wearing_any<I>(&self, gear_names: I) -> bool
+    where
+        I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
+    {
+        // Check if the player is wearing any item in the provided Vec
+        gear_names
+            .into_iter()
+            .any(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
+    }
+
+    pub fn is_wearing_all<I>(&self, gear_names: I) -> bool
+    where
+        I: IntoIterator<Item = (&'static str, Option<&'static str>)>,
+    {
+        // Check if the player is wearing all items in the provided Vec
+        gear_names
+            .into_iter()
+            .all(|gear_name| self.is_wearing(gear_name.0, gear_name.1))
+    }
+
+    pub fn is_quiver_bonus_valid(&self) -> bool {
+        // Check if the player is wearing a quiver and using a weapon with bolts or arrows
+        self.cape.as_ref().is_some_and(|cape| {
+            cape.name == "Dizana's quiver"
+                && cape.matches_version("Charged")
+                && self.weapon.uses_bolts_or_arrows()
+                && (self
+                    .ammo
+                    .as_ref()
+                    .is_some_and(|ammo| ammo.is_bolt_or_arrow())
+                    || self
+                        .second_ammo
+                        .as_ref()
+                        .is_some_and(|ammo| ammo.is_bolt_or_arrow()))
+        })
+    }
+}
+
 // Combat types, e.g., stab, slash, crush, magic, etc.
 #[derive(Debug, PartialEq, Eq, Hash, Default, Copy, Clone, EnumIter, Deserialize, Display)]
 pub enum CombatType {

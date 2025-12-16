@@ -10,6 +10,7 @@ use crate::utils::math;
 use rand::Rng;
 use rand::rngs::SmallRng;
 use std::cmp::max;
+use std::rc::Rc;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AttackInfo {
@@ -912,7 +913,7 @@ pub fn dual_macuahuitl_attack(
     info2.max_hit = max_hit - max_hit / 2;
 
     // Reset attack speed to 4 ticks
-    player.gear.weapon.speed = 4;
+    Rc::make_mut(&mut player.gear).weapon.speed = 4;
 
     // Roll two separate hits
     let mut hit1 = base_attack(&info1, rng, false);
@@ -935,7 +936,7 @@ pub fn dual_macuahuitl_attack(
         && ((hit1.success && rng.random_range(0..3) == 0)
             || (hit2.success && rng.random_range(0..3) == 0))
     {
-        player.gear.weapon.speed = 3;
+        Rc::make_mut(&mut player.gear).weapon.speed = 3;
     }
 
     hit1.combine(&hit2)
@@ -1124,7 +1125,7 @@ mod tests {
         player.update_bonuses();
         player.update_set_effects();
         player.set_active_style(CombatStyle::Rapid);
-        player.prayers.add(Prayer::Rigour);
+        player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();

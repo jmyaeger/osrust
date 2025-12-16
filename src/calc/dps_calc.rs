@@ -1187,11 +1187,15 @@ mod tests {
     use crate::types::potions::Potion;
     use crate::types::prayers::Prayer;
     use crate::types::stats::PlayerStats;
+
+    use std::rc::Rc;
+
     #[test]
     fn test_max_melee_ammonite_crab() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Torva full helm", None);
@@ -1221,7 +1225,7 @@ mod tests {
     fn test_macuahuitl() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Torva full helm", None);
@@ -1250,7 +1254,7 @@ mod tests {
     fn test_scythe_vardorvis() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Torva full helm", None);
@@ -1280,7 +1284,7 @@ mod tests {
     fn test_ruby_bolts_zcb_zebak_500() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Rigour);
+        player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::SmellingSalts);
 
         player.equip("Masori mask (f)", None);

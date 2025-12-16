@@ -678,6 +678,7 @@ mod tests {
     use crate::types::prayers::Prayer;
     use crate::types::stats::Stat;
     use std::collections::HashMap;
+    use std::rc::Rc;
 
     #[test]
     fn test_hunllef_sim() {
@@ -692,8 +693,8 @@ mod tests {
         player.equip("Crystal legs (basic)", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Accurate);
-        player.prayers.add(Prayer::MysticMight);
-        player.prayers.add(Prayer::SteelSkin);
+        player.add_prayer(Prayer::MysticMight);
+        player.add_prayer(Prayer::SteelSkin);
 
         let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
         calc_active_player_rolls(&mut player, &hunllef);
@@ -703,17 +704,17 @@ mod tests {
         player.equip("Corrupted bow (perfected)", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
-        player.prayers.add(Prayer::EagleEye);
-        player.prayers.remove(Prayer::MysticMight);
+        player.add_prayer(Prayer::EagleEye);
+        player.remove_prayer(Prayer::MysticMight);
 
         calc_active_player_rolls(&mut player, &hunllef);
 
         let ranged_switch = GearSwitch::from(&player);
 
-        player.gear.weapon = Weapon::default();
+        Rc::make_mut(&mut player.gear).weapon = Weapon::default();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Kick);
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
 
         calc_active_player_rolls(&mut player, &hunllef);
 

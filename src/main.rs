@@ -1,4 +1,6 @@
 #![allow(unused)]
+use std::rc::Rc;
+
 use osrs::calc::analysis::SimulationStats;
 use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
@@ -99,7 +101,7 @@ fn simulate_single_way() {
     player.equip("Dragon claws", None);
     player.set_active_style(CombatStyle::Slash);
     let dclaws_switch = GearSwitch::new(
-        SwitchType::Spec("Dragon claws spec".to_string()),
+        SwitchType::Spec("Dragon claws spec".into()),
         &player,
         &monster,
     );
@@ -111,7 +113,7 @@ fn simulate_single_way() {
     player.equip("Burning claws", None);
     player.set_active_style(CombatStyle::Slash);
     let bclaws_switch = GearSwitch::new(
-        SwitchType::Spec("Burning claws spec".to_string()),
+        SwitchType::Spec("Burning claws spec".into()),
         &player,
         &monster,
     );
@@ -122,7 +124,7 @@ fn simulate_single_way() {
 
     player.equip("Bandos godsword", None);
     player.set_active_style(CombatStyle::Slash);
-    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".to_string()), &player, &monster);
+    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".into()), &player, &monster);
     let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
         .with_target_def_reduction(20)
         .with_max_attempts(2)
@@ -132,7 +134,7 @@ fn simulate_single_way() {
     player.equip("Elder maul", None);
     player.set_active_style(CombatStyle::Pound);
     let maul_switch = GearSwitch::new(
-        SwitchType::Spec("Elder maul spec".to_string()),
+        SwitchType::Spec("Elder maul spec".into()),
         &player,
         &monster,
     );
@@ -174,8 +176,8 @@ fn simulate_hunllef() {
     player.equip("Crystal legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.prayers.add(Prayer::MysticMight);
-    // player.prayers.add(Prayer::SteelSkin);
+    player.add_prayer(Prayer::MysticMight);
+    // player.add_prayer(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
     calc_active_player_rolls(&mut player, &hunllef);
@@ -186,7 +188,7 @@ fn simulate_hunllef() {
     // player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::EagleEye);
+    player.add_prayer(Prayer::EagleEye);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -197,7 +199,7 @@ fn simulate_hunllef() {
     player.equip("Corrupted halberd (perfected)", None);
     player.set_active_style(CombatStyle::Swipe);
     player.update_bonuses();
-    player.prayers.add(Prayer::Piety);
+    player.add_prayer(Prayer::Piety);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -314,8 +316,8 @@ fn simulate_door_altar_graardor() {
     player.stats.ranged = Stat::new(87, None);
     player.stats.defence = Stat::new(80, None);
     player.reset_current_stats(false);
-    player.prayers.add(Prayer::EagleEye);
-    player.prayers.add(Prayer::SteelSkin);
+    player.add_prayer(Prayer::EagleEye);
+    player.add_prayer(Prayer::SteelSkin);
     player.equip("Barrows gloves", None);
     player.equip("Zamorak d'hide boots", None);
     player.equip("Ava's assembler", None);

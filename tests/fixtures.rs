@@ -1,4 +1,4 @@
-use osrs::types::equipment::CombatStyle;
+use osrs::types::equipment::{CombatStyle, GearSlot};
 use osrs::types::monster::Monster;
 use osrs::types::player::Player;
 use osrs::types::potions::Potion;
@@ -256,7 +256,7 @@ pub fn baba_300() -> Monster {
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Piety);
+    player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
     player.equip("Torva full helm", None);
@@ -292,7 +292,7 @@ pub fn mid_level_melee_player() -> Player {
         herblore: Stat::new(70, None),
         spec: SpecEnergy::default(),
     };
-    player.prayers.add(Prayer::Piety);
+    player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
     player.equip("Helm of neitiznot", None);
@@ -317,7 +317,7 @@ pub fn mid_level_melee_player() -> Player {
 pub fn max_ranged_zcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Rigour);
+    player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
 
     player.equip("Masori mask (f)", None);
@@ -353,7 +353,7 @@ pub fn mid_level_ranged_rcb_player() -> Player {
         herblore: Stat::new(70, None),
         spec: SpecEnergy::default(),
     };
-    player.prayers.add(Prayer::EagleEye);
+    player.add_prayer(Prayer::EagleEye);
     player.add_potion(Potion::Ranging);
 
     player.equip("Ancient coif", None);
@@ -524,7 +524,7 @@ pub fn max_ranged_blowpipe_dragon_darts_player() -> Player {
 pub fn max_ranged_tbow_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player.equip("Twisted bow", None);
-    player.gear.ammo = None;
+    player.unequip_slot(&GearSlot::Ammo);
     player.equip("Dragon arrow", Some("Unpoisoned"));
     player.update_bonuses();
     player
@@ -605,7 +605,7 @@ pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     player.update_bonuses();
     player.update_set_effects();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::Rigour);
+    player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
     player
 }
@@ -626,7 +626,7 @@ pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     player.equip("Atlatl dart", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.prayers.add(Prayer::Rigour);
+    player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
     player
 }
@@ -652,7 +652,7 @@ pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
 pub fn max_mage_sang_staff_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Augury);
+    player.add_prayer(Prayer::Augury);
     player.add_potion(Potion::SaturatedHeart);
 
     player.equip("Ancestral hat", None);
@@ -732,7 +732,7 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
         herblore: Stat::new(70, None),
         spec: SpecEnergy::default(),
     };
-    player.prayers.add(Prayer::MysticMight);
+    player.add_prayer(Prayer::MysticMight);
 
     player.calc_potion_boosts();
     player.reset_current_stats(false);

@@ -13,6 +13,7 @@ use num::clamp;
 use rand::Rng;
 use rand::rngs::SmallRng;
 use std::cmp::max;
+use std::rc::Rc;
 
 pub type SpecialAttackFn =
     fn(&mut Player, &mut Monster, &mut SmallRng, &Option<Box<dyn Limiter>>) -> Hit;
@@ -1527,7 +1528,7 @@ pub fn dual_macuahuitl_spec(
     }
 
     // Next attack is guaranteed to be 3 ticks
-    player.gear.weapon.speed = 3;
+    Rc::make_mut(&mut player.gear).weapon.speed = 3;
 
     hit1.combine(&hit2)
 }

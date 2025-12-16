@@ -14,7 +14,7 @@ mod spec_tests {
     fn create_test_player() -> Player {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Bandos chestplate", None);
@@ -32,11 +32,7 @@ mod spec_tests {
     fn test_spec_strategy_creation() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
-        let switch = GearSwitch::new(
-            SwitchType::Custom("Test spec".to_string()),
-            &player,
-            &monster,
-        );
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
 
         let strategy = SpecStrategy::new(&switch, None);
 
@@ -54,20 +50,14 @@ mod spec_tests {
         let monster = Monster::new("General Graardor", None).unwrap();
 
         // Create multiple strategies with different costs
-        let fang_switch = GearSwitch::new(
-            SwitchType::Custom("Fang spec".to_string()),
-            &player,
-            &monster,
-        );
+        let fang_switch =
+            GearSwitch::new(SwitchType::Custom("Fang spec".into()), &player, &monster);
         let fang_strategy = SpecStrategy::new(&fang_switch, None);
 
         let mut player2 = player.clone();
         player2.equip("Dragon claws", None);
-        let claw_switch = GearSwitch::new(
-            SwitchType::Custom("Claw spec".to_string()),
-            &player2,
-            &monster,
-        );
+        let claw_switch =
+            GearSwitch::new(SwitchType::Custom("Claw spec".into()), &player2, &monster);
         let claw_strategy = SpecStrategy::new(&claw_switch, None);
 
         let config = SpecConfig::new(
@@ -86,11 +76,7 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new(
-            SwitchType::Custom("Test spec".to_string()),
-            &player,
-            &monster,
-        );
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test MaxAttempts condition
@@ -124,11 +110,7 @@ mod spec_tests {
         let mut monster = Monster::new("General Graardor", None).unwrap();
         monster.stats.hitpoints.current = 100;
 
-        let switch = GearSwitch::new(
-            SwitchType::Custom("Test spec".to_string()),
-            &player,
-            &monster,
-        );
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test MonsterHpBelow
@@ -162,11 +144,7 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new(
-            SwitchType::Custom("Test spec".to_string()),
-            &player,
-            &monster,
-        );
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Test TargetDefenceReduction
@@ -225,11 +203,7 @@ mod spec_tests {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).unwrap();
 
-        let switch = GearSwitch::new(
-            SwitchType::Custom("Test spec".to_string()),
-            &player,
-            &monster,
-        );
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
 
         // Modify state

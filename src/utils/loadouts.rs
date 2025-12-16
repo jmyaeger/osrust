@@ -4,10 +4,12 @@ use crate::types::potions::Potion;
 use crate::types::prayers::Prayer;
 use crate::types::stats::PlayerStats;
 
+use std::rc::Rc;
+
 pub fn max_melee_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Piety);
+    player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
     player.equip("Torva full helm", None);
@@ -31,7 +33,7 @@ pub fn max_melee_player() -> Player {
 pub fn max_ranged_zcb_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Rigour);
+    player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
 
     player.equip("Masori mask (f)", None);
@@ -55,7 +57,7 @@ pub fn max_ranged_zcb_player() -> Player {
 pub fn max_mage_sang_staff_player() -> Player {
     let mut player = Player::new();
     player.stats = PlayerStats::default();
-    player.prayers.add(Prayer::Augury);
+    player.add_prayer(Prayer::Augury);
     player.add_potion(Potion::SaturatedHeart);
 
     player.equip("Ancestral hat", None);
@@ -83,7 +85,7 @@ pub fn bowfa_crystal_player() -> Player {
     player.equip("Crystal helm", Some("Active"));
     player.equip("Crystal body", Some("Active"));
     player.equip("Crystal legs", Some("Active"));
-    player.gear.ammo = None;
+    Rc::make_mut(&mut player.gear).ammo = None;
     player.equip("Rada's blessing 4", None);
 
     player.update_bonuses();

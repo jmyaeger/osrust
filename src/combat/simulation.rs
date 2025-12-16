@@ -245,7 +245,7 @@ mod tests {
     fn test_simulate_n_fights() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
         player.equip("Torva full helm", None);

@@ -609,14 +609,16 @@ mod tests {
     use crate::types::prayers::Prayer;
     use crate::types::stats::PlayerStats;
 
+    use std::rc::Rc;
+
     #[test]
     fn test_simulate_fight() {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
-        player.prayers.add(Prayer::Piety);
+        player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.gear = Gear {
+        player.gear = Rc::new(Gear {
             head: Some(Armor::new("Torva full helm", None)),
             neck: Some(Armor::new("Amulet of torture", None)),
             cape: Some(Armor::new("Infernal cape", None)),
@@ -629,7 +631,7 @@ mod tests {
             hands: Some(Armor::new("Ferocious gloves", None)),
             feet: Some(Armor::new("Primordial boots", None)),
             ring: Some(Armor::new("Ultor ring", None)),
-        };
+        });
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();

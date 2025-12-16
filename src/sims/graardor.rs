@@ -278,7 +278,7 @@ mod tests {
     #[test]
     fn test_simulate_door_altar_fight() {
         let mut player = Player::default();
-        player.prayers.add(Prayer::Rigour);
+        player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
         player.equip("Bow of faerdhinen (c)", None);
