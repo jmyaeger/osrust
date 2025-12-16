@@ -134,21 +134,27 @@ impl HunllefMechanics {
         logger: &mut FightLogger,
     ) {
         let hit = (player.attack)(player, monster, rng, limiter);
-        logger.log_player_attack(
-            fight_vars.tick_counter,
-            hit.damage,
-            hit.success,
-            player.combat_type(),
-        );
+        if logger.enabled {
+            logger.log_player_attack(
+                fight_vars.tick_counter,
+                hit.damage,
+                hit.success,
+                player.combat_type(),
+            );
+        }
+
         player.state.first_attack = false;
         player.state.last_attack_hit = hit.success;
         monster.take_damage(hit.damage);
-        logger.log_monster_damage(
-            fight_vars.tick_counter,
-            hit.damage,
-            monster.stats.hitpoints.current,
-            monster.info.name.as_str(),
-        );
+
+        if logger.enabled {
+            logger.log_monster_damage(
+                fight_vars.tick_counter,
+                hit.damage,
+                monster.stats.hitpoints.current,
+                monster.info.name.as_str(),
+            );
+        }
 
         fight_vars.hit_attempts += 1;
         fight_vars.hit_count += if hit.success { 1 } else { 0 };
@@ -165,7 +171,9 @@ impl HunllefMechanics {
     ) {
         if let Some(damage) = state.queued_damage {
             player.take_damage(damage);
-            logger.log_player_damage(vars.tick_counter, damage, player.stats.hitpoints.current);
+            if logger.enabled {
+                logger.log_player_damage(vars.tick_counter, damage, player.stats.hitpoints.current);
+            }
             vars.damage_taken += damage;
             state.queued_damage = None;
         }
@@ -184,7 +192,10 @@ impl HunllefMechanics {
                 && state.hunllef_attack_count % 4 != 3
             {
                 // Tornado procs act like an empty attack
-                logger.log_custom(vars.tick_counter, "Tornadoes spawned.");
+                if logger.enabled {
+                    logger.log_custom(vars.tick_counter, "Tornadoes spawned.");
+                }
+
                 state.hunllef_attack_tick += HUNLLEF_ATTACK_SPEED;
                 state.hunllef_attack_count += 1;
 
@@ -227,13 +238,16 @@ impl HunllefMechanics {
         let hp_capped_damage = min(hit.damage, player.stats.hitpoints.current);
         hit.damage = hp_capped_damage;
 
-        config.logger.log_monster_attack(
-            hunllef,
-            vars.tick_counter,
-            hit.damage,
-            hit.success,
-            Some(hunllef_style),
-        );
+        if config.logger.enabled {
+            config.logger.log_monster_attack(
+                hunllef,
+                vars.tick_counter,
+                hit.damage,
+                hit.success,
+                Some(hunllef_style),
+            );
+        }
+
         // Queue the damage for the next tick to allow for tick eating
         state.queued_damage = Some(hit.damage);
         state.hunllef_attack_tick += HUNLLEF_ATTACK_SPEED;

@@ -445,9 +445,12 @@ impl SingleWayMechanics {
                 fight
                     .logger
                     .log_gear_switch(fight_vars.tick_counter, &strategy.switch_type);
-                fight.logger.log_current_player_rolls(&fight.player);
-                fight.logger.log_current_player_stats(&fight.player);
-                fight.logger.log_current_gear(&fight.player);
+
+                if fight.logger.enabled {
+                    fight.logger.log_current_player_rolls(&fight.player);
+                    fight.logger.log_current_player_stats(&fight.player);
+                    fight.logger.log_current_gear(&fight.player);
+                }
 
                 let hit = (fight.player.spec)(
                     &mut fight.player,
@@ -455,22 +458,26 @@ impl SingleWayMechanics {
                     &mut fight.rng,
                     &mut fight.limiter,
                 );
-                fight.logger.log_player_spec(
-                    fight_vars.tick_counter,
-                    hit.damage,
-                    hit.success,
-                    &strategy.switch_type,
-                );
+
+                if fight.logger.enabled {
+                    fight.logger.log_player_spec(
+                        fight_vars.tick_counter,
+                        hit.damage,
+                        hit.success,
+                        &strategy.switch_type,
+                    );
+                    fight.logger.log_monster_damage(
+                        fight_vars.tick_counter,
+                        hit.damage,
+                        fight.monster.stats.hitpoints.current,
+                        fight.monster.info.name.as_str(),
+                    );
+                    fight.logger.log_current_monster_stats(&fight.monster);
+                    fight.logger.log_current_monster_rolls(&fight.monster);
+                }
+
                 fight.player.state.first_attack = false;
                 fight.monster.take_damage(hit.damage);
-                fight.logger.log_monster_damage(
-                    fight_vars.tick_counter,
-                    hit.damage,
-                    fight.monster.stats.hitpoints.current,
-                    fight.monster.info.name.as_str(),
-                );
-                fight.logger.log_current_monster_stats(&fight.monster);
-                fight.logger.log_current_monster_rolls(&fight.monster);
 
                 strategy.state.attempt_count += 1;
                 if hit.success {
@@ -497,10 +504,13 @@ impl SingleWayMechanics {
 
                 // Switch back to the previous set of gear
                 fight.player.switch(&previous_switch);
-                fight
-                    .logger
-                    .log_gear_switch(fight_vars.tick_counter, &previous_switch);
-                fight.logger.log_current_player_rolls(&fight.player);
+
+                if fight.logger.enabled {
+                    fight
+                        .logger
+                        .log_gear_switch(fight_vars.tick_counter, &previous_switch);
+                    fight.logger.log_current_player_rolls(&fight.player);
+                }
 
                 return true;
             }

@@ -26,11 +26,11 @@ fn main() {
     let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
     // simulate_hunllef();
 
-    // simulate_vardorvis();
+    simulate_vardorvis();
 
     let end_time = std::time::Instant::now();
 
@@ -155,8 +155,8 @@ fn simulate_single_way() {
     let results = simulate_n_fights(Box::new(simulation), 1_000_000);
     let stats = SimulationStats::new(&results);
 
-    println!("Ttk: {}", stats.ttk);
-    println!("Acc: {}", stats.accuracy);
+    println!("Ttk: {:.4} seconds", stats.ttk);
+    println!("Acc: {:.4}%", stats.accuracy);
     // println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
 }
 
@@ -307,7 +307,7 @@ fn simulate_vardorvis() {
         "Average damage taken per kill: {:.2}",
         stats.avg_damage_taken
     );
-    println!("Probability of hitting GM time: {odds_of_gm}");
+    println!("Probability of hitting GM time: {:.4}%", odds_of_gm * 100.0);
 }
 
 #[allow(unused)]

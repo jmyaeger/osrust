@@ -8,7 +8,7 @@ use std::fs::File;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct FightLogger {
-    enabled: bool,
+    pub enabled: bool,
 }
 
 impl FightLogger {
@@ -35,25 +35,23 @@ impl FightLogger {
     }
 
     pub fn log_current_player_rolls(&mut self, player: &Player) {
-        if self.enabled {
-            debug!("Player's active combat style: {}", player.combat_type());
-            debug!(
-                "Player's max attack roll: {}",
-                player.att_rolls.get(player.combat_type())
-            );
-            debug!(
-                "Player's max hit: {}",
-                player.max_hits.get(player.combat_type())
-            );
-            debug!(
-                "Player's max defence rolls\n: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
-                player.def_rolls.get(CombatType::Stab),
-                player.def_rolls.get(CombatType::Slash),
-                player.def_rolls.get(CombatType::Crush),
-                player.def_rolls.get(CombatType::Ranged),
-                player.def_rolls.get(CombatType::Magic)
-            );
-        }
+        debug!("Player's active combat style: {}", player.combat_type());
+        debug!(
+            "Player's max attack roll: {}",
+            player.att_rolls.get(player.combat_type())
+        );
+        debug!(
+            "Player's max hit: {}",
+            player.max_hits.get(player.combat_type())
+        );
+        debug!(
+            "Player's max defence rolls\n: {} (Stab), {} (Slash), {} (Crush), {} (Ranged), {} (Magic)\n",
+            player.def_rolls.get(CombatType::Stab),
+            player.def_rolls.get(CombatType::Slash),
+            player.def_rolls.get(CombatType::Crush),
+            player.def_rolls.get(CombatType::Ranged),
+            player.def_rolls.get(CombatType::Magic)
+        );
     }
 
     pub fn log_current_gear(&self, player: &Player) {
@@ -205,25 +203,21 @@ impl FightLogger {
     }
 
     pub fn log_initial_setup(&mut self, player: &Player, monster: &Monster) {
-        if self.enabled {
-            debug!("Initial setup:");
-            self.log_current_player_rolls(player);
-            self.log_current_player_stats(player);
-            self.log_current_gear(player);
+        debug!("Initial setup:");
+        self.log_current_player_rolls(player);
+        self.log_current_player_stats(player);
+        self.log_current_gear(player);
 
-            debug!("\n");
-            self.log_current_monster_stats(monster);
-            self.log_current_monster_rolls(monster);
-        }
+        debug!("\n");
+        self.log_current_monster_stats(monster);
+        self.log_current_monster_rolls(monster);
     }
 
     pub fn log_player_attack(&mut self, tick: i32, damage: u32, success: bool, style: CombatType) {
-        if self.enabled {
-            if success {
-                debug!("[Tick {tick}] Player hit with {style} for {damage} damage");
-            } else {
-                debug!("[Tick {tick}] Player missed with {style}");
-            }
+        if success {
+            debug!("[Tick {tick}] Player hit with {style} for {damage} damage");
+        } else {
+            debug!("[Tick {tick}] Player missed with {style}");
         }
     }
 
@@ -234,28 +228,20 @@ impl FightLogger {
         success: bool,
         switch_type: &SwitchType,
     ) {
-        if self.enabled {
-            let label = switch_type.label();
-            if success {
-                debug!(
-                    "[Tick {tick}] Player hit with special attack '{label}' for {damage} damage"
-                );
-            } else {
-                debug!("[Tick {tick}] Player missed with special attack '{label}'");
-            }
+        let label = switch_type.label();
+        if success {
+            debug!("[Tick {tick}] Player hit with special attack '{label}' for {damage} damage");
+        } else {
+            debug!("[Tick {tick}] Player missed with special attack '{label}'");
         }
     }
 
     pub fn log_player_damage(&mut self, tick: i32, damage: u32, hp: u32) {
-        if self.enabled {
-            debug!("[Tick {tick}] Player took {damage} damage ({hp} hp remaining)");
-        }
+        debug!("[Tick {tick}] Player took {damage} damage ({hp} hp remaining)");
     }
 
     pub fn log_thrall_attack(&mut self, tick: i32, damage: u32) {
-        if self.enabled {
-            debug!("[Tick {tick}] Thrall hit for {damage} damage");
-        }
+        debug!("[Tick {tick}] Thrall hit for {damage} damage");
     }
 
     pub fn log_monster_attack(
@@ -280,73 +266,51 @@ impl FightLogger {
         };
         let name = monster.info.name.as_str();
 
-        if self.enabled {
-            if success {
-                debug!("[Tick {tick}] {name} hit with {style} for {damage} damage");
-            } else {
-                debug!("[Tick {tick}] {name} missed with {style}");
-            }
+        if success {
+            debug!("[Tick {tick}] {name} hit with {style} for {damage} damage");
+        } else {
+            debug!("[Tick {tick}] {name} missed with {style}");
         }
     }
 
     pub fn log_monster_damage(&mut self, tick: i32, damage: u32, hp: u32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} took {damage} damage ({hp} hp remaining)");
-        }
+        debug!("[Tick {tick}] {name} took {damage} damage ({hp} hp remaining)");
     }
 
     pub fn log_gear_switch(&mut self, tick: i32, switch_type: &SwitchType) {
-        if self.enabled {
-            let label = switch_type.label();
-            debug!("[Tick {tick}] Player switched to a {label} setup");
-        }
+        let label = switch_type.label();
+        debug!("[Tick {tick}] Player switched to a {label} setup");
     }
 
     pub fn log_food_eaten(&mut self, tick: i32, heal_amount: u32, hp: u32) {
-        if self.enabled {
-            debug!("[Tick {tick}] Player ate food for {heal_amount} hp ({hp} hp remaining)");
-        }
+        debug!("[Tick {tick}] Player ate food for {heal_amount} hp ({hp} hp remaining)");
     }
 
     pub fn log_hp_regen(&mut self, tick: i32, hp: u32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} regenerated 1 hp ({hp} hp remaining)");
-        }
+        debug!("[Tick {tick}] {name} regenerated 1 hp ({hp} hp remaining)");
     }
 
     pub fn log_stats_regen(&mut self, tick: i32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} regenerated stats by 1");
-        }
+        debug!("[Tick {tick}] {name} regenerated stats by 1");
     }
 
     pub fn log_monster_death(&mut self, tick: i32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} has died.");
-        }
+        debug!("[Tick {tick}] {name} has died.");
     }
 
     pub fn log_player_death(&mut self, tick: i32) {
-        if self.enabled {
-            debug!("[Tick {tick}] Player has died, ending the fight");
-        }
+        debug!("[Tick {tick}] Player has died, ending the fight");
     }
 
     pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} took {damage} effect damage");
-        }
+        debug!("[Tick {tick}] {name} took {damage} effect damage");
     }
 
     pub fn log_custom(&mut self, tick: i32, message: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {message}");
-        }
+        debug!("[Tick {tick}] {message}");
     }
 
     pub fn log_freeze_end(&mut self, tick: i32, name: &str) {
-        if self.enabled {
-            debug!("[Tick {tick}] {name} is no longer frozen");
-        }
+        debug!("[Tick {tick}] {name} is no longer frozen");
     }
 }

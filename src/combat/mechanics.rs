@@ -25,21 +25,24 @@ pub trait Mechanics {
         logger: &mut FightLogger,
     ) {
         let hit = (player.attack)(player, monster, rng, limiter);
-        logger.log_player_attack(
-            fight_vars.tick_counter,
-            hit.damage,
-            hit.success,
-            player.combat_type(),
-        );
+        if logger.enabled {
+            logger.log_player_attack(
+                fight_vars.tick_counter,
+                hit.damage,
+                hit.success,
+                player.combat_type(),
+            );
+            logger.log_monster_damage(
+                fight_vars.tick_counter,
+                hit.damage,
+                monster.stats.hitpoints.current,
+                monster.info.name.as_str(),
+            );
+        }
+
         player.state.first_attack = false;
         player.state.last_attack_hit = hit.success;
         monster.take_damage(hit.damage);
-        logger.log_monster_damage(
-            fight_vars.tick_counter,
-            hit.damage,
-            monster.stats.hitpoints.current,
-            monster.info.name.as_str(),
-        );
 
         handle_blood_fury(player, &hit, fight_vars, logger, rng);
 
@@ -61,19 +64,22 @@ pub trait Mechanics {
     ) {
         // Note: does not increment monster attack tick for flexibility
         let hit = monster.attack(player, attack_type, rng, true);
-        logger.log_monster_attack(
-            monster,
-            fight_vars.tick_counter,
-            hit.damage,
-            hit.success,
-            attack_type,
-        );
+
+        if logger.enabled {
+            logger.log_monster_attack(
+                monster,
+                fight_vars.tick_counter,
+                hit.damage,
+                hit.success,
+                attack_type,
+            );
+            logger.log_player_damage(
+                fight_vars.tick_counter,
+                hit.damage,
+                player.stats.hitpoints.current,
+            );
+        }
         player.take_damage(hit.damage);
-        logger.log_player_damage(
-            fight_vars.tick_counter,
-            hit.damage,
-            player.stats.hitpoints.current,
-        );
         fight_vars.damage_taken += hit.damage;
 
         handle_recoil(player, monster, &hit, fight_vars, logger);
@@ -87,7 +93,7 @@ pub trait Mechanics {
         rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
-        if monster.is_immune_to_thrall(thrall) {
+        if logger.enabled && monster.is_immune_to_thrall(thrall) {
             logger.log_custom(
                 fight_vars.tick_counter,
                 format!(
@@ -103,14 +109,17 @@ pub trait Mechanics {
             rng.random_range(0..thrall.max_hit() + 1),
             monster.stats.hitpoints.current,
         );
-        logger.log_thrall_attack(fight_vars.tick_counter, thrall_hit);
+
+        if logger.enabled {
+            logger.log_thrall_attack(fight_vars.tick_counter, thrall_hit);
+            logger.log_monster_damage(
+                fight_vars.tick_counter,
+                thrall_hit,
+                monster.stats.hitpoints.current,
+                monster.info.name.as_str(),
+            );
+        }
         monster.take_damage(thrall_hit);
-        logger.log_monster_damage(
-            fight_vars.tick_counter,
-            thrall_hit,
-            monster.stats.hitpoints.current,
-            monster.info.name.as_str(),
-        );
         scale_monster_hp_only(monster);
 
         fight_vars.thrall_attack_tick += THRALL_ATTACK_SPEED;
@@ -150,11 +159,15 @@ pub trait Mechanics {
 
         if effect_damage > 0 {
             monster.take_damage(effect_damage);
-            logger.log_monster_effect_damage(
-                fight_vars.tick_counter,
-                effect_damage,
-                monster.info.name.as_str(),
-            );
+
+            if logger.enabled {
+                logger.log_monster_effect_damage(
+                    fight_vars.tick_counter,
+                    effect_damage,
+                    monster.info.name.as_str(),
+                );
+            }
+
             scale_monster_hp_only(monster);
         }
 
@@ -171,7 +184,10 @@ pub trait Mechanics {
         if monster.info.freeze_duration > 0 {
             monster.info.freeze_duration -= 1;
             if monster.info.freeze_duration == 0 {
-                logger.log_freeze_end(fight_vars.tick_counter, monster.info.name.as_str());
+                if logger.enabled {
+                    logger.log_freeze_end(fight_vars.tick_counter, monster.info.name.as_str());
+                }
+
                 // 5 tick freeze immunity when it runs out
                 fight_vars.freeze_immunity = 5;
                 monster.immunities.freeze = 100;
@@ -202,10 +218,12 @@ pub trait Mechanics {
                 || state.spec_regen_timer.counter().is_multiple_of(50)
             {
                 player.stats.spec.regen();
-                logger.log_custom(
-                    fight_vars.tick_counter,
-                    "Player has regenerated 10 special attack energy",
-                );
+                if logger.enabled {
+                    logger.log_custom(
+                        fight_vars.tick_counter,
+                        "Player has regenerated 10 special attack energy",
+                    );
+                }
             }
             if player.stats.spec.is_full() {
                 state.spec_regen_timer.reset();
@@ -220,7 +238,10 @@ pub trait Mechanics {
         logger: &mut FightLogger,
         remove_final_attack_delay: bool,
     ) -> Result<FightResult, SimulationError> {
-        logger.log_monster_death(fight_vars.tick_counter, monster.info.name.as_str());
+        if logger.enabled {
+            logger.log_monster_death(fight_vars.tick_counter, monster.info.name.as_str());
+        }
+
         let ttk_ticks = if remove_final_attack_delay {
             fight_vars.tick_counter
         } else {
@@ -246,7 +267,10 @@ pub trait Mechanics {
         monster: &Monster,
         logger: &mut FightLogger,
     ) -> Result<FightResult, SimulationError> {
-        logger.log_player_death(fight_vars.tick_counter);
+        if logger.enabled {
+            logger.log_player_death(fight_vars.tick_counter);
+        }
+
         let leftover_burn = calc_leftover_burn(monster);
 
         Err(SimulationError::PlayerDeathError(FightResult {
@@ -268,11 +292,14 @@ pub trait Mechanics {
         logger: &mut FightLogger,
     ) {
         monster.heal(1);
-        logger.log_hp_regen(
-            fight_vars.tick_counter,
-            monster.stats.hitpoints.current,
-            monster.info.name.as_str(),
-        );
+
+        if logger.enabled {
+            logger.log_hp_regen(
+                fight_vars.tick_counter,
+                monster.stats.hitpoints.current,
+                monster.info.name.as_str(),
+            );
+        }
     }
 
     fn monster_regen_stats(
@@ -282,17 +309,23 @@ pub trait Mechanics {
         logger: &mut FightLogger,
     ) {
         monster.regen_stats();
-        logger.log_stats_regen(fight_vars.tick_counter, monster.info.name.as_str());
+
+        if logger.enabled {
+            logger.log_stats_regen(fight_vars.tick_counter, monster.info.name.as_str());
+        }
     }
 
     fn player_regen(&self, player: &mut Player, fight_vars: &FightVars, logger: &mut FightLogger) {
         player.regen_all_stats();
-        logger.log_hp_regen(
-            fight_vars.tick_counter,
-            player.stats.hitpoints.current,
-            "Player",
-        );
-        logger.log_stats_regen(fight_vars.tick_counter, "Player");
+
+        if logger.enabled {
+            logger.log_hp_regen(
+                fight_vars.tick_counter,
+                player.stats.hitpoints.current,
+                "Player",
+            );
+            logger.log_stats_regen(fight_vars.tick_counter, "Player");
+        }
     }
 
     fn decrement_eat_delay(&self, fight_vars: &mut FightVars) {
@@ -320,11 +353,15 @@ pub trait Mechanics {
     ) {
         // Note: Does not increment attack delay for flexibility
         player.heal(heal_amount, overheal);
-        logger.log_food_eaten(
-            fight_vars.tick_counter,
-            heal_amount,
-            player.stats.hitpoints.current,
-        );
+
+        if logger.enabled {
+            logger.log_food_eaten(
+                fight_vars.tick_counter,
+                heal_amount,
+                player.stats.hitpoints.current,
+            );
+        }
+
         fight_vars.food_eaten += 1;
         fight_vars.eat_delay = constants::EAT_DELAY;
     }
@@ -403,18 +440,24 @@ pub fn handle_recoil(
         ]) {
             let recoil_damage = hit.damage / 10 + 1;
             monster.take_damage(recoil_damage);
-            logger.log_custom(
-                fight_vars.tick_counter,
-                format!("{} took {} recoil damage", monster.info.name, recoil_damage).as_str(),
-            );
+
+            if logger.enabled {
+                logger.log_custom(
+                    fight_vars.tick_counter,
+                    format!("{} took {} recoil damage", monster.info.name, recoil_damage).as_str(),
+                );
+            }
         }
 
         if player.is_wearing("Echo boots", None) && player.is_using_melee() {
             monster.take_damage(1);
-            logger.log_custom(
-                fight_vars.tick_counter,
-                format!("{} took 1 recoil damage from echo boots", monster.info.name).as_str(),
-            );
+
+            if logger.enabled {
+                logger.log_custom(
+                    fight_vars.tick_counter,
+                    format!("{} took 1 recoil damage from echo boots", monster.info.name).as_str(),
+                );
+            }
         }
     }
 }
@@ -428,9 +471,12 @@ pub fn handle_blood_fury(
 ) {
     if player.is_wearing("Amulet of blood fury", None) && rng.random_range(0..5) == 0 {
         player.heal(hit.damage * 3 / 10, None);
-        logger.log_custom(
-            fight_vars.tick_counter,
-            format!("Blood fury healed for {} HP", hit.damage * 3 / 10).as_str(),
-        );
+
+        if logger.enabled {
+            logger.log_custom(
+                fight_vars.tick_counter,
+                format!("Blood fury healed for {} HP", hit.damage * 3 / 10).as_str(),
+            );
+        }
     }
 }
