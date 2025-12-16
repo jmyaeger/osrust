@@ -2,8 +2,7 @@
 Script to generate a monsters.json of all the monsters on the OSRS Wiki, and downloads images for each of them.
 The JSON file is placed in ../src/databases/monsters.json
 
-The images are placed in ../src/images/monsters/. This directory is NOT included in the Next.js app bundle, and should
-be deployed separately to our file storage solution.
+The images are placed in ../src/images/monsters/.
 
 Written for Python 3.9.
 """

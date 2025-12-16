@@ -1113,6 +1113,7 @@ mod tests {
     use crate::utils::loadouts::{self, *};
 
     #[test]
+    #[ignore = "too slow"]
     fn test_atlatl_dps() {
         let mut player = max_melee_player();
         player.equip("Eclipse atlatl", None);

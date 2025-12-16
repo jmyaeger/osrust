@@ -39,7 +39,7 @@ pub fn spindel() -> Monster {
 
 #[fixture]
 pub fn duke() -> Monster {
-    Monster::new("Duke Sucellus", Some("Post-quest, awake")).unwrap()
+    Monster::new("Duke Sucellus", Some("Post-quest, Awake")).unwrap()
 }
 
 #[fixture]
@@ -59,7 +59,7 @@ pub fn revenant_dragon() -> Monster {
 
 #[fixture]
 pub fn zebak() -> Monster {
-    Monster::new("Zebak", None).unwrap()
+    Monster::new("Zebak", Some("Normal")).unwrap()
 }
 
 #[fixture]
@@ -129,7 +129,7 @@ pub fn skeletal_mystic() -> Monster {
 
 #[fixture]
 pub fn olm_head() -> Monster {
-    Monster::new("Great Olm", Some("Head")).unwrap()
+    Monster::new("Great Olm", Some("Head (Normal)")).unwrap()
 }
 
 #[fixture]
@@ -163,7 +163,7 @@ pub fn vardorvis() -> Monster {
 
 #[fixture]
 pub fn kephri_400() -> Monster {
-    let mut monster = Monster::new("Kephri", None).unwrap();
+    let mut monster = Monster::new("Kephri", Some("Shielded")).unwrap();
     monster.info.toa_level = 400;
     monster.scale_toa();
     monster
@@ -216,12 +216,12 @@ pub fn vasa_crystal() -> Monster {
 
 #[fixture]
 pub fn olm_melee_hand() -> Monster {
-    Monster::new("Great Olm", Some("Left claw")).unwrap()
+    Monster::new("Great Olm", Some("Left claw (Normal)")).unwrap()
 }
 
 #[fixture]
 pub fn olm_mage_hand() -> Monster {
-    Monster::new("Great Olm", Some("Right claw")).unwrap()
+    Monster::new("Great Olm", Some("Right claw (Normal)")).unwrap()
 }
 
 #[fixture]
@@ -231,7 +231,7 @@ pub fn ice_demon() -> Monster {
 
 #[fixture]
 pub fn slagilith() -> Monster {
-    Monster::new("Slagilith", Some("Hard")).unwrap()
+    Monster::new("Slagilith (Nightmare Zone)", Some("Hard Mode")).unwrap()
 }
 
 #[fixture]

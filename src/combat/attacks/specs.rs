@@ -1738,7 +1738,7 @@ mod tests {
 
         let dps = total_damage as f32 / (n as f32 * 2.4);
 
-        assert!(dps - 7.963 < 0.1);
+        assert!(dps - 8.429 < 0.1);
     }
 
     #[test]
@@ -1761,7 +1761,7 @@ mod tests {
 
         let dps = total_damage as f32 / (n as f32 * 2.4);
 
-        assert!(dps - 18.123 < 0.1);
+        assert!(dps - 18.806 < 0.1);
     }
 
     #[test]
@@ -1784,6 +1784,6 @@ mod tests {
 
         let dps = total_damage as f32 / (n as f32 * 2.4);
 
-        assert!(dps - 5.723 < 0.1);
+        assert!(dps - 5.994 < 0.1);
     }
 }

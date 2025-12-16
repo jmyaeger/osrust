@@ -983,8 +983,9 @@ pub fn get_ttk(
     player: &Player,
     monster: &Monster,
     using_spec: bool,
+    remove_final_hit_delay: bool,
 ) -> f64 {
-    if dist_is_current_hp_dependent(player, monster) {
+    let ttk = if dist_is_current_hp_dependent(player, monster) {
         // More expensive than get_htk, so only use this if the hit dist changes during the fight
         let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster, using_spec);
 
@@ -996,6 +997,12 @@ pub fn get_ttk(
             * SECONDS_PER_TICK
     } else {
         get_htk(dist, monster) * player.gear.weapon.speed as f64 * SECONDS_PER_TICK
+    };
+
+    if remove_final_hit_delay {
+        ttk - (player.gear.weapon.speed - 1) as f64 * SECONDS_PER_TICK
+    } else {
+        ttk
     }
 }
 
@@ -1172,6 +1179,7 @@ fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::calc::monster_scaling::scale_monster_hp_only;
     use crate::calc::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
@@ -1204,7 +1212,7 @@ mod tests {
         calc_player_melee_rolls(&mut player, &monster);
 
         let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false);
+        let ttk = get_ttk(dist, &player, &monster, false, false);
 
         assert!(num::abs(ttk - 10.2) < 0.1);
     }
@@ -1233,7 +1241,7 @@ mod tests {
         let monster = Monster::new("Vet'ion", Some("Normal")).unwrap();
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false);
+        let ttk = get_ttk(dist, &player, &monster, false, false);
 
         assert!(num::abs(ttk - 44.2) < 0.1);
     }
@@ -1259,12 +1267,13 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
 
-        let monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+        let mut monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+        scale_monster_hp_only(&mut monster);
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false);
+        let ttk = get_ttk(dist, &player, &monster, false, false);
 
-        assert!(num::abs(ttk - 90.6) < 0.1);
+        assert!(num::abs(ttk - 90.8) < 0.1);
     }
 
     #[test]
@@ -1289,14 +1298,14 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
 
-        let mut monster = Monster::new("Zebak", None).unwrap();
+        let mut monster = Monster::new("Zebak", Some("Normal")).unwrap();
         monster.info.toa_level = 500;
         monster.scale_toa();
         calc_player_ranged_rolls(&mut player, &monster);
 
         let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false);
+        let ttk = get_ttk(dist, &player, &monster, false, false);
 
-        assert!(num::abs(ttk - 240.8) < 0.1);
+        assert!(num::abs(ttk - 236.2) < 0.1);
     }
 }
