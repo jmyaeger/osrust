@@ -180,7 +180,7 @@ impl HunllefMechanics {
     ) -> bool {
         state.tornado_cd = state.tornado_cd.saturating_sub(1);
         if state.tornado_cd == 0 {
-            if rng.random_range(1..=state.tornado_chance) == 1
+            if rng.random_range(1..state.tornado_chance + 1) == 1
                 && state.hunllef_attack_count % 4 != 3
             {
                 // Tornado procs act like an empty attack

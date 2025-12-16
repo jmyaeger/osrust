@@ -1,6 +1,8 @@
 use crate::combat::simulation::CumulativeResults;
+use crate::constants::SECONDS_PER_TICK;
 use core::f64;
 use std::collections::HashMap;
+use std::hash::Hash;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct SimulationStats {
@@ -18,66 +20,22 @@ pub struct SimulationStats {
 
 impl SimulationStats {
     pub fn new(results: &CumulativeResults) -> Self {
-        // Calculate average ttk and accuracy
-        let ttks_seconds: Vec<f64> = results
-            .ttks_ticks
-            .iter()
-            .map(|&ttk| ttk as f64 * 0.6)
-            .collect();
-        let ttk = ttks_seconds.iter().sum::<f64>() / results.ttks_ticks.len() as f64;
-        let ttk_counts: HashMap<i32, u64> =
-            results
-                .ttks_ticks
-                .iter()
-                .fold(HashMap::new(), |mut acc, &value| {
-                    *acc.entry(value).or_insert(0) += 1;
-                    acc
-                });
-        let ttk_dist = ttk_counts
-            .iter()
-            .map(|(&key, &value)| (key, value as f64 / results.ttks_ticks.len() as f64))
-            .collect();
-        let accuracy = results.hit_counts.iter().sum::<u32>() as f64
-            / results.hit_attempt_counts.iter().sum::<u32>() as f64
-            * 100.0;
+        let total_ticks: u64 = results.ttks_ticks.iter().map(|&t| t as u64).sum();
+        let total_successful_fights = results.ttks_ticks.len();
+        let ttk = (total_ticks as f64 / total_successful_fights as f64) * SECONDS_PER_TICK;
 
-        // Convert hit amount Vecs to a HashMap counting the number of times each amount appears
-        let hit_counts: HashMap<u32, u32> =
-            results
-                .hit_amounts
-                .iter()
-                .fold(HashMap::new(), |mut acc, &value| {
-                    *acc.entry(value).or_insert(0) += 1;
-                    acc
-                });
+        let ttk_dist = calculate_dist(&results.ttks_ticks);
+        let hit_dist = calculate_dist(&results.hit_amounts);
+        let food_eaten_dist = calculate_dist(&results.food_eaten);
 
-        // Convert hit counts into a probability distribution
-        let hit_dist = hit_counts
-            .iter()
-            .map(|(&key, &value)| (key, value as f64 / hit_counts.values().sum::<u32>() as f64))
-            .collect();
+        let total_hits: u64 = results.hit_counts.iter().map(|&h| h as u64).sum();
+        let total_attempts: u64 = results.hit_attempt_counts.iter().map(|&a| a as u64).sum();
+        let accuracy = (total_hits as f64 / total_attempts as f64) * 100.0;
 
-        // Calculate success rate and average food eaten
-        let total_fights = results.ttks_ticks.len() + results.player_deaths;
-        let success_rate = 1.0 - results.player_deaths as f64 / total_fights as f64;
+        let total_fights = total_successful_fights + results.player_deaths;
+        let success_rate = 1.0 - (results.player_deaths as f64 / total_fights as f64);
+
         let avg_food_eaten = results.food_eaten.iter().sum::<u32>() as f64 / total_fights as f64;
-        let food_eaten_counts: HashMap<u32, u64> =
-            results
-                .food_eaten
-                .iter()
-                .fold(HashMap::new(), |mut acc, &value| {
-                    *acc.entry(value).or_insert(0) += 1;
-                    acc
-                });
-        let food_eaten_dist = food_eaten_counts
-            .iter()
-            .map(|(&key, &value)| {
-                (
-                    key,
-                    value as f64 / food_eaten_counts.values().sum::<u64>() as f64,
-                )
-            })
-            .collect();
         let avg_damage_taken =
             results.damage_taken.iter().sum::<u32>() as f64 / total_fights as f64;
         let avg_leftover_burn =
@@ -96,4 +54,23 @@ impl SimulationStats {
             total_deaths: results.player_deaths as u32,
         }
     }
+}
+
+fn calculate_dist<T: Eq + Hash + Copy>(data: &[T]) -> HashMap<T, f64> {
+    if data.is_empty() {
+        return HashMap::new();
+    }
+
+    let mut map = HashMap::with_capacity(data.len());
+
+    for &item in data {
+        *map.entry(item).or_insert(0.0) += 1.0;
+    }
+
+    let total = data.len() as f64;
+    for count in map.values_mut() {
+        *count /= total;
+    }
+
+    map
 }

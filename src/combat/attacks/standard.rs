@@ -161,15 +161,15 @@ pub fn base_attack(att_info: &AttackInfo, rng: &mut SmallRng, roll_att_twice: bo
 }
 
 pub fn accuracy_roll(max_att_roll: i32, rng: &mut SmallRng) -> i32 {
-    rng.random_range(0..=max_att_roll)
+    rng.random_range(0..max_att_roll + 1)
 }
 
 pub fn defence_roll(max_def_roll: i32, rng: &mut SmallRng) -> i32 {
-    rng.random_range(0..=max_def_roll)
+    rng.random_range(0..max_def_roll + 1)
 }
 
 pub fn damage_roll(min_hit: u32, max_hit: u32, rng: &mut SmallRng) -> u32 {
-    rng.random_range(min_hit..=max_hit)
+    rng.random_range(min_hit..max_hit + 1)
 }
 
 pub fn fang_attack(

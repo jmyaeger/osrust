@@ -151,7 +151,7 @@ def main():
             "name": v["page_name"],
             "id": item_id,
             "version": v.get("version_anchor"),
-            "slot": v.get("infobox_bonuses.equipment_slot"),
+            "slot": v.get("infobox_bonuses.equipment_slot").lower(),
             "image": (
                 "" if not v.get("image") else v.get("image")[-1].replace("File:", "")
             ),

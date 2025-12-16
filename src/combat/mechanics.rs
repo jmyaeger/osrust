@@ -100,7 +100,7 @@ pub trait Mechanics {
         }
 
         let thrall_hit = std::cmp::min(
-            rng.random_range(0..=thrall.max_hit()),
+            rng.random_range(0..thrall.max_hit() + 1),
             monster.stats.hitpoints.current,
         );
         logger.log_thrall_attack(fight_vars.tick_counter, thrall_hit);

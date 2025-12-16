@@ -512,7 +512,7 @@ impl Monster {
             AttackType::None => panic!("None attack type not supported"),
         };
 
-        let att_roll = rng.random_range(0..=max_att_roll);
+        let att_roll = rng.random_range(0..max_att_roll + 1);
 
         let max_def_roll = match attack_type {
             AttackType::Stab => player.def_rolls.get(CombatType::Stab),
@@ -530,12 +530,12 @@ impl Monster {
             AttackType::None => panic!("None attack type not supported"),
         };
 
-        let def_roll = rng.random_range(0..=max_def_roll);
+        let def_roll = rng.random_range(0..max_def_roll + 1);
 
         let success = att_roll > def_roll;
 
         let mut damage = if success {
-            rng.random_range(0..=max_hit.value)
+            rng.random_range(0..max_hit.value + 1)
         } else {
             0
         };

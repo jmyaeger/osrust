@@ -59,8 +59,18 @@ pub struct CumulativeResults {
 }
 
 impl CumulativeResults {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(n: usize) -> Self {
+        Self {
+            ttks_ticks: Vec::<i32>::with_capacity(n),
+            hit_attempt_counts: Vec::<u32>::with_capacity(n),
+            hit_counts: Vec::<u32>::with_capacity(n),
+            hit_amounts: Vec::<u32>::with_capacity(n),
+            player_deaths: 0,
+            food_eaten: Vec::<u32>::with_capacity(n),
+            damage_taken: Vec::<u32>::with_capacity(n),
+            leftover_burn: Vec::<u32>::with_capacity(n),
+            thrall_damage: Vec::<u32>::with_capacity(n),
+        }
     }
 
     pub fn push(&mut self, result: &FightResult) {
@@ -193,7 +203,7 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Cumulat
     }
 
     // Set up result variables
-    let mut results = CumulativeResults::new();
+    let mut results = CumulativeResults::new(n as usize);
 
     // Retrieve attack function and limiter
     simulation.set_attack_function();
