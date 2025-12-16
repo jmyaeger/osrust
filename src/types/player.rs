@@ -4,8 +4,8 @@ use crate::combat::attacks::specs::{SpecialAttackFn, get_spec_attack_function};
 use crate::combat::attacks::standard::{AttackFn, get_attack_functions, standard_attack};
 use crate::constants::*;
 use crate::types::equipment::{
-    self, Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear,
-    GearSlot, Weapon,
+    Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear, GearSlot,
+    Weapon,
 };
 use crate::types::monster::Monster;
 use crate::types::potions::{Potion, PotionBoost, PotionBoosts, PotionStat};
@@ -432,75 +432,21 @@ impl Player {
         self.gear.is_wearing_all(gear_names)
     }
 
-    pub fn equip(&mut self, item_name: &str, version: Option<&str>) {
-        // Equip the specified item in the correct slot
-        let slot_name = equipment::get_slot_name(item_name)
-            .unwrap_or_else(|_| panic!("Slot not found for item {item_name}"));
-
-        let gear = Rc::make_mut(&mut self.gear);
-
-        match slot_name.as_str() {
-            "head" => gear.head = Some(Armor::new(item_name, version)),
-            "neck" => gear.neck = Some(Armor::new(item_name, version)),
-            "cape" => {
-                gear.cape = Some(Armor::new(item_name, version));
-
-                // For the quiver, apply extra +10 accuracy and +1 strength if applicable
-                self.set_quiver_bonuses();
-            }
-            "ammo" => {
-                // If quiver is equipped and the ammo slot is already full with a different ammo type,
-                // equip the new ammo in the second_ammo slot
-                if gear.is_wearing_any_version("Dizana's quiver")
-                    && (gear.ammo.is_some()
-                        && !((gear.ammo.as_ref().unwrap().is_bolt()
-                            && item_name.contains("bolts"))
-                            || (gear.ammo.as_ref().unwrap().is_arrow()
-                                && item_name.contains("arrow"))))
-                {
-                    gear.second_ammo = Some(Armor::new(item_name, version));
-
-                    self.set_quiver_bonuses();
-                } else {
-                    gear.ammo = Some(Armor::new(item_name, version));
-
-                    self.set_quiver_bonuses();
-                }
-            }
-            "weapon" => {
-                gear.weapon = Weapon::new(item_name, version);
-
-                // Unequip shield if weapon is two handed
-                if gear.weapon.is_two_handed {
-                    gear.shield = None;
-                }
-
-                // Modify attack speed if weapon is on rapid
-                if self.attrs.active_style == CombatStyle::Rapid
-                    && gear.weapon.combat_styles.contains_key(&CombatStyle::Rapid)
-                {
-                    gear.weapon.speed = gear.weapon.base_speed - 1;
-                }
-
-                self.set_quiver_bonuses();
-            }
-            "shield" => {
-                gear.shield = Some(Armor::new(item_name, version));
-
-                // Unequip weapon if it is two handed
-                if gear.weapon.is_two_handed {
-                    gear.weapon = Weapon::default();
-                }
-            }
-            "body" => gear.body = Some(Armor::new(item_name, version)),
-            "legs" => gear.legs = Some(Armor::new(item_name, version)),
-            "hands" => gear.hands = Some(Armor::new(item_name, version)),
-            "feet" => gear.feet = Some(Armor::new(item_name, version)),
-            "ring" => gear.ring = Some(Armor::new(item_name, version)),
-            _ => panic!("Slot not found for item {item_name}"),
+    pub fn equip(
+        &mut self,
+        item_name: &str,
+        version: Option<&str>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        if let Ok(armor) = Armor::new(item_name, version) {
+            self.equip_item(Box::new(armor))?;
+        } else if let Ok(weapon) = Weapon::new(item_name, version) {
+            self.equip_item(Box::new(weapon))?;
         }
+
         self.update_bonuses();
         self.update_set_effects();
+
+        Ok(())
     }
 
     pub fn unequip_slot(&mut self, slot: &GearSlot) {
@@ -1327,9 +1273,9 @@ impl Player {
     }
 
     pub fn rolls_accuracy_twice(&self) -> bool {
-        self.is_wearing("Confliction gauntlets", None)
+        !self.state.last_attack_hit
             && self.combat_type() == CombatType::Magic
-            && !self.state.last_attack_hit
+            && self.is_wearing("Confliction gauntlets", None)
     }
 }
 
@@ -1437,9 +1383,9 @@ mod test {
     #[test]
     fn test_equip_armor() {
         let mut player = Player::new();
-        player.equip("Torva full helm", None);
+        let _ = player.equip("Torva full helm", None);
         player.update_bonuses();
-        let torva_full_helm = Armor::new("Torva full helm", None);
+        let torva_full_helm = Armor::new("Torva full helm", None).unwrap();
         assert_eq!(player.gear.head.clone().unwrap(), torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
     }
@@ -1447,9 +1393,9 @@ mod test {
     #[test]
     fn test_equip_weapon() {
         let mut player = Player::new();
-        player.equip("Osmumten's fang", None);
+        let _ = player.equip("Osmumten's fang", None);
         player.update_bonuses();
-        let osmumtens_fang = Weapon::new("Osmumten's fang", None);
+        let osmumtens_fang = Weapon::new("Osmumten's fang", None).unwrap();
         assert_eq!(player.gear.weapon, osmumtens_fang);
         assert_eq!(player.bonuses, osmumtens_fang.bonuses)
     }
@@ -1457,11 +1403,11 @@ mod test {
     #[test]
     fn test_replace_gear() {
         let mut player = Player::new();
-        player.equip("Torva full helm", None);
+        let _ = player.equip("Torva full helm", None);
         player.update_bonuses();
-        player.equip("Neitiznot faceguard", None);
+        let _ = player.equip("Neitiznot faceguard", None);
         player.update_bonuses();
-        let neitiznot_faceguard = Armor::new("Neitiznot faceguard", None);
+        let neitiznot_faceguard = Armor::new("Neitiznot faceguard", None).unwrap();
         assert_eq!(player.gear.head.clone().unwrap(), neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
@@ -1470,18 +1416,18 @@ mod test {
     fn test_max_melee_bonuses() {
         let mut player = Player::new();
         let max_melee_gear = Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
+            head: Some(Armor::new("Torva full helm", None).unwrap()),
+            neck: Some(Armor::new("Amulet of torture", None).unwrap()),
+            cape: Some(Armor::new("Infernal cape", None).unwrap()),
+            ammo: Some(Armor::new("Rada's blessing 4", None).unwrap()),
             second_ammo: None,
-            weapon: Weapon::new("Osmumten's fang", None),
-            shield: Some(Armor::new("Avernic defender", None)),
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
+            weapon: Weapon::new("Osmumten's fang", None).unwrap(),
+            shield: Some(Armor::new("Avernic defender", None).unwrap()),
+            body: Some(Armor::new("Torva platebody", None).unwrap()),
+            legs: Some(Armor::new("Torva platelegs", None).unwrap()),
+            hands: Some(Armor::new("Ferocious gloves", None).unwrap()),
+            feet: Some(Armor::new("Primordial boots", None).unwrap()),
+            ring: Some(Armor::new("Ultor ring", None).unwrap()),
         };
         player.gear = Rc::new(max_melee_gear);
         player.update_bonuses();
@@ -1568,7 +1514,7 @@ mod test {
     #[test]
     fn test_twinflame_detection() {
         let mut player = Player::new();
-        player.equip("Twinflame staff", None);
+        let _ = player.equip("Twinflame staff", None);
         player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
         assert!(player.gets_second_twinflame_hit());
 

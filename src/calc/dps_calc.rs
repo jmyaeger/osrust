@@ -1188,8 +1188,6 @@ mod tests {
     use crate::types::prayers::Prayer;
     use crate::types::stats::PlayerStats;
 
-    use std::rc::Rc;
-
     #[test]
     fn test_max_melee_ammonite_crab() {
         let mut player = Player::new();
@@ -1198,17 +1196,17 @@ mod tests {
         player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.equip("Torva full helm", None);
-        player.equip("Amulet of torture", None);
-        player.equip("Infernal cape", None);
-        player.equip("Rada's blessing 4", None);
-        player.equip("Ghrazi rapier", None);
-        player.equip("Avernic defender", None);
-        player.equip("Torva platebody", None);
-        player.equip("Torva platelegs", None);
-        player.equip("Ferocious gloves", None);
-        player.equip("Primordial boots", None);
-        player.equip("Ultor ring", None);
+        let _ = player.equip("Torva full helm", None);
+        let _ = player.equip("Amulet of torture", None);
+        let _ = player.equip("Infernal cape", None);
+        let _ = player.equip("Rada's blessing 4", None);
+        let _ = player.equip("Ghrazi rapier", None);
+        let _ = player.equip("Avernic defender", None);
+        let _ = player.equip("Torva platebody", None);
+        let _ = player.equip("Torva platelegs", None);
+        let _ = player.equip("Ferocious gloves", None);
+        let _ = player.equip("Primordial boots", None);
+        let _ = player.equip("Ultor ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
@@ -1228,16 +1226,16 @@ mod tests {
         player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.equip("Torva full helm", None);
-        player.equip("Amulet of torture", None);
-        player.equip("Infernal cape", None);
-        player.equip("Rada's blessing 4", None);
-        player.equip("Dual macuahuitl", None);
-        player.equip("Torva platebody", None);
-        player.equip("Torva platelegs", None);
-        player.equip("Ferocious gloves", None);
-        player.equip("Primordial boots", None);
-        player.equip("Ultor ring", None);
+        let _ = player.equip("Torva full helm", None);
+        let _ = player.equip("Amulet of torture", None);
+        let _ = player.equip("Infernal cape", None);
+        let _ = player.equip("Rada's blessing 4", None);
+        let _ = player.equip("Dual macuahuitl", None);
+        let _ = player.equip("Torva platebody", None);
+        let _ = player.equip("Torva platelegs", None);
+        let _ = player.equip("Ferocious gloves", None);
+        let _ = player.equip("Primordial boots", None);
+        let _ = player.equip("Ultor ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Pummel);
@@ -1257,16 +1255,16 @@ mod tests {
         player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.equip("Torva full helm", None);
-        player.equip("Amulet of torture", None);
-        player.equip("Infernal cape", None);
-        player.equip("Rada's blessing 4", None);
-        player.equip("Scythe of vitur", Some("Charged"));
-        player.equip("Torva platebody", None);
-        player.equip("Torva platelegs", None);
-        player.equip("Ferocious gloves", None);
-        player.equip("Primordial boots", None);
-        player.equip("Ultor ring", None);
+        let _ = player.equip("Torva full helm", None);
+        let _ = player.equip("Amulet of torture", None);
+        let _ = player.equip("Infernal cape", None);
+        let _ = player.equip("Rada's blessing 4", None);
+        let _ = player.equip("Scythe of vitur", Some("Charged"));
+        let _ = player.equip("Torva platebody", None);
+        let _ = player.equip("Torva platelegs", None);
+        let _ = player.equip("Ferocious gloves", None);
+        let _ = player.equip("Primordial boots", None);
+        let _ = player.equip("Ultor ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
@@ -1287,17 +1285,17 @@ mod tests {
         player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::SmellingSalts);
 
-        player.equip("Masori mask (f)", None);
-        player.equip("Necklace of anguish", None);
-        player.equip("Dizana's quiver", Some("Charged"));
-        player.equip("Ruby dragon bolts (e)", None);
-        player.equip("Zaryte crossbow", None);
-        player.equip("Twisted buckler", None);
-        player.equip("Masori body (f)", None);
-        player.equip("Masori chaps (f)", None);
-        player.equip("Zaryte vambraces", None);
-        player.equip("Pegasian boots", None);
-        player.equip("Venator ring", None);
+        let _ = player.equip("Masori mask (f)", None);
+        let _ = player.equip("Necklace of anguish", None);
+        let _ = player.equip("Dizana's quiver", Some("Charged"));
+        let _ = player.equip("Ruby dragon bolts (e)", None);
+        let _ = player.equip("Zaryte crossbow", None);
+        let _ = player.equip("Twisted buckler", None);
+        let _ = player.equip("Masori body (f)", None);
+        let _ = player.equip("Masori chaps (f)", None);
+        let _ = player.equip("Zaryte vambraces", None);
+        let _ = player.equip("Pegasian boots", None);
+        let _ = player.equip("Venator ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);

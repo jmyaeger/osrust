@@ -2,7 +2,6 @@ use lazy_static::lazy_static;
 
 use crate::constants::*;
 use serde::{Deserialize, Deserializer};
-use serde_json::Value;
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
@@ -431,11 +430,11 @@ impl fmt::Display for Armor {
 }
 
 impl Armor {
-    pub fn new(name: &str, version: Option<&str>) -> Self {
+    pub fn new(name: &str, version: Option<&str>) -> Result<Self, Box<dyn std::error::Error>> {
         // Create a new Armor struct from item name and version (optional)
         let mut armor = Armor::default();
-        armor.set_info(name, version).unwrap();
-        armor
+        armor.set_info(name, version)?;
+        Ok(armor)
     }
 
     pub fn is_valid_ranged_ammo(&self) -> bool {
@@ -604,10 +603,10 @@ where
 }
 
 impl Weapon {
-    pub fn new(name: &str, version: Option<&str>) -> Self {
+    pub fn new(name: &str, version: Option<&str>) -> Result<Self, Box<dyn std::error::Error>> {
         let mut weapon = Weapon::default();
-        weapon.set_info(name, version).unwrap();
-        weapon
+        weapon.set_info(name, version)?;
+        Ok(weapon)
     }
 
     pub fn uses_bolts_or_arrows(&self) -> bool {
@@ -1046,23 +1045,6 @@ impl Weapon {
     }
 }
 
-pub fn get_slot_name(item_name: &str) -> Result<String, Box<dyn std::error::Error>> {
-    // Get the name of the slot for an item (by name)
-    let json_content = fs::read_to_string(EQUIPMENT_JSON.as_path())?;
-    let items: Vec<Value> = serde_json::from_str(&json_content)?;
-
-    for item in items {
-        if let Some(name) = item.get("name").and_then(|v| v.as_str())
-            && name == item_name
-            && let Some(slot) = item.get("slot").and_then(|v| v.as_str())
-        {
-            return Ok(slot.to_string());
-        }
-    }
-
-    Err(format!("Equipment '{item_name}' not found").into())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1093,7 +1075,7 @@ mod tests {
 
     #[test]
     fn test_set_weapon_info() {
-        let weapon = Weapon::new("Abyssal whip", None);
+        let weapon = Weapon::new("Abyssal whip", None).unwrap();
         assert_eq!(weapon.name, "Abyssal whip");
         assert_eq!(weapon.slot, GearSlot::Weapon);
         assert_eq!(weapon.bonuses.attack.slash, 82);
@@ -1105,7 +1087,7 @@ mod tests {
 
     #[test]
     fn test_set_armor_info() {
-        let armor = Armor::new("Rune platebody", None);
+        let armor = Armor::new("Rune platebody", None).unwrap();
         assert_eq!(armor.name, "Rune platebody");
         assert_eq!(armor.slot, GearSlot::Body);
         assert_eq!(
@@ -1122,7 +1104,7 @@ mod tests {
 
     #[test]
     fn test_spec_cost() {
-        let voidwaker = Weapon::new("Voidwaker", None);
+        let voidwaker = Weapon::new("Voidwaker", None).unwrap();
         assert_eq!(voidwaker.spec_cost, Some(50));
     }
 }

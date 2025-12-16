@@ -1117,11 +1117,11 @@ mod tests {
     #[ignore = "too slow"]
     fn test_atlatl_dps() {
         let mut player = max_melee_player();
-        player.equip("Eclipse atlatl", None);
-        player.equip("Eclipse moon helm", None);
-        player.equip("Eclipse moon chestplate", None);
-        player.equip("Eclipse moon tassets", None);
-        player.equip("Atlatl dart", None);
+        let _ = player.equip("Eclipse atlatl", None);
+        let _ = player.equip("Eclipse moon helm", None);
+        let _ = player.equip("Eclipse moon chestplate", None);
+        let _ = player.equip("Eclipse moon tassets", None);
+        let _ = player.equip("Atlatl dart", None);
         player.update_bonuses();
         player.update_set_effects();
         player.set_active_style(CombatStyle::Rapid);
@@ -1252,7 +1252,7 @@ mod tests {
         let mut monster = Monster::new("Ammonite Crab", None).unwrap();
 
         let mut player = loadouts::max_melee_player();
-        player.equip("Soulreaper axe", None);
+        let _ = player.equip("Soulreaper axe", None);
         player.set_active_style(CombatStyle::Hack);
         player.attack = get_attack_functions(&player);
         player.update_bonuses();

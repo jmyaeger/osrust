@@ -619,18 +619,18 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Rc::new(Gear {
-            head: Some(Armor::new("Torva full helm", None)),
-            neck: Some(Armor::new("Amulet of torture", None)),
-            cape: Some(Armor::new("Infernal cape", None)),
-            ammo: Some(Armor::new("Rada's blessing 4", None)),
+            head: Some(Armor::new("Torva full helm", None).unwrap()),
+            neck: Some(Armor::new("Amulet of torture", None).unwrap()),
+            cape: Some(Armor::new("Infernal cape", None).unwrap()),
+            ammo: Some(Armor::new("Rada's blessing 4", None).unwrap()),
             second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier", None),
-            shield: Some(Armor::new("Avernic defender", None)),
-            body: Some(Armor::new("Torva platebody", None)),
-            legs: Some(Armor::new("Torva platelegs", None)),
-            hands: Some(Armor::new("Ferocious gloves", None)),
-            feet: Some(Armor::new("Primordial boots", None)),
-            ring: Some(Armor::new("Ultor ring", None)),
+            weapon: Weapon::new("Ghrazi rapier", None).unwrap(),
+            shield: Some(Armor::new("Avernic defender", None).unwrap()),
+            body: Some(Armor::new("Torva platebody", None).unwrap()),
+            legs: Some(Armor::new("Torva platelegs", None).unwrap()),
+            hands: Some(Armor::new("Ferocious gloves", None).unwrap()),
+            feet: Some(Armor::new("Primordial boots", None).unwrap()),
+            ring: Some(Armor::new("Ultor ring", None).unwrap()),
         });
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);

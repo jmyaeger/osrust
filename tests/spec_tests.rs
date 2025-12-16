@@ -17,10 +17,10 @@ mod spec_tests {
         player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.equip("Bandos chestplate", None);
-        player.equip("Bandos tassets", None);
-        player.equip("Dragon defender", None);
-        player.equip("Osmumten's fang", None);
+        let _ = player.equip("Bandos chestplate", None);
+        let _ = player.equip("Bandos tassets", None);
+        let _ = player.equip("Dragon defender", None);
+        let _ = player.equip("Osmumten's fang", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
 
@@ -55,7 +55,7 @@ mod spec_tests {
         let fang_strategy = SpecStrategy::new(&fang_switch, None);
 
         let mut player2 = player.clone();
-        player2.equip("Dragon claws", None);
+        let _ = player2.equip("Dragon claws", None);
         let claw_switch =
             GearSwitch::new(SwitchType::Custom("Claw spec".into()), &player2, &monster);
         let claw_strategy = SpecStrategy::new(&claw_switch, None);

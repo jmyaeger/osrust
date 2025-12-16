@@ -258,17 +258,17 @@ mod tests {
         player.add_prayer(Prayer::Piety);
         player.add_potion(Potion::SuperCombat);
 
-        player.equip("Torva full helm", None);
-        player.equip("Amulet of torture", None);
-        player.equip("Infernal cape", None);
-        player.equip("Rada's blessing 4", None);
-        player.equip("Ghrazi rapier", None);
-        player.equip("Avernic defender", None);
-        player.equip("Torva platebody", None);
-        player.equip("Torva platelegs", None);
-        player.equip("Ferocious gloves", None);
-        player.equip("Primordial boots", None);
-        player.equip("Ultor ring", None);
+        let _ = player.equip("Torva full helm", None);
+        let _ = player.equip("Amulet of torture", None);
+        let _ = player.equip("Infernal cape", None);
+        let _ = player.equip("Rada's blessing 4", None);
+        let _ = player.equip("Ghrazi rapier", None);
+        let _ = player.equip("Avernic defender", None);
+        let _ = player.equip("Torva platebody", None);
+        let _ = player.equip("Torva platelegs", None);
+        let _ = player.equip("Ferocious gloves", None);
+        let _ = player.equip("Primordial boots", None);
+        let _ = player.equip("Ultor ring", None);
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);

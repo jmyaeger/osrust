@@ -1722,7 +1722,7 @@ mod tests {
     #[test]
     fn test_dragon_dagger() {
         let mut player = max_melee_player();
-        player.equip("Dragon dagger", Some("Unpoisoned"));
+        let _ = player.equip("Dragon dagger", Some("Unpoisoned"));
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
@@ -1745,7 +1745,7 @@ mod tests {
     #[test]
     fn test_dragon_claws() {
         let mut player = max_melee_player();
-        player.equip("Dragon claws", None);
+        let _ = player.equip("Dragon claws", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Slash);
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
@@ -1768,7 +1768,7 @@ mod tests {
     #[test]
     fn test_chally() {
         let mut player = max_melee_player();
-        player.equip("Crystal halberd", Some("Active"));
+        let _ = player.equip("Crystal halberd", Some("Active"));
         player.update_bonuses();
         player.set_active_style(CombatStyle::Swipe);
         let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();

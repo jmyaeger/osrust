@@ -259,17 +259,17 @@ pub fn max_melee_player() -> Player {
     player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
-    player.equip("Torva full helm", None);
-    player.equip("Torva platebody", None);
-    player.equip("Torva platelegs", None);
-    player.equip("Ferocious gloves", None);
-    player.equip("Primordial boots", None);
-    player.equip("Ghrazi rapier", None);
-    player.equip("Avernic defender", None);
-    player.equip("Rada's blessing 4", None);
-    player.equip("Amulet of torture", None);
-    player.equip("Infernal cape", None);
-    player.equip("Ultor ring", None);
+    let _ = player.equip("Torva full helm", None);
+    let _ = player.equip("Torva platebody", None);
+    let _ = player.equip("Torva platelegs", None);
+    let _ = player.equip("Ferocious gloves", None);
+    let _ = player.equip("Primordial boots", None);
+    let _ = player.equip("Ghrazi rapier", None);
+    let _ = player.equip("Avernic defender", None);
+    let _ = player.equip("Rada's blessing 4", None);
+    let _ = player.equip("Amulet of torture", None);
+    let _ = player.equip("Infernal cape", None);
+    let _ = player.equip("Ultor ring", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lunge);
@@ -295,17 +295,17 @@ pub fn mid_level_melee_player() -> Player {
     player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
-    player.equip("Helm of neitiznot", None);
-    player.equip("Amulet of fury", None);
-    player.equip("Fire cape", None);
-    player.equip("Rada's blessing 3", None);
-    player.equip("Abyssal whip", None);
-    player.equip("Dragon defender", None);
-    player.equip("Fighter torso", None);
-    player.equip("Obsidian platelegs", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Dragon boots", None);
-    player.equip("Berserker ring (i)", None);
+    let _ = player.equip("Helm of neitiznot", None);
+    let _ = player.equip("Amulet of fury", None);
+    let _ = player.equip("Fire cape", None);
+    let _ = player.equip("Rada's blessing 3", None);
+    let _ = player.equip("Abyssal whip", None);
+    let _ = player.equip("Dragon defender", None);
+    let _ = player.equip("Fighter torso", None);
+    let _ = player.equip("Obsidian platelegs", None);
+    let _ = player.equip("Barrows gloves", None);
+    let _ = player.equip("Dragon boots", None);
+    let _ = player.equip("Berserker ring (i)", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lash);
@@ -320,17 +320,17 @@ pub fn max_ranged_zcb_player() -> Player {
     player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
 
-    player.equip("Masori mask (f)", None);
-    player.equip("Necklace of anguish", None);
-    player.equip("Dizana's quiver", Some("Charged"));
-    player.equip("Dragon bolts", Some("Unpoisoned"));
-    player.equip("Zaryte crossbow", None);
-    player.equip("Twisted buckler", None);
-    player.equip("Masori body (f)", None);
-    player.equip("Masori chaps (f)", None);
-    player.equip("Zaryte vambraces", None);
-    player.equip("Pegasian boots", None);
-    player.equip("Venator ring", None);
+    let _ = player.equip("Masori mask (f)", None);
+    let _ = player.equip("Necklace of anguish", None);
+    let _ = player.equip("Dizana's quiver", Some("Charged"));
+    let _ = player.equip("Dragon bolts", Some("Unpoisoned"));
+    let _ = player.equip("Zaryte crossbow", None);
+    let _ = player.equip("Twisted buckler", None);
+    let _ = player.equip("Masori body (f)", None);
+    let _ = player.equip("Masori chaps (f)", None);
+    let _ = player.equip("Zaryte vambraces", None);
+    let _ = player.equip("Pegasian boots", None);
+    let _ = player.equip("Venator ring", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
@@ -356,17 +356,17 @@ pub fn mid_level_ranged_rcb_player() -> Player {
     player.add_prayer(Prayer::EagleEye);
     player.add_potion(Potion::Ranging);
 
-    player.equip("Ancient coif", None);
-    player.equip("Amulet of fury", None);
-    player.equip("Ava's assembler", None);
-    player.equip("Adamant bolts", Some("Unpoisoned"));
-    player.equip("Rune crossbow", None);
-    player.equip("Odium ward", None);
-    player.equip("Ancient d'hide body", None);
-    player.equip("Ancient chaps", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Ancient d'hide boots", None);
-    player.equip("Archers ring (i)", None);
+    let _ = player.equip("Ancient coif", None);
+    let _ = player.equip("Amulet of fury", None);
+    let _ = player.equip("Ava's assembler", None);
+    let _ = player.equip("Adamant bolts", Some("Unpoisoned"));
+    let _ = player.equip("Rune crossbow", None);
+    let _ = player.equip("Odium ward", None);
+    let _ = player.equip("Ancient d'hide body", None);
+    let _ = player.equip("Ancient chaps", None);
+    let _ = player.equip("Barrows gloves", None);
+    let _ = player.equip("Ancient d'hide boots", None);
+    let _ = player.equip("Archers ring (i)", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
@@ -377,7 +377,7 @@ pub fn mid_level_ranged_rcb_player() -> Player {
 #[fixture]
 pub fn max_melee_dhl_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Dragon hunter lance", None);
+    let _ = player.equip("Dragon hunter lance", None);
     player.update_bonuses();
     player
 }
@@ -385,7 +385,7 @@ pub fn max_melee_dhl_player() -> Player {
 #[fixture]
 pub fn max_melee_keris_partisan_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Keris partisan", None);
+    let _ = player.equip("Keris partisan", None);
     player.set_active_style(CombatStyle::Pound);
     player.update_bonuses();
     player
@@ -394,7 +394,7 @@ pub fn max_melee_keris_partisan_player() -> Player {
 #[fixture]
 pub fn max_melee_blue_keris_partisan_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Keris partisan of breaching", None);
+    let _ = player.equip("Keris partisan of breaching", None);
     player.set_active_style(CombatStyle::Pound);
     player.update_bonuses();
     player
@@ -403,7 +403,7 @@ pub fn max_melee_blue_keris_partisan_player() -> Player {
 #[fixture]
 pub fn mid_level_melee_barronite_player() -> Player {
     let mut player = mid_level_melee_player();
-    player.equip("Barronite mace", None);
+    let _ = player.equip("Barronite mace", None);
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -412,7 +412,7 @@ pub fn mid_level_melee_barronite_player() -> Player {
 #[fixture]
 pub fn max_melee_ursine_chainmace_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Ursine chainmace", Some("Charged"));
+    let _ = player.equip("Ursine chainmace", Some("Charged"));
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -421,8 +421,8 @@ pub fn max_melee_ursine_chainmace_player() -> Player {
 #[fixture]
 pub fn max_melee_berserker_neck_obby_sword_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Berserker necklace", None);
-    player.equip("Toktz-xil-ak", None);
+    let _ = player.equip("Berserker necklace", None);
+    let _ = player.equip("Toktz-xil-ak", None);
     player.set_active_style(CombatStyle::Lunge);
     player.update_bonuses();
     player
@@ -431,7 +431,7 @@ pub fn max_melee_berserker_neck_obby_sword_player() -> Player {
 #[fixture]
 pub fn max_melee_silverlight_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Silverlight", None);
+    let _ = player.equip("Silverlight", None);
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -440,7 +440,7 @@ pub fn max_melee_silverlight_player() -> Player {
 #[fixture]
 pub fn max_melee_darklight_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Darklight", None);
+    let _ = player.equip("Darklight", None);
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -449,7 +449,7 @@ pub fn max_melee_darklight_player() -> Player {
 #[fixture]
 pub fn max_melee_arclight_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Arclight", Some("Charged"));
+    let _ = player.equip("Arclight", Some("Charged"));
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -458,7 +458,7 @@ pub fn max_melee_arclight_player() -> Player {
 #[fixture]
 pub fn mid_level_melee_lbba_player() -> Player {
     let mut player = mid_level_melee_player();
-    player.equip("Leaf-bladed battleaxe", None);
+    let _ = player.equip("Leaf-bladed battleaxe", None);
     player.set_active_style(CombatStyle::Hack);
     player.update_bonuses();
     player
@@ -467,7 +467,7 @@ pub fn mid_level_melee_lbba_player() -> Player {
 #[fixture]
 pub fn max_melee_colossal_blade_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Colossal blade", None);
+    let _ = player.equip("Colossal blade", None);
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -476,7 +476,7 @@ pub fn max_melee_colossal_blade_player() -> Player {
 #[fixture]
 pub fn mid_level_melee_bone_mace_player() -> Player {
     let mut player = mid_level_melee_player();
-    player.equip("Bone mace", None);
+    let _ = player.equip("Bone mace", None);
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -485,10 +485,10 @@ pub fn mid_level_melee_bone_mace_player() -> Player {
 #[fixture]
 pub fn full_obby_with_sword_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Obsidian helmet", None);
-    player.equip("Obsidian platebody", None);
-    player.equip("Obsidian platelegs", None);
-    player.equip("Toktz-xil-ak", None);
+    let _ = player.equip("Obsidian helmet", None);
+    let _ = player.equip("Obsidian platebody", None);
+    let _ = player.equip("Obsidian platelegs", None);
+    let _ = player.equip("Toktz-xil-ak", None);
     player.set_active_style(CombatStyle::Lunge);
     player.update_bonuses();
     player.update_set_effects();
@@ -498,7 +498,7 @@ pub fn full_obby_with_sword_player() -> Player {
 #[fixture]
 pub fn full_obby_with_sword_and_necklace_player() -> Player {
     let mut player = full_obby_with_sword_player();
-    player.equip("Berserker necklace", None);
+    let _ = player.equip("Berserker necklace", None);
     player.update_bonuses();
     player
 }
@@ -506,7 +506,7 @@ pub fn full_obby_with_sword_and_necklace_player() -> Player {
 #[fixture]
 pub fn max_melee_blisterwood_flail_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Blisterwood flail", None);
+    let _ = player.equip("Blisterwood flail", None);
     player.set_active_style(CombatStyle::Pound);
     player.update_bonuses();
     player
@@ -515,7 +515,7 @@ pub fn max_melee_blisterwood_flail_player() -> Player {
 #[fixture]
 pub fn max_ranged_blowpipe_dragon_darts_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Toxic blowpipe", Some("Dragon"));
+    let _ = player.equip("Toxic blowpipe", Some("Dragon"));
     player.update_bonuses();
     player
 }
@@ -523,9 +523,9 @@ pub fn max_ranged_blowpipe_dragon_darts_player() -> Player {
 #[fixture]
 pub fn max_ranged_tbow_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Twisted bow", None);
+    let _ = player.equip("Twisted bow", None);
     player.unequip_slot(&GearSlot::Ammo);
-    player.equip("Dragon arrow", Some("Unpoisoned"));
+    let _ = player.equip("Dragon arrow", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -547,7 +547,7 @@ pub fn max_ranged_tbow_salts_player() -> Player {
 #[fixture]
 pub fn max_ranged_dhcb_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Dragon hunter crossbow", None);
+    let _ = player.equip("Dragon hunter crossbow", None);
     player.update_bonuses();
     player
 }
@@ -555,10 +555,10 @@ pub fn max_ranged_dhcb_player() -> Player {
 #[fixture]
 pub fn elite_void_dhcb_player() -> Player {
     let mut player = max_ranged_dhcb_player();
-    player.equip("Elite void top", None);
-    player.equip("Elite void robe", None);
-    player.equip("Void knight gloves", None);
-    player.equip("Void ranger helm", None);
+    let _ = player.equip("Elite void top", None);
+    let _ = player.equip("Elite void robe", None);
+    let _ = player.equip("Void knight gloves", None);
+    let _ = player.equip("Void ranger helm", None);
     player.update_set_effects();
     player.update_bonuses();
     player
@@ -567,7 +567,7 @@ pub fn elite_void_dhcb_player() -> Player {
 #[fixture]
 pub fn max_ranged_webweaver_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Webweaver bow", Some("Charged"));
+    let _ = player.equip("Webweaver bow", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -575,11 +575,11 @@ pub fn max_ranged_webweaver_player() -> Player {
 #[fixture]
 pub fn full_eclipse_atlatl_ranged_gear_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
-    player.equip("Atlatl dart", None);
+    let _ = player.equip("Eclipse atlatl", None);
+    let _ = player.equip("Eclipse moon helm", None);
+    let _ = player.equip("Eclipse moon chestplate", None);
+    let _ = player.equip("Eclipse moon tassets", None);
+    let _ = player.equip("Atlatl dart", None);
     player.update_set_effects();
     player.update_bonuses();
     player
@@ -588,8 +588,8 @@ pub fn full_eclipse_atlatl_ranged_gear_player() -> Player {
 #[fixture]
 pub fn eclipse_atlatl_ranged_gear_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Eclipse atlatl", None);
-    player.equip("Atlatl dart", None);
+    let _ = player.equip("Eclipse atlatl", None);
+    let _ = player.equip("Atlatl dart", None);
     player.update_bonuses();
     player
 }
@@ -597,11 +597,11 @@ pub fn eclipse_atlatl_ranged_gear_player() -> Player {
 #[fixture]
 pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     let mut player = max_melee_player();
-    player.equip("Eclipse atlatl", None);
-    player.equip("Eclipse moon helm", None);
-    player.equip("Eclipse moon chestplate", None);
-    player.equip("Eclipse moon tassets", None);
-    player.equip("Atlatl dart", None);
+    let _ = player.equip("Eclipse atlatl", None);
+    let _ = player.equip("Eclipse moon helm", None);
+    let _ = player.equip("Eclipse moon chestplate", None);
+    let _ = player.equip("Eclipse moon tassets", None);
+    let _ = player.equip("Atlatl dart", None);
     player.update_bonuses();
     player.update_set_effects();
     player.set_active_style(CombatStyle::Rapid);
@@ -622,8 +622,8 @@ pub fn full_eclipse_atlatl_melee_gear_rigour_all_pots_80_str() -> Player {
 #[fixture]
 pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
     let mut player = max_melee_player();
-    player.equip("Eclipse atlatl", None);
-    player.equip("Atlatl dart", None);
+    let _ = player.equip("Eclipse atlatl", None);
+    let _ = player.equip("Atlatl dart", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.add_prayer(Prayer::Rigour);
@@ -634,8 +634,8 @@ pub fn eclipse_atlatl_melee_gear_rigour_all_pots() -> Player {
 #[fixture]
 pub fn mid_level_ranged_bone_shortbow_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
-    player.equip("Bone shortbow", None);
-    player.equip("Rune arrow", Some("Unpoisoned"));
+    let _ = player.equip("Bone shortbow", None);
+    let _ = player.equip("Rune arrow", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -643,7 +643,7 @@ pub fn mid_level_ranged_bone_shortbow_player() -> Player {
 #[fixture]
 pub fn mid_level_ranged_rcb_silver_bolts_player() -> Player {
     let mut player = mid_level_ranged_rcb_player();
-    player.equip("Silver bolts", Some("Unpoisoned"));
+    let _ = player.equip("Silver bolts", Some("Unpoisoned"));
     player.update_bonuses();
     player
 }
@@ -655,17 +655,17 @@ pub fn max_mage_sang_staff_player() -> Player {
     player.add_prayer(Prayer::Augury);
     player.add_potion(Potion::SaturatedHeart);
 
-    player.equip("Ancestral hat", None);
-    player.equip("Occult necklace", None);
-    player.equip("Imbued guthix cape", None);
-    player.equip("Rada's blessing 4", None);
-    player.equip("Sanguinesti staff", Some("Charged"));
-    player.equip("Elidinis' ward (f)", None);
-    player.equip("Ancestral robe top", None);
-    player.equip("Ancestral robe bottom", None);
-    player.equip("Tormented bracelet", None);
-    player.equip("Eternal boots", None);
-    player.equip("Magus ring", None);
+    let _ = player.equip("Ancestral hat", None);
+    let _ = player.equip("Occult necklace", None);
+    let _ = player.equip("Imbued guthix cape", None);
+    let _ = player.equip("Rada's blessing 4", None);
+    let _ = player.equip("Sanguinesti staff", Some("Charged"));
+    let _ = player.equip("Elidinis' ward (f)", None);
+    let _ = player.equip("Ancestral robe top", None);
+    let _ = player.equip("Ancestral robe bottom", None);
+    let _ = player.equip("Tormented bracelet", None);
+    let _ = player.equip("Eternal boots", None);
+    let _ = player.equip("Magus ring", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
@@ -676,7 +676,7 @@ pub fn max_mage_sang_staff_player() -> Player {
 #[fixture]
 pub fn max_mage_sang_staff_brimstone_ring_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Brimstone ring", None);
+    let _ = player.equip("Brimstone ring", None);
     player.update_bonuses();
     player
 }
@@ -684,7 +684,7 @@ pub fn max_mage_sang_staff_brimstone_ring_player() -> Player {
 #[fixture]
 pub fn max_mage_toxic_trident_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Trident of the swamp", Some("Charged"));
+    let _ = player.equip("Trident of the swamp", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -692,7 +692,7 @@ pub fn max_mage_toxic_trident_player() -> Player {
 #[fixture]
 pub fn max_mage_trident_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Trident of the seas", Some("Charged"));
+    let _ = player.equip("Trident of the seas", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -700,7 +700,7 @@ pub fn max_mage_trident_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_fire_surge_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Harmonised nightmare staff", None);
+    let _ = player.equip("Harmonised nightmare staff", None);
     player.update_bonuses();
     player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player.set_active_style(CombatStyle::Spell);
@@ -710,7 +710,7 @@ pub fn max_mage_harm_fire_surge_player() -> Player {
 #[fixture]
 pub fn max_mage_kodai_ice_barrage_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Kodai wand", None);
+    let _ = player.equip("Kodai wand", None);
     player.update_bonuses();
     player.set_spell(Spell::Ancient(AncientSpell::IceBarrage));
     player.set_active_style(CombatStyle::Spell);
@@ -737,17 +737,17 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
     player.calc_potion_boosts();
     player.reset_current_stats(false);
 
-    player.equip("Ahrim's hood", None);
-    player.equip("Occult necklace", None);
-    player.equip("Imbued guthix cape", None);
-    player.equip("Rada's blessing 3", None);
-    player.equip("Warped sceptre", Some("Charged"));
-    player.equip("Malediction ward", None);
-    player.equip("Ahrim's robetop", None);
-    player.equip("Ahrim's robeskirt", None);
-    player.equip("Barrows gloves", None);
-    player.equip("Infinity boots", None);
-    player.equip("Seers ring (i)", None);
+    let _ = player.equip("Ahrim's hood", None);
+    let _ = player.equip("Occult necklace", None);
+    let _ = player.equip("Imbued guthix cape", None);
+    let _ = player.equip("Rada's blessing 3", None);
+    let _ = player.equip("Warped sceptre", Some("Charged"));
+    let _ = player.equip("Malediction ward", None);
+    let _ = player.equip("Ahrim's robetop", None);
+    let _ = player.equip("Ahrim's robeskirt", None);
+    let _ = player.equip("Barrows gloves", None);
+    let _ = player.equip("Infinity boots", None);
+    let _ = player.equip("Seers ring (i)", None);
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
@@ -758,8 +758,8 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
 #[fixture]
 pub fn mid_level_mage_chaos_gauntlets_fire_bolt_player() -> Player {
     let mut player = mid_level_magic_warped_sceptre_player();
-    player.equip("Fire battlestaff", None);
-    player.equip("Chaos gauntlets", None);
+    let _ = player.equip("Fire battlestaff", None);
+    let _ = player.equip("Chaos gauntlets", None);
     player.update_bonuses();
     player.set_spell(Spell::Standard(StandardSpell::FireBolt));
     player.set_active_style(CombatStyle::Spell);
@@ -769,7 +769,7 @@ pub fn mid_level_mage_chaos_gauntlets_fire_bolt_player() -> Player {
 #[fixture]
 pub fn mid_level_mage_god_spell_charge_player() -> Player {
     let mut player = mid_level_magic_warped_sceptre_player();
-    player.equip("Guthix staff", None);
+    let _ = player.equip("Guthix staff", None);
     player.update_bonuses();
     player.boosts.charge_active = true;
     player.set_spell(Spell::Standard(StandardSpell::ClawsOfGuthix));
@@ -780,7 +780,7 @@ pub fn mid_level_mage_god_spell_charge_player() -> Player {
 #[fixture]
 pub fn max_mage_shadow_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Tumeken's shadow", Some("Charged"));
+    let _ = player.equip("Tumeken's shadow", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -788,7 +788,7 @@ pub fn max_mage_shadow_player() -> Player {
 #[fixture]
 pub fn max_mage_shadow_salts_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Tumeken's shadow", Some("Charged"));
+    let _ = player.equip("Tumeken's shadow", Some("Charged"));
     player.add_potion(Potion::SmellingSalts);
     player.update_bonuses();
     player
@@ -797,9 +797,9 @@ pub fn max_mage_shadow_salts_player() -> Player {
 #[fixture]
 pub fn full_virtus_kodai_ice_barrage_player() -> Player {
     let mut player = max_mage_kodai_ice_barrage_player();
-    player.equip("Virtus mask", None);
-    player.equip("Virtus robe top", None);
-    player.equip("Virtus robe bottom", None);
+    let _ = player.equip("Virtus mask", None);
+    let _ = player.equip("Virtus robe top", None);
+    let _ = player.equip("Virtus robe bottom", None);
     player.update_bonuses();
     player
 }
@@ -814,7 +814,7 @@ pub fn full_virtus_kodai_fire_surge_player() -> Player {
 #[fixture]
 pub fn max_mage_smoke_staff_fire_surge_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.equip("Smoke battlestaff", None);
+    let _ = player.equip("Smoke battlestaff", None);
     player.update_bonuses();
     player
 }
@@ -822,7 +822,7 @@ pub fn max_mage_smoke_staff_fire_surge_player() -> Player {
 #[fixture]
 pub fn max_mage_accursed_sceptre_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Accursed sceptre", Some("Charged"));
+    let _ = player.equip("Accursed sceptre", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -830,7 +830,7 @@ pub fn max_mage_accursed_sceptre_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.equip("Tome of water", Some("Charged"));
+    let _ = player.equip("Tome of water", Some("Charged"));
     player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
     player.update_bonuses();
     player
@@ -839,14 +839,14 @@ pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_fire_surge_tome_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.equip("Tome of fire", Some("Charged"));
+    let _ = player.equip("Tome of fire", Some("Charged"));
     player.update_bonuses();
     player
 }
 #[fixture]
 pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
     let mut player = mid_level_mage_chaos_gauntlets_fire_bolt_player();
-    player.equip("Tome of fire", Some("Charged"));
+    let _ = player.equip("Tome of fire", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -854,7 +854,7 @@ pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
 #[fixture]
 pub fn max_melee_blade_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Blade of saeldor (c)", None);
+    let _ = player.equip("Blade of saeldor (c)", None);
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -863,7 +863,7 @@ pub fn max_melee_blade_player() -> Player {
 #[fixture]
 pub fn max_melee_scythe_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Scythe of vitur", Some("Charged"));
+    let _ = player.equip("Scythe of vitur", Some("Charged"));
     player.set_active_style(CombatStyle::Chop);
     player.update_bonuses();
     player
@@ -872,7 +872,7 @@ pub fn max_melee_scythe_player() -> Player {
 #[fixture]
 pub fn max_melee_fang_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Osmumten's fang", None);
+    let _ = player.equip("Osmumten's fang", None);
     player.set_active_style(CombatStyle::Lunge);
     player.update_bonuses();
     player
@@ -881,8 +881,8 @@ pub fn max_melee_fang_player() -> Player {
 #[fixture]
 pub fn full_ahrims_aotd_player() -> Player {
     let mut player = mid_level_magic_warped_sceptre_player();
-    player.equip("Ahrim's staff", None);
-    player.equip("Amulet of the damned", Some("Full"));
+    let _ = player.equip("Ahrim's staff", None);
+    let _ = player.equip("Amulet of the damned", Some("Full"));
     player.attrs.spell = Some(Spell::Arceuus(ArceuusSpell::UndeadGrasp));
     player.set_active_style(CombatStyle::Spell);
     player.update_set_effects();
@@ -902,10 +902,10 @@ pub fn full_ahrims_aotd_sunfire_player() -> Player {
 #[fixture]
 pub fn full_dharoks_1hp_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Dharok's helm", None);
-    player.equip("Dharok's platebody", None);
-    player.equip("Dharok's platelegs", None);
-    player.equip("Dharok's greataxe", None);
+    let _ = player.equip("Dharok's helm", None);
+    let _ = player.equip("Dharok's platebody", None);
+    let _ = player.equip("Dharok's platelegs", None);
+    let _ = player.equip("Dharok's greataxe", None);
     player.set_active_style(CombatStyle::Hack);
     player.update_set_effects();
     player.update_bonuses();
@@ -917,10 +917,10 @@ pub fn full_dharoks_1hp_player() -> Player {
 #[fixture]
 pub fn full_veracs_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Verac's helm", None);
-    player.equip("Verac's plateskirt", None);
-    player.equip("Verac's brassard", None);
-    player.equip("Verac's flail", None);
+    let _ = player.equip("Verac's helm", None);
+    let _ = player.equip("Verac's plateskirt", None);
+    let _ = player.equip("Verac's brassard", None);
+    let _ = player.equip("Verac's flail", None);
     player.set_active_style(CombatStyle::Pummel);
     player.update_set_effects();
     player.update_bonuses();
@@ -930,11 +930,11 @@ pub fn full_veracs_player() -> Player {
 #[fixture]
 pub fn full_karils_aotd_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Karil's coif", None);
-    player.equip("Karil's leathertop", None);
-    player.equip("Karil's leatherskirt", None);
-    player.equip("Karil's crossbow", None);
-    player.equip("Amulet of the damned", Some("Full"));
+    let _ = player.equip("Karil's coif", None);
+    let _ = player.equip("Karil's leathertop", None);
+    let _ = player.equip("Karil's leatherskirt", None);
+    let _ = player.equip("Karil's crossbow", None);
+    let _ = player.equip("Amulet of the damned", Some("Full"));
     player.update_set_effects();
     player.update_bonuses();
     player
@@ -943,7 +943,7 @@ pub fn full_karils_aotd_player() -> Player {
 #[fixture]
 pub fn max_melee_torags_hammers_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Torag's hammers", None);
+    let _ = player.equip("Torag's hammers", None);
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -952,7 +952,7 @@ pub fn max_melee_torags_hammers_player() -> Player {
 #[fixture]
 pub fn max_ranged_tonalztics_charged_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Tonalztics of ralos", Some("Charged"));
+    let _ = player.equip("Tonalztics of ralos", Some("Charged"));
     player.update_bonuses();
     player
 }
@@ -960,7 +960,7 @@ pub fn max_ranged_tonalztics_charged_player() -> Player {
 #[fixture]
 pub fn max_ranged_tonalztics_uncharged_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Tonalztics of ralos", Some("Uncharged"));
+    let _ = player.equip("Tonalztics of ralos", Some("Uncharged"));
     player.update_bonuses();
     player
 }
@@ -968,7 +968,7 @@ pub fn max_ranged_tonalztics_uncharged_player() -> Player {
 #[fixture]
 pub fn max_melee_macuahuitl_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Dual macuahuitl", None);
+    let _ = player.equip("Dual macuahuitl", None);
     player.set_active_style(CombatStyle::Pummel);
     player.update_bonuses();
     player
@@ -977,7 +977,7 @@ pub fn max_melee_macuahuitl_player() -> Player {
 #[fixture]
 pub fn max_ranged_zcb_ruby_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Ruby dragon bolts (e)", None);
+    let _ = player.equip("Ruby dragon bolts (e)", None);
     player.update_bonuses();
     player
 }
@@ -985,7 +985,7 @@ pub fn max_ranged_zcb_ruby_player() -> Player {
 #[fixture]
 pub fn max_mage_dawnbringer_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Dawnbringer", None);
+    let _ = player.equip("Dawnbringer", None);
     player.update_bonuses();
     player
 }
@@ -1000,8 +1000,8 @@ pub fn max_mage_harm_crumble_undead() -> Player {
 #[fixture]
 pub fn max_range_comp_ogre_bow_player() -> Player {
     let mut player = max_ranged_zcb_player();
-    player.equip("Comp ogre bow", None);
-    player.equip("Rune brutal", None);
+    let _ = player.equip("Comp ogre bow", None);
+    let _ = player.equip("Rune brutal", None);
     player.update_bonuses();
     player
 }
@@ -1009,9 +1009,9 @@ pub fn max_range_comp_ogre_bow_player() -> Player {
 #[fixture]
 pub fn full_blood_moon_player() -> Player {
     let mut player = max_melee_macuahuitl_player();
-    player.equip("Blood moon helm", None);
-    player.equip("Blood moon chestplate", None);
-    player.equip("Blood moon tassets", None);
+    let _ = player.equip("Blood moon helm", None);
+    let _ = player.equip("Blood moon chestplate", None);
+    let _ = player.equip("Blood moon tassets", None);
     player.update_bonuses();
     player.update_set_effects();
     player
@@ -1019,28 +1019,28 @@ pub fn full_blood_moon_player() -> Player {
 
 #[allow(unused)]
 pub fn slayer(mut player: Player) -> Player {
-    player.equip("Slayer helmet (i)", None);
+    let _ = player.equip("Slayer helmet (i)", None);
     player.update_bonuses();
     player
 }
 
 #[allow(unused)]
 pub fn salve_ei(mut player: Player) -> Player {
-    player.equip("Salve amulet(ei)", None);
+    let _ = player.equip("Salve amulet(ei)", None);
     player.update_bonuses();
     player
 }
 
 #[allow(unused)]
 pub fn salve_i(mut player: Player) -> Player {
-    player.equip("Salve amulet(i)", None);
+    let _ = player.equip("Salve amulet(i)", None);
     player.update_bonuses();
     player
 }
 
 #[allow(unused)]
 pub fn avarice_forinthry(mut player: Player) -> Player {
-    player.equip("Amulet of avarice", None);
+    let _ = player.equip("Amulet of avarice", None);
     player.boosts.forinthry_surge = true;
     player.update_bonuses();
     player
@@ -1048,7 +1048,7 @@ pub fn avarice_forinthry(mut player: Player) -> Player {
 
 #[allow(unused)]
 pub fn efaritays_aid(mut player: Player) -> Player {
-    player.equip("Efaritay's aid", None);
+    let _ = player.equip("Efaritay's aid", None);
     player.update_bonuses();
     player
 }
