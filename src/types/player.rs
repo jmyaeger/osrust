@@ -166,8 +166,8 @@ impl From<&Player> for GearSwitch {
 
         Self {
             switch_type,
-            gear: player.gear.clone(),
-            prayers: player.prayers.clone(),
+            gear: Rc::clone(&player.gear),
+            prayers: Rc::clone(&player.prayers),
             spell: player.attrs.spell,
             active_style: player.attrs.active_style,
             set_effects: player.set_effects,
@@ -834,8 +834,8 @@ impl Player {
 
         for switch in &self.switches {
             if &switch.switch_type == switch_type {
-                self.gear = switch.gear.clone();
-                self.prayers = switch.prayers.clone();
+                self.gear = Rc::clone(&switch.gear);
+                self.prayers = Rc::clone(&switch.prayers);
                 self.attrs.spell = switch.spell;
                 self.attrs.active_style = switch.active_style;
                 self.set_effects = switch.set_effects;
