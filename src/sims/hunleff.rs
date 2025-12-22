@@ -14,6 +14,10 @@ const TORNADO_MAX_TIMER: u32 = 23;
 const TORNADO_COOLDOWN: u32 = 9;
 const TORNADO_BASE_CHANCE: u32 = 6;
 const HUNLLEF_MAX_HIT: u32 = 68;
+const T0_MAX_HIT: u32 = 16;
+const T1_MAX_HIT: u32 = 13;
+const T2_MAX_HIT: u32 = 10;
+const T3_MAX_HIT: u32 = 8;
 const PADDLEFISH_HEAL: u32 = 20;
 const PADDLEFISH_DELAY: i32 = 3;
 const HUNLLEF_REGEN_TICKS: i32 = 100;
@@ -48,7 +52,7 @@ const ALLOWED_GEAR: [&str; 23] = [
 pub struct HunllefConfig {
     pub food_count: u32, // Only normal paddlefish for now
     pub eat_strategy: HunllefEatStrategy,
-    pub redemption_attempts: u32, // TODO: Attempt to use redemption a certain number of times at the beginning
+    pub redemption_strategy: Option<HunllefRedemptionStrat>,
     pub attack_strategy: AttackStrategy,
     pub lost_ticks: i32,
     pub logger: FightLogger,
@@ -60,7 +64,7 @@ impl Default for HunllefConfig {
         Self {
             food_count: 20,
             eat_strategy: HunllefEatStrategy::EatAtHp(50),
-            redemption_attempts: 0,
+            redemption_strategy: None,
             attack_strategy: AttackStrategy::TwoT3Weapons {
                 style1: SwitchType::Ranged,
                 style2: SwitchType::Magic,
@@ -90,6 +94,13 @@ pub enum AttackStrategy {
         other_style1: SwitchType,
         other_style2: SwitchType,
     },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum HunllefRedemptionStrat {
+    // Inner values are the maximum redemption procs
+    BeforeEating(u32), // Redemption at the start before eating any food
+    NoFoodLeft(u32),   // Redemption only if out of food
 }
 
 #[derive(Debug, Clone)]
@@ -260,13 +271,15 @@ impl HunllefMechanics {
         vars: &mut FightVars,
         player: &mut Player,
         eat_strategy: &HunllefEatStrategy,
+        hunllef_max: u32,
         logger: &mut FightLogger,
     ) {
         // Handle eating based on set strategy
         match eat_strategy {
             HunllefEatStrategy::EatAtHp(threshold) => {
                 // Eat if at or below the provided threshold and force the player to skip the next attack
-                if player.stats.hitpoints.current <= *threshold
+                if (player.stats.hitpoints.current <= *threshold
+                    || player.stats.hitpoints.current <= hunllef_max)
                     && vars.eat_delay == 0
                     && state.food_count > 0
                 {
@@ -277,7 +290,7 @@ impl HunllefMechanics {
             }
             HunllefEatStrategy::TickEatOnly => {
                 if state.queued_damage.is_some()
-                    && player.stats.hitpoints.current < 14
+                    && player.stats.hitpoints.current <= hunllef_max
                     && vars.eat_delay == 0
                     && state.food_count > 0
                 {
@@ -290,7 +303,7 @@ impl HunllefMechanics {
                 if ((state.tornado_timer > 0
                     && player.stats.hitpoints.base - player.stats.hitpoints.current
                         >= PADDLEFISH_HEAL)
-                    || player.stats.hitpoints.current < 14)
+                    || player.stats.hitpoints.current <= hunllef_max)
                     && vars.eat_delay == 0
                     && state.food_count > 0
                 {
@@ -351,6 +364,13 @@ impl HunllefFight {
 
         let attack_strategy = self.config.attack_strategy.clone();
 
+        let hunllef_max = match self.config.armor_tier {
+            1 => T1_MAX_HIT,
+            2 => T2_MAX_HIT,
+            3 => T3_MAX_HIT,
+            _ => T0_MAX_HIT,
+        };
+
         match &attack_strategy {
             AttackStrategy::TwoT3Weapons { style1, style2 } => {
                 // The normal case - two T3 weapons, no 5:1
@@ -393,14 +413,23 @@ impl HunllefFight {
                     // Decrement eat delay timer if there is one active
                     self.mechanics.decrement_eat_delay(&mut vars);
 
-                    // Handle eating based on set strategy
-                    self.mechanics.handle_eating(
-                        &mut state,
-                        &mut vars,
-                        &mut self.player,
-                        &self.config.eat_strategy,
-                        &mut self.config.logger,
-                    );
+                    match self.config.redemption_strategy {
+                        // Don't eat yet if planning to redemption at the start (unless chanceable)
+                        Some(HunllefRedemptionStrat::BeforeEating(max_procs))
+                            if vars.redemption_procs < max_procs
+                                && self.player.stats.hitpoints.current > hunllef_max => {}
+                        _ => {
+                            // Handle eating based on set strategy
+                            self.mechanics.handle_eating(
+                                &mut state,
+                                &mut vars,
+                                &mut self.player,
+                                &self.config.eat_strategy,
+                                hunllef_max,
+                                &mut self.config.logger,
+                            );
+                        }
+                    }
 
                     // Apply any queued damage to the player
                     self.mechanics.apply_queued_damage(
@@ -409,6 +438,36 @@ impl HunllefFight {
                         &mut self.config.logger,
                         &mut vars,
                     );
+
+                    // Process Redemption, if applicable
+                    if self.player.stats.hitpoints.current > 0
+                        && self.player.stats.hitpoints.current
+                            <= (self.player.stats.hitpoints.base / 10)
+                    {
+                        match self.config.redemption_strategy {
+                            Some(HunllefRedemptionStrat::BeforeEating(max_procs))
+                                if vars.redemption_procs < max_procs =>
+                            {
+                                vars.redemption_procs += 1;
+                                self.mechanics.process_redemption(
+                                    &mut self.player,
+                                    &vars,
+                                    &mut self.config.logger,
+                                );
+                            }
+                            Some(HunllefRedemptionStrat::NoFoodLeft(max_procs))
+                                if vars.redemption_procs < max_procs && state.food_count == 0 =>
+                            {
+                                vars.redemption_procs += 1;
+                                self.mechanics.process_redemption(
+                                    &mut self.player,
+                                    &vars,
+                                    &mut self.config.logger,
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
 
                     if vars.tick_counter == vars.attack_tick {
                         self.mechanics.player_attack(
@@ -511,14 +570,23 @@ impl HunllefFight {
                     // Decrement eat delay timer if there is one active
                     self.mechanics.decrement_eat_delay(&mut vars);
 
-                    // Handle eating based on set strategy
-                    self.mechanics.handle_eating(
-                        &mut state,
-                        &mut vars,
-                        &mut self.player,
-                        &self.config.eat_strategy,
-                        &mut self.config.logger,
-                    );
+                    match self.config.redemption_strategy {
+                        // Don't eat yet if planning to redemption at the start
+                        Some(HunllefRedemptionStrat::BeforeEating(max_procs))
+                            if vars.redemption_procs < max_procs
+                                && self.player.stats.hitpoints.current > hunllef_max => {}
+                        _ => {
+                            // Handle eating based on set strategy
+                            self.mechanics.handle_eating(
+                                &mut state,
+                                &mut vars,
+                                &mut self.player,
+                                &self.config.eat_strategy,
+                                hunllef_max,
+                                &mut self.config.logger,
+                            );
+                        }
+                    }
 
                     // Apply any queued damage to the player
                     self.mechanics.apply_queued_damage(
@@ -527,6 +595,36 @@ impl HunllefFight {
                         &mut self.config.logger,
                         &mut vars,
                     );
+
+                    // Process Redemption, if applicable
+                    if self.player.stats.hitpoints.current > 0
+                        && self.player.stats.hitpoints.current
+                            <= (self.player.stats.hitpoints.base / 10)
+                    {
+                        match self.config.redemption_strategy {
+                            Some(HunllefRedemptionStrat::BeforeEating(max_procs))
+                                if vars.redemption_procs < max_procs =>
+                            {
+                                vars.redemption_procs += 1;
+                                self.mechanics.process_redemption(
+                                    &mut self.player,
+                                    &vars,
+                                    &mut self.config.logger,
+                                );
+                            }
+                            Some(HunllefRedemptionStrat::NoFoodLeft(max_procs))
+                                if vars.redemption_procs < max_procs && state.food_count == 0 =>
+                            {
+                                vars.redemption_procs += 1;
+                                self.mechanics.process_redemption(
+                                    &mut self.player,
+                                    &vars,
+                                    &mut self.config.logger,
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
 
                     if vars.tick_counter == vars.attack_tick {
                         self.mechanics.player_attack(
@@ -752,7 +850,7 @@ mod tests {
         let fight_config = HunllefConfig {
             food_count: 20,
             eat_strategy: HunllefEatStrategy::EatAtHp(15),
-            redemption_attempts: 0,
+            redemption_strategy: None,
             attack_strategy: AttackStrategy::FiveToOne {
                 main_style: SwitchType::Magic,
                 other_style1: SwitchType::Ranged,

@@ -313,4 +313,10 @@ impl FightLogger {
     pub fn log_freeze_end(&mut self, tick: i32, name: &str) {
         debug!("[Tick {tick}] {name} is no longer frozen");
     }
+
+    pub fn log_redemption_proc(&mut self, tick: i32, heal_amount: u32, hp: u32) {
+        debug!(
+            "[Tick {tick}] Player used Redemption and healed for {heal_amount} ({hp} hp remaining)"
+        )
+    }
 }
