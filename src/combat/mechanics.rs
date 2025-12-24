@@ -366,6 +366,24 @@ pub trait Mechanics {
         fight_vars.eat_delay = constants::EAT_DELAY;
     }
 
+    fn process_redemption(
+        &self,
+        player: &mut Player,
+        fight_vars: &FightVars,
+        logger: &mut FightLogger,
+    ) {
+        let current_prayer = player.stats.prayer.current;
+        let heal_amount = player.stats.prayer.base / 4;
+        player.stats.prayer.drain(current_prayer);
+        player.heal(heal_amount, None);
+
+        logger.log_redemption_proc(
+            fight_vars.tick_counter,
+            heal_amount,
+            player.stats.hitpoints.current,
+        );
+    }
+
     fn process_death_charge(
         &self,
         player: &mut Player,

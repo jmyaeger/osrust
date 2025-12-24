@@ -8,7 +8,9 @@ use osrs::combat::attacks::standard::get_attack_functions;
 use osrs::combat::simulation::{Simulation, simulate_n_fights};
 use osrs::combat::thralls::Thrall;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
-use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
+use osrs::sims::hunleff::{
+    AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight, HunllefRedemptionStrat,
+};
 use osrs::sims::single_way::{
     DeathCharge, SingleWayConfig, SingleWayFight, SpecCondition, SpecConfig, SpecRestorePolicy,
     SpecStrategy, SpecStrategyState,
@@ -28,9 +30,9 @@ fn main() {
 
     // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
-    simulate_vardorvis();
+    // simulate_vardorvis();
 
     let end_time = std::time::Instant::now();
 
@@ -211,9 +213,9 @@ fn simulate_hunllef() {
     player.switch(&SwitchType::Ranged);
 
     let fight_config = HunllefConfig {
-        food_count: 30,
+        food_count: 20,
         eat_strategy: HunllefEatStrategy::EatAtHp(64),
-        redemption_attempts: 0,
+        redemption_strategy: None,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Magic,
             style2: SwitchType::Ranged,

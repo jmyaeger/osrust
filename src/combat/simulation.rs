@@ -100,6 +100,7 @@ pub struct FightVars {
     pub eat_delay: u32,
     pub thrall_damage: u32,
     pub spec_regen_timer: Option<i32>,
+    pub redemption_procs: u32,
 }
 
 impl FightVars {
