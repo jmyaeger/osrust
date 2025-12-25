@@ -28,11 +28,11 @@ fn main() {
     let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
     // simulate_hunllef();
 
-    simulate_vardorvis();
+    // simulate_vardorvis();
 
     let end_time = std::time::Instant::now();
 
@@ -292,7 +292,7 @@ fn simulate_vardorvis() {
     let stats = SimulationStats::new(&results);
 
     let mut odds_of_gm = 0.0;
-    for (ticks, prob) in stats.ttk_dist {
+    for (ticks, prob) in stats.ttk_dist.iter().enumerate() {
         if ticks < 92 {
             odds_of_gm += prob;
         }
