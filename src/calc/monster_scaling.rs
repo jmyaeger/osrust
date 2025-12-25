@@ -1,13 +1,24 @@
 // Adapted from the wiki DPS calc - credit to the wiki team
 
 use crate::calc::rolls::{calc_max_hit, monster_def_rolls};
-use crate::types::monster::{AttackType, Monster};
+use crate::types::monster::{HpScalingEntry, HpScalingTable, Monster};
 use crate::utils::math::lerp;
 
+/// Scales monster stats based on current HP if the monster has HP-based scaling.
+#[inline]
 pub fn scale_monster_hp_only(monster: &mut Monster) {
-    // Currently only used for Vardorvis, but this allows for future expansion
-    if monster.info.name.contains("Vardorvis") {
-        apply_vard_scaling(monster);
+    if monster.hp_scaling_table.is_some() {
+        let hp = monster.stats.hitpoints.current as usize;
+        let entry = &monster.hp_scaling_table.as_ref().unwrap().get(hp);
+
+        monster.stats.strength.current = entry.strength;
+        monster.stats.defence.current = entry.defence;
+
+        if let Some(hits) = &mut monster.max_hits {
+            hits[0].value = entry.max_hit;
+        }
+
+        monster.def_rolls = entry.def_rolls;
     }
 }
 
@@ -38,16 +49,7 @@ pub fn apply_vard_scaling(monster: &mut Monster) {
             monster.bonuses.strength.melee,
         );
     }
-    // monster.max_hits.as_mut().and_then(|hits| {
-    //     hits.iter_mut()
-    //         .find(|h| h.style == AttackType::Slash)
-    //         .map(|h| {
-    //             h.value = calc_max_hit(
-    //                 monster.stats.strength.current + 9,
-    //                 monster.bonuses.strength.melee,
-    //             )
-    //         })
-    // });
+
     monster.def_rolls = monster_def_rolls(monster);
 }
 
@@ -78,4 +80,40 @@ impl VardNumbers {
             },
         }
     }
+}
+
+/// Build a precomputed HP scaling table for Vardorvis.
+pub fn build_vard_scaling_table(monster: &Monster) -> HpScalingTable {
+    let (max_hp, str_bounds, def_bounds): (i32, [i32; 2], [i32; 2]) =
+        match monster.info.version.as_deref() {
+            Some("Quest") => (500, [210, 280], [180, 130]),
+            Some("Awakened") => (1400, [391, 522], [268, 181]),
+            _ => (700, [270, 360], [215, 145]),
+        };
+
+    let str_bonus = monster.bonuses.strength.melee;
+
+    let mut table = Vec::with_capacity(max_hp as usize + 1);
+
+    // Create a temporary copy to compute def_rolls at each HP level
+    let mut temp_monster = monster.clone();
+
+    for hp in 0..=max_hp {
+        let strength = lerp(hp, max_hp, 0, str_bounds[0], str_bounds[1]) as u32;
+        let defence = lerp(hp, max_hp, 0, def_bounds[0], def_bounds[1]) as u32;
+        let max_hit = calc_max_hit(strength + 9, str_bonus);
+
+        // Set the defence level and compute def_rolls
+        temp_monster.stats.defence.current = defence;
+        let def_rolls = monster_def_rolls(&temp_monster);
+
+        table.push(HpScalingEntry {
+            strength,
+            defence,
+            max_hit,
+            def_rolls,
+        });
+    }
+
+    HpScalingTable::new(table)
 }
