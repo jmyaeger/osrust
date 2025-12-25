@@ -1,4 +1,3 @@
-use num::Integer;
 use serde::{Deserialize, Serialize};
 
 // Covers any type of effect that gets applied over time

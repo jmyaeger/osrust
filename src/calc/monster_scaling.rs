@@ -11,7 +11,8 @@ pub fn scale_monster_hp_only(monster: &mut Monster) {
     }
 }
 
-fn apply_vard_scaling(monster: &mut Monster) {
+#[inline]
+pub fn apply_vard_scaling(monster: &mut Monster) {
     // Scale Vardorvis' strength and defence based on current hp
     let vard_ranges = VardNumbers::get(monster);
     let current_hp = monster.stats.hitpoints.current as i32;
@@ -31,16 +32,22 @@ fn apply_vard_scaling(monster: &mut Monster) {
     ) as u32;
 
     // Recalculate Vardorvis' max hit (Note: must be initialized first)
-    monster.max_hits.as_mut().and_then(|hits| {
-        hits.iter_mut()
-            .find(|h| h.style == AttackType::Slash)
-            .map(|h| {
-                h.value = calc_max_hit(
-                    monster.stats.strength.current + 9,
-                    monster.bonuses.strength.melee,
-                )
-            })
-    });
+    if let Some(hits) = &mut monster.max_hits {
+        hits[0].value = calc_max_hit(
+            monster.stats.strength.current + 9,
+            monster.bonuses.strength.melee,
+        );
+    }
+    // monster.max_hits.as_mut().and_then(|hits| {
+    //     hits.iter_mut()
+    //         .find(|h| h.style == AttackType::Slash)
+    //         .map(|h| {
+    //             h.value = calc_max_hit(
+    //                 monster.stats.strength.current + 9,
+    //                 monster.bonuses.strength.melee,
+    //             )
+    //         })
+    // });
     monster.def_rolls = monster_def_rolls(monster);
 }
 

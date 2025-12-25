@@ -42,11 +42,13 @@ pub trait Mechanics {
 
         player.state.first_attack = false;
         player.state.last_attack_hit = hit.success;
-        monster.take_damage(hit.damage);
 
-        handle_blood_fury(player, &hit, fight_vars, logger, rng);
+        if hit.damage > 0 {
+            monster.take_damage(hit.damage);
+            handle_blood_fury(player, &hit, fight_vars, logger, rng);
+            scale_monster_hp_only(monster);
+        }
 
-        scale_monster_hp_only(monster);
         fight_vars.hit_attempts += 1;
         fight_vars.hit_count += if hit.success { 1 } else { 0 };
         fight_vars.hit_amounts.push(hit.damage);
@@ -82,7 +84,9 @@ pub trait Mechanics {
         player.take_damage(hit.damage);
         fight_vars.damage_taken += hit.damage;
 
-        handle_recoil(player, monster, &hit, fight_vars, logger);
+        if hit.success {
+            handle_recoil(player, monster, &hit, fight_vars, logger);
+        }
     }
 
     fn thrall_attack(
@@ -119,8 +123,11 @@ pub trait Mechanics {
                 monster.info.name.as_str(),
             );
         }
-        monster.take_damage(thrall_hit);
-        scale_monster_hp_only(monster);
+
+        if thrall_hit > 0 {
+            monster.take_damage(thrall_hit);
+            scale_monster_hp_only(monster);
+        }
 
         fight_vars.thrall_attack_tick += THRALL_ATTACK_SPEED;
         fight_vars.thrall_damage += thrall_hit;
@@ -451,11 +458,10 @@ pub fn handle_recoil(
     if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default())
         && hit.damage > 0
     {
-        if player.is_wearing_any(vec![
-            ("Ring of suffering", Some("Recoil")),
-            ("Ring of suffering (i)", Some("Recoil")),
-            ("Ring of recoil", None),
-        ]) {
+        if player.is_wearing("Ring of suffering", Some("Recoil"))
+            || player.is_wearing("Ring of suffering (i)", Some("Recoil"))
+            || player.is_wearing("Ring of recoil", None)
+        {
             let recoil_damage = hit.damage / 10 + 1;
             monster.take_damage(recoil_damage);
 

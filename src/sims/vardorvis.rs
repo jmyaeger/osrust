@@ -1,4 +1,4 @@
-use crate::calc::monster_scaling::scale_monster_hp_only;
+use crate::calc::monster_scaling::apply_vard_scaling;
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::{Mechanics, handle_recoil};
 use crate::combat::simulation::{
@@ -69,7 +69,7 @@ impl VardorvisMechanics {
         rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
-        scale_monster_hp_only(vard);
+        apply_vard_scaling(vard);
         let mut hit = vard.attack(player, Some(VARDORVIS_ATTACK_STYLE), rng, false);
         hit.damage /= 4; // Assumes Protect from Melee is active
 
@@ -88,7 +88,7 @@ impl VardorvisMechanics {
             vars.damage_taken += hit.damage;
             vard.heal(hit.damage / 2);
             handle_recoil(player, vard, &hit, vars, logger);
-            scale_monster_hp_only(vard);
+            apply_vard_scaling(vard);
 
             if logger.enabled {
                 logger.log_custom(
@@ -159,7 +159,7 @@ impl VardorvisFight {
     pub fn new(player: Player, config: VardorvisConfig) -> Self {
         let mut vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
         vard.max_hits = Some(vec![MonsterMaxHit::new(0, AttackType::Slash)]);
-        scale_monster_hp_only(&mut vard);
+        apply_vard_scaling(&mut vard);
 
         let limiter = assign_limiter(&player, &vard);
         let rng = SmallRng::from_os_rng();
@@ -176,7 +176,7 @@ impl VardorvisFight {
     fn simulate_vardorvis_fight(&mut self) -> Result<FightResult, SimulationError> {
         let mut vars = FightVars::new();
         let mut state = VardorvisState::default();
-        scale_monster_hp_only(&mut self.vard);
+        apply_vard_scaling(&mut self.vard);
         self.config
             .logger
             .log_initial_setup(&self.player, &self.vard);

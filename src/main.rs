@@ -30,9 +30,9 @@ fn main() {
 
     // simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 
-    // simulate_vardorvis();
+    simulate_vardorvis();
 
     let end_time = std::time::Instant::now();
 
