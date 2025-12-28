@@ -358,9 +358,13 @@ impl HunllefFight {
         state.food_count = self.config.food_count;
         vars.attack_tick += self.config.lost_ticks;
 
-        self.config
-            .logger
-            .log_initial_setup(&self.player, &self.hunllef);
+        let logger_enabled = self.config.logger.enabled;
+
+        if logger_enabled {
+            self.config
+                .logger
+                .log_initial_setup(&self.player, &self.hunllef);
+        }
 
         let attack_strategy = self.config.attack_strategy.clone();
 
@@ -383,9 +387,11 @@ impl HunllefFight {
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
 
-                self.config
-                    .logger
-                    .log_gear_switch(vars.tick_counter, current_style);
+                if logger_enabled {
+                    self.config
+                        .logger
+                        .log_gear_switch(vars.tick_counter, current_style);
+                }
 
                 // Combat loop
                 while self.hunllef.stats.hitpoints.current > 0 {
@@ -485,9 +491,12 @@ impl HunllefFight {
                             state.player_attack_count = 0;
                             std::mem::swap(&mut current_style, &mut other_style);
                             self.player.switch(current_style);
-                            self.config
-                                .logger
-                                .log_gear_switch(vars.tick_counter, current_style);
+
+                            if logger_enabled {
+                                self.config
+                                    .logger
+                                    .log_gear_switch(vars.tick_counter, current_style);
+                            }
                         }
                     }
 
@@ -540,9 +549,12 @@ impl HunllefFight {
 
                 // Ensure the player is switched to the correct starting style
                 self.player.switch(current_style);
-                self.config
-                    .logger
-                    .log_gear_switch(vars.tick_counter, current_style);
+
+                if logger_enabled {
+                    self.config
+                        .logger
+                        .log_gear_switch(vars.tick_counter, current_style);
+                }
 
                 // Combat loop
                 while self.hunllef.stats.hitpoints.current > 0 {
@@ -641,18 +653,24 @@ impl HunllefFight {
                         if state.player_attack_count == 5 {
                             std::mem::swap(&mut current_style, &mut next_style);
                             self.player.switch(current_style);
-                            self.config
-                                .logger
-                                .log_gear_switch(vars.tick_counter, current_style);
+
+                            if logger_enabled {
+                                self.config
+                                    .logger
+                                    .log_gear_switch(vars.tick_counter, current_style);
+                            }
                         }
                         if state.player_attack_count == 6 {
                             state.player_attack_count = 0;
                             std::mem::swap(&mut current_style, &mut next_style);
                             std::mem::swap(&mut next_style, &mut other_style);
                             self.player.switch(current_style);
-                            self.config
-                                .logger
-                                .log_gear_switch(vars.tick_counter, current_style);
+
+                            if logger_enabled {
+                                self.config
+                                    .logger
+                                    .log_gear_switch(vars.tick_counter, current_style);
+                            }
                         }
                     }
 

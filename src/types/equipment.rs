@@ -120,24 +120,24 @@ pub struct Gear {
 impl Gear {
     pub fn is_wearing(&self, gear_name: &str, version: Option<&str>) -> bool {
         // Check if the player is wearing the specified piece of gear
-        let version = version.map(|v| v.to_string());
 
-        self.weapon.name == gear_name && self.weapon.version == version
-            || [
-                &self.head,
-                &self.neck,
-                &self.cape,
-                &self.ammo,
-                &self.shield,
-                &self.body,
-                &self.legs,
-                &self.feet,
-                &self.hands,
-                &self.ring,
-            ]
-            .iter()
-            .filter_map(|slot| slot.as_ref())
-            .any(|armor| armor.name == gear_name && armor.version == version)
+        let matches = |opt: &Option<Armor>| -> bool {
+            opt.as_ref()
+                .is_some_and(|a| a.name == gear_name && a.version.as_deref() == version)
+        };
+
+        self.weapon.name == gear_name && self.weapon.version.as_deref() == version
+            || matches(&self.head)
+            || matches(&self.neck)
+            || matches(&self.cape)
+            || matches(&self.ammo)
+            || matches(&self.second_ammo)
+            || matches(&self.shield)
+            || matches(&self.body)
+            || matches(&self.legs)
+            || matches(&self.feet)
+            || matches(&self.hands)
+            || matches(&self.ring)
     }
 
     pub fn is_wearing_any_version(&self, gear_name: &str) -> bool {

@@ -492,33 +492,33 @@ fn apply_vampyre_boost(
     player: &Player,
     monster: &Monster,
 ) -> (i32, u32) {
-    if let Some(tier) = monster.vampyre_tier() {
-        if (1..=3).contains(&tier) {
-            let (mut att_factor, max_hit_factor) = match (
-                player.gear.weapon.name.as_str(),
-                player.is_wearing_silver_weapon(),
-                player.is_wearing("Efaritay's aid", None),
-                tier,
-            ) {
-                ("Blisterwood flail" | "Blisterwood sickle", _, _, _) => {
-                    (Fraction::new(105, 100), Fraction::new(1, 1))
-                }
-                ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(1, 1)),
-                // Any other weapon against tier 3 or any non-silver weapon against tier 2 will return (0, 0)
-                (_, _, _, 2 | 3) => (Fraction::new(0, 1), Fraction::new(0, 1)),
-                _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
-            };
-
-            // Efaritay's aid now gives silver weapons a 15% accuracy boost
-            if player.is_wearing_silver_weapon() && player.is_wearing("Efaritay's aid", None) {
-                att_factor *= Fraction::new(115, 100);
+    if let Some(tier) = monster.vampyre_tier()
+        && (1..=3).contains(&tier)
+    {
+        let (mut att_factor, max_hit_factor) = match (
+            player.gear.weapon.name.as_str(),
+            player.is_wearing_silver_weapon(),
+            player.is_wearing("Efaritay's aid", None),
+            tier,
+        ) {
+            ("Blisterwood flail" | "Blisterwood sickle", _, _, _) => {
+                (Fraction::new(105, 100), Fraction::new(1, 1))
             }
+            ("Ivandis flail", _, _, _) => (Fraction::new(1, 1), Fraction::new(1, 1)),
+            // Any other weapon against tier 3 or any non-silver weapon against tier 2 will return (0, 0)
+            (_, _, _, 2 | 3) => (Fraction::new(0, 1), Fraction::new(0, 1)),
+            _ => (Fraction::new(1, 1), Fraction::new(1, 1)),
+        };
 
-            return (
-                att_factor.multiply_to_int(att_roll),
-                max_hit_factor.multiply_to_int(max_hit),
-            );
+        // Efaritay's aid now gives silver weapons a 15% accuracy boost
+        if player.is_wearing_silver_weapon() && player.is_wearing("Efaritay's aid", None) {
+            att_factor *= Fraction::new(115, 100);
         }
+
+        return (
+            att_factor.multiply_to_int(att_roll),
+            max_hit_factor.multiply_to_int(max_hit),
+        );
     }
 
     (att_roll, max_hit)
@@ -889,10 +889,11 @@ fn apply_additive_magic_boosts(
         magic_damage += 100;
     }
 
-    if let Some(1) = monster.vampyre_tier() {
-        if player.is_wearing("Efaritay's aid", None) && player.is_wearing_silver_weapon() {
-            att_roll_mod += 15;
-        }
+    if let Some(1) = monster.vampyre_tier()
+        && player.is_wearing("Efaritay's aid", None)
+        && player.is_wearing_silver_weapon()
+    {
+        att_roll_mod += 15;
     }
 
     att_roll = att_roll * att_roll_mod / 100;
@@ -918,10 +919,11 @@ fn apply_chaos_gauntlet_boost(max_hit: u32, player: &Player) -> u32 {
         StandardSpell::FireBolt,
     ];
 
-    if let Some(Spell::Standard(standard_spell)) = player.attrs.spell {
-        if player.is_wearing("Chaos gauntlets", None) && bolt_spells.contains(&standard_spell) {
-            return max_hit + 3;
-        }
+    if let Some(Spell::Standard(standard_spell)) = player.attrs.spell
+        && player.is_wearing("Chaos gauntlets", None)
+        && bolt_spells.contains(&standard_spell)
+    {
+        return max_hit + 3;
     }
 
     max_hit
@@ -934,12 +936,11 @@ fn apply_charge_boost(max_hit: u32, player: &Player) -> u32 {
         StandardSpell::FlamesOfZamorak,
     ];
 
-    if player.boosts.charge_active {
-        if let Some(Spell::Standard(standard_spell)) = player.attrs.spell {
-            if god_spells.contains(&standard_spell) {
-                return max_hit + 10;
-            }
-        }
+    if player.boosts.charge_active
+        && let Some(Spell::Standard(standard_spell)) = player.attrs.spell
+        && god_spells.contains(&standard_spell)
+    {
+        return max_hit + 10;
     }
 
     max_hit

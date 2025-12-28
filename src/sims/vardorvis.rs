@@ -1,4 +1,4 @@
-use crate::calc::monster_scaling::scale_monster_hp_only;
+use crate::calc::monster_scaling::{build_vard_scaling_table, scale_monster_hp_only};
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::{Mechanics, handle_recoil};
 use crate::combat::simulation::{
@@ -159,6 +159,9 @@ impl VardorvisFight {
     pub fn new(player: Player, config: VardorvisConfig) -> Self {
         let mut vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
         vard.max_hits = Some(vec![MonsterMaxHit::new(0, AttackType::Slash)]);
+
+        // Build precomputed scaling table
+        vard.hp_scaling_table = Some(build_vard_scaling_table(&vard));
         scale_monster_hp_only(&mut vard);
 
         let limiter = assign_limiter(&player, &vard);

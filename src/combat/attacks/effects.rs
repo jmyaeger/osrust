@@ -135,7 +135,9 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
             stacks.retain(|s| *s > 0);
 
             // Burn effect has ended if there are no stacks
-            if stacks.is_empty() {
+            // In-game testing indicates that the burn timer persists for 3 ticks after the last
+            // burn is applied, but this could use some more testing to confirm
+            if stacks.is_empty() && *tick % 4 == 0 {
                 *tick_counter = None;
                 return damage;
             }

@@ -384,6 +384,50 @@ pub struct ElementalWeakness {
     pub severity: i64,
 }
 
+/// Entry in an HP scaling table containing precomputed values for a given HP level.
+/// Currently only used for Vardorvis, but can add other stats if necessary
+/// in the future
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct HpScalingEntry {
+    pub strength: u32,
+    pub defence: u32,
+    pub max_hit: u32,
+    pub def_rolls: MonsterDefRolls,
+}
+
+/// Precomputed scaling table for monsters whose stats scale with HP.
+
+#[derive(Debug, PartialEq, Clone, Default)]
+pub struct HpScalingTable {
+    table: Vec<HpScalingEntry>,
+}
+
+impl HpScalingTable {
+    pub fn new(table: Vec<HpScalingEntry>) -> Self {
+        Self { table }
+    }
+
+    #[inline]
+    pub fn get(&self, hp: usize) -> &HpScalingEntry {
+        &self.table[hp]
+    }
+
+    #[inline]
+    pub fn apply(&self, monster: &mut Monster) {
+        let hp = monster.stats.hitpoints.current as usize;
+        let entry = &self.table[hp];
+
+        monster.stats.strength.current = entry.strength;
+        monster.stats.defence.current = entry.defence;
+
+        if let Some(hits) = &mut monster.max_hits {
+            hits[0].value = entry.max_hit;
+        }
+
+        monster.def_rolls = entry.def_rolls;
+    }
+}
+
 // Overall monster struct
 #[derive(Debug, PartialEq, Clone, Deserialize, Default)]
 pub struct Monster {
@@ -405,6 +449,8 @@ pub struct Monster {
     pub att_rolls: MonsterAttRolls,
     #[serde(skip)]
     pub active_effects: Vec<CombatEffect>, // Will move poison/venom here
+    #[serde(skip)]
+    pub hp_scaling_table: Option<HpScalingTable>,
 }
 
 impl Monster {

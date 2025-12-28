@@ -433,7 +433,8 @@ impl SingleWayMechanics {
 
                 // Make sure the current set of gear is added to the player's gear switches to allow switching back
                 if fight.player.current_switch.is_none() {
-                    let current_gear = GearSwitch::from(&fight.player.clone());
+                    let current_gear = GearSwitch::from(&fight.player);
+                    fight.player.current_switch = Some(current_gear.switch_type.clone());
                     fight.player.switches.push(current_gear);
                 }
 
@@ -442,11 +443,11 @@ impl SingleWayMechanics {
 
                 // Switch to the spec gear and perform the attack
                 fight.player.switch(&strategy.switch_type);
-                fight
-                    .logger
-                    .log_gear_switch(fight_vars.tick_counter, &strategy.switch_type);
 
                 if fight.logger.enabled {
+                    fight
+                        .logger
+                        .log_gear_switch(fight_vars.tick_counter, &strategy.switch_type);
                     fight.logger.log_current_player_rolls(&fight.player);
                     fight.logger.log_current_player_stats(&fight.player);
                     fight.logger.log_current_gear(&fight.player);
