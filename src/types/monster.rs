@@ -408,20 +408,21 @@ pub struct Monster {
 }
 
 impl Monster {
-    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
+    pub fn from_json_str(
+        name: &str,
+        version: Option<&str>,
+        json_str: &str,
+    ) -> Result<Monster, Box<dyn std::error::Error>> {
         // Create a monster by name and version (optional)
 
-        // Load the full JSON file and deserialize it into a Vec
         let string_version = version.map(|v| v.to_string());
-        let json_content = fs::read_to_string(MONSTER_JSON.as_path())?;
-        let all_monsters: Vec<Monster> = serde_json::from_str(json_content.as_str())?;
+        let all_monsters: Vec<Monster> = serde_json::from_str(json_str)?;
 
         // Find the monster matching the given name and version
         let mut monster = all_monsters
             .into_iter()
             .find(|m| m.info.name == name && m.info.version == string_version)
             .ok_or("Monster not found")?;
-
         // Set defence level floor
         monster.set_defence_floor();
 
@@ -467,6 +468,10 @@ impl Monster {
         }
 
         Ok(monster)
+    }
+    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
+        let json_content = fs::read_to_string(MONSTER_JSON.as_path())?;
+        Self::from_json_str(name, version, json_content.as_str())
     }
 
     pub fn attack(
