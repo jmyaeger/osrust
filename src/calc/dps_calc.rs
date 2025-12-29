@@ -11,6 +11,7 @@ use crate::calc::rolls::{calc_active_player_rolls, get_demonbane_factor, monster
 use crate::constants::*;
 use crate::dists;
 use crate::dists::bolts::{self, BoltContext};
+use crate::error::DpsCalcError;
 use crate::types::equipment::{CombatStance, CombatType};
 use crate::types::monster::Monster;
 use crate::types::player::Player;
@@ -156,8 +157,8 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
         || (using_spec && player.is_wearing_any(ALWAYS_HITS_SPEC))
-        || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
-        || GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or_default())
+        || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0))
+        || GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or(0))
     {
         return 1.0;
     }
@@ -230,13 +231,13 @@ pub fn get_distribution(
     player: &Player,
     monster: &Monster,
     using_spec: bool,
-) -> AttackDistribution {
+) -> Result<AttackDistribution, DpsCalcError> {
     // Get the attack distribution for the given player and monster
     let acc = get_hit_chance(player, monster, using_spec);
     let combat_type = player.combat_type();
     let (mut min_hit, max_hit) = if using_spec {
-        get_spec_min_max_hit(player, monster)
-    } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default()) {
+        get_spec_min_max_hit(player, monster)?
+    } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0)) {
         get_wardens_p2_min_max(player, monster)
     } else {
         (0, player.max_hits.get(combat_type))
@@ -253,18 +254,18 @@ pub fn get_distribution(
 
     // Check if the monster always dies in one hit
     if ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
-        return AttackDistribution::new(vec![HitDistribution::single(
+        return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             vec![Hitsplat::new(monster.stats.hitpoints.base, true)],
-        )]);
+        )]));
     }
 
     // Sire vents always die in one hit if the player is using a demonbane weapon
     if monster.info.name == "Respiratory system" && player.is_using_demonbane() {
-        return AttackDistribution::new(vec![HitDistribution::single(
+        return Ok(AttackDistribution::new(vec![HitDistribution::single(
             acc,
             vec![Hitsplat::new(monster.stats.hitpoints.current, true)],
-        )]);
+        )]));
     }
 
     // Check if the monster always takes the maximum hit for the current combat type
@@ -273,10 +274,10 @@ pub fn get_distribution(
         || player.is_using_melee() && ALWAYS_MAX_HIT_MELEE.contains(&monster.info.id.unwrap_or(0))
         || player.is_using_ranged() && ALWAYS_MAX_HIT_RANGED.contains(&monster.info.id.unwrap_or(0))
     {
-        return AttackDistribution::new(vec![HitDistribution::single(
+        return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             vec![Hitsplat::new(max_hit, true)],
-        )]);
+        )]));
     }
 
     // Add a minimum hit if the player is using sunfire runes and a fire spell
@@ -526,7 +527,7 @@ pub fn get_distribution(
         let pick_bonus = PICKAXE_BONUSES
             .iter()
             .find(|b| b.0 == player.gear.weapon.name)
-            .unwrap_or_else(|| panic!("No pickaxe bonus for {}", player.gear.weapon.name))
+            .ok_or_else(|| DpsCalcError::NoPickaxeBonus(player.gear.weapon.name.clone()))?
             .1;
 
         let numerator = 50 + player.stats.mining.current + pick_bonus;
@@ -723,13 +724,13 @@ pub fn get_distribution(
         )
     }
 
-    apply_limiters(dist, player, monster)
+    Ok(apply_limiters(dist, player, monster))
 }
 
-fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
+fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32), DpsCalcError> {
     let combat_type = player.combat_type();
     let base_max_hit = player.max_hits.get(combat_type);
-    match player.gear.weapon.name.as_str() {
+    let min_max = match player.gear.weapon.name.as_str() {
         "Soulreaper axe" => {
             let current_stacks = player.boosts.soulreaper_stacks;
             let mut player_copy = player.clone();
@@ -774,8 +775,14 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> (u32, u32) {
         "Accursed sceptre" | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
-        _ => panic!("Spec not implemented for {}", player.gear.weapon.name),
-    }
+        _ => {
+            return Err(DpsCalcError::SpecNotImplemented(
+                player.gear.weapon.name.clone(),
+            ));
+        }
+    };
+
+    Ok(min_max)
 }
 
 fn apply_limiters(
@@ -984,10 +991,10 @@ pub fn get_ttk(
     monster: &Monster,
     using_spec: bool,
     remove_final_hit_delay: bool,
-) -> f64 {
+) -> Result<f64, DpsCalcError> {
     let ttk = if dist_is_current_hp_dependent(player, monster) {
         // More expensive than get_htk, so only use this if the hit dist changes during the fight
-        let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster, using_spec);
+        let ttk_dist = get_ttk_distribution(&mut dist.clone(), player, monster, using_spec)?;
 
         // Find the expected value of the ttk distribution
         ttk_dist
@@ -1000,9 +1007,9 @@ pub fn get_ttk(
     };
 
     if remove_final_hit_delay {
-        ttk - (player.gear.weapon.speed - 1) as f64 * SECONDS_PER_TICK
+        Ok(ttk - (player.gear.weapon.speed - 1) as f64 * SECONDS_PER_TICK)
     } else {
-        ttk
+        Ok(ttk)
     }
 }
 
@@ -1012,7 +1019,7 @@ pub fn get_ttk_distribution(
     player: &Player,
     monster: &Monster,
     using_spec: bool,
-) -> HashMap<usize, f64> {
+) -> Result<HashMap<usize, f64>, DpsCalcError> {
     let speed = player.gear.weapon.speed as usize;
     let max_hp = monster.stats.hitpoints.current as usize;
     let mut dist_copy = dist.clone();
@@ -1020,7 +1027,7 @@ pub fn get_ttk_distribution(
 
     // Return empty distribution if the expected damage is 0
     if dist_single.expected_hit() == 0.0 {
-        return HashMap::new();
+        return Ok(HashMap::new());
     }
 
     // Probability distribution of hp values at current iteration
@@ -1039,7 +1046,7 @@ pub fn get_ttk_distribution(
     hp_hit_dists.insert(max_hp, dist_single.clone());
     if recalc_dist_on_hp {
         for hp in 0..max_hp {
-            dist_at_hp(dist, hp, player, monster, &mut hp_hit_dists, using_spec);
+            dist_at_hp(dist, hp, player, monster, &mut hp_hit_dists, using_spec)?;
         }
     }
 
@@ -1057,7 +1064,12 @@ pub fn get_ttk_distribution(
         for (hp, hp_prob) in hps.iter().enumerate() {
             // Get the current hit distribution (the original or cached one based on current hp)
             let current_dist = if recalc_dist_on_hp {
-                hp_hit_dists.get(&hp).unwrap()
+                hp_hit_dists
+                    .get(&hp)
+                    .ok_or_else(|| DpsCalcError::MissingHpHitDist {
+                        monster_name: monster.info.name.clone(),
+                        hp,
+                    })?
             } else {
                 dist_single
             };
@@ -1092,7 +1104,7 @@ pub fn get_ttk_distribution(
         hps = next_hps;
     }
 
-    ttks
+    Ok(ttks)
 }
 
 fn dist_from_multiple_hits(hits_vec: Vec<Vec<WeightedHit>>) -> AttackDistribution {
@@ -1130,7 +1142,7 @@ fn dist_at_hp<'a>(
     monster: &'a Monster,
     hp_hit_dists: &'a mut HashMap<usize, HitDistribution>,
     using_spec: bool,
-) {
+) -> Result<(), DpsCalcError> {
     // Calculate the hit distribution at a specific hp
 
     // Return the original distribution if applicable to save some computation
@@ -1148,7 +1160,7 @@ fn dist_at_hp<'a>(
             && hp >= 500)
     {
         hp_hit_dists.insert(hp, no_scaling.clone());
-        return;
+        return Ok(());
     }
 
     // Scale monster's stats based on current hp (only applies to Vardorvis currently)
@@ -1157,8 +1169,10 @@ fn dist_at_hp<'a>(
     monster_scaling::scale_monster_hp_only(&mut monster_copy, true);
 
     // Return the new hp-scaled distribution
-    let mut new_dist = get_distribution(player, &monster_copy, using_spec);
+    let mut new_dist = get_distribution(player, &monster_copy, using_spec)?;
     hp_hit_dists.insert(hp, new_dist.get_single_hitsplat().clone());
+
+    Ok(())
 }
 
 fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
@@ -1210,11 +1224,12 @@ mod tests {
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let monster = Monster::new("Ammonite Crab", None).unwrap();
+        let monster = Monster::new("Ammonite Crab", None).expect("Error creating monster.");
         calc_player_melee_rolls(&mut player, &monster);
 
-        let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false, false);
+        let dist = get_distribution(&player, &monster, false)
+            .expect("Error calculating attack distribution.");
+        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 10.2) < 0.1);
     }
@@ -1240,10 +1255,11 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Pummel);
 
-        let monster = Monster::new("Vet'ion", Some("Normal")).unwrap();
+        let monster = Monster::new("Vet'ion", Some("Normal")).expect("Error creating monster.");
         calc_player_melee_rolls(&mut player, &monster);
-        let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false, false);
+        let dist = get_distribution(&player, &monster, false)
+            .expect("Error creating attack distribution.");
+        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 44.2) < 0.1);
     }
@@ -1269,11 +1285,13 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Chop);
 
-        let mut monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+        let mut monster =
+            Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
         scale_monster_hp_only(&mut monster, true);
         calc_player_melee_rolls(&mut player, &monster);
-        let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false, false);
+        let dist = get_distribution(&player, &monster, false)
+            .expect("Error creating attack distribution.");
+        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 90.8) < 0.1);
     }
@@ -1300,13 +1318,14 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
 
-        let mut monster = Monster::new("Zebak", Some("Normal")).unwrap();
+        let mut monster = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         monster.info.toa_level = 500;
         monster.scale_toa();
         calc_player_ranged_rolls(&mut player, &monster);
 
-        let dist = get_distribution(&player, &monster, false);
-        let ttk = get_ttk(dist, &player, &monster, false, false);
+        let dist = get_distribution(&player, &monster, false)
+            .expect("Error creating attack distribution.");
+        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 236.2) < 0.1);
     }
