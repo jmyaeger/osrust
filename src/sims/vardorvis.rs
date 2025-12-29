@@ -69,7 +69,6 @@ impl VardorvisMechanics {
         rng: &mut SmallRng,
         logger: &mut FightLogger,
     ) {
-        scale_monster_hp_only(vard);
         let mut hit = vard.attack(player, Some(VARDORVIS_ATTACK_STYLE), rng, false);
         hit.damage /= 4; // Assumes Protect from Melee is active
 
@@ -88,7 +87,7 @@ impl VardorvisMechanics {
             vars.damage_taken += hit.damage;
             vard.heal(hit.damage / 2);
             handle_recoil(player, vard, &hit, vars, logger);
-            scale_monster_hp_only(vard);
+            scale_monster_hp_only(vard, true);
 
             if logger.enabled {
                 logger.log_custom(
@@ -162,7 +161,7 @@ impl VardorvisFight {
 
         // Build precomputed scaling table
         vard.hp_scaling_table = Some(build_vard_scaling_table(&vard));
-        scale_monster_hp_only(&mut vard);
+        scale_monster_hp_only(&mut vard, true);
 
         let limiter = assign_limiter(&player, &vard);
         let rng = SmallRng::from_os_rng();
@@ -179,16 +178,15 @@ impl VardorvisFight {
     fn simulate_vardorvis_fight(&mut self) -> Result<FightResult, SimulationError> {
         let mut vars = FightVars::new();
         let mut state = VardorvisState::default();
-        scale_monster_hp_only(&mut self.vard);
         self.config
             .logger
             .log_initial_setup(&self.player, &self.vard);
 
         while self.vard.stats.hitpoints.current > 0 {
-            // Assuming regen rate is 100 ticks for now; TODO: test this
             if vars.tick_counter % VARDORVIS_REGEN_TICKS == 0 {
+                // Appears to regen stats but not HP every 100 ticks
                 self.mechanics
-                    .monster_regen_hp(&mut self.vard, &vars, &mut self.config.logger);
+                    .monster_regen_stats(&mut self.vard, &vars, &mut self.config.logger);
             }
 
             // Regen 1 HP for player every 100 ticks

@@ -64,7 +64,7 @@ fn test_max_mage_brimstone_ring_kril_ttk(
 #[case(max_melee_scythe_player())]
 fn test_vardorvis_ttk(#[case] mut player: Player, vardorvis: Monster) {
     let mut monster = vardorvis;
-    scale_monster_hp_only(&mut monster);
+    scale_monster_hp_only(&mut monster, true);
     calc_active_player_rolls(&mut player, &monster);
 
     let simulation = SingleWayFight::new(

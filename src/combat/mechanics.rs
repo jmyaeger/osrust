@@ -46,7 +46,7 @@ pub trait Mechanics {
         if hit.damage > 0 {
             monster.take_damage(hit.damage);
             handle_blood_fury(player, &hit, fight_vars, logger, rng);
-            scale_monster_hp_only(monster);
+            scale_monster_hp_only(monster, true);
         }
 
         fight_vars.hit_attempts += 1;
@@ -126,7 +126,7 @@ pub trait Mechanics {
 
         if thrall_hit > 0 {
             monster.take_damage(thrall_hit);
-            scale_monster_hp_only(monster);
+            scale_monster_hp_only(monster, true);
         }
 
         fight_vars.thrall_attack_tick += THRALL_ATTACK_SPEED;
@@ -175,7 +175,7 @@ pub trait Mechanics {
                 );
             }
 
-            scale_monster_hp_only(monster);
+            scale_monster_hp_only(monster, true);
         }
 
         monster.clear_inactive_effects();

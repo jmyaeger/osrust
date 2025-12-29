@@ -492,7 +492,7 @@ impl SingleWayMechanics {
                     &mut fight.logger,
                     &mut fight.rng,
                 );
-                scale_monster_hp_only(&mut fight.monster);
+                scale_monster_hp_only(&mut fight.monster, true);
                 fight_vars.hit_attempts += 1;
                 fight_vars.hit_count += if hit.success { 1 } else { 0 };
                 fight_vars.hit_amounts.push(hit.damage);
@@ -533,7 +533,7 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         .logger
         .log_initial_setup(&fight.player, &fight.monster);
     let mut vars = FightVars::new();
-    scale_monster_hp_only(&mut fight.monster);
+    scale_monster_hp_only(&mut fight.monster, true);
 
     while fight.monster.stats.hitpoints.current > 0 {
         if vars.tick_counter == vars.attack_tick {

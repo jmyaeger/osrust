@@ -6,22 +6,27 @@ use crate::utils::math::lerp;
 
 /// Scales monster stats based on current HP if the monster has HP-based scaling.
 #[inline]
-pub fn scale_monster_hp_only(monster: &mut Monster) {
+pub fn scale_monster_hp_only(monster: &mut Monster, one_way: bool) {
     if monster.hp_scaling_table.is_some() {
         let hp = monster.stats.hitpoints.current as usize;
         let entry = &monster.hp_scaling_table.as_ref().unwrap().get(hp);
 
-        monster.stats.strength.current = entry.strength;
-        monster.stats.defence.current = entry.defence;
+        if entry.strength > monster.stats.strength.current || !one_way {
+            monster.stats.strength.current = entry.strength;
 
-        if let Some(hits) = &mut monster.max_hits {
-            hits[0].value = entry.max_hit;
+            if let Some(hits) = &mut monster.max_hits {
+                hits[0].value = entry.max_hit;
+            }
         }
 
-        monster.def_rolls = entry.def_rolls;
+        if entry.defence < monster.stats.defence.current || !one_way {
+            {
+                monster.stats.defence.current = entry.defence;
+                monster.def_rolls = entry.def_rolls;
+            }
+        }
     } else if monster.info.name.as_str() == "Vardorvis" {
-        // let scaling_table = build_vard_scaling_table(monster);
-        // monster.hp_scaling_table = Some(scaling_table);
+        // Fallback for single way simulations
         apply_vard_scaling(monster);
     }
 }

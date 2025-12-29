@@ -1154,7 +1154,7 @@ fn dist_at_hp<'a>(
     // Scale monster's stats based on current hp (only applies to Vardorvis currently)
     let mut monster_copy = monster.clone();
     monster_copy.stats.hitpoints.current = hp as u32;
-    monster_scaling::scale_monster_hp_only(&mut monster_copy);
+    monster_scaling::scale_monster_hp_only(&mut monster_copy, true);
 
     // Return the new hp-scaled distribution
     let mut new_dist = get_distribution(player, &monster_copy, using_spec);
@@ -1270,7 +1270,7 @@ mod tests {
         player.set_active_style(CombatStyle::Chop);
 
         let mut monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
-        scale_monster_hp_only(&mut monster);
+        scale_monster_hp_only(&mut monster, true);
         calc_player_melee_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false);
         let ttk = get_ttk(dist, &player, &monster, false, false);
