@@ -407,6 +407,14 @@ impl HpScalingTable {
         Self { table }
     }
 
+    pub fn len(&self) -> usize {
+        self.table.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.table.is_empty()
+    }
+
     #[inline]
     pub fn get(&self, hp: usize) -> &HpScalingEntry {
         &self.table[hp]

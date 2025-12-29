@@ -19,6 +19,10 @@ pub fn scale_monster_hp_only(monster: &mut Monster) {
         }
 
         monster.def_rolls = entry.def_rolls;
+    } else if monster.info.name.as_str() == "Vardorvis" {
+        // let scaling_table = build_vard_scaling_table(monster);
+        // monster.hp_scaling_table = Some(scaling_table);
+        apply_vard_scaling(monster);
     }
 }
 
