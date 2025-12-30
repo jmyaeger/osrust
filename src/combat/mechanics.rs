@@ -64,9 +64,9 @@ pub trait Mechanics {
         fight_vars: &mut FightVars,
         rng: &mut SmallRng,
         logger: &mut FightLogger,
-    ) {
+    ) -> Result<(), SimulationError> {
         // Note: does not increment monster attack tick for flexibility
-        let hit = monster.attack(player, attack_type, rng, true);
+        let hit = monster.attack(player, attack_type, rng, true)?;
 
         if logger.enabled {
             logger.log_monster_attack(
@@ -88,6 +88,8 @@ pub trait Mechanics {
         if hit.success {
             handle_recoil(player, monster, &hit, fight_vars, logger);
         }
+
+        Ok(())
     }
 
     fn thrall_attack(

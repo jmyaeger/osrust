@@ -5,11 +5,12 @@ use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
 use crate::combat::thralls::Thrall;
 use crate::constants::*;
+use crate::error::MonsterError;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
 use crate::types::stats::MonsterStats;
 use rand::Rng;
-use serde::Deserialize;
+use serde::{Deserialize, de::Error};
 use std::cmp::{max, min};
 use std::fs;
 use std::path::PathBuf;
@@ -131,6 +132,21 @@ pub enum AttackType {
     None,
 }
 
+impl<T: AsRef<str>> From<T> for AttackType {
+    fn from(attack_type: T) -> Self {
+        match attack_type.as_ref().to_lowercase().as_str() {
+            "stab" => Self::Stab,
+            "slash" => Self::Slash,
+            "crush" => Self::Crush,
+            "melee" => Self::Melee,
+            "magic" => Self::Magic,
+            "ranged" => Self::Ranged,
+            "" => Self::None,
+            _ => Self::Special,
+        }
+    }
+}
+
 // Maximum hit value for a given style
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub struct MonsterMaxHit {
@@ -176,32 +192,35 @@ where
 {
     // Translate attributes from strings into equivalent enums
     let attributes: Option<Vec<String>> = Option::deserialize(deserializer)?;
-    let parsed_attributes = attributes.map(|attrs| {
-        attrs
-            .into_iter()
-            .map(|attr| match attr.as_str() {
-                "demon" => Attribute::Demon,
-                "dragon" => Attribute::Draconic,
-                "fiery" => Attribute::Fiery,
-                "flying" => Attribute::Flying,
-                "golem" => Attribute::Golem,
-                "icy" => Attribute::Icy,
-                "kalphite" => Attribute::Kalphite,
-                "leafy" => Attribute::Leafy,
-                "penance" => Attribute::Penance,
-                "rat" => Attribute::Rat,
-                "shade" => Attribute::Shade,
-                "spectral" => Attribute::Spectral,
-                "undead" => Attribute::Undead,
-                "vampyre1" => Attribute::Vampyre(1),
-                "vampyre2" => Attribute::Vampyre(2),
-                "vampyre3" => Attribute::Vampyre(3),
-                "xerician" => Attribute::Xerician,
-                _ => panic!("Unknown attribute: {attr}"),
-            })
-            .collect()
-    });
-    Ok(parsed_attributes)
+    attributes
+        .map(|attrs| {
+            attrs
+                .into_iter()
+                .map(|attr| match attr.as_str() {
+                    "demon" => Ok(Attribute::Demon),
+                    "dragon" => Ok(Attribute::Draconic),
+                    "fiery" => Ok(Attribute::Fiery),
+                    "flying" => Ok(Attribute::Flying),
+                    "golem" => Ok(Attribute::Golem),
+                    "icy" => Ok(Attribute::Icy),
+                    "kalphite" => Ok(Attribute::Kalphite),
+                    "leafy" => Ok(Attribute::Leafy),
+                    "penance" => Ok(Attribute::Penance),
+                    "rat" => Ok(Attribute::Rat),
+                    "shade" => Ok(Attribute::Shade),
+                    "spectral" => Ok(Attribute::Spectral),
+                    "undead" => Ok(Attribute::Undead),
+                    "vampyre1" => Ok(Attribute::Vampyre(1)),
+                    "vampyre2" => Ok(Attribute::Vampyre(2)),
+                    "vampyre3" => Ok(Attribute::Vampyre(3)),
+                    "xerician" => Ok(Attribute::Xerician),
+                    _ => Err(D::Error::custom(format!(
+                        "Unknown monster attribute: {attr}"
+                    ))),
+                })
+                .collect()
+        })
+        .transpose()
 }
 
 fn deserialize_attack_speed<'de, D>(deserializer: D) -> Result<Option<u32>, D::Error>
@@ -221,37 +240,31 @@ fn deserialize_max_hits<'de, D>(deserializer: D) -> Result<Option<Vec<MonsterMax
 where
     D: serde::Deserializer<'de>,
 {
-    // Parse max hit strings into values and styles
     let max_hits: Option<Vec<String>> = Option::deserialize(deserializer)?;
-    let parsed_max_hits = max_hits.map(|hits| {
-        hits.into_iter()
-            .map(|hit| {
+
+    Ok(max_hits.and_then(|hits| {
+        let parsed: Vec<_> = hits
+            .into_iter()
+            .filter_map(|hit| {
                 let mut parts = hit.split('(');
-                let value = parts
-                    .next()
-                    .unwrap()
-                    .trim()
-                    .parse::<u32>()
-                    .unwrap_or_default();
+                let value_str = parts.next()?;
+                let value = value_str.trim().parse::<u32>().ok()?;
                 let style = parts
                     .next()
                     .unwrap_or_default()
                     .to_string()
                     .replace(')', "");
-                match style.to_lowercase().as_str() {
-                    "stab" => MonsterMaxHit::new(value, AttackType::Stab),
-                    "slash" => MonsterMaxHit::new(value, AttackType::Slash),
-                    "crush" => MonsterMaxHit::new(value, AttackType::Crush),
-                    "melee" => MonsterMaxHit::new(value, AttackType::Melee),
-                    "magic" => MonsterMaxHit::new(value, AttackType::Magic),
-                    "ranged" => MonsterMaxHit::new(value, AttackType::Ranged),
-                    "" => MonsterMaxHit::new(value, AttackType::None),
-                    _ => MonsterMaxHit::new(value, AttackType::Special),
-                }
+
+                Some(MonsterMaxHit::new(value, AttackType::from(style)))
             })
-            .collect()
-    });
-    Ok(parsed_max_hits)
+            .collect();
+
+        if parsed.is_empty() {
+            None
+        } else {
+            Some(parsed)
+        }
+    }))
 }
 
 fn deserialize_attack_styles<'de, D>(deserializer: D) -> Result<Option<Vec<AttackType>>, D::Error>
@@ -263,15 +276,7 @@ where
     if let Some(attack_styles) = attack_styles {
         attack_types = Some(Vec::new());
         for style in attack_styles.iter() {
-            let attack_type = match style.to_lowercase().as_str() {
-                "melee" => AttackType::Melee,
-                "stab" => AttackType::Stab,
-                "slash" => AttackType::Slash,
-                "crush" => AttackType::Crush,
-                "magic" => AttackType::Magic,
-                "ranged" => AttackType::Ranged,
-                _ => AttackType::Special,
-            };
+            let attack_type = AttackType::from(style);
             attack_types.as_mut().unwrap().push(attack_type);
         }
     }
@@ -284,17 +289,12 @@ where
     D: serde::Deserializer<'de>,
 {
     let burn_immunity: Option<String> = Option::deserialize(deserializer)?;
-    if let Some(burn_type) = burn_immunity {
-        let burn_str = burn_type.as_str();
-        match burn_str {
-            "Weak" => Ok(Some(BurnType::Weak)),
-            "Normal" => Ok(Some(BurnType::Normal)),
-            "Strong" => Ok(Some(BurnType::Strong)),
-            _ => Ok(None),
-        }
-    } else {
-        Ok(None)
-    }
+    burn_immunity
+        .map(|s| {
+            s.parse::<BurnType>()
+                .map_err(|e| D::Error::custom(e.to_string()))
+        })
+        .transpose()
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -466,7 +466,7 @@ impl Monster {
         name: &str,
         version: Option<&str>,
         json_str: &str,
-    ) -> Result<Monster, Box<dyn std::error::Error>> {
+    ) -> Result<Monster, MonsterError> {
         // Create a monster by name and version (optional)
 
         let string_version = version.map(|v| v.to_string());
@@ -476,7 +476,7 @@ impl Monster {
         let mut monster = all_monsters
             .into_iter()
             .find(|m| m.info.name == name && m.info.version == string_version)
-            .ok_or("Monster not found")?;
+            .ok_or(MonsterError::MonsterNotFound(name.to_string()))?;
         // Set defence level floor
         monster.set_defence_floor();
 
@@ -491,31 +491,19 @@ impl Monster {
         monster.base_att_rolls = rolls::monster_att_rolls(&monster);
         monster.att_rolls.clone_from(&monster.base_att_rolls);
 
-        if let Some(max_hits) = &mut monster.max_hits {
-            if max_hits.len() == 1
-                && monster.info.attack_styles.is_some()
-                && monster.info.attack_styles.as_ref().unwrap().len() == 1
-            {
-                max_hits[0].style = monster.info.attack_styles.as_ref().unwrap()[0];
+        if let (Some(max_hits), Some(attack_styles)) =
+            (&mut monster.max_hits, &monster.info.attack_styles)
+        {
+            if max_hits.len() == 1 && attack_styles.len() == 1 {
+                max_hits[0].style = attack_styles[0];
             } else {
                 for hit in max_hits.iter_mut() {
-                    if hit.style == AttackType::Melee && monster.info.attack_styles.is_some() {
-                        let melee_style =
-                            monster
-                                .info
-                                .attack_styles
-                                .as_ref()
-                                .unwrap()
-                                .iter()
-                                .find(|x| {
-                                    *x == &AttackType::Stab
-                                        || *x == &AttackType::Slash
-                                        || *x == &AttackType::Crush
-                                });
-
-                        if let Some(melee_style) = melee_style {
-                            hit.style = *melee_style;
-                        }
+                    if hit.style == AttackType::Melee
+                        && let Some(&melee_style) = attack_styles.iter().find(|&x| {
+                            matches!(x, AttackType::Stab | AttackType::Slash | AttackType::Crush)
+                        })
+                    {
+                        hit.style = melee_style;
                     }
                 }
             }
@@ -523,7 +511,7 @@ impl Monster {
 
         Ok(monster)
     }
-    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, Box<dyn std::error::Error>> {
+    pub fn new(name: &str, version: Option<&str>) -> Result<Monster, MonsterError> {
         let json_content = fs::read_to_string(MONSTER_JSON.as_path())?;
         Self::from_json_str(name, version, json_content.as_str())
     }
@@ -534,60 +522,61 @@ impl Monster {
         attack_type: Option<AttackType>,
         rng: &mut rand::rngs::SmallRng,
         cap_hit: bool,
-    ) -> Hit {
+    ) -> Result<Hit, MonsterError> {
         // Perform an attack on a player
 
         let attack_type = if let Some(att_type) = attack_type {
             att_type
-        } else if self
-            .info
-            .attack_styles
-            .as_ref()
-            .is_some_and(|x| x.len() == 1)
+        } else if let Some(attack_styles) = &self.info.attack_styles
+            && attack_styles.len() == 1
         {
-            self.info.attack_styles.as_ref().unwrap()[0]
+            attack_styles[0]
         } else {
-            panic!("Attack type must be specified for this monster")
+            return Err(MonsterError::AttackTypeNotSpecified(self.info.name.clone()));
         };
 
-        let max_hit = self.max_hits.as_ref().map_or_else(
-            || panic!("No max hits found for given attack style"),
-            |x| x.iter().find(|y| y.style == attack_type).unwrap(),
-        );
+        let max_hit = self
+            .max_hits
+            .as_ref()
+            .and_then(|hits| hits.iter().find(|h| h.style == attack_type))
+            .ok_or_else(|| MonsterError::MaxHitNotFound {
+                monster_name: self.info.name.clone(),
+                attack_type: attack_type.to_string(),
+            })?;
 
         let max_att_roll = match attack_type {
-            AttackType::Stab => self.att_rolls.get(CombatType::Stab),
-            AttackType::Slash => self.att_rolls.get(CombatType::Slash),
-            AttackType::Crush => self.att_rolls.get(CombatType::Crush),
-            AttackType::Ranged => self.att_rolls.get(CombatType::Ranged),
-            AttackType::Magic => self.att_rolls.get(CombatType::Magic),
-            AttackType::Melee => {
+            AttackType::Stab => Ok(self.att_rolls.get(CombatType::Stab)),
+            AttackType::Slash => Ok(self.att_rolls.get(CombatType::Slash)),
+            AttackType::Crush => Ok(self.att_rolls.get(CombatType::Crush)),
+            AttackType::Ranged => Ok(self.att_rolls.get(CombatType::Ranged)),
+            AttackType::Magic => Ok(self.att_rolls.get(CombatType::Magic)),
+            AttackType::Melee => Ok({
                 (self.att_rolls.get(CombatType::Stab)
                     + self.att_rolls.get(CombatType::Slash)
                     + self.att_rolls.get(CombatType::Crush))
                     / 3
-            }
-            AttackType::Special => panic!("Special attack type not supported"),
-            AttackType::None => panic!("None attack type not supported"),
-        };
+            }),
+            AttackType::Special => Err(MonsterError::SpecialAttackNotSupported),
+            AttackType::None => Err(MonsterError::NoneAttackNotSupported),
+        }?;
 
         let att_roll = rng.random_range(0..max_att_roll + 1);
 
         let max_def_roll = match attack_type {
-            AttackType::Stab => player.def_rolls.get(CombatType::Stab),
-            AttackType::Slash => player.def_rolls.get(CombatType::Slash),
-            AttackType::Crush => player.def_rolls.get(CombatType::Crush),
-            AttackType::Ranged => player.def_rolls.get(CombatType::Ranged),
-            AttackType::Magic => player.def_rolls.get(CombatType::Magic),
-            AttackType::Melee => {
+            AttackType::Stab => Ok(player.def_rolls.get(CombatType::Stab)),
+            AttackType::Slash => Ok(player.def_rolls.get(CombatType::Slash)),
+            AttackType::Crush => Ok(player.def_rolls.get(CombatType::Crush)),
+            AttackType::Ranged => Ok(player.def_rolls.get(CombatType::Ranged)),
+            AttackType::Magic => Ok(player.def_rolls.get(CombatType::Magic)),
+            AttackType::Melee => Ok({
                 (player.def_rolls.get(CombatType::Stab)
                     + player.def_rolls.get(CombatType::Slash)
                     + player.def_rolls.get(CombatType::Crush))
                     / 3
-            }
-            AttackType::Special => panic!("Special attack type not supported"),
-            AttackType::None => panic!("None attack type not supported"),
-        };
+            }),
+            AttackType::Special => Err(MonsterError::SpecialAttackNotSupported),
+            AttackType::None => Err(MonsterError::NoneAttackNotSupported),
+        }?;
 
         let def_roll = rng.random_range(0..max_def_roll + 1);
 
@@ -611,20 +600,20 @@ impl Monster {
 
             if player.set_effects.full_justiciar {
                 let defensive_bonus = match attack_type {
-                    AttackType::Stab => player.bonuses.defence.stab,
-                    AttackType::Slash => player.bonuses.defence.slash,
-                    AttackType::Crush => player.bonuses.defence.crush,
-                    AttackType::Ranged => player.bonuses.defence.ranged,
-                    AttackType::Magic => player.bonuses.defence.magic,
-                    AttackType::Melee => {
+                    AttackType::Stab => Ok(player.bonuses.defence.stab),
+                    AttackType::Slash => Ok(player.bonuses.defence.slash),
+                    AttackType::Crush => Ok(player.bonuses.defence.crush),
+                    AttackType::Ranged => Ok(player.bonuses.defence.ranged),
+                    AttackType::Magic => Ok(player.bonuses.defence.magic),
+                    AttackType::Melee => Ok({
                         (player.bonuses.defence.stab
                             + player.bonuses.defence.slash
                             + player.bonuses.defence.crush)
                             / 3
-                    }
-                    AttackType::Special => panic!("Special attack type not supported"),
-                    AttackType::None => panic!("None attack type not supported"),
-                };
+                    }),
+                    AttackType::Special => Err(MonsterError::SpecialAttackNotSupported),
+                    AttackType::None => Err(MonsterError::NoneAttackNotSupported),
+                }?;
 
                 damage -= damage * defensive_bonus as u32 / 3000;
             }
@@ -634,7 +623,7 @@ impl Monster {
             damage = min(damage, player.stats.hitpoints.current);
         }
 
-        Hit::new(damage, success)
+        Ok(Hit::new(damage, success))
     }
 
     pub fn scale_toa(&mut self) {
@@ -1100,14 +1089,14 @@ mod tests {
 
     #[test]
     fn test_set_info() {
-        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         assert_eq!(vorkath.info.name, "Vorkath".to_string());
         assert_eq!(vorkath.info.combat_level, 732)
     }
 
     #[test]
     fn test_toa_scaling() {
-        let mut baba = Monster::new("Ba-Ba", None).unwrap();
+        let mut baba = Monster::new("Ba-Ba", None).expect("Error creating monster.");
         baba.set_toa_level(400, 0);
         assert_eq!(baba.stats.hitpoints.current, 990);
         assert_eq!(baba.def_rolls.get(CombatType::Stab), 33321);
@@ -1115,37 +1104,38 @@ mod tests {
 
     #[test]
     fn test_is_dragon() {
-        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         assert!(vorkath.is_dragon());
     }
 
     #[test]
     fn test_is_demon() {
-        let kril = Monster::new("K'ril Tsutsaroth", None).unwrap();
+        let kril = Monster::new("K'ril Tsutsaroth", None).expect("Error creating monster.");
         assert!(kril.is_demon());
     }
 
     #[test]
     fn test_is_undead() {
-        let vorkath = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let vorkath = Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         assert!(vorkath.is_undead());
     }
 
     #[test]
     fn test_is_in_wilderness() {
-        let spindel = Monster::new("Spindel", None).unwrap();
+        let spindel = Monster::new("Spindel", None).expect("Error creating monster.");
         assert!(spindel.is_in_wilderness());
     }
 
     #[test]
     fn test_is_revenant() {
-        let revenant = Monster::new("Revenant demon", None).unwrap();
+        let revenant = Monster::new("Revenant demon", None).expect("Error creating monster.");
         assert!(revenant.is_revenant());
     }
 
     #[test]
     fn test_tbow_olm() {
-        let olm = Monster::new("Great Olm", Some("Head (Normal)")).unwrap();
+        let olm =
+            Monster::new("Great Olm", Some("Head (Normal)")).expect("Error creating monster.");
         let (tbow_acc_bonus, tbow_dmg_bonus) = olm.tbow_bonuses();
         assert_eq!(tbow_acc_bonus, 140);
         assert_eq!(tbow_dmg_bonus, 215);
@@ -1153,7 +1143,8 @@ mod tests {
 
     #[test]
     fn test_max_hit_parsing_one_style() {
-        let sergeant_steelwill = Monster::new("Sergeant Steelwill", None).unwrap();
+        let sergeant_steelwill =
+            Monster::new("Sergeant Steelwill", None).expect("Error creating monster.");
         assert!(sergeant_steelwill.max_hits.is_some());
         assert_eq!(sergeant_steelwill.max_hits.as_ref().unwrap().len(), 1);
         assert_eq!(sergeant_steelwill.max_hits.as_ref().unwrap()[0].value, 15);
@@ -1165,7 +1156,7 @@ mod tests {
 
     #[test]
     fn test_max_hit_parsing_two_styles() {
-        let graardor = Monster::new("General Graardor", None).unwrap();
+        let graardor = Monster::new("General Graardor", None).expect("Error creating monster.");
         assert!(graardor.max_hits.is_some());
         assert_eq!(graardor.max_hits.as_ref().unwrap().len(), 2);
         assert_eq!(graardor.max_hits.as_ref().unwrap()[0].value, 60);
@@ -1179,21 +1170,21 @@ mod tests {
 
     #[test]
     fn test_drain_stat() {
-        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         zebak.stats.defence.drain(20);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 
     #[test]
     fn test_drain_stat_min_cap() {
-        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         zebak.stats.defence.drain(30);
         assert_eq!(zebak.stats.defence.current, 50);
     }
 
     #[test]
     fn test_toa_scaling_with_drain() {
-        let mut zebak = Monster::new("Zebak", Some("Normal")).unwrap();
+        let mut zebak = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         let initial_def_roll = zebak.def_rolls.get(CombatType::Standard);
         zebak.drain_stat(CombatStat::Defence, 20, None);
         assert_ne!(zebak.def_rolls.get(CombatType::Ranged), initial_def_roll);
@@ -1205,7 +1196,7 @@ mod tests {
 
     #[test]
     fn test_burn_immunity() {
-        let cerberus = Monster::new("Cerberus", None).unwrap();
+        let cerberus = Monster::new("Cerberus", None).expect("Error creating monster.");
         assert_eq!(cerberus.immunities.burn.unwrap(), BurnType::Normal);
     }
 }

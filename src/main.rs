@@ -242,7 +242,7 @@ fn simulate_hunllef() {
     //     logger: FightLogger::new(false, "hunllef"),
     // };
 
-    let fight = HunllefFight::new(player, fight_config);
+    let fight = HunllefFight::new(player, fight_config).expect("Error setting up Hunllef fight.");
     let results = simulate_n_fights(Box::new(fight), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 

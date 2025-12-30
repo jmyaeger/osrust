@@ -18,6 +18,35 @@ pub enum SimulationError {
     PlayerDeathError(FightResult),
     #[error("Simulation config error: {0}")]
     ConfigError(String),
-    #[error("Monster {0} is immune to the player")]
+    #[error("Monster {0} is immune to the player.")]
     MonsterImmune(String),
+    #[error("Equipped gear is not usable in the Gauntlet.")]
+    InvalidGauntletGear,
+    #[error("Monster attack error: {0}")]
+    MonsterAttack(#[from] MonsterError),
+}
+
+#[derive(Error, Debug)]
+pub enum MonsterError {
+    #[error("Unknown attribute: {0}")]
+    UnknownMonsterAttribute(String),
+    #[error("Invalid burn type: {0}")]
+    InvalidBurnType(String),
+    #[error("Error reading monster JSON: {0}")]
+    JsonError(#[from] serde_json::Error),
+    #[error("Monster {0} not found.")]
+    MonsterNotFound(String),
+    #[error("Could not find monster JSON: {0}")]
+    JsonFileNotFound(#[from] std::io::Error),
+    #[error("Attack type must be specified for monster {0}.")]
+    AttackTypeNotSpecified(String),
+    #[error("No max hits found for {monster_name} for {attack_type} attack type.")]
+    MaxHitNotFound {
+        monster_name: String,
+        attack_type: String,
+    },
+    #[error("Special attack type not supported.")]
+    SpecialAttackNotSupported,
+    #[error("None attack type not supported.")]
+    NoneAttackNotSupported,
 }

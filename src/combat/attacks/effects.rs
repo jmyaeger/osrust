@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::error::MonsterError;
+
 // Covers any type of effect that gets applied over time
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum CombatEffect {
@@ -254,6 +256,18 @@ pub enum BurnType {
     Weak,
     Normal,
     Strong,
+}
+impl std::str::FromStr for BurnType {
+    type Err = MonsterError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Weak" => Ok(Self::Weak),
+            "Normal" => Ok(Self::Normal),
+            "Strong" => Ok(Self::Strong),
+            other => Err(MonsterError::InvalidBurnType(other.to_string())),
+        }
+    }
 }
 
 // #[cfg(test)]

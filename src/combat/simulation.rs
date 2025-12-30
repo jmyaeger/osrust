@@ -212,7 +212,11 @@ pub fn simulate_n_fights(
                     results.thrall_damage.push(result.thrall_damage);
                 }
                 SimulationError::ConfigError(e) => return Err(SimulationError::ConfigError(e)),
+                SimulationError::MonsterAttack(e) => {
+                    return Err(SimulationError::MonsterAttack(e));
+                }
                 SimulationError::MonsterImmune(_) => unreachable!(),
+                SimulationError::InvalidGauntletGear => unreachable!(),
             },
         }
         simulation.reset();

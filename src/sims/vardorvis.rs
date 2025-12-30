@@ -67,8 +67,8 @@ impl VardorvisMechanics {
         vars: &mut FightVars,
         rng: &mut SmallRng,
         logger: &mut FightLogger,
-    ) {
-        let mut hit = vard.attack(player, Some(VARDORVIS_ATTACK_STYLE), rng, false);
+    ) -> Result<(), SimulationError> {
+        let mut hit = vard.attack(player, Some(VARDORVIS_ATTACK_STYLE), rng, false)?;
         hit.damage /= 4; // Assumes Protect from Melee is active
 
         if logger.enabled {
@@ -117,6 +117,8 @@ impl VardorvisMechanics {
         }
 
         state.vardorvis_attack_tick += VARDORVIS_ATTACK_SPEED;
+
+        Ok(())
     }
 
     fn handle_eating(
@@ -232,7 +234,7 @@ impl VardorvisFight {
                     &mut vars,
                     &mut self.rng,
                     &mut self.config.logger,
-                );
+                )?;
             }
 
             // Increment tick counter

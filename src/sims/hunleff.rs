@@ -233,14 +233,14 @@ impl HunllefMechanics {
         config: &mut HunllefConfig,
         vars: &mut FightVars,
         rng: &mut SmallRng,
-    ) {
+    ) -> Result<(), SimulationError> {
         // Choose Hunllef's attack style, alternating every 4 attacks (starting with ranged)
         let hunllef_style = if (state.hunllef_attack_count / 4).is_multiple_of(2) {
             AttackType::Ranged
         } else {
             AttackType::Magic
         };
-        let mut hit = hunllef.attack(player, Some(hunllef_style), rng, false);
+        let mut hit = hunllef.attack(player, Some(hunllef_style), rng, false)?;
 
         // Damage is reduced after it is rolled
         // Armor reduction occurs first, then protection prayers (source: Mod Arcane in Summit Blue)
@@ -264,6 +264,8 @@ impl HunllefMechanics {
         state.queued_damage = Some(hit.damage);
         state.hunllef_attack_tick += HUNLLEF_ATTACK_SPEED;
         state.hunllef_attack_count += 1;
+
+        Ok(())
     }
 
     fn handle_eating(
@@ -327,9 +329,9 @@ pub struct HunllefFight {
 }
 
 impl HunllefFight {
-    pub fn new(player: Player, mut config: HunllefConfig) -> HunllefFight {
+    pub fn new(player: Player, mut config: HunllefConfig) -> Result<HunllefFight, SimulationError> {
         if !has_valid_gear(&player) {
-            panic!("Equipped gear is not usable in the Gauntlet.")
+            return Err(SimulationError::InvalidGauntletGear);
         }
         let mut hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
         hunllef.max_hits = Some(vec![
@@ -340,14 +342,14 @@ impl HunllefFight {
         let limiter = crate::combat::simulation::assign_limiter(&player, &hunllef);
         let rng = SmallRng::from_os_rng();
         config.armor_tier = armor_tier(&player);
-        HunllefFight {
+        Ok(HunllefFight {
             player,
             hunllef,
             limiter,
             rng,
             config,
             mechanics: HunllefMechanics,
-        }
+        })
     }
 
     fn simulate_hunllef_fight(&mut self) -> Result<FightResult, SimulationError> {
@@ -520,7 +522,7 @@ impl HunllefFight {
                                 &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                            );
+                            )?;
                         }
                     }
 
@@ -694,7 +696,7 @@ impl HunllefFight {
                                 &mut self.config,
                                 &mut vars,
                                 &mut self.rng,
-                            );
+                            )?;
                         }
                     }
 
@@ -880,7 +882,8 @@ mod tests {
             armor_tier: 0,
         };
 
-        let mut fight = HunllefFight::new(player, fight_config);
+        let mut fight =
+            HunllefFight::new(player, fight_config).expect("Error setting up Hunllef fight.");
 
         let result = fight.simulate();
 

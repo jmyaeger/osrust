@@ -145,7 +145,7 @@ impl GraardorFight {
                     &mut vars,
                     &mut self.rng,
                     &mut self.config.logger,
-                );
+                )?;
                 if vars.tick_counter == 6 {
                     state.mage_attack_tick += 7;
                 } else {
@@ -162,7 +162,7 @@ impl GraardorFight {
                     &mut vars,
                     &mut self.rng,
                     &mut self.config.logger,
-                );
+                )?;
                 if vars.tick_counter == 5 {
                     state.melee_attack_tick += 22;
                 } else {
