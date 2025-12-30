@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 
 use crate::constants::*;
+use crate::error::GearError;
 use serde::{Deserialize, Deserializer};
 use std::any::Any;
 use std::collections::HashMap;
@@ -29,25 +30,28 @@ pub struct EquipmentJson {
 }
 
 impl EquipmentJson {
-    pub fn into_weapon(self) -> Result<Weapon, Box<dyn std::error::Error>> {
+    pub fn into_weapon(self) -> Result<Weapon, GearError> {
         if self.slot != "weapon" {
-            return Err(
-                format!("Item '{}' is not a weapon (slot: {})", self.name, self.slot).into(),
-            );
+            return Err(GearError::NotAWeapon {
+                item_name: self.name,
+                slot: self.slot,
+            });
         }
 
         let combat_styles = match self.category {
             Some(category) => Weapon::get_styles_from_weapon_type(&category),
-            None => return Err("weapon missing category field".into()),
+            None => return Err(GearError::MissingWeaponCategory(self.name)),
         };
 
-        let speed = self.speed.ok_or("Weapon missing speed field")?;
+        let speed = self
+            .speed
+            .ok_or(GearError::MissingWeaponSpeed(self.name.clone()))?;
         let attack_range = self
             .attack_range
-            .ok_or("Weapon missing attack_range field")?;
+            .ok_or(GearError::MissingAttackRange(self.name.clone()))?;
         let is_two_handed = self
             .is_two_handed
-            .ok_or("Weapon missing is_two_handed field")?;
+            .ok_or(GearError::MissingTwoHandedField(self.name.clone()))?;
 
         let weapon = Weapon {
             name: self.name,
@@ -68,9 +72,9 @@ impl EquipmentJson {
         Ok(weapon)
     }
 
-    pub fn into_armor(self) -> Result<Armor, Box<dyn std::error::Error>> {
+    pub fn into_armor(self) -> Result<Armor, GearError> {
         if self.slot == "weapon" {
-            return Err(format!("Item '{}' is a weapon, not armor", self.name).into());
+            return Err(GearError::NotArmor(self.name));
         }
 
         Ok(Armor {
@@ -195,6 +199,172 @@ impl Gear {
                         .as_ref()
                         .is_some_and(|ammo| ammo.is_bolt_or_arrow()))
         })
+    }
+
+    pub fn builder() -> GearBuilder {
+        GearBuilder::default()
+    }
+}
+
+/// Builder for constructing `Gear` instances by item name and version.
+///
+/// # Example
+/// ```
+/// use osrs::types::equipment::Gear;
+///
+/// let gear = Gear::builder()
+///     .head("Torva full helm", None)
+///     .body("Torva platebody", None)
+///     .legs("Torva platelegs", None)
+///     .weapon("Osmumten's fang", None)
+///     .build()?;
+/// ```
+#[derive(Debug, Clone, Default)]
+pub struct GearBuilder {
+    head: Option<(String, Option<String>)>,
+    neck: Option<(String, Option<String>)>,
+    cape: Option<(String, Option<String>)>,
+    ammo: Option<(String, Option<String>)>,
+    second_ammo: Option<(String, Option<String>)>,
+    weapon: Option<(String, Option<String>)>,
+    shield: Option<(String, Option<String>)>,
+    body: Option<(String, Option<String>)>,
+    legs: Option<(String, Option<String>)>,
+    hands: Option<(String, Option<String>)>,
+    feet: Option<(String, Option<String>)>,
+    ring: Option<(String, Option<String>)>,
+}
+
+impl GearBuilder {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the head slot item.
+    pub fn head(mut self, name: &str, version: Option<&str>) -> Self {
+        self.head = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the neck slot item.
+    pub fn neck(mut self, name: &str, version: Option<&str>) -> Self {
+        self.neck = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the cape slot item.
+    pub fn cape(mut self, name: &str, version: Option<&str>) -> Self {
+        self.cape = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the ammo slot item.
+    pub fn ammo(mut self, name: &str, version: Option<&str>) -> Self {
+        self.ammo = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the second ammo slot item (for quiver).
+    pub fn second_ammo(mut self, name: &str, version: Option<&str>) -> Self {
+        self.second_ammo = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the weapon slot item.
+    pub fn weapon(mut self, name: &str, version: Option<&str>) -> Self {
+        self.weapon = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the shield slot item.
+    pub fn shield(mut self, name: &str, version: Option<&str>) -> Self {
+        self.shield = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the body slot item.
+    pub fn body(mut self, name: &str, version: Option<&str>) -> Self {
+        self.body = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the legs slot item.
+    pub fn legs(mut self, name: &str, version: Option<&str>) -> Self {
+        self.legs = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the hands slot item.
+    pub fn hands(mut self, name: &str, version: Option<&str>) -> Self {
+        self.hands = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the feet slot item.
+    pub fn feet(mut self, name: &str, version: Option<&str>) -> Self {
+        self.feet = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Set the ring slot item.
+    pub fn ring(mut self, name: &str, version: Option<&str>) -> Self {
+        self.ring = Some((name.to_string(), version.map(|v| v.to_string())));
+        self
+    }
+
+    /// Build the `Gear` instance.
+    pub fn build(self) -> Result<Gear, GearError> {
+        let mut gear = Gear::default();
+
+        if let Some((name, version)) = self.head {
+            gear.head = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.neck {
+            gear.neck = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.cape {
+            gear.cape = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.ammo {
+            gear.ammo = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.second_ammo {
+            gear.second_ammo = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.weapon {
+            gear.weapon = Weapon::new(&name, version.as_deref())?;
+        }
+
+        if let Some((name, version)) = self.shield {
+            gear.shield = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.body {
+            gear.body = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.legs {
+            gear.legs = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.hands {
+            gear.hands = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.feet {
+            gear.feet = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        if let Some((name, version)) = self.ring {
+            gear.ring = Some(Armor::new(&name, version.as_deref())?);
+        }
+
+        Ok(gear)
     }
 }
 
@@ -349,11 +519,7 @@ impl EquipmentBonuses {
 
 // Equipment trait to provide common method for Armor and Weapon structs
 pub trait Equipment: Any {
-    fn set_info(
-        &mut self,
-        item_name: &str,
-        version: Option<&str>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn set_info(&mut self, item_name: &str, version: Option<&str>) -> Result<(), GearError> {
         // Retrieve item data from the SQLite database in a JSON format
         let json_content = fs::read_to_string(EQUIPMENT_JSON.as_path())?;
 
@@ -366,7 +532,7 @@ pub trait Equipment: Any {
         json: &str,
         item_name: &str,
         version: Option<&str>,
-    ) -> Result<(), Box<dyn std::error::Error>>;
+    ) -> Result<(), GearError>;
     fn as_any(&self) -> &dyn Any;
     fn name(&self) -> &str;
     fn get_image_path(&self) -> &str;
@@ -389,13 +555,16 @@ impl Equipment for Armor {
         json: &str,
         item_name: &str,
         version: Option<&str>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), GearError> {
         let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
         let version_string = version.map(|v| v.to_string());
         let matched_item = all_items
             .into_iter()
             .find(|a| a.name == item_name && a.version == version_string)
-            .ok_or("Equipment not found")?;
+            .ok_or(GearError::EquipmentNotFound {
+                name: item_name.to_string(),
+                version: version_string,
+            })?;
 
         *self = matched_item.into_armor()?;
 
@@ -430,7 +599,7 @@ impl fmt::Display for Armor {
 }
 
 impl Armor {
-    pub fn new(name: &str, version: Option<&str>) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(name: &str, version: Option<&str>) -> Result<Self, GearError> {
         // Create a new Armor struct from item name and version (optional)
         let mut armor = Armor::default();
         armor.set_info(name, version)?;
@@ -462,7 +631,7 @@ impl Armor {
     }
 }
 
-fn parse_gear_slot(slot: String) -> Result<GearSlot, Box<dyn std::error::Error>> {
+fn parse_gear_slot(slot: String) -> Result<GearSlot, GearError> {
     // Translate a gear slot string into an enum
 
     let trimmed = slot.replace('\"', "");
@@ -478,8 +647,8 @@ fn parse_gear_slot(slot: String) -> Result<GearSlot, Box<dyn std::error::Error>>
         "hands" => Ok(GearSlot::Hands),
         "ring" => Ok(GearSlot::Ring),
         "ammo" => Ok(GearSlot::Ammo),
-        "weapon" => Err("Tried to create armor from a weapon name".into()),
-        _ => Err(format!("Unknown slot: {slot}").into()),
+        "weapon" => unreachable!(),
+        _ => Err(GearError::UnknownSlot(slot)),
     }
 }
 
@@ -514,13 +683,16 @@ impl Equipment for Weapon {
         json: &str,
         item_name: &str,
         version: Option<&str>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), GearError> {
         let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
         let version_string = version.map(|v| v.to_string());
         let matching_item = all_items
             .into_iter()
             .find(|a| a.name == item_name && a.version == version_string)
-            .ok_or("Equipment not found")?;
+            .ok_or(GearError::EquipmentNotFound {
+                name: self.name.clone(),
+                version: self.version.clone(),
+            })?;
 
         let mut weapon = matching_item.into_weapon()?;
 
@@ -603,7 +775,7 @@ where
 }
 
 impl Weapon {
-    pub fn new(name: &str, version: Option<&str>) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(name: &str, version: Option<&str>) -> Result<Self, GearError> {
         let mut weapon = Weapon::default();
         weapon.set_info(name, version)?;
         Ok(weapon)
@@ -1112,5 +1284,76 @@ mod tests {
     fn test_spec_cost() {
         let voidwaker = Weapon::new("Voidwaker", None).expect("Error creating equipment.");
         assert_eq!(voidwaker.spec_cost, Some(50));
+    }
+
+    #[test]
+    fn test_gear_builder_default() {
+        let gear = Gear::builder().build().expect("Error building gear.");
+        assert_eq!(gear, Gear::default());
+    }
+
+    #[test]
+    fn test_gear_builder_with_weapon() {
+        let gear = Gear::builder()
+            .weapon("Abyssal whip", None)
+            .build()
+            .expect("Error building gear.");
+
+        assert_eq!(gear.weapon.name, "Abyssal whip");
+        assert_eq!(gear.weapon.bonuses.attack.slash, 82);
+    }
+
+    #[test]
+    fn test_gear_builder_with_armor() {
+        let gear = Gear::builder()
+            .head("Torva full helm", None)
+            .body("Torva platebody", None)
+            .legs("Torva platelegs", None)
+            .build()
+            .expect("Error building gear.");
+
+        assert!(gear.head.is_some());
+        assert_eq!(gear.head.as_ref().unwrap().name, "Torva full helm");
+        assert!(gear.body.is_some());
+        assert_eq!(gear.body.as_ref().unwrap().name, "Torva platebody");
+        assert!(gear.legs.is_some());
+        assert_eq!(gear.legs.as_ref().unwrap().name, "Torva platelegs");
+    }
+
+    #[test]
+    fn test_gear_builder_full_setup() {
+        let gear = Gear::builder()
+            .head("Torva full helm", None)
+            .neck("Amulet of torture", None)
+            .cape("Infernal cape", None)
+            .ammo("Rada's blessing 4", None)
+            .body("Torva platebody", None)
+            .legs("Torva platelegs", None)
+            .hands("Ferocious gloves", None)
+            .feet("Primordial boots", None)
+            .ring("Ultor ring", None)
+            .weapon("Osmumten's fang", None)
+            .shield("Avernic defender", None)
+            .build()
+            .expect("Error building gear.");
+
+        assert!(gear.is_wearing("Torva full helm", None));
+        assert!(gear.is_wearing("Amulet of torture", None));
+        assert!(gear.is_wearing("Infernal cape", None));
+        assert!(gear.is_wearing("Rada's blessing 4", None));
+        assert!(gear.is_wearing("Torva platebody", None));
+        assert!(gear.is_wearing("Torva platelegs", None));
+        assert!(gear.is_wearing("Ferocious gloves", None));
+        assert!(gear.is_wearing("Primordial boots", None));
+        assert!(gear.is_wearing("Ultor ring", None));
+        assert!(gear.is_wearing("Osmumten's fang", None));
+        assert!(gear.is_wearing("Avernic defender", None));
+    }
+
+    #[test]
+    fn test_gear_builder_invalid_item() {
+        let result = Gear::builder().head("Not a real item", None).build();
+
+        assert!(result.is_err());
     }
 }

@@ -1300,7 +1300,7 @@ impl Player {
     }
 }
 
-/// Builder for constructing `Player` instances with a fluent API.
+/// Builder for constructing `Player` instances.
 ///
 /// # Example
 /// ```

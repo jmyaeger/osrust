@@ -90,3 +90,32 @@ pub enum MathError {
     #[error("Fraction denominator cannot be zero.")]
     DivideByZero,
 }
+
+#[derive(Error, Debug)]
+pub enum GearError {
+    #[error("Equipment not found: {name}")]
+    EquipmentNotFound {
+        name: String,
+        version: Option<String>,
+    },
+    #[error("Error creating equipment: {0}")]
+    CreationError(String),
+    #[error("Item {item_name} is not a weapon  (slot: {slot}).")]
+    NotAWeapon { item_name: String, slot: String },
+    #[error("Item {0} is a weapon, not armor.")]
+    NotArmor(String),
+    #[error("Weapon {0} missing category field.")]
+    MissingWeaponCategory(String),
+    #[error("Weapon {0} is missing the speed field.")]
+    MissingWeaponSpeed(String),
+    #[error("Weapon {0} is missing the attack range field.")]
+    MissingAttackRange(String),
+    #[error("Weapon {0} is missing the is_two_handed field.")]
+    MissingTwoHandedField(String),
+    #[error("Unknown slot: {0}")]
+    UnknownSlot(String),
+    #[error("Error parsing equipment JSON: {0}")]
+    JsonParseError(#[from] serde_json::Error),
+    #[error("Error opening equipment JSON: {0}")]
+    JsonReadError(#[from] std::io::Error),
+}
