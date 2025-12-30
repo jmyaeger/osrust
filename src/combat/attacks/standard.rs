@@ -34,7 +34,10 @@ impl AttackInfo {
         };
         AttackInfo {
             combat_type,
-            max_att_roll: player.att_rolls.get(combat_type),
+            max_att_roll: player
+                .att_rolls
+                .get(combat_type)
+                .expect("Error getting player attack rolls."),
             max_def_roll: monster.def_rolls.get(combat_type),
             min_hit,
             max_hit: player.max_hits.get(combat_type),
@@ -179,7 +182,7 @@ pub fn fang_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     let combat_type = player.combat_type();
-    let max_att_roll = player.att_rolls.get(combat_type);
+    let max_att_roll = player.att_rolls.get(combat_type).unwrap();
     let max_def_roll = monster.def_rolls.get(combat_type);
     let true_max_hit = player.max_hits.get(combat_type);
 
@@ -536,8 +539,10 @@ pub fn ruby_bolt_attack(
     if rng.random::<f64>() <= proc_chance {
         // Bolt proc ignores defense and deals fixed amount of damage
         player.take_damage(player.stats.hitpoints.current / 10);
-        let damage = if limiter.is_some() && !monster.info.name.contains("Corporeal Beast") {
-            limiter.as_ref().unwrap().apply(ruby_damage, rng)
+        let damage = if let Some(lim) = limiter
+            && !monster.info.name.contains("Corporeal Beast")
+        {
+            lim.apply(ruby_damage, rng)
         } else {
             ruby_damage
         };
@@ -1023,7 +1028,10 @@ pub fn wardens_p2_attack(
 ) -> Hit {
     let att_roll = max(
         0,
-        player.att_rolls.get(player.combat_type())
+        player
+            .att_rolls
+            .get(player.combat_type())
+            .expect("Error getting player attack rolls.")
             - monster.def_rolls.get(player.combat_type()) / 3,
     );
 
@@ -1128,7 +1136,8 @@ mod tests {
         player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
-        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let mut monster =
+            Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         monster.stats.defence = Stat::new(1, None);
         monster.bonuses.defence.standard = -64;
         player.bonuses.attack.ranged = 10000;
@@ -1249,7 +1258,7 @@ mod tests {
 
     #[test]
     fn test_soulreaper_stacks() {
-        let mut monster = Monster::new("Ammonite Crab", None).unwrap();
+        let mut monster = Monster::new("Ammonite Crab", None).expect("Error creating monster.");
 
         let mut player = loadouts::max_melee_player();
         let _ = player.equip("Soulreaper axe", None);

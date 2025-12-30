@@ -7,9 +7,9 @@ use crate::utils::math::lerp;
 /// Scales monster stats based on current HP if the monster has HP-based scaling.
 #[inline]
 pub fn scale_monster_hp_only(monster: &mut Monster, one_way: bool) {
-    if monster.hp_scaling_table.is_some() {
+    if let Some(table) = &monster.hp_scaling_table {
         let hp = monster.stats.hitpoints.current as usize;
-        let entry = &monster.hp_scaling_table.as_ref().unwrap().get(hp);
+        let entry = table.get(hp);
 
         if entry.strength > monster.stats.strength.current || !one_way {
             monster.stats.strength.current = entry.strength;

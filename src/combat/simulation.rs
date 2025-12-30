@@ -211,12 +211,7 @@ pub fn simulate_n_fights(
                     results.leftover_burn.push(result.leftover_burn);
                     results.thrall_damage.push(result.thrall_damage);
                 }
-                SimulationError::ConfigError(e) => return Err(SimulationError::ConfigError(e)),
-                SimulationError::MonsterAttack(e) => {
-                    return Err(SimulationError::MonsterAttack(e));
-                }
-                SimulationError::MonsterImmune(_) => unreachable!(),
-                SimulationError::InvalidGauntletGear => unreachable!(),
+                _ => return Err(e),
             },
         }
         simulation.reset();
@@ -262,10 +257,11 @@ mod tests {
 
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let monster = Monster::new("Ammonite Crab", None).unwrap();
+        let monster = Monster::new("Ammonite Crab", None).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &monster);
         let simulation =
-            SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false);
+            SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false)
+                .expect("Error setting up single way fight.");
         let results = simulate_n_fights(Box::new(simulation), 100000).expect("Simulation failed.");
         let stats = SimulationStats::new(&results);
 

@@ -32,7 +32,7 @@ pub fn fang_spec(
 ) -> Hit {
     // Boost accuracy by 50%
     let combat_type = player.combat_type();
-    let max_att_roll = player.att_rolls.get(combat_type) * 3 / 2;
+    let max_att_roll = player.att_rolls.get(combat_type).unwrap() * 3 / 2;
     let max_def_roll = monster.def_rolls.get(combat_type);
     let max_hit = player.max_hits.get(combat_type);
     let min_hit = max_hit * 15 / 100;
@@ -201,7 +201,7 @@ pub fn eldritch_staff_spec(
     let previous_spell = player.attrs.spell;
 
     // Set spell to Invocate and recalculate max hit
-    player.set_spell(Spell::Special(SpecialSpell::Invocate));
+    let _ = player.set_spell(Spell::Special(SpecialSpell::Invocate));
     calc_active_player_rolls(player, monster);
 
     // Perform an accurate hit
@@ -214,7 +214,7 @@ pub fn eldritch_staff_spec(
 
     // Restore previous spell and recalculate max hit
     if let Some(spell) = previous_spell {
-        player.set_spell(spell);
+        let _ = player.set_spell(spell);
     } else {
         player.attrs.spell = None;
     }
@@ -726,18 +726,18 @@ pub fn acb_spec(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
-    let old_att_roll = player.att_rolls.get(CombatType::Ranged);
+    let old_att_roll = player.att_rolls.get(CombatType::Heavy).unwrap();
     player.boosts.acb_spec = true;
 
     // Double accuracy
-    player.att_rolls.set(CombatType::Ranged, old_att_roll * 2);
+    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    player.att_rolls.set(CombatType::Ranged, old_att_roll);
+    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll);
     player.boosts.acb_spec = false;
 
     hit
@@ -750,18 +750,18 @@ pub fn zcb_spec(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     // Store base attack roll to restore afterwards
-    let old_att_roll = player.att_rolls.get(CombatType::Ranged);
+    let old_att_roll = player.att_rolls.get(CombatType::Heavy).unwrap();
     player.boosts.zcb_spec = true;
 
     // Double accuracy
-    player.att_rolls.set(CombatType::Ranged, old_att_roll * 2);
+    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll * 2);
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    player.att_rolls.set(CombatType::Ranged, old_att_roll);
+    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll);
     player.boosts.zcb_spec = false;
 
     hit
@@ -980,7 +980,7 @@ pub fn volatile_staff_spec(
     let previous_spell = player.attrs.spell;
 
     // Set spell to Immolate and recalculate max hit
-    player.set_spell(Spell::Special(SpecialSpell::Immolate));
+    let _ = player.set_spell(Spell::Special(SpecialSpell::Immolate));
     calc_active_player_rolls(player, monster);
 
     let mut info = AttackInfo::new(player, monster);
@@ -996,7 +996,7 @@ pub fn volatile_staff_spec(
 
     // Restore previous spell and recalculate max hit
     if let Some(spell) = previous_spell {
-        player.set_spell(spell);
+        let _ = player.set_spell(spell);
     } else {
         player.attrs.spell = None;
     }
@@ -1725,7 +1725,8 @@ mod tests {
         let _ = player.equip("Dragon dagger", Some("Unpoisoned"));
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let mut monster =
+            Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();
@@ -1748,7 +1749,8 @@ mod tests {
         let _ = player.equip("Dragon claws", None);
         player.update_bonuses();
         player.set_active_style(CombatStyle::Slash);
-        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let mut monster =
+            Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();
@@ -1771,7 +1773,8 @@ mod tests {
         let _ = player.equip("Crystal halberd", Some("Active"));
         player.update_bonuses();
         player.set_active_style(CombatStyle::Swipe);
-        let mut monster = Monster::new("Vorkath", Some("Post-quest")).unwrap();
+        let mut monster =
+            Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &monster);
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();

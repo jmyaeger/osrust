@@ -31,7 +31,7 @@ mod spec_tests {
     #[test]
     fn test_spec_strategy_creation() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
 
         let strategy = SpecStrategy::new(&switch, None);
@@ -47,7 +47,7 @@ mod spec_tests {
     #[test]
     fn test_spec_config_lowest_cost() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         // Create multiple strategies with different costs
         let fang_switch =
@@ -74,7 +74,7 @@ mod spec_tests {
     #[test]
     fn test_condition_evaluation() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
@@ -93,7 +93,8 @@ mod spec_tests {
             SingleWayConfig::default(),
             Some(config),
             false,
-        );
+        )
+        .expect("Error setting up single way fight.");
 
         // Should allow first two attempts
         assert!(check_spec_conditions(&strategy, &fight));
@@ -107,7 +108,7 @@ mod spec_tests {
     #[test]
     fn test_hp_conditions() {
         let player = create_test_player();
-        let mut monster = Monster::new("General Graardor", None).unwrap();
+        let mut monster = Monster::new("General Graardor", None).expect("Error creating monster.");
         monster.stats.hitpoints.current = 100;
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
@@ -127,7 +128,8 @@ mod spec_tests {
             SingleWayConfig::default(),
             Some(config),
             false,
-        );
+        )
+        .expect("Error setting up single way fight.");
 
         assert!(!check_spec_conditions(&strategy, &fight)); // HP is 100, not below 50
 
@@ -142,7 +144,7 @@ mod spec_tests {
     #[test]
     fn test_stat_reduction_conditions() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);
@@ -161,7 +163,8 @@ mod spec_tests {
             SingleWayConfig::default(),
             Some(config),
             false,
-        );
+        )
+        .expect("Error setting up single way fight.");
 
         // Initially no reduction
         assert!(check_spec_conditions(&strategy, &fight));
@@ -186,14 +189,15 @@ mod spec_tests {
         // lowest_cost() should handle empty strategies gracefully
 
         // Test with immune monster
-        let immune_monster = Monster::new("Dawn", None).unwrap(); // Immune to melee
+        let immune_monster = Monster::new("Dawn", None).expect("Error creating monster."); // Immune to melee
         let fight = SingleWayFight::new(
             player.clone(),
             immune_monster,
             SingleWayConfig::default(),
             None,
             false,
-        );
+        )
+        .expect("Error setting up single way fight.");
         assert!(fight.is_immune());
     }
 
@@ -201,7 +205,7 @@ mod spec_tests {
     #[test]
     fn test_state_reset() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).unwrap();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
         let mut strategy = SpecStrategy::new(&switch, None);

@@ -279,7 +279,7 @@ impl std::str::FromStr for BurnType {
 //     fn test_atlatl_burn() {
 //         let mut rng = SmallRng::from_os_rng();
 //         let n = 1000000000;
-//         let mut dummy_monster = Monster::new("Nex", None).unwrap();
+//         let mut dummy_monster = Monster::new("Nex", None).expect("Error creating monster.");
 //         let mut damage = 0;
 
 //         for i in 0..n {

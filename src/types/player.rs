@@ -3,6 +3,7 @@ use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::attacks::specs::{SpecialAttackFn, get_spec_attack_function};
 use crate::combat::attacks::standard::{AttackFn, get_attack_functions, standard_attack};
 use crate::constants::*;
+use crate::error::PlayerError;
 use crate::types::equipment::{
     Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear, GearSlot,
     Weapon,
@@ -110,6 +111,18 @@ impl SwitchType {
     }
 }
 
+impl std::fmt::Display for SwitchType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::Melee => write!(f, "Melee"),
+            Self::Ranged => write!(f, "Ranged"),
+            Self::Magic => write!(f, "Magic"),
+            Self::Spec(s) => write!(f, "Spec ({})", s),
+            Self::Custom(c) => write!(f, "Custom ({})", c),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
     pub switch_type: SwitchType,
@@ -204,21 +217,21 @@ impl PlayerAttRolls {
         Self::default()
     }
 
-    pub fn get(&self, combat_type: CombatType) -> i32 {
+    pub fn get(&self, combat_type: CombatType) -> Result<i32, PlayerError> {
         match combat_type {
-            CombatType::Stab => self.stab,
-            CombatType::Slash => self.slash,
-            CombatType::Crush => self.crush,
-            CombatType::Light => self.light,
-            CombatType::Standard => self.standard,
-            CombatType::Heavy => self.heavy,
-            CombatType::Ranged => panic!("Players do not have generic ranged attack rolls"),
-            CombatType::Magic => self.magic,
-            CombatType::None => 0,
+            CombatType::Stab => Ok(self.stab),
+            CombatType::Slash => Ok(self.slash),
+            CombatType::Crush => Ok(self.crush),
+            CombatType::Light => Ok(self.light),
+            CombatType::Standard => Ok(self.standard),
+            CombatType::Heavy => Ok(self.heavy),
+            CombatType::Ranged => Err(PlayerError::NoGenericRangedStyle),
+            CombatType::Magic => Ok(self.magic),
+            CombatType::None => Ok(0),
         }
     }
 
-    pub fn set(&mut self, combat_type: CombatType, value: i32) {
+    pub fn set(&mut self, combat_type: CombatType, value: i32) -> Result<(), PlayerError> {
         match combat_type {
             CombatType::Stab => self.stab = value,
             CombatType::Slash => self.slash = value,
@@ -226,10 +239,12 @@ impl PlayerAttRolls {
             CombatType::Light => self.light = value,
             CombatType::Standard => self.standard = value,
             CombatType::Heavy => self.heavy = value,
-            CombatType::Ranged => panic!("Players do not have generic ranged attack rolls"),
+            CombatType::Ranged => return Err(PlayerError::NoGenericRangedStyle),
             CombatType::Magic => self.magic = value,
             CombatType::None => {}
-        }
+        };
+
+        Ok(())
     }
 }
 
@@ -386,13 +401,15 @@ impl Player {
         Self::default()
     }
 
-    pub async fn lookup_stats(&mut self, rsn: &str) {
+    pub async fn lookup_stats(&mut self, rsn: &str) -> Result<(), PlayerError> {
         // Fetch stats from OSRS hiscores and set the corresponding fields
         let stats = fetch_player_data(rsn)
             .await
             .expect("Failed to fetch player data");
-        self.stats = parse_player_data(stats);
+        self.stats = parse_player_data(stats)?;
         self.attrs.name = Some(rsn.to_string());
+
+        Ok(())
     }
 
     pub fn reset_current_stats(&mut self, include_spec: bool) {
@@ -501,15 +518,12 @@ impl Player {
             GearSlot::Ammo => {
                 // If quiver is equipped and the ammo slot is already full with a different ammo type,
                 // equip the new ammo in the second_ammo slot
-                if gear.is_wearing_any_version("Dizana's quiver")
-                    && (gear.ammo.is_some()
-                        && !((gear.ammo.as_ref().unwrap().is_bolt()
-                            && item.name().contains("bolts"))
-                            || (gear.ammo.as_ref().unwrap().is_arrow()
-                                && item.name().contains("arrow"))))
+                if let Some(ammo) = &gear.ammo
+                    && !((ammo.is_bolt() && item.name().contains("bolts"))
+                        || (ammo.is_arrow() && item.name().contains("arrow")))
+                    && gear.is_wearing_any_version("Dizana's quiver")
                 {
                     gear.second_ammo = item.as_any().downcast_ref::<Armor>().cloned();
-
                     self.set_quiver_bonuses();
                 } else {
                     gear.ammo = item.as_any().downcast_ref::<Armor>().cloned();
@@ -603,12 +617,16 @@ impl Player {
     fn set_quiver_bonuses(&mut self) {
         let gear = Rc::make_mut(&mut self.gear);
         // Apply extra +10 accuracy and +1 strength to quiver if applicable
-        if gear.is_quiver_bonus_valid() {
-            gear.cape.as_mut().unwrap().bonuses.attack.ranged = 28;
-            gear.cape.as_mut().unwrap().bonuses.strength.ranged = 4;
-        } else if gear.is_wearing_any_version("Dizana's quiver") {
-            gear.cape.as_mut().unwrap().bonuses.attack.ranged = 18;
-            gear.cape.as_mut().unwrap().bonuses.strength.ranged = 3;
+        if gear.is_quiver_bonus_valid()
+            && let Some(cape) = &mut gear.cape
+        {
+            cape.bonuses.attack.ranged = 28;
+            cape.bonuses.strength.ranged = 4;
+        } else if gear.is_wearing_any_version("Dizana's quiver")
+            && let Some(cape) = &mut gear.cape
+        {
+            cape.bonuses.attack.ranged = 18;
+            cape.bonuses.strength.ranged = 3;
         }
     }
 
@@ -644,11 +662,10 @@ impl Player {
             {
                 self.bonuses.add_bonuses(&item.bonuses);
             }
-        } else if self.gear.ammo.is_some()
-            && !(self.gear.ammo.as_ref().unwrap().is_valid_ranged_ammo())
+        } else if let Some(ammo) = &self.gear.ammo
+            && !ammo.is_valid_ranged_ammo()
         {
-            self.bonuses
-                .add_bonuses(&self.gear.ammo.as_ref().unwrap().bonuses);
+            self.bonuses.add_bonuses(&ammo.bonuses);
         }
 
         // Dinh's bulwark bonus is applied directly to gear strength bonus
@@ -825,11 +842,11 @@ impl Player {
         self.combat_type = gear.weapon.combat_styles[&style].combat_type;
     }
 
-    pub fn switch(&mut self, switch_type: &SwitchType) {
+    pub fn switch(&mut self, switch_type: &SwitchType) -> Result<(), PlayerError> {
         if let Some(current) = &self.current_switch
             && current == switch_type
         {
-            return;
+            return Ok(());
         }
 
         for switch in &self.switches {
@@ -848,10 +865,10 @@ impl Player {
                 self.combat_type =
                     self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
 
-                return;
+                return Ok(());
             }
         }
-        panic!("Gear switch not found.")
+        Err(PlayerError::GearSwitchNotFound(switch_type.clone()))
     }
 
     pub fn is_wearing_black_mask(&self) -> bool {
@@ -1050,9 +1067,7 @@ impl Player {
                 .gear
                 .ammo
                 .as_ref()
-                .unwrap_or(&Armor::default())
-                .name
-                .contains("bolt")
+                .is_some_and(|a| a.name.contains("bolt"))
     }
 
     pub fn is_using_demonbane(&self) -> bool {
@@ -1073,11 +1088,13 @@ impl Player {
         }
     }
 
-    pub fn set_spell(&mut self, spell: spells::Spell) {
+    pub fn set_spell(&mut self, spell: spells::Spell) -> Result<(), PlayerError> {
         if spell.required_level() > self.stats.magic.current {
-            panic!("Player does not have enough magic to cast {spell}.");
+            return Err(PlayerError::MagicLevelTooLow(spell));
         }
         self.attrs.spell = Some(spell);
+
+        Ok(())
     }
 
     pub fn add_potion(&mut self, potion: Potion) {
@@ -1279,7 +1296,7 @@ impl Player {
     }
 }
 
-pub async fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
+pub async fn fetch_player_data(rsn: &str) -> Result<String, PlayerError> {
     // Fetches player data from the OSRS hiscores
     let url = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws";
     let params = [("player", rsn)];
@@ -1289,7 +1306,7 @@ pub async fn fetch_player_data(rsn: &str) -> Result<String, reqwest::Error> {
     Ok(data)
 }
 
-pub fn parse_player_data(data: String) -> PlayerStats {
+pub fn parse_player_data(data: String) -> Result<PlayerStats, PlayerError> {
     // Parses player data and creates a PlayerStats struct from it
     let skills = [
         "attack",
@@ -1305,18 +1322,16 @@ pub fn parse_player_data(data: String) -> PlayerStats {
 
     for (i, skill) in skills.iter().enumerate() {
         let line_parts: Vec<&str> = data_lines[i + 1].split(',').collect();
-        let level = line_parts[1]
-            .parse::<u32>()
-            .expect("Level could not be parsed as u8.");
+        let level = line_parts[1].parse::<u32>()?;
         skill_map.insert(*skill, level);
     }
 
     let mining_lvl = data_lines[15].split(',').collect::<Vec<&str>>()[1];
-    skill_map.insert("mining", mining_lvl.parse::<u32>().unwrap());
+    skill_map.insert("mining", mining_lvl.parse::<u32>()?);
     let herblore_lvl = data_lines[16].split(',').collect::<Vec<&str>>()[1];
-    skill_map.insert("herblore", herblore_lvl.parse::<u32>().unwrap());
+    skill_map.insert("herblore", herblore_lvl.parse::<u32>()?);
 
-    PlayerStats {
+    Ok(PlayerStats {
         hitpoints: Stat::new(skill_map["hitpoints"], None),
         attack: Stat::new(skill_map["attack"], None),
         strength: Stat::new(skill_map["strength"], None),
@@ -1327,7 +1342,7 @@ pub fn parse_player_data(data: String) -> PlayerStats {
         mining: Stat::new(skill_map["mining"], None),
         herblore: Stat::new(skill_map["herblore"], None),
         spec: SpecEnergy::default(),
-    }
+    })
 }
 
 #[cfg(test)]
@@ -1361,7 +1376,7 @@ mod test {
     #[tokio::test]
     async fn test_lookup_stats() {
         let mut player = Player::new();
-        player.lookup_stats("Lynx Titan").await;
+        let _ = player.lookup_stats("Lynx Titan").await;
         assert_eq!(player.stats.attack.base, 99);
         assert_eq!(player.stats.defence.base, 99);
         assert_eq!(player.stats.strength.base, 99);
@@ -1385,7 +1400,8 @@ mod test {
         let mut player = Player::new();
         let _ = player.equip("Torva full helm", None);
         player.update_bonuses();
-        let torva_full_helm = Armor::new("Torva full helm", None).unwrap();
+        let torva_full_helm =
+            Armor::new("Torva full helm", None).expect("Error creating equipment.");
         assert_eq!(player.gear.head.clone().unwrap(), torva_full_helm);
         assert_eq!(player.bonuses, torva_full_helm.bonuses)
     }
@@ -1395,7 +1411,8 @@ mod test {
         let mut player = Player::new();
         let _ = player.equip("Osmumten's fang", None);
         player.update_bonuses();
-        let osmumtens_fang = Weapon::new("Osmumten's fang", None).unwrap();
+        let osmumtens_fang =
+            Weapon::new("Osmumten's fang", None).expect("Error creating equipment.");
         assert_eq!(player.gear.weapon, osmumtens_fang);
         assert_eq!(player.bonuses, osmumtens_fang.bonuses)
     }
@@ -1407,7 +1424,8 @@ mod test {
         player.update_bonuses();
         let _ = player.equip("Neitiznot faceguard", None);
         player.update_bonuses();
-        let neitiznot_faceguard = Armor::new("Neitiznot faceguard", None).unwrap();
+        let neitiznot_faceguard =
+            Armor::new("Neitiznot faceguard", None).expect("Error creating equipment.");
         assert_eq!(player.gear.head.clone().unwrap(), neitiznot_faceguard);
         assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
     }
@@ -1416,18 +1434,18 @@ mod test {
     fn test_max_melee_bonuses() {
         let mut player = Player::new();
         let max_melee_gear = Gear {
-            head: Some(Armor::new("Torva full helm", None).unwrap()),
-            neck: Some(Armor::new("Amulet of torture", None).unwrap()),
-            cape: Some(Armor::new("Infernal cape", None).unwrap()),
-            ammo: Some(Armor::new("Rada's blessing 4", None).unwrap()),
+            head: Some(Armor::new("Torva full helm", None).expect("Error creating equipment.")),
+            neck: Some(Armor::new("Amulet of torture", None).expect("Error creating equipment.")),
+            cape: Some(Armor::new("Infernal cape", None).expect("Error creating equipment.")),
+            ammo: Some(Armor::new("Rada's blessing 4", None).expect("Error creating equipment.")),
             second_ammo: None,
-            weapon: Weapon::new("Osmumten's fang", None).unwrap(),
-            shield: Some(Armor::new("Avernic defender", None).unwrap()),
-            body: Some(Armor::new("Torva platebody", None).unwrap()),
-            legs: Some(Armor::new("Torva platelegs", None).unwrap()),
-            hands: Some(Armor::new("Ferocious gloves", None).unwrap()),
-            feet: Some(Armor::new("Primordial boots", None).unwrap()),
-            ring: Some(Armor::new("Ultor ring", None).unwrap()),
+            weapon: Weapon::new("Osmumten's fang", None).expect("Error creating equipment."),
+            shield: Some(Armor::new("Avernic defender", None).expect("Error creating equipment.")),
+            body: Some(Armor::new("Torva platebody", None).expect("Error creating equipment.")),
+            legs: Some(Armor::new("Torva platelegs", None).expect("Error creating equipment.")),
+            hands: Some(Armor::new("Ferocious gloves", None).expect("Error creating equipment.")),
+            feet: Some(Armor::new("Primordial boots", None).expect("Error creating equipment.")),
+            ring: Some(Armor::new("Ultor ring", None).expect("Error creating equipment.")),
         };
         player.gear = Rc::new(max_melee_gear);
         player.update_bonuses();
@@ -1515,10 +1533,10 @@ mod test {
     fn test_twinflame_detection() {
         let mut player = Player::new();
         let _ = player.equip("Twinflame staff", None);
-        player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
+        let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
         assert!(player.gets_second_twinflame_hit());
 
-        player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
+        let _ = player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
         assert!(!player.gets_second_twinflame_hit());
     }
 }

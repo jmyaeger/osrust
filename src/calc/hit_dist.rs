@@ -534,7 +534,7 @@ pub fn multiply_transformer(factor: Fraction, minimum: u32) -> impl HitTransform
 
 pub fn division_transformer(divisor: u32, minimum: u32) -> impl HitTransformer {
     // Divide each hit's damage by a divisor and clamp it to a minimum value
-    multiply_transformer(Fraction::new(1, divisor as i32), minimum)
+    multiply_transformer(Fraction::new(1, divisor as i32).unwrap(), minimum)
 }
 
 pub fn flat_add_transformer(addend: i32, minimum: i32) -> impl HitTransformer {

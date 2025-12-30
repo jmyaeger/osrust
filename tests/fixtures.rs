@@ -9,132 +9,134 @@ use rstest::fixture;
 
 #[fixture]
 pub fn vorkath() -> Monster {
-    Monster::new("Vorkath", Some("Post-quest")).unwrap()
+    Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kril() -> Monster {
-    Monster::new("K'ril Tsutsaroth", None).unwrap()
+    Monster::new("K'ril Tsutsaroth", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kalphite() -> Monster {
-    Monster::new("Kalphite Soldier", Some("Kalphite Lair")).unwrap()
+    Monster::new("Kalphite Soldier", Some("Kalphite Lair")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn ammonite_crab() -> Monster {
-    Monster::new("Ammonite Crab", None).unwrap()
+    Monster::new("Ammonite Crab", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn vetion() -> Monster {
-    Monster::new("Vet'ion", Some("Normal")).unwrap()
+    Monster::new("Vet'ion", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn spindel() -> Monster {
-    Monster::new("Spindel", None).unwrap()
+    Monster::new("Spindel", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn duke() -> Monster {
-    Monster::new("Duke Sucellus", Some("Post-quest, Awake")).unwrap()
+    Monster::new("Duke Sucellus", Some("Post-quest, Awake")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kurask() -> Monster {
-    Monster::new("Kurask", Some("Normal")).unwrap()
+    Monster::new("Kurask", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn scurrius() -> Monster {
-    Monster::new("Scurrius", Some("Solo")).unwrap()
+    Monster::new("Scurrius", Some("Solo")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn revenant_dragon() -> Monster {
-    Monster::new("Revenant dragon", None).unwrap()
+    Monster::new("Revenant dragon", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn zebak() -> Monster {
-    Monster::new("Zebak", Some("Normal")).unwrap()
+    Monster::new("Zebak", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn chaos_golem() -> Monster {
-    Monster::new("Chaos Golem", Some("Golem")).unwrap()
+    Monster::new("Chaos Golem", Some("Golem")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn aberrant_spectre() -> Monster {
-    Monster::new("Aberrant spectre", None).unwrap()
+    Monster::new("Aberrant spectre", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn abhorrent_spectre() -> Monster {
-    Monster::new("Abhorrent spectre", None).unwrap()
+    Monster::new("Abhorrent spectre", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn general_graardor() -> Monster {
-    Monster::new("General Graardor", None).unwrap()
+    Monster::new("General Graardor", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn rune_dragon() -> Monster {
-    Monster::new("Rune dragon", None).unwrap()
+    Monster::new("Rune dragon", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn bloat() -> Monster {
-    Monster::new("Pestilent Bloat", Some("Normal")).unwrap()
+    Monster::new("Pestilent Bloat", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn count_draynor() -> Monster {
-    Monster::new("Count Draynor (Nightmare Zone)", Some("Hard Mode")).unwrap()
+    Monster::new("Count Draynor (Nightmare Zone)", Some("Hard Mode"))
+        .expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn vampyre_juvinate() -> Monster {
-    Monster::new("Vampyre Juvinate", Some("Level 50")).unwrap()
+    Monster::new("Vampyre Juvinate", Some("Level 50")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn vanstrom_klause() -> Monster {
-    Monster::new("Vanstrom Klause", Some("Sins of the Father")).unwrap()
+    Monster::new("Vanstrom Klause", Some("Sins of the Father")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn zilyana() -> Monster {
-    Monster::new("Commander Zilyana", None).unwrap()
+    Monster::new("Commander Zilyana", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn shaman_cox() -> Monster {
-    Monster::new("Lizardman shaman (Chambers of Xeric)", Some("Normal")).unwrap()
+    Monster::new("Lizardman shaman (Chambers of Xeric)", Some("Normal"))
+        .expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn abyssal_portal() -> Monster {
-    Monster::new("Abyssal portal", Some("Normal")).unwrap()
+    Monster::new("Abyssal portal", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn skeletal_mystic() -> Monster {
-    Monster::new("Skeletal Mystic", Some("Normal")).unwrap()
+    Monster::new("Skeletal Mystic", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn olm_head() -> Monster {
-    Monster::new("Great Olm", Some("Head (Normal)")).unwrap()
+    Monster::new("Great Olm", Some("Head (Normal)")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn olm_head_cm() -> Monster {
-    Monster::new("Great Olm", Some("Head (Challenge Mode)")).unwrap()
+    Monster::new("Great Olm", Some("Head (Challenge Mode)")).expect("Error creating monster.")
 }
 
 #[fixture]
@@ -143,27 +145,27 @@ pub fn shaman_cox_cm() -> Monster {
         "Lizardman shaman (Chambers of Xeric)",
         Some("Challenge Mode"),
     )
-    .unwrap()
+    .expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn skeletal_mystic_cm() -> Monster {
-    Monster::new("Skeletal Mystic", Some("Challenge Mode")).unwrap()
+    Monster::new("Skeletal Mystic", Some("Challenge Mode")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn wardens_p3() -> Monster {
-    Monster::new("Elidinis' Warden", Some("Damaged")).unwrap()
+    Monster::new("Elidinis' Warden", Some("Damaged")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn vardorvis() -> Monster {
-    Monster::new("Vardorvis", Some("Post-quest")).unwrap()
+    Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kephri_400() -> Monster {
-    let mut monster = Monster::new("Kephri", Some("Shielded")).unwrap();
+    let mut monster = Monster::new("Kephri", Some("Shielded")).expect("Error creating monster.");
     monster.info.toa_level = 400;
     monster.scale_toa();
     monster
@@ -171,82 +173,82 @@ pub fn kephri_400() -> Monster {
 
 #[fixture]
 pub fn urium_shade() -> Monster {
-    Monster::new("Urium Shade", Some("Shade")).unwrap()
+    Monster::new("Urium Shade", Some("Shade")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kalphite_queen_p1() -> Monster {
-    Monster::new("Kalphite Queen", Some("Crawling")).unwrap()
+    Monster::new("Kalphite Queen", Some("Crawling")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn zulrah_tanzanite() -> Monster {
-    Monster::new("Zulrah", Some("Tanzanite")).unwrap()
+    Monster::new("Zulrah", Some("Tanzanite")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn zulrah_magma() -> Monster {
-    Monster::new("Zulrah", Some("Magma")).unwrap()
+    Monster::new("Zulrah", Some("Magma")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn seren() -> Monster {
-    Monster::new("Fragment of Seren", None).unwrap()
+    Monster::new("Fragment of Seren", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn kraken() -> Monster {
-    Monster::new("Kraken", Some("Kraken")).unwrap()
+    Monster::new("Kraken", Some("Kraken")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn verzik_p1() -> Monster {
-    Monster::new("Verzik Vitur", Some("Normal mode, Phase 1")).unwrap()
+    Monster::new("Verzik Vitur", Some("Normal mode, Phase 1")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn tekton() -> Monster {
-    Monster::new("Tekton", Some("Normal")).unwrap()
+    Monster::new("Tekton", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn vasa_crystal() -> Monster {
-    Monster::new("Glowing crystal", Some("Normal")).unwrap()
+    Monster::new("Glowing crystal", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn olm_melee_hand() -> Monster {
-    Monster::new("Great Olm", Some("Left claw (Normal)")).unwrap()
+    Monster::new("Great Olm", Some("Left claw (Normal)")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn olm_mage_hand() -> Monster {
-    Monster::new("Great Olm", Some("Right claw (Normal)")).unwrap()
+    Monster::new("Great Olm", Some("Right claw (Normal)")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn ice_demon() -> Monster {
-    Monster::new("Ice demon", Some("Normal")).unwrap()
+    Monster::new("Ice demon", Some("Normal")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn slagilith() -> Monster {
-    Monster::new("Slagilith (Nightmare Zone)", Some("Hard Mode")).unwrap()
+    Monster::new("Slagilith (Nightmare Zone)", Some("Hard Mode")).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn zogre() -> Monster {
-    Monster::new("Zogre", None).unwrap()
+    Monster::new("Zogre", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn corp() -> Monster {
-    Monster::new("Corporeal Beast", None).unwrap()
+    Monster::new("Corporeal Beast", None).expect("Error creating monster.")
 }
 
 #[fixture]
 pub fn baba_300() -> Monster {
-    let mut monster = Monster::new("Ba-Ba", None).unwrap();
+    let mut monster = Monster::new("Ba-Ba", None).expect("Error creating monster.");
     monster.info.toa_level = 300;
     monster.scale_toa();
     monster
@@ -702,7 +704,7 @@ pub fn max_mage_harm_fire_surge_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     let _ = player.equip("Harmonised nightmare staff", None);
     player.update_bonuses();
-    player.set_spell(Spell::Standard(StandardSpell::FireSurge));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -712,7 +714,7 @@ pub fn max_mage_kodai_ice_barrage_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     let _ = player.equip("Kodai wand", None);
     player.update_bonuses();
-    player.set_spell(Spell::Ancient(AncientSpell::IceBarrage));
+    let _ = player.set_spell(Spell::Ancient(AncientSpell::IceBarrage));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -761,7 +763,7 @@ pub fn mid_level_mage_chaos_gauntlets_fire_bolt_player() -> Player {
     let _ = player.equip("Fire battlestaff", None);
     let _ = player.equip("Chaos gauntlets", None);
     player.update_bonuses();
-    player.set_spell(Spell::Standard(StandardSpell::FireBolt));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::FireBolt));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -772,7 +774,7 @@ pub fn mid_level_mage_god_spell_charge_player() -> Player {
     let _ = player.equip("Guthix staff", None);
     player.update_bonuses();
     player.boosts.charge_active = true;
-    player.set_spell(Spell::Standard(StandardSpell::ClawsOfGuthix));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::ClawsOfGuthix));
     player.set_active_style(CombatStyle::Spell);
     player
 }
@@ -807,7 +809,7 @@ pub fn full_virtus_kodai_ice_barrage_player() -> Player {
 #[fixture]
 pub fn full_virtus_kodai_fire_surge_player() -> Player {
     let mut player = full_virtus_kodai_ice_barrage_player();
-    player.set_spell(Spell::Standard(StandardSpell::FireSurge));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player
 }
 
@@ -831,7 +833,7 @@ pub fn max_mage_accursed_sceptre_player() -> Player {
 pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
     let _ = player.equip("Tome of water", Some("Charged"));
-    player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
     player.update_bonuses();
     player
 }
@@ -894,7 +896,7 @@ pub fn full_ahrims_aotd_player() -> Player {
 pub fn full_ahrims_aotd_sunfire_player() -> Player {
     let mut player = full_ahrims_aotd_player();
     player.stats.magic = Stat::new(95, None);
-    player.set_spell(Spell::Standard(StandardSpell::FireSurge));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::FireSurge));
     player.boosts.sunfire.active = true;
     player
 }
@@ -993,7 +995,7 @@ pub fn max_mage_dawnbringer_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_crumble_undead() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.set_spell(Spell::Standard(StandardSpell::CrumbleUndead));
+    let _ = player.set_spell(Spell::Standard(StandardSpell::CrumbleUndead));
     player
 }
 

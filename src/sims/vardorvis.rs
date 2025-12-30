@@ -31,7 +31,7 @@ impl Default for VardorvisConfig {
             food_eat_delay: 3,
             eat_strategy: VardorvisEatStrategy::EatAtHp(20),
             thralls: None,
-            logger: FightLogger::new(false, "vardorvis"),
+            logger: FightLogger::new(false, "vardorvis").expect("Error initializing logger."),
         }
     }
 }
@@ -156,8 +156,9 @@ pub struct VardorvisFight {
 }
 
 impl VardorvisFight {
-    pub fn new(player: Player, config: VardorvisConfig) -> Self {
-        let mut vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+    pub fn new(player: Player, config: VardorvisConfig) -> Result<Self, SimulationError> {
+        let mut vard = Monster::new("Vardorvis", Some("Post-quest"))
+            .map_err(|_| SimulationError::MonsterCreationError("Vardorvis".to_string()))?;
         vard.max_hits = Some(vec![MonsterMaxHit::new(0, AttackType::Slash)]);
 
         // Build precomputed scaling table
@@ -166,14 +167,15 @@ impl VardorvisFight {
 
         let limiter = assign_limiter(&player, &vard);
         let rng = SmallRng::from_os_rng();
-        Self {
+
+        Ok(Self {
             player,
             vard,
             limiter,
             rng,
             config,
             mechanics: VardorvisMechanics,
-        }
+        })
     }
 
     fn simulate_vardorvis_fight(&mut self) -> Result<FightResult, SimulationError> {

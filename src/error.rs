@@ -1,6 +1,11 @@
+use std::num::ParseIntError;
+
 use thiserror::Error;
 
-use crate::combat::simulation::FightResult;
+use crate::{
+    combat::simulation::FightResult,
+    types::{player::SwitchType, spells::Spell},
+};
 
 #[derive(Error, Debug)]
 pub enum DpsCalcError {
@@ -10,6 +15,8 @@ pub enum DpsCalcError {
     SpecNotImplemented(String),
     #[error("Missing hit distribution for {monster_name} at {hp} HP")]
     MissingHpHitDist { monster_name: String, hp: usize },
+    #[error("Player attack roll error: {0}")]
+    PlayerAttackRollError(#[from] PlayerError),
 }
 
 #[derive(Error, Debug)]
@@ -24,6 +31,10 @@ pub enum SimulationError {
     InvalidGauntletGear,
     #[error("Monster attack error: {0}")]
     MonsterAttack(#[from] MonsterError),
+    #[error("Error switching player styles: {0}")]
+    SwitchingError(#[from] PlayerError),
+    #[error("Error creating monster: {0}")]
+    MonsterCreationError(String),
 }
 
 #[derive(Error, Debug)]
@@ -49,4 +60,28 @@ pub enum MonsterError {
     SpecialAttackNotSupported,
     #[error("None attack type not supported.")]
     NoneAttackNotSupported,
+}
+
+#[derive(Error, Debug)]
+pub enum PlayerError {
+    #[error("Players do not have generic ranged attack rolls.")]
+    NoGenericRangedStyle,
+    #[error("Gear switch not found: {0}")]
+    GearSwitchNotFound(SwitchType),
+    #[error("Player magic level too low to cast {0}.")]
+    MagicLevelTooLow(Spell),
+    #[error("Error parsing player stats: {0}")]
+    StatParseError(#[from] std::num::ParseIntError),
+    #[error("Error fetching player data: {0}")]
+    StatLookupError(#[from] reqwest::Error),
+}
+
+#[derive(Error, Debug)]
+pub enum MathError {
+    #[error("Fraction has {0} components.")]
+    InvalidFraction(usize),
+    #[error("Error parsing fraction component: {0}")]
+    NumeratorParseError(#[from] ParseIntError),
+    #[error("Fraction denominator cannot be zero.")]
+    DivideByZero,
 }

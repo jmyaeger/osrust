@@ -344,21 +344,24 @@ impl SingleWayFight {
         config: SingleWayConfig,
         spec_config: Option<SpecConfig>,
         use_logger: bool,
-    ) -> SingleWayFight {
+    ) -> Result<SingleWayFight, SimulationError> {
         let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
         let rng = SmallRng::from_os_rng();
         let monster_name = monster.info.name.clone();
-        SingleWayFight {
+        let logger = FightLogger::new(use_logger, monster_name.as_str())
+            .map_err(|e| SimulationError::ConfigError(format!("Error initializing logger: {e}")))?;
+
+        Ok(SingleWayFight {
             player,
             monster,
             limiter,
             rng,
             mechanics: SingleWayMechanics,
-            logger: FightLogger::new(use_logger, monster_name.as_str()),
+            logger,
             config,
             spec_config,
             state: SingleWayState::default(),
-        }
+        })
     }
 }
 
@@ -425,7 +428,10 @@ pub struct SingleWayConfig {
 pub struct SingleWayMechanics;
 
 impl SingleWayMechanics {
-    pub fn player_special_attack(fight: &mut SingleWayFight, fight_vars: &mut FightVars) -> bool {
+    pub fn player_special_attack(
+        fight: &mut SingleWayFight,
+        fight_vars: &mut FightVars,
+    ) -> Result<bool, SimulationError> {
         if let Some(ref mut spec_config) = fight.spec_config {
             for strategy in &mut spec_config.strategies {
                 if !strategy.can_execute(&fight.player, &fight.monster) {
@@ -443,13 +449,13 @@ impl SingleWayMechanics {
                 let previous_switch = fight.player.current_switch.clone().unwrap();
 
                 // Switch to the spec gear and perform the attack
-                fight.player.switch(&strategy.switch_type);
+                fight.player.switch(&strategy.switch_type)?;
 
                 if fight.logger.enabled {
                     fight
                         .logger
                         .log_gear_switch(fight_vars.tick_counter, &strategy.switch_type);
-                    fight.logger.log_current_player_rolls(&fight.player);
+                    let _ = fight.logger.log_current_player_rolls(&fight.player);
                     fight.logger.log_current_player_stats(&fight.player);
                     fight.logger.log_current_gear(&fight.player);
                 }
@@ -505,19 +511,19 @@ impl SingleWayMechanics {
                 }
 
                 // Switch back to the previous set of gear
-                fight.player.switch(&previous_switch);
+                fight.player.switch(&previous_switch)?;
 
                 if fight.logger.enabled {
                     fight
                         .logger
                         .log_gear_switch(fight_vars.tick_counter, &previous_switch);
-                    fight.logger.log_current_player_rolls(&fight.player);
+                    let _ = fight.logger.log_current_player_rolls(&fight.player);
                 }
 
-                return true;
+                return Ok(true);
             }
         }
-        false
+        Ok(false)
     }
 }
 
@@ -541,7 +547,7 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
             let did_spec = if let Some(ref spec_config) = fight.spec_config {
                 if let Some(lowest) = spec_config.lowest_cost() {
                     if fight.player.stats.spec.value() >= lowest {
-                        SingleWayMechanics::player_special_attack(fight, &mut vars)
+                        SingleWayMechanics::player_special_attack(fight, &mut vars)?
                     } else {
                         false
                     }
@@ -631,27 +637,28 @@ mod tests {
         player.add_potion(Potion::SuperCombat);
 
         player.gear = Rc::new(Gear {
-            head: Some(Armor::new("Torva full helm", None).unwrap()),
-            neck: Some(Armor::new("Amulet of torture", None).unwrap()),
-            cape: Some(Armor::new("Infernal cape", None).unwrap()),
-            ammo: Some(Armor::new("Rada's blessing 4", None).unwrap()),
+            head: Some(Armor::new("Torva full helm", None).expect("Error creating equipment.")),
+            neck: Some(Armor::new("Amulet of torture", None).expect("Error creating equipment.")),
+            cape: Some(Armor::new("Infernal cape", None).expect("Error creating equipment.")),
+            ammo: Some(Armor::new("Rada's blessing 4", None).expect("Error creating equipment.")),
             second_ammo: None,
-            weapon: Weapon::new("Ghrazi rapier", None).unwrap(),
-            shield: Some(Armor::new("Avernic defender", None).unwrap()),
-            body: Some(Armor::new("Torva platebody", None).unwrap()),
-            legs: Some(Armor::new("Torva platelegs", None).unwrap()),
-            hands: Some(Armor::new("Ferocious gloves", None).unwrap()),
-            feet: Some(Armor::new("Primordial boots", None).unwrap()),
-            ring: Some(Armor::new("Ultor ring", None).unwrap()),
+            weapon: Weapon::new("Ghrazi rapier", None).expect("Error creating equipment."),
+            shield: Some(Armor::new("Avernic defender", None).expect("Error creating equipment.")),
+            body: Some(Armor::new("Torva platebody", None).expect("Error creating equipment.")),
+            legs: Some(Armor::new("Torva platelegs", None).expect("Error creating equipment.")),
+            hands: Some(Armor::new("Ferocious gloves", None).expect("Error creating equipment.")),
+            feet: Some(Armor::new("Primordial boots", None).expect("Error creating equipment.")),
+            ring: Some(Armor::new("Ultor ring", None).expect("Error creating equipment.")),
         });
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
-        let monster = Monster::new("Ammonite Crab", None).unwrap();
+        let monster = Monster::new("Ammonite Crab", None).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &monster);
 
         let config = SingleWayConfig::default();
-        let mut fight = SingleWayFight::new(player, monster, config, None, false);
-        let result = simulate_fight(&mut fight).unwrap();
+        let mut fight = SingleWayFight::new(player, monster, config, None, false)
+            .expect("Error setting up single way fight.");
+        let result = simulate_fight(&mut fight).expect("Simulation failed.");
 
         assert!(result.ttk_ticks > 0);
         assert!(result.hit_attempts > 0);

@@ -64,7 +64,8 @@ fn simulate_single_way() {
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Chop);
 
-    let mut monster = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+    let mut monster =
+        Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -158,7 +159,8 @@ fn simulate_single_way() {
     //     false,
     // );
 
-    let simulation = SingleWayFight::new(player, monster, config, None, false);
+    let simulation = SingleWayFight::new(player, monster, config, None, false)
+        .expect("Error setting up single way fight.");
     let results = simulate_n_fights(Box::new(simulation), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
@@ -186,7 +188,7 @@ fn simulate_hunllef() {
     player.add_prayer(Prayer::MysticMight);
     // player.add_prayer(Prayer::SteelSkin);
 
-    let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
+    let hunllef = Monster::new("Corrupted Hunllef", None).expect("Error creating monster.");
     calc_active_player_rolls(&mut player, &hunllef);
 
     let mage_switch = GearSwitch::from(&player);
@@ -226,7 +228,7 @@ fn simulate_hunllef() {
             style2: SwitchType::Ranged,
         },
         lost_ticks: 0,
-        logger: FightLogger::new(false, "hunllef"),
+        logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),
         armor_tier: 0,
     };
     // let fight_config = HunllefConfig {
@@ -281,7 +283,7 @@ fn simulate_vardorvis() {
     player.update_set_effects();
     player.set_active_style(CombatStyle::Hack);
 
-    let vard = Monster::new("Vardorvis", Some("Post-quest")).unwrap();
+    let vard = Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
     calc_active_player_rolls(&mut player, &vard);
 
     let fight_config = VardorvisConfig {
@@ -289,10 +291,11 @@ fn simulate_vardorvis() {
         food_eat_delay: 3,
         eat_strategy: VardorvisEatStrategy::EatAtHp(10),
         thralls: Some(Thrall::GreaterMagic),
-        logger: FightLogger::new(false, "vardorvis"),
+        logger: FightLogger::new(false, "vardorvis").expect("Error initializing logger."),
     };
 
-    let mut fight = VardorvisFight::new(player, fight_config);
+    let mut fight =
+        VardorvisFight::new(player, fight_config).expect("Error creating the Vardorvis fight.");
     let results = simulate_n_fights(Box::new(fight), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
@@ -336,17 +339,17 @@ fn simulate_door_altar_graardor() {
 
     calc_active_player_rolls(
         &mut player,
-        &Monster::new("General Graardor", None).unwrap(),
+        &Monster::new("General Graardor", None).expect("Error creating monster."),
     );
 
     let fight_config = GraardorConfig {
         method: GraardorMethod::DoorAltar,
         eat_hp: 20,
         heal_amount: 18,
-        logger: FightLogger::new(false, "graardor"),
+        logger: FightLogger::new(false, "graardor").expect("Error initializing logger."),
     };
 
-    let fight = GraardorFight::new(player, fight_config);
+    let fight = GraardorFight::new(player, fight_config).expect("Error setting up Graardor fight.");
 
     let results = simulate_n_fights(Box::new(fight), 1000000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);

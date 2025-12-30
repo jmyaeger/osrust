@@ -38,7 +38,7 @@ impl Default for GraardorConfig {
             method: GraardorMethod::DoorAltar,
             eat_hp: 30,
             heal_amount: 20,
-            logger: FightLogger::new(false, "graardor"),
+            logger: FightLogger::new(false, "graardor").expect("Error initializing logger."),
         }
     }
 }
@@ -75,14 +75,20 @@ pub struct GraardorFight {
 }
 
 impl GraardorFight {
-    pub fn new(player: Player, config: GraardorConfig) -> GraardorFight {
-        let graardor = Monster::new("General Graardor", None).unwrap();
-        let melee_minion = Monster::new("Sergeant Strongstack", None).unwrap();
-        let ranged_minion = Monster::new("Sergeant Grimspike", None).unwrap();
-        let mage_minion = Monster::new("Sergeant Steelwill", None).unwrap();
+    pub fn new(player: Player, config: GraardorConfig) -> Result<GraardorFight, SimulationError> {
+        let graardor = Monster::new("General Graardor", None)
+            .map_err(|_| SimulationError::MonsterCreationError("General Graardor".to_string()))?;
+        let melee_minion = Monster::new("Sergeant Strongstack", None).map_err(|_| {
+            SimulationError::MonsterCreationError("Sergeant Strongstack".to_string())
+        })?;
+        let ranged_minion = Monster::new("Sergeant Grimspike", None)
+            .map_err(|_| SimulationError::MonsterCreationError("Sergeant Grimspike".to_string()))?;
+        let mage_minion = Monster::new("Sergeant Steelwill", None)
+            .map_err(|_| SimulationError::MonsterCreationError("Sergeant Steelwill".to_string()))?;
         let limiter = crate::combat::simulation::assign_limiter(&player, &graardor);
         let rng = SmallRng::from_os_rng();
-        GraardorFight {
+
+        Ok(GraardorFight {
             player,
             graardor,
             melee_minion,
@@ -92,7 +98,7 @@ impl GraardorFight {
             rng,
             config,
             mechanics: GraardorMechanics,
-        }
+        })
     }
 
     fn simulate_door_altar_fight(&mut self) -> Result<FightResult, SimulationError> {
@@ -297,17 +303,18 @@ mod tests {
 
         calc_active_player_rolls(
             &mut player,
-            &Monster::new("General Graardor", None).unwrap(),
+            &Monster::new("General Graardor", None).expect("Error creating monster"),
         );
 
         let fight_config = GraardorConfig {
             method: GraardorMethod::DoorAltar,
             eat_hp: 30,
             heal_amount: 22,
-            logger: FightLogger::new(false, "graardor"),
+            logger: FightLogger::new(false, "graardor").expect("Error initializing logger."),
         };
 
-        let mut fight = GraardorFight::new(player, fight_config);
+        let mut fight =
+            GraardorFight::new(player, fight_config).expect("Error setting up Graardor fight.");
 
         let result = fight.simulate();
 

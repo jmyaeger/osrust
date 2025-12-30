@@ -71,7 +71,7 @@ impl Default for HunllefConfig {
                 style2: SwitchType::Magic,
             },
             lost_ticks: 0,
-            logger: FightLogger::new(false, "hunllef"),
+            logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),
             armor_tier: 0,
         }
     }
@@ -333,7 +333,8 @@ impl HunllefFight {
         if !has_valid_gear(&player) {
             return Err(SimulationError::InvalidGauntletGear);
         }
-        let mut hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
+        let mut hunllef = Monster::new("Corrupted Hunllef", None)
+            .map_err(|_| SimulationError::MonsterCreationError("Corrupted Hunllef".to_string()))?;
         hunllef.max_hits = Some(vec![
             MonsterMaxHit::new(HUNLLEF_MAX_HIT, AttackType::Ranged),
             MonsterMaxHit::new(HUNLLEF_MAX_HIT, AttackType::Magic),
@@ -388,7 +389,7 @@ impl HunllefFight {
                 let mut other_style = if style_choice == 1 { style2 } else { style1 };
 
                 // Ensure the player is switched to the correct starting style
-                self.player.switch(current_style);
+                self.player.switch(current_style)?;
 
                 if logger_enabled {
                     self.config
@@ -493,7 +494,7 @@ impl HunllefFight {
                         if state.player_attack_count == 6 {
                             state.player_attack_count = 0;
                             std::mem::swap(&mut current_style, &mut other_style);
-                            self.player.switch(current_style);
+                            self.player.switch(current_style)?;
 
                             if logger_enabled {
                                 self.config
@@ -551,7 +552,7 @@ impl HunllefFight {
                 let mut other_style = other_style2;
 
                 // Ensure the player is switched to the correct starting style
-                self.player.switch(current_style);
+                self.player.switch(current_style)?;
 
                 if logger_enabled {
                     self.config
@@ -655,7 +656,7 @@ impl HunllefFight {
                         state.player_attack_count += 1;
                         if state.player_attack_count == 5 {
                             std::mem::swap(&mut current_style, &mut next_style);
-                            self.player.switch(current_style);
+                            self.player.switch(current_style)?;
 
                             if logger_enabled {
                                 self.config
@@ -667,7 +668,7 @@ impl HunllefFight {
                             state.player_attack_count = 0;
                             std::mem::swap(&mut current_style, &mut next_style);
                             std::mem::swap(&mut next_style, &mut other_style);
-                            self.player.switch(current_style);
+                            self.player.switch(current_style)?;
 
                             if logger_enabled {
                                 self.config
@@ -752,30 +753,29 @@ impl Simulation for HunllefFight {
 }
 
 fn armor_tier(player: &Player) -> u32 {
-    if player.gear.head.is_none() || player.gear.body.is_none() || player.gear.legs.is_none() {
-        return 0;
+    if let (Some(head), Some(body), Some(legs)) =
+        (&player.gear.head, &player.gear.body, &player.gear.legs)
+    {
+        let all_armour: [&String; 3] = [&head.name, &body.name, &legs.name];
+        let total_tier = all_armour
+            .iter()
+            .map(|s| {
+                if s.contains("basic") {
+                    1
+                } else if s.contains("attuned") {
+                    2
+                } else if s.contains("perfected") {
+                    3
+                } else {
+                    0
+                }
+            })
+            .sum::<u32>();
+
+        total_tier / 3
+    } else {
+        0
     }
-
-    let head = &player.gear.head.as_ref().unwrap().name;
-    let body = &player.gear.body.as_ref().unwrap().name;
-    let legs = &player.gear.legs.as_ref().unwrap().name;
-    let all_armour: [&String; 3] = [head, body, legs];
-    let total_tier = all_armour
-        .iter()
-        .map(|s| {
-            if s.contains("basic") {
-                1
-            } else if s.contains("attuned") {
-                2
-            } else if s.contains("perfected") {
-                3
-            } else {
-                0
-            }
-        })
-        .sum::<u32>();
-
-    total_tier / 3
 }
 
 fn has_valid_gear(player: &Player) -> bool {
@@ -829,7 +829,7 @@ mod tests {
         player.add_prayer(Prayer::MysticMight);
         player.add_prayer(Prayer::SteelSkin);
 
-        let hunllef = Monster::new("Corrupted Hunllef", None).unwrap();
+        let hunllef = Monster::new("Corrupted Hunllef", None).expect("Error creating monster.");
         calc_active_player_rolls(&mut player, &hunllef);
 
         let mage_switch = GearSwitch::from(&player);
@@ -878,7 +878,7 @@ mod tests {
                 other_style2: SwitchType::Melee,
             },
             lost_ticks: 0,
-            logger: FightLogger::new(false, "hunllef"),
+            logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),
             armor_tier: 0,
         };
 

@@ -4,6 +4,8 @@ use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 use std::str::FromStr;
 
+use crate::error::MathError;
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Fraction {
     numer: i32,
@@ -11,13 +13,13 @@ pub struct Fraction {
 }
 
 impl Fraction {
-    pub fn new(numer: i32, denom: i32) -> Self {
+    pub fn new(numer: i32, denom: i32) -> Result<Self, MathError> {
         if denom == 0 {
-            panic!("Denominator cannot be 0");
+            return Err(MathError::DivideByZero);
         }
         let mut fraction = Self { numer, denom };
         fraction.reduce();
-        fraction
+        Ok(fraction)
     }
 
     fn reduce(&mut self) {
@@ -56,7 +58,7 @@ impl Add for Fraction {
     fn add(self, rhs: Self) -> Self::Output {
         let numer = self.numer * rhs.denom + self.denom * rhs.numer;
         let denom = self.denom * rhs.denom;
-        Fraction::new(numer, denom)
+        Fraction::new(numer, denom).unwrap()
     }
 }
 
@@ -66,7 +68,7 @@ impl Sub for Fraction {
     fn sub(self, rhs: Self) -> Self::Output {
         let numer = self.numer * rhs.denom - self.denom * rhs.numer;
         let denom = self.denom * rhs.denom;
-        Fraction::new(numer, denom)
+        Fraction::new(numer, denom).unwrap()
     }
 }
 
@@ -76,7 +78,7 @@ impl Mul for Fraction {
     fn mul(self, rhs: Self) -> Self::Output {
         let numer = self.numer * rhs.numer;
         let denom = self.denom * rhs.denom;
-        Fraction::new(numer, denom)
+        Fraction::new(numer, denom).unwrap()
     }
 }
 
@@ -86,7 +88,8 @@ impl Div for Fraction {
     fn div(self, rhs: Self) -> Self::Output {
         let numer = self.numer * rhs.denom;
         let denom = self.denom * rhs.numer;
-        Fraction::new(numer, denom)
+
+        Fraction::new(numer, denom).unwrap()
     }
 }
 
@@ -94,7 +97,7 @@ impl AddAssign for Fraction {
     fn add_assign(&mut self, rhs: Self) {
         let numer = self.numer * rhs.denom + self.denom * rhs.numer;
         let denom = self.denom * rhs.denom;
-        *self = Fraction::new(numer, denom);
+        *self = Fraction::new(numer, denom).unwrap();
     }
 }
 
@@ -102,7 +105,7 @@ impl SubAssign for Fraction {
     fn sub_assign(&mut self, rhs: Self) {
         let numer = self.numer * rhs.denom - self.denom * rhs.numer;
         let denom = self.denom * rhs.denom;
-        *self = Fraction::new(numer, denom);
+        *self = Fraction::new(numer, denom).unwrap();
     }
 }
 
@@ -110,7 +113,7 @@ impl MulAssign for Fraction {
     fn mul_assign(&mut self, rhs: Self) {
         let numer = self.numer * rhs.numer;
         let denom = self.denom * rhs.denom;
-        *self = Fraction::new(numer, denom);
+        *self = Fraction::new(numer, denom).unwrap();
     }
 }
 
@@ -118,7 +121,7 @@ impl DivAssign for Fraction {
     fn div_assign(&mut self, rhs: Self) {
         let numer = self.numer * rhs.denom;
         let denom = self.denom * rhs.numer;
-        *self = Fraction::new(numer, denom);
+        *self = Fraction::new(numer, denom).unwrap();
     }
 }
 
@@ -126,7 +129,7 @@ impl Neg for Fraction {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Fraction::new(-self.numer, self.denom)
+        Fraction::new(-self.numer, self.denom).unwrap()
     }
 }
 
@@ -149,20 +152,17 @@ impl fmt::Display for Fraction {
 }
 
 impl FromStr for Fraction {
-    type Err = String;
+    type Err = MathError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let parts: Vec<&str> = s.split('/').collect();
         if parts.len() != 2 {
-            return Err("Invalid fraction".to_string());
+            return Err(MathError::InvalidFraction(parts.len()));
         }
-        let numer = parts[0]
-            .parse::<i32>()
-            .map_err(|_| format!("Invalid numerator: {}", parts[0]))?;
-        let denom = parts[1]
-            .parse::<i32>()
-            .map_err(|_| format!("Invalid denominator: {}", parts[1]))?;
-        Ok(Fraction::new(numer, denom))
+        let numer = parts[0].parse::<i32>()?;
+        let denom = parts[1].parse::<i32>()?;
+
+        Fraction::new(numer, denom)
     }
 }
 

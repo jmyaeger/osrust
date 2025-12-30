@@ -20,10 +20,14 @@ use crate::utils::math::{Fraction, lerp};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
-fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
+fn get_normal_accuracy(
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
     // Calculate theoretical hit chance for most weapons
     let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls.get(combat_type);
+    let mut max_att_roll = player.att_rolls.get(combat_type)?;
 
     if using_spec {
         let att_roll_factor = match &player.gear.weapon.name as &str {
@@ -43,7 +47,8 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
             "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
             _ => Fraction::new(1, 1),
-        };
+        }
+        .unwrap();
         max_att_roll = att_roll_factor.multiply_to_int(max_att_roll);
     }
 
@@ -87,17 +92,21 @@ fn get_normal_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> 
     }
 
     match (max_att_roll < 0, def_roll < 0) {
-        (false, false) => std_roll(max_att_roll, def_roll),
-        (false, true) => 1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0),
-        (true, false) => 0.0,
-        (true, true) => std_roll(-max_att_roll, -def_roll),
+        (false, false) => Ok(std_roll(max_att_roll, def_roll)),
+        (false, true) => Ok(1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0)),
+        (true, false) => Ok(0.0),
+        (true, true) => Ok(std_roll(-max_att_roll, -def_roll)),
     }
 }
 
-fn get_fang_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
+fn get_fang_accuracy(
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
     // Calculate theoretical hit chance for Osmumten's fang outside of ToA
     let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls.get(combat_type);
+    let mut max_att_roll = player.att_rolls.get(combat_type)?;
 
     if using_spec {
         max_att_roll = max_att_roll * 3 / 2;
@@ -142,14 +151,18 @@ fn get_fang_accuracy(player: &Player, monster: &Monster, using_spec: bool) -> f6
     }
 
     match (max_att_roll < 0, def_roll < 0) {
-        (false, false) => std_roll(max_att_roll, def_roll),
-        (false, true) => 1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0),
-        (true, false) => 0.0,
-        (true, true) => rv_roll(-def_roll, -max_att_roll),
+        (false, false) => Ok(std_roll(max_att_roll, def_roll)),
+        (false, true) => Ok(1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0)),
+        (true, false) => Ok(0.0),
+        (true, true) => Ok(rv_roll(-def_roll, -max_att_roll)),
     }
 }
 
-fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
+fn get_hit_chance(
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
     // Always accurate in these cases
     if (monster.info.name.contains("Verzik")
         && monster.matches_version("Phase 1")
@@ -160,16 +173,16 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
         || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0))
         || GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or(0))
     {
-        return 1.0;
+        return Ok(1.0);
     }
 
-    let mut hit_chance = get_normal_accuracy(player, monster, using_spec);
+    let mut hit_chance = get_normal_accuracy(player, monster, using_spec)?;
 
     if player.is_wearing("Osmumten's fang", None) && player.combat_type() == CombatType::Stab {
         if monster.is_toa_monster() {
             hit_chance = 1.0 - (1.0 - hit_chance) * (1.0 - hit_chance);
         } else {
-            hit_chance = get_fang_accuracy(player, monster, using_spec);
+            hit_chance = get_fang_accuracy(player, monster, using_spec)?;
         }
     }
 
@@ -178,26 +191,30 @@ fn get_hit_chance(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
         let def_roll = monster.def_rolls.get(CombatType::Magic) * 9 / 10;
         monster_copy.def_rolls.set(CombatType::Magic, def_roll);
         hit_chance =
-            hit_chance * 0.75 + get_normal_accuracy(player, &monster_copy, using_spec) * 0.25;
+            hit_chance * 0.75 + get_normal_accuracy(player, &monster_copy, using_spec)? * 0.25;
     }
 
-    hit_chance
+    Ok(hit_chance)
 }
 
-fn get_dot_expected(player: &Player, monster: &Monster, using_spec: bool) -> f64 {
+fn get_dot_expected(
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
     if using_spec {
         if player.is_wearing("Burning claws", None) {
             burning_claw_dot(player, monster)
         } else if player.is_wearing("Scorching bow", None) {
-            if monster.is_demon() { 5.0 } else { 1.0 }
+            if monster.is_demon() { Ok(5.0) } else { Ok(1.0) }
         } else if player.is_wearing("Ancient godsword", None) {
-            let accuracy = get_hit_chance(player, monster, true);
-            accuracy * 25.0
+            let accuracy = get_hit_chance(player, monster, true)?;
+            Ok(accuracy * 25.0)
         } else {
-            0.0
+            Ok(0.0)
         }
     } else {
-        0.0
+        Ok(0.0)
     }
 }
 
@@ -215,16 +232,16 @@ fn get_dot_max(player: &Player, monster: &Monster, using_spec: bool) -> u32 {
     }
 }
 
-fn burning_claw_dot(player: &Player, monster: &Monster) -> f64 {
+fn burning_claw_dot(player: &Player, monster: &Monster) -> Result<f64, DpsCalcError> {
     let mut dot = 0.0;
-    let accuracy = get_hit_chance(player, monster, true);
+    let accuracy = get_hit_chance(player, monster, true)?;
     for acc_roll in 0..3 {
         let prev_rolls_fail = (1.0 - accuracy).powi(acc_roll);
         let this_roll_hits = prev_rolls_fail * accuracy;
         dot += this_roll_hits * BURN_EXPECTED[acc_roll as usize];
     }
 
-    dot
+    Ok(dot)
 }
 
 pub fn get_distribution(
@@ -233,12 +250,12 @@ pub fn get_distribution(
     using_spec: bool,
 ) -> Result<AttackDistribution, DpsCalcError> {
     // Get the attack distribution for the given player and monster
-    let acc = get_hit_chance(player, monster, using_spec);
+    let acc = get_hit_chance(player, monster, using_spec)?;
     let combat_type = player.combat_type();
     let (mut min_hit, max_hit) = if using_spec {
         get_spec_min_max_hit(player, monster)?
     } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0)) {
-        get_wardens_p2_min_max(player, monster)
+        get_wardens_p2_min_max(player, monster)?
     } else {
         (0, player.max_hits.get(combat_type))
     };
@@ -304,7 +321,7 @@ pub fn get_distribution(
         let hits1 = standard_hit_dist
             .clone()
             .scale_probability(0.95)
-            .scale_damage(Fraction::new(5, 4));
+            .scale_damage(Fraction::new(5, 4).unwrap());
         let hits2 = standard_hit_dist
             .clone()
             .scale_probability(0.05)
@@ -332,14 +349,14 @@ pub fn get_distribution(
         && player.is_wearing_any(vec![("Dragon halberd", None), ("Crystal halberd", None)])
     {
         // Second hit has 75% accuracy
-        let second_hit_att_roll = player.att_rolls.get(player.combat_type()) * 3 / 4;
+        let second_hit_att_roll = player.att_rolls.get(player.combat_type())? * 3 / 4;
         let mut player_copy = player.clone();
-        player_copy
+        let _ = player_copy
             .att_rolls
             .set(player.combat_type(), second_hit_att_roll);
         calc_active_player_rolls(&mut player_copy, monster);
 
-        let second_hit_acc = get_hit_chance(&player_copy, monster, using_spec);
+        let second_hit_acc = get_hit_chance(&player_copy, monster, using_spec)?;
         dist = AttackDistribution::new(vec![
             standard_hit_dist.clone(),
             HitDistribution::linear(second_hit_acc, min_hit, max_hit),
@@ -485,7 +502,7 @@ pub fn get_distribution(
                 monster_copy.stats.defence.drain(def_drain);
                 monster_copy.def_rolls = monster_def_rolls(&monster_copy);
 
-                let second_hit_acc = get_hit_chance(player, &monster_copy, using_spec);
+                let second_hit_acc = get_hit_chance(player, &monster_copy, using_spec)?;
                 let lowered_second_hit = HitDistribution::linear(second_hit_acc, 0, three_fourths);
                 dist = dist.transform(
                     &|h| {
@@ -534,7 +551,7 @@ pub fn get_distribution(
         let denominator = 150;
 
         dist = dist.transform(
-            &multiply_transformer(Fraction::new(numerator as i32, denominator), 0),
+            &multiply_transformer(Fraction::new(numerator as i32, denominator).unwrap(), 0),
             &TransformOpts::default(),
         );
     }
@@ -543,7 +560,7 @@ pub fn get_distribution(
     if monster.info.name.contains("Ice demon") && player.is_using_fire_spell()
         || player.attrs.spell == Some(Spell::Standard(StandardSpell::FlamesOfZamorak))
     {
-        dist = dist.scale_damage(Fraction::new(3, 2));
+        dist = dist.scale_damage(Fraction::new(3, 2).unwrap());
     }
 
     // Mark of darkness + demonbane distribution
@@ -588,7 +605,7 @@ pub fn get_distribution(
     // Vampyre stuff
     if let Some(tier) = monster.vampyre_tier() {
         if player.is_wearing("Efaritay's aid", None) {
-            dist = dist.scale_damage(Fraction::new(11, 10));
+            dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
         }
         match (
             player.gear.weapon.name.as_str(),
@@ -596,19 +613,19 @@ pub fn get_distribution(
             tier,
         ) {
             ("Blisterwood flail", _, _) => {
-                dist = dist.scale_damage(Fraction::new(5, 4));
+                dist = dist.scale_damage(Fraction::new(5, 4).unwrap());
             }
             ("Blisterwood sickle", _, _) => {
-                dist = dist.scale_damage(Fraction::new(23, 20));
+                dist = dist.scale_damage(Fraction::new(23, 20).unwrap());
             }
             ("Ivandis flail", _, _) => {
-                dist = dist.scale_damage(Fraction::new(6, 5));
+                dist = dist.scale_damage(Fraction::new(6, 5).unwrap());
             }
             ("Rod of ivandis", _, 1 | 2) => {
-                dist = dist.scale_damage(Fraction::new(11, 10));
+                dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
             }
             (_, true, 1) => {
-                dist = dist.scale_damage(Fraction::new(11, 10));
+                dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
             }
             (_, _, _) => {}
         }
@@ -686,7 +703,7 @@ pub fn get_distribution(
         && player.is_wearing("Berserker necklace", None)
         && player.is_wearing_tzhaar_weapon()
     {
-        dist = dist.scale_damage(Fraction::new(6, 5));
+        dist = dist.scale_damage(Fraction::new(6, 5).unwrap());
     }
 
     // Dharok's set effect distribution
@@ -694,7 +711,7 @@ pub fn get_distribution(
         let full_hp = player.stats.hitpoints.base;
         let current_hp = player.stats.hitpoints.current;
         let numerator = 10000 + (full_hp - current_hp) as i32 * full_hp as i32;
-        dist = dist.scale_damage(Fraction::new(numerator, 10000));
+        dist = dist.scale_damage(Fraction::new(numerator, 10000).unwrap());
     }
 
     // Accurate 0 -> 1 is either overwritten by ruby bolts or divided back down to 0
@@ -945,8 +962,8 @@ pub fn get_expected_damage(
     player: &Player,
     monster: &Monster,
     using_spec: bool,
-) -> f64 {
-    dist.get_expected_damage() + get_dot_expected(player, monster, using_spec)
+) -> Result<f64, DpsCalcError> {
+    Ok(dist.get_expected_damage() + get_dot_expected(player, monster, using_spec)?)
 }
 
 // Get the average damage per tick
@@ -1175,10 +1192,10 @@ fn dist_at_hp<'a>(
     Ok(())
 }
 
-fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
+fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> Result<(u32, u32), DpsCalcError> {
     let att_roll = max(
         0,
-        player.att_rolls.get(player.combat_type())
+        player.att_rolls.get(player.combat_type())?
             - monster.def_rolls.get(player.combat_type()) / 3,
     );
 
@@ -1187,7 +1204,7 @@ fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
     let min_hit = base_max_hit * modifier as u32 / 100;
     let max_hit = base_max_hit * (modifier + 20) as u32 / 100;
 
-    (min_hit, max_hit)
+    Ok((min_hit, max_hit))
 }
 
 #[cfg(test)]

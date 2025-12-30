@@ -1060,7 +1060,10 @@ mod tests {
         assert!(!weapon.is_two_handed);
         assert_eq!(weapon.spec_cost, None);
         assert_eq!(weapon.slot, GearSlot::Weapon);
-        let combat_style = weapon.combat_styles.get(&CombatStyle::Punch).unwrap();
+        let combat_style = weapon
+            .combat_styles
+            .get(&CombatStyle::Punch)
+            .expect("Combat style not found.");
         assert_eq!(combat_style.combat_type, CombatType::Crush);
         assert_eq!(combat_style.stance, CombatStance::Accurate);
     }
@@ -1075,19 +1078,22 @@ mod tests {
 
     #[test]
     fn test_set_weapon_info() {
-        let weapon = Weapon::new("Abyssal whip", None).unwrap();
+        let weapon = Weapon::new("Abyssal whip", None).expect("Error creating equipment.");
         assert_eq!(weapon.name, "Abyssal whip");
         assert_eq!(weapon.slot, GearSlot::Weapon);
         assert_eq!(weapon.bonuses.attack.slash, 82);
         assert_eq!(weapon.bonuses.strength.melee, 82);
-        let combat_style = weapon.combat_styles.get(&CombatStyle::Flick).unwrap();
+        let combat_style = weapon
+            .combat_styles
+            .get(&CombatStyle::Flick)
+            .expect("Combat style not found.");
         assert_eq!(combat_style.combat_type, CombatType::Slash);
         assert_eq!(combat_style.stance, CombatStance::Accurate);
     }
 
     #[test]
     fn test_set_armor_info() {
-        let armor = Armor::new("Rune platebody", None).unwrap();
+        let armor = Armor::new("Rune platebody", None).expect("Error creating equipment.");
         assert_eq!(armor.name, "Rune platebody");
         assert_eq!(armor.slot, GearSlot::Body);
         assert_eq!(
@@ -1104,7 +1110,7 @@ mod tests {
 
     #[test]
     fn test_spec_cost() {
-        let voidwaker = Weapon::new("Voidwaker", None).unwrap();
+        let voidwaker = Weapon::new("Voidwaker", None).expect("Error creating equipment.");
         assert_eq!(voidwaker.spec_cost, Some(50));
     }
 }

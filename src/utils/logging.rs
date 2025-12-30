@@ -1,3 +1,4 @@
+use crate::error::PlayerError;
 use crate::types::equipment::CombatType;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::{Player, SwitchType};
@@ -12,7 +13,7 @@ pub struct FightLogger {
 }
 
 impl FightLogger {
-    pub fn new(enabled: bool, name: &str) -> Self {
+    pub fn new(enabled: bool, name: &str) -> Result<Self, log::SetLoggerError> {
         if enabled {
             std::fs::create_dir_all("logs").unwrap_or_else(|e| {
                 eprintln!("Failed to create log directory: {e}");
@@ -28,17 +29,16 @@ impl FightLogger {
                     eprintln!("Failed to create log file: {e}",);
                     panic!("Failed to create log file");
                 }),
-            )
-            .unwrap();
+            )?;
         }
-        Self { enabled }
+        Ok(Self { enabled })
     }
 
-    pub fn log_current_player_rolls(&mut self, player: &Player) {
+    pub fn log_current_player_rolls(&mut self, player: &Player) -> Result<(), PlayerError> {
         debug!("Player's active combat style: {}", player.combat_type());
         debug!(
             "Player's max attack roll: {}",
-            player.att_rolls.get(player.combat_type())
+            player.att_rolls.get(player.combat_type())?
         );
         debug!(
             "Player's max hit: {}",
@@ -52,6 +52,8 @@ impl FightLogger {
             player.def_rolls.get(CombatType::Ranged),
             player.def_rolls.get(CombatType::Magic)
         );
+
+        Ok(())
     }
 
     pub fn log_current_gear(&self, player: &Player) {
@@ -204,7 +206,7 @@ impl FightLogger {
 
     pub fn log_initial_setup(&mut self, player: &Player, monster: &Monster) {
         debug!("Initial setup:");
-        self.log_current_player_rolls(player);
+        let _ = self.log_current_player_rolls(player);
         self.log_current_player_stats(player);
         self.log_current_gear(player);
 
