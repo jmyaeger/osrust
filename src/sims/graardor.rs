@@ -1,7 +1,8 @@
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::Mechanics;
-use crate::combat::simulation::{FightResult, FightVars, Simulation, SimulationError};
+use crate::combat::simulation::{FightResult, FightVars, Simulation};
 use crate::constants;
+use crate::error::SimulationError;
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;

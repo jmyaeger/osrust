@@ -1,11 +1,10 @@
 use crate::calc::monster_scaling::{build_vard_scaling_table, scale_monster_hp_only};
 use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::{Mechanics, handle_recoil};
-use crate::combat::simulation::{
-    FightResult, FightVars, Simulation, SimulationError, assign_limiter,
-};
+use crate::combat::simulation::{FightResult, FightVars, Simulation, assign_limiter};
 use crate::combat::thralls::Thrall;
 use crate::constants;
+use crate::error::SimulationError;
 use crate::types::monster::{AttackType, Monster, MonsterMaxHit};
 use crate::types::player::Player;
 use crate::utils::logging::FightLogger;

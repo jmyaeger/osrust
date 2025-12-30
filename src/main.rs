@@ -159,7 +159,7 @@ fn simulate_single_way() {
     // );
 
     let simulation = SingleWayFight::new(player, monster, config, None, false);
-    let results = simulate_n_fights(Box::new(simulation), 1_000_000);
+    let results = simulate_n_fights(Box::new(simulation), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {:.4} seconds", stats.ttk);
@@ -243,7 +243,7 @@ fn simulate_hunllef() {
     // };
 
     let fight = HunllefFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 1_000_000);
+    let results = simulate_n_fights(Box::new(fight), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);
@@ -293,7 +293,7 @@ fn simulate_vardorvis() {
     };
 
     let mut fight = VardorvisFight::new(player, fight_config);
-    let results = simulate_n_fights(Box::new(fight), 1_000_000);
+    let results = simulate_n_fights(Box::new(fight), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     let mut odds_of_gm = 0.0;
@@ -348,7 +348,7 @@ fn simulate_door_altar_graardor() {
 
     let fight = GraardorFight::new(player, fight_config);
 
-    let results = simulate_n_fights(Box::new(fight), 1000000);
+    let results = simulate_n_fights(Box::new(fight), 1000000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Average ttk: {:.2} seconds", stats.ttk);

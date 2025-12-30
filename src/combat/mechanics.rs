@@ -1,10 +1,11 @@
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
+use crate::combat::simulation::FightResult;
 use crate::combat::simulation::FightVars;
-use crate::combat::simulation::{FightResult, SimulationError};
 use crate::combat::thralls::Thrall;
 use crate::constants::{self, THRALL_ATTACK_SPEED};
+use crate::error::SimulationError;
 use crate::sims::single_way::{DeathCharge, SingleWayState, SpecConfig};
 use crate::types::monster::{AttackType, Monster};
 use crate::types::player::Player;

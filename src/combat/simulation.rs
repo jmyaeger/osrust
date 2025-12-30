@@ -1,5 +1,6 @@
 use crate::combat::limiters;
 use crate::constants::HUEYCOATL_TAIL_ID;
+use crate::error::SimulationError;
 use crate::types::equipment::CombatType;
 use crate::types::monster::Monster;
 use crate::types::player::Player;
@@ -20,28 +21,6 @@ pub struct FightResult {
 impl FightResult {
     pub fn new() -> Self {
         Self::default()
-    }
-}
-
-pub enum SimulationError {
-    PlayerDeathError(FightResult),
-    ConfigError(String),
-}
-
-impl std::fmt::Display for SimulationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            SimulationError::PlayerDeathError(_) => {
-                write!(f, "Player died before the monster did.")
-            }
-            SimulationError::ConfigError(msg) => write!(f, "{msg}"),
-        }
-    }
-}
-
-impl std::fmt::Debug for SimulationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Display::fmt(self, f)
     }
 }
 
@@ -197,10 +176,15 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
     None
 }
 
-pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> CumulativeResults {
+pub fn simulate_n_fights(
+    mut simulation: Box<dyn Simulation>,
+    n: u32,
+) -> Result<CumulativeResults, SimulationError> {
     // Check if the monster is immune before running simulations
     if simulation.is_immune() {
-        panic!("The monster is immune to the player in this setup");
+        return Err(SimulationError::MonsterImmune(
+            simulation.monster().info.name.clone(),
+        ));
     }
 
     // Set up result variables
@@ -227,13 +211,14 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Cumulat
                     results.leftover_burn.push(result.leftover_burn);
                     results.thrall_damage.push(result.thrall_damage);
                 }
-                SimulationError::ConfigError(e) => panic!("Configuration error: {e}"),
+                SimulationError::ConfigError(e) => return Err(SimulationError::ConfigError(e)),
+                SimulationError::MonsterImmune(_) => unreachable!(),
             },
         }
         simulation.reset();
     }
 
-    results
+    Ok(results)
 
     // Return a struct with average ttk, average accuracy, and hit distribution
     // SimulationStats::new(&results)
@@ -277,7 +262,7 @@ mod tests {
         calc_active_player_rolls(&mut player, &monster);
         let simulation =
             SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false);
-        let results = simulate_n_fights(Box::new(simulation), 100000);
+        let results = simulate_n_fights(Box::new(simulation), 100000).expect("Simulation failed.");
         let stats = SimulationStats::new(&results);
 
         assert!(num::abs(stats.ttk - 10.2) < 0.1);
