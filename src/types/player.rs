@@ -1313,6 +1313,8 @@ impl Player {
 ///     .prayer(Prayer::Piety)
 ///     .active_style(CombatStyle::Lunge)
 ///     .build()?;
+///
+/// Ok(())
 /// ```
 #[derive(Debug, Clone, Default)]
 pub struct PlayerBuilder {
