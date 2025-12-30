@@ -1,4 +1,4 @@
-use crate::calc::rolls::{calc_player_magic_rolls, calc_player_melee_rolls};
+use crate::calc::rolls::calc_active_player_rolls;
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::attacks::standard::{
     AttackFn, AttackInfo, Hit, accuracy_roll, base_attack, damage_roll, defence_roll,
@@ -202,7 +202,7 @@ pub fn eldritch_staff_spec(
 
     // Set spell to Invocate and recalculate max hit
     player.set_spell(Spell::Special(SpecialSpell::Invocate));
-    calc_player_magic_rolls(player, monster);
+    calc_active_player_rolls(player, monster);
 
     // Perform an accurate hit
     let info = AttackInfo::new(player, monster);
@@ -219,7 +219,7 @@ pub fn eldritch_staff_spec(
         player.attrs.spell = None;
     }
 
-    calc_player_magic_rolls(player, monster);
+    calc_active_player_rolls(player, monster);
 
     hit
 }
@@ -981,7 +981,7 @@ pub fn volatile_staff_spec(
 
     // Set spell to Immolate and recalculate max hit
     player.set_spell(Spell::Special(SpecialSpell::Immolate));
-    calc_player_magic_rolls(player, monster);
+    calc_active_player_rolls(player, monster);
 
     let mut info = AttackInfo::new(player, monster);
 
@@ -1001,7 +1001,7 @@ pub fn volatile_staff_spec(
         player.attrs.spell = None;
     }
 
-    calc_player_magic_rolls(player, monster);
+    calc_active_player_rolls(player, monster);
 
     hit
 }
@@ -1431,7 +1431,7 @@ pub fn soulreaper_axe_spec(
 
     // Reset the number of stacks and recalculate rolls
     player.boosts.soulreaper_stacks = 0;
-    calc_player_melee_rolls(player, monster);
+    calc_active_player_rolls(player, monster);
 
     let mut info = AttackInfo::new(player, monster);
 

@@ -151,7 +151,7 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
     calc_player_def_rolls(player);
 }
 
-pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
+fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let (eff_att, eff_str) = calc_eff_melee_lvls(player);
 
     // Get slayer and salve/avarice boosts
@@ -200,7 +200,7 @@ pub fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     );
 }
 
-pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
+fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     // TODO: Implement silver bolts against vampyres
 
     // Returns melee effective strength for eclipse atlatl
@@ -259,7 +259,7 @@ pub fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     }
 }
 
-pub fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
+fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     // Base max hit of a spell or charged staff/salamander (based on magic level)
     let base_max_hit = get_base_magic_hit(player);
 

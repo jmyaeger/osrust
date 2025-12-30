@@ -269,7 +269,7 @@ impl Simulation for GraardorFight {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::calc::rolls::calc_player_ranged_rolls;
+    use crate::calc::rolls::calc_active_player_rolls;
     use crate::types::equipment::CombatStyle;
     use crate::types::player::Player;
     use crate::types::potions::Potion;
@@ -294,7 +294,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
 
-        calc_player_ranged_rolls(
+        calc_active_player_rolls(
             &mut player,
             &Monster::new("General Graardor", None).unwrap(),
         );

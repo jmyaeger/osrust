@@ -612,7 +612,7 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::calc::rolls::calc_player_melee_rolls;
+    use crate::calc::rolls::calc_active_player_rolls;
     use crate::types::equipment::{Armor, CombatStyle, Gear, Weapon};
     use crate::types::monster::Monster;
     use crate::types::player::Player;
@@ -646,7 +646,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();
-        calc_player_melee_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
 
         let config = SingleWayConfig::default();
         let mut fight = SingleWayFight::new(player, monster, config, None, false);

@@ -1,6 +1,4 @@
-use osrs::calc::rolls::{
-    calc_player_magic_rolls, calc_player_melee_rolls, calc_player_ranged_rolls,
-};
+use osrs::calc::rolls::calc_active_player_rolls;
 use osrs::types::equipment::CombatType;
 use osrs::types::monster::Monster;
 use osrs::types::player::Player;
@@ -317,7 +315,7 @@ fn test_melee_player_rolls(
     #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
-    calc_player_melee_rolls(&mut player, &monster);
+    calc_active_player_rolls(&mut player, &monster);
     assert_eq!(player.att_rolls.get(combat_type), att_roll);
     assert_eq!(player.max_hits.get(combat_type), max_hit);
 }
@@ -431,7 +429,7 @@ fn test_ranged_player_rolls(
     #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
-    calc_player_ranged_rolls(&mut player, &monster);
+    calc_active_player_rolls(&mut player, &monster);
     let combat_type = player.combat_type();
     assert_eq!(player.att_rolls.get(combat_type), att_roll);
     assert_eq!(player.max_hits.get(combat_type), max_hit);
@@ -540,7 +538,7 @@ fn test_magic_player_rolls(
     #[case] att_roll: i32,
     #[case] max_hit: u32,
 ) {
-    calc_player_magic_rolls(&mut player, &monster);
+    calc_active_player_rolls(&mut player, &monster);
     assert_eq!(player.att_rolls.get(CombatType::Magic), att_roll);
     assert_eq!(player.max_hits.get(CombatType::Magic), max_hit);
 }

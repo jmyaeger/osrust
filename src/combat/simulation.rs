@@ -243,7 +243,7 @@ pub fn simulate_n_fights(mut simulation: Box<dyn Simulation>, n: u32) -> Cumulat
 mod tests {
     use super::*;
     use crate::calc::analysis::SimulationStats;
-    use crate::calc::rolls::calc_player_melee_rolls;
+    use crate::calc::rolls::calc_active_player_rolls;
     use crate::sims::single_way::{SingleWayConfig, SingleWayFight};
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
@@ -274,7 +274,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).unwrap();
-        calc_player_melee_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
         let simulation =
             SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false);
         let results = simulate_n_fights(Box::new(simulation), 100000);

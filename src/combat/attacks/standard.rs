@@ -1,4 +1,4 @@
-use crate::calc::rolls::{self, calc_player_melee_rolls};
+use crate::calc::rolls::{self, calc_active_player_rolls};
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
 use crate::constants::*;
@@ -847,7 +847,7 @@ pub fn soulreaper_axe_attack(
         player.boosts.soulreaper_stacks += 1;
 
         // Recalculate melee rolls with stack boost added
-        calc_player_melee_rolls(player, monster);
+        calc_active_player_rolls(player, monster);
     }
 
     hit

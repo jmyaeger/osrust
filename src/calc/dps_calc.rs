@@ -1194,7 +1194,7 @@ fn get_wardens_p2_min_max(player: &Player, monster: &Monster) -> (u32, u32) {
 mod tests {
     use super::*;
     use crate::calc::monster_scaling::scale_monster_hp_only;
-    use crate::calc::rolls::{calc_player_melee_rolls, calc_player_ranged_rolls};
+    use crate::calc::rolls::calc_active_player_rolls;
     use crate::types::equipment::CombatStyle;
     use crate::types::monster::Monster;
     use crate::types::player::Player;
@@ -1225,7 +1225,7 @@ mod tests {
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let monster = Monster::new("Ammonite Crab", None).expect("Error creating monster.");
-        calc_player_melee_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
 
         let dist = get_distribution(&player, &monster, false)
             .expect("Error calculating attack distribution.");
@@ -1256,7 +1256,7 @@ mod tests {
         player.set_active_style(CombatStyle::Pummel);
 
         let monster = Monster::new("Vet'ion", Some("Normal")).expect("Error creating monster.");
-        calc_player_melee_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
         let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
@@ -1288,7 +1288,7 @@ mod tests {
         let mut monster =
             Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
         scale_monster_hp_only(&mut monster, true);
-        calc_player_melee_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
         let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
@@ -1321,7 +1321,7 @@ mod tests {
         let mut monster = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         monster.info.toa_level = 500;
         monster.scale_toa();
-        calc_player_ranged_rolls(&mut player, &monster);
+        calc_active_player_rolls(&mut player, &monster);
 
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
