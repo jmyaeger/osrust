@@ -118,4 +118,6 @@ pub enum GearError {
     JsonParseError(#[from] serde_json::Error),
     #[error("Error opening equipment JSON: {0}")]
     JsonReadError(#[from] std::io::Error),
+    #[error("{0} has the slot type None.")]
+    NoneSlot(String),
 }

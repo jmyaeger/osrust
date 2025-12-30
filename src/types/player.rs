@@ -3,7 +3,7 @@ use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::attacks::specs::{SpecialAttackFn, get_spec_attack_function};
 use crate::combat::attacks::standard::{AttackFn, get_attack_functions, standard_attack};
 use crate::constants::*;
-use crate::error::PlayerError;
+use crate::error::{GearError, PlayerError};
 use crate::types::equipment::{
     Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear, GearSlot,
     Weapon,
@@ -453,11 +453,7 @@ impl Player {
         self.gear.is_wearing_all(gear_names)
     }
 
-    pub fn equip(
-        &mut self,
-        item_name: &str,
-        version: Option<&str>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn equip(&mut self, item_name: &str, version: Option<&str>) -> Result<(), GearError> {
         if let Ok(armor) = Armor::new(item_name, version) {
             self.equip_item(Box::new(armor))?;
         } else if let Ok(weapon) = Weapon::new(item_name, version) {
@@ -491,10 +487,7 @@ impl Player {
         self.combat_type = self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
     }
 
-    pub fn equip_item(
-        &mut self,
-        item: Box<dyn Equipment>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn equip_item(&mut self, item: Box<dyn Equipment>) -> Result<(), GearError> {
         let gear = Rc::make_mut(&mut self.gear);
         let slot = item.slot();
         match slot {
@@ -516,7 +509,10 @@ impl Player {
 
                     self.set_quiver_bonuses();
                 } else {
-                    return Err("Expected weapon for weapon slot".into());
+                    return Err(GearError::NotAWeapon {
+                        item_name: item.name().to_string(),
+                        slot: item.slot().to_string(),
+                    });
                 }
             }
             GearSlot::Ammo => {
@@ -553,7 +549,7 @@ impl Player {
             GearSlot::Neck => gear.neck = item.as_any().downcast_ref::<Armor>().cloned(),
             GearSlot::Ring => gear.ring = item.as_any().downcast_ref::<Armor>().cloned(),
             GearSlot::None => {
-                return Err(format!("{} has the slot type 'none'", item.name()).into());
+                return Err(GearError::NoneSlot(item.name().to_string()));
             }
         }
         self.update_bonuses();
