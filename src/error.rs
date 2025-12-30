@@ -4,7 +4,7 @@ use thiserror::Error;
 
 use crate::{
     combat::simulation::FightResult,
-    types::{player::SwitchType, spells::Spell},
+    types::{equipment::CombatStyle, player::SwitchType, spells::Spell},
 };
 
 #[derive(Error, Debug)]
@@ -74,6 +74,11 @@ pub enum PlayerError {
     StatParseError(#[from] std::num::ParseIntError),
     #[error("Error fetching player data: {0}")]
     StatLookupError(#[from] reqwest::Error),
+    #[error("Equipped weapon {weapon_name} does not have the {style} combat style.")]
+    CombatStyleMismatch {
+        weapon_name: String,
+        style: CombatStyle,
+    },
 }
 
 #[derive(Error, Debug)]
