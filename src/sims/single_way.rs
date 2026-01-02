@@ -308,9 +308,9 @@ impl Default for SingleWayState {
         Self {
             kill_counter: 0,
             death_charge_procs: 0,
-            death_charge_cd: Timer::new(constants::DEATH_CHARGE_CD),
-            surge_potion_cd: Timer::new(constants::SURGE_POTION_CD),
-            spec_regen_timer: Timer::new(constants::FULL_SPEC_REGEN_TIME),
+            death_charge_cd: Timer::new(Some(constants::DEATH_CHARGE_CD)),
+            surge_potion_cd: Timer::new(Some(constants::SURGE_POTION_CD)),
+            spec_regen_timer: Timer::new(None),
         }
     }
 }
@@ -474,6 +474,12 @@ impl SingleWayMechanics {
                         hit.success,
                         &strategy.switch_type,
                     );
+                }
+
+                fight.player.state.first_attack = false;
+                fight.monster.take_damage(hit.damage);
+
+                if fight.logger.enabled {
                     fight.logger.log_monster_damage(
                         fight_vars.tick_counter,
                         hit.damage,
@@ -483,9 +489,6 @@ impl SingleWayMechanics {
                     fight.logger.log_current_monster_stats(&fight.monster);
                     fight.logger.log_current_monster_rolls(&fight.monster);
                 }
-
-                fight.player.state.first_attack = false;
-                fight.monster.take_damage(hit.damage);
 
                 strategy.state.attempt_count += 1;
                 if hit.success {

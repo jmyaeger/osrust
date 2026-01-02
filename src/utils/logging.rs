@@ -304,8 +304,8 @@ impl FightLogger {
         debug!("[Tick {tick}] Player has died, ending the fight");
     }
 
-    pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str) {
-        debug!("[Tick {tick}] {name} took {damage} effect damage");
+    pub fn log_monster_effect_damage(&mut self, tick: i32, damage: u32, name: &str, hp: u32) {
+        debug!("[Tick {tick}] {name} took {damage} effect damage ({hp} hp remaining)");
     }
 
     pub fn log_custom(&mut self, tick: i32, message: &str) {

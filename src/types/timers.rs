@@ -1,12 +1,12 @@
 #[derive(Debug, Clone, PartialEq)]
 pub struct Timer {
-    duration: u32,
+    duration: Option<u32>,
     counter: u32,
     is_active: bool,
 }
 
 impl Timer {
-    pub fn new(duration: u32) -> Self {
+    pub fn new(duration: Option<u32>) -> Self {
         Self {
             duration,
             counter: 0,
@@ -22,7 +22,9 @@ impl Timer {
     pub fn increment(&mut self) {
         if self.is_active {
             self.counter = self.counter.saturating_add(1);
-            if self.counter >= self.duration {
+            if let Some(duration) = self.duration
+                && self.counter >= duration
+            {
                 self.is_active = false;
                 self.counter = 0;
             }

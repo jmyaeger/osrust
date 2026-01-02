@@ -44,10 +44,17 @@ fn main() {
 
 #[allow(unused)]
 fn simulate_single_way() {
-    let mut player = Player::default();
-    let _ = player.equip("Zaryte crossbow", None);
-    let _ = player.equip("Ruby dragon bolts (e)", None);
-    player.set_active_style(CombatStyle::Rapid);
+    let mut player = loadouts::max_melee_player();
+    let _ = player.equip("Zamorakian hasta", None);
+    let _ = player.equip("Slayer helmet (i)", None);
+    let _ = player.equip("Bandos chestplate", None);
+    let _ = player.equip("Bandos tassets", None);
+    let _ = player.equip("Avernic treads (max)", None);
+    let _ = player.equip("Berserker ring (i)", None);
+    let _ = player.equip("Barrows gloves", None);
+    let _ = player.equip("Dragon defender", None);
+    let _ = player.equip("Amulet of torture", None);
+    player.set_active_style(CombatStyle::Pound);
     // let _ = player.equip("Amulet of torture", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Oathplate helm", None);
@@ -64,8 +71,7 @@ fn simulate_single_way() {
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Chop);
 
-    let mut monster =
-        Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
+    let mut monster = Monster::new("Araxxor", None).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -74,94 +80,84 @@ fn simulate_single_way() {
     // monster.scale_toa();
 
     calc_active_player_rolls(&mut player, &monster);
-    // println!("Max hit: {}", player.max_hits.get(player.combat_type()));
-    // println!(
-    //     "Max att roll: {}",
-    //     player.att_rolls.get(player.combat_type())
-    // );
 
     let config = SingleWayConfig {
-        thralls: None,
+        thralls: Some(Thrall::GreaterMagic),
         remove_final_attack_delay: false,
     };
 
-    // let mut main_hand = GearSwitch::from(&player);
-    // player.switches.push(main_hand);
+    let mut main_hand = GearSwitch::from(&player);
+    player.switches.push(main_hand);
 
-    // let _ = player.equip("Voidwaker", None);
-    // player.set_active_style(CombatStyle::Slash);
-    // let vw_switch = GearSwitch::new(
-    //     SwitchType::Spec("Voidwaker spec".to_string()),
-    //     &player,
-    //     &monster,
-    // );
-    // let vw_spec_strategy = SpecStrategy::new(&vw_switch, None);
-    // player.switches.push(vw_switch);
+    let _ = player.equip("Voidwaker", None);
+    player.set_active_style(CombatStyle::Slash);
+    let vw_switch = GearSwitch::new(SwitchType::Spec("Voidwaker spec".into()), &player, &monster);
+    let vw_spec_strategy = SpecStrategy::builder(&vw_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(vw_switch);
 
-    // let _ = player.equip("Dragon warhammer", None);
-    // player.set_active_style(CombatStyle::Pound);
-    // let dwh_switch = GearSwitch::new(SwitchType::Spec("DWH spec".to_string()), &player, &monster);
-    // let dwh_spec_strategy = SpecStrategy::builder(&dwh_switch)
-    //     .with_max_attempts(1)
-    //     .build();
-    // player.switches.push(dwh_switch);
+    let _ = player.equip("Dragon warhammer", None);
+    player.set_active_style(CombatStyle::Pound);
+    let dwh_switch = GearSwitch::new(SwitchType::Spec("DWH spec".into()), &player, &monster);
+    let dwh_spec_strategy = SpecStrategy::builder(&dwh_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(dwh_switch);
 
-    // let _ = player.equip("Dragon claws", None);
-    // player.set_active_style(CombatStyle::Slash);
-    // let dclaws_switch = GearSwitch::new(
-    //     SwitchType::Spec("Dragon claws spec".into()),
-    //     &player,
-    //     &monster,
-    // );
-    // let dclaws_spec_strategy = SpecStrategy::builder(&dclaws_switch)
-    //     .with_max_attempts(1)
-    //     .build();
-    // player.switches.push(dclaws_switch);
+    let _ = player.equip("Dragon claws", None);
+    player.set_active_style(CombatStyle::Slash);
+    let dclaws_switch = GearSwitch::new(
+        SwitchType::Spec("Dragon claws spec".into()),
+        &player,
+        &monster,
+    );
+    let dclaws_spec_strategy = SpecStrategy::builder(&dclaws_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(dclaws_switch);
 
-    // let _ = player.equip("Burning claws", None);
-    // player.set_active_style(CombatStyle::Slash);
-    // let bclaws_switch = GearSwitch::new(
-    //     SwitchType::Spec("Burning claws spec".into()),
-    //     &player,
-    //     &monster,
-    // );
-    // let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
-    //     .with_max_attempts(1)
-    //     .build();
-    // player.switches.push(bclaws_switch);
+    let _ = player.equip("Burning claws", None);
+    player.set_active_style(CombatStyle::Slash);
+    let bclaws_switch = GearSwitch::new(
+        SwitchType::Spec("Burning claws spec".into()),
+        &player,
+        &monster,
+    );
+    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch).build();
+    player.switches.push(bclaws_switch);
 
-    // let _ = player.equip("Bandos godsword", None);
-    // player.set_active_style(CombatStyle::Slash);
-    // let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".into()), &player, &monster);
-    // let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
-    //     .with_target_def_reduction(20)
-    //     .with_max_attempts(2)
-    //     .build();
-    // player.switches.push(bgs_switch);
+    let _ = player.equip("Bandos godsword", None);
+    player.set_active_style(CombatStyle::Slash);
+    let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".into()), &player, &monster);
+    let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(bgs_switch);
 
-    // let _ = player.equip("Elder maul", None);
-    // player.set_active_style(CombatStyle::Pound);
-    // let maul_switch = GearSwitch::new(
-    //     SwitchType::Spec("Elder maul spec".into()),
-    //     &player,
-    //     &monster,
-    // );
-    // let maul_spec_strategy = SpecStrategy::builder(&maul_switch)
-    //     .with_max_attempts(1)
-    //     .build();
-    // player.switches.push(maul_switch);
+    let _ = player.equip("Elder maul", None);
+    player.set_active_style(CombatStyle::Pound);
+    let maul_switch = GearSwitch::new(
+        SwitchType::Spec("Elder maul spec".into()),
+        &player,
+        &monster,
+    );
+    let maul_spec_strategy = SpecStrategy::builder(&maul_switch)
+        .with_max_attempts(1)
+        .build();
+    player.switches.push(maul_switch);
 
-    // player.switch(&SwitchType::Melee);
-    // let spec_config = SpecConfig::new(
-    //     vec![maul_spec_strategy],
-    //     SpecRestorePolicy::RestoreEveryKill,
-    //     None,
-    //     false,
-    // );
+    player.switch(&SwitchType::Melee);
+    let spec_config = SpecConfig::new(
+        vec![bclaws_spec_strategy],
+        SpecRestorePolicy::NeverRestore,
+        None,
+        false,
+    );
 
-    let simulation = SingleWayFight::new(player, monster, config, None, false)
+    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), true)
         .expect("Error setting up single way fight.");
-    let results = simulate_n_fights(Box::new(simulation), 1_000_000).expect("Simulation failed.");
+    let results = simulate_n_fights(Box::new(simulation), 10).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {:.4} seconds", stats.ttk);

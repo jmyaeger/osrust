@@ -33,12 +33,6 @@ pub trait Mechanics {
                 hit.success,
                 player.combat_type(),
             );
-            logger.log_monster_damage(
-                fight_vars.tick_counter,
-                hit.damage,
-                monster.stats.hitpoints.current,
-                monster.info.name.as_str(),
-            );
         }
 
         player.state.first_attack = false;
@@ -48,6 +42,15 @@ pub trait Mechanics {
             monster.take_damage(hit.damage);
             handle_blood_fury(player, &hit, fight_vars, logger, rng);
             scale_monster_hp_only(monster, true);
+        }
+
+        if logger.enabled {
+            logger.log_monster_damage(
+                fight_vars.tick_counter,
+                hit.damage,
+                monster.stats.hitpoints.current,
+                monster.info.name.as_str(),
+            );
         }
 
         fight_vars.hit_attempts += 1;
@@ -119,17 +122,20 @@ pub trait Mechanics {
 
         if logger.enabled {
             logger.log_thrall_attack(fight_vars.tick_counter, thrall_hit);
+        }
+
+        if thrall_hit > 0 {
+            monster.take_damage(thrall_hit);
+            scale_monster_hp_only(monster, true);
+        }
+
+        if logger.enabled {
             logger.log_monster_damage(
                 fight_vars.tick_counter,
                 thrall_hit,
                 monster.stats.hitpoints.current,
                 monster.info.name.as_str(),
             );
-        }
-
-        if thrall_hit > 0 {
-            monster.take_damage(thrall_hit);
-            scale_monster_hp_only(monster, true);
         }
 
         fight_vars.thrall_attack_tick += THRALL_ATTACK_SPEED;
@@ -175,6 +181,7 @@ pub trait Mechanics {
                     fight_vars.tick_counter,
                     effect_damage,
                     monster.info.name.as_str(),
+                    monster.stats.hitpoints.current,
                 );
             }
 
@@ -231,7 +238,11 @@ pub trait Mechanics {
                 if logger.enabled {
                     logger.log_custom(
                         fight_vars.tick_counter,
-                        "Player has regenerated 10 special attack energy",
+                        format!(
+                            "Player has regenerated 10 special attack energy ({} remaining)",
+                            player.stats.spec.value()
+                        )
+                        .as_str(),
                     );
                 }
             }
