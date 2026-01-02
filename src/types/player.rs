@@ -407,9 +407,7 @@ impl Player {
 
     pub async fn lookup_stats(&mut self, rsn: &str) -> Result<(), PlayerError> {
         // Fetch stats from OSRS hiscores and set the corresponding fields
-        let stats = fetch_player_data(rsn)
-            .await
-            .expect("Failed to fetch player data");
+        let stats = fetch_player_data(rsn).await?;
         self.stats = parse_player_data(stats)?;
         self.attrs.name = Some(rsn.to_string());
 
