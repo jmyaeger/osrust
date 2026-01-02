@@ -18,6 +18,7 @@ use std::rc::Rc;
 pub type SpecialAttackFn =
     fn(&mut Player, &mut Monster, &mut SmallRng, &Option<Box<dyn Limiter>>) -> Hit;
 
+#[allow(unpredictable_function_pointer_comparisons)]
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct SpecialAttack {
     pub cost: u32,

@@ -123,6 +123,7 @@ impl std::fmt::Display for SwitchType {
     }
 }
 
+#[allow(unpredictable_function_pointer_comparisons)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct GearSwitch {
     pub switch_type: SwitchType,
@@ -349,6 +350,7 @@ impl Default for PlayerState {
     }
 }
 
+#[allow(unpredictable_function_pointer_comparisons)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub stats: PlayerStats,

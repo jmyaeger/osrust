@@ -124,7 +124,9 @@ fn simulate_single_way() {
         &player,
         &monster,
     );
-    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch).build();
+    let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
+        .with_monster_hp_above(250)
+        .build();
     player.switches.push(bclaws_switch);
 
     let _ = player.equip("Bandos godsword", None);
@@ -149,9 +151,9 @@ fn simulate_single_way() {
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![bclaws_spec_strategy],
-        SpecRestorePolicy::NeverRestore,
-        None,
+        vec![dwh_spec_strategy],
+        SpecRestorePolicy::RestoreAfter(5),
+        Some(DeathCharge::Single),
         false,
     );
 
