@@ -156,10 +156,7 @@ pub trait Mechanics {
                     let mut burn_damage = effect.apply();
                     let monster_version = monster.info.version.as_ref().map_or("", |s| s.as_str());
                     let monster_name = monster.info.name.as_str();
-                    if monster_version == "Left claw"
-                        || monster_version == "Right claw"
-                        || monster_name == "Ice demon"
-                    {
+                    if monster_version.contains("Right claw") {
                         burn_damage /= 3;
                     } else if monster_name == "Corporeal Beast" {
                         burn_damage /= 2;

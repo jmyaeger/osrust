@@ -45,16 +45,9 @@ fn main() {
 #[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
-    let _ = player.equip("Zamorakian hasta", None);
-    let _ = player.equip("Slayer helmet (i)", None);
-    let _ = player.equip("Bandos chestplate", None);
-    let _ = player.equip("Bandos tassets", None);
     let _ = player.equip("Avernic treads (max)", None);
-    let _ = player.equip("Berserker ring (i)", None);
-    let _ = player.equip("Barrows gloves", None);
-    let _ = player.equip("Dragon defender", None);
-    let _ = player.equip("Amulet of torture", None);
-    player.set_active_style(CombatStyle::Pound);
+    let _ = player.equip("Dragon hunter lance", None);
+    player.set_active_style(CombatStyle::Lunge);
     // let _ = player.equip("Amulet of torture", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Oathplate helm", None);
@@ -65,13 +58,14 @@ fn simulate_single_way() {
     // let _ = player.equip("Bandos tassets", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Lightbearer", None);
-    // player.add_potion(Potion::OverloadPlus);
+    player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Chop);
 
-    let mut monster = Monster::new("Araxxor", None).expect("Error creating monster.");
+    let mut monster =
+        Monster::new("Great Olm", Some("Left claw (Normal)")).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -82,8 +76,8 @@ fn simulate_single_way() {
     calc_active_player_rolls(&mut player, &monster);
 
     let config = SingleWayConfig {
-        thralls: Some(Thrall::GreaterMagic),
-        remove_final_attack_delay: false,
+        thralls: Some(Thrall::GreaterMelee),
+        remove_final_attack_delay: true,
     };
 
     let mut main_hand = GearSwitch::from(&player);
@@ -125,7 +119,7 @@ fn simulate_single_way() {
         &monster,
     );
     let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
-        .with_monster_hp_above(250)
+        .with_max_attempts(1)
         .build();
     player.switches.push(bclaws_switch);
 
@@ -151,15 +145,15 @@ fn simulate_single_way() {
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![dwh_spec_strategy],
-        SpecRestorePolicy::RestoreAfter(5),
-        Some(DeathCharge::Single),
+        vec![dclaws_spec_strategy],
+        SpecRestorePolicy::RestoreEveryKill,
+        None,
         false,
     );
 
-    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), true)
+    let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false)
         .expect("Error setting up single way fight.");
-    let results = simulate_n_fights(Box::new(simulation), 10).expect("Simulation failed.");
+    let results = simulate_n_fights(Box::new(simulation), 1_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {:.4} seconds", stats.ttk);
