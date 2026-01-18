@@ -1,19 +1,12 @@
-use lazy_static::lazy_static;
-
 use crate::constants::*;
 use crate::error::GearError;
 use serde::{Deserialize, Deserializer};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
-use std::fs;
-use std::path::PathBuf;
 use strum_macros::{Display, EnumIter};
 
-lazy_static! {
-    static ref EQUIPMENT_JSON: PathBuf =
-        fs::canonicalize("src/databases/equipment.json").expect("Failed to get database path");
-}
+const EQUIPMENT_JSON_STR: &str = include_str!("../databases/equipment.json");
 
 // Intermediate struct for JSON deserialization
 #[derive(Debug, Deserialize, PartialEq, Clone)]
@@ -522,11 +515,7 @@ impl EquipmentBonuses {
 // Equipment trait to provide common method for Armor and Weapon structs
 pub trait Equipment: Any {
     fn set_info(&mut self, item_name: &str, version: Option<&str>) -> Result<(), GearError> {
-        // Retrieve item data from the SQLite database in a JSON format
-        let json_content = fs::read_to_string(EQUIPMENT_JSON.as_path())?;
-
-        // Pass it to the set_fields_from_json method to set the item stats
-        self.set_fields_from_json(&json_content, item_name, version)
+        self.set_fields_from_json(EQUIPMENT_JSON_STR, item_name, version)
     }
 
     fn set_fields_from_json(

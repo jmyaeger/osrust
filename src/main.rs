@@ -28,9 +28,9 @@ fn main() {
     let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
-    // simulate_hunllef();
+    simulate_hunllef();
 
     // simulate_vardorvis();
 
@@ -46,8 +46,10 @@ fn main() {
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
     let _ = player.equip("Avernic treads (max)", None);
-    let _ = player.equip("Dragon hunter lance", None);
-    player.set_active_style(CombatStyle::Lunge);
+    let _ = player.equip("Emberlight", None);
+    let _ = player.equip("Slayer helmet (i)", None);
+
+    player.set_active_style(CombatStyle::Slash);
     // let _ = player.equip("Amulet of torture", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Oathplate helm", None);
@@ -58,14 +60,14 @@ fn simulate_single_way() {
     // let _ = player.equip("Bandos tassets", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Lightbearer", None);
-    player.add_potion(Potion::OverloadPlus);
+    // player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Chop);
 
     let mut monster =
-        Monster::new("Great Olm", Some("Left claw (Normal)")).expect("Error creating monster.");
+        Monster::new("Nechryael", Some("Slayer task")).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -76,8 +78,8 @@ fn simulate_single_way() {
     calc_active_player_rolls(&mut player, &monster);
 
     let config = SingleWayConfig {
-        thralls: Some(Thrall::GreaterMelee),
-        remove_final_attack_delay: true,
+        thralls: Some(Thrall::GreaterMagic),
+        remove_final_attack_delay: false,
     };
 
     let mut main_hand = GearSwitch::from(&player);
@@ -107,7 +109,8 @@ fn simulate_single_way() {
         &monster,
     );
     let dclaws_spec_strategy = SpecStrategy::builder(&dclaws_switch)
-        .with_max_attempts(1)
+        // .with_max_attempts(1)
+        .with_monster_hp_above(50)
         .build();
     player.switches.push(dclaws_switch);
 
@@ -119,7 +122,8 @@ fn simulate_single_way() {
         &monster,
     );
     let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
-        .with_max_attempts(1)
+        // .with_max_attempts(1)
+        .with_monster_hp_above(70)
         .build();
     player.switches.push(bclaws_switch);
 
@@ -146,30 +150,30 @@ fn simulate_single_way() {
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
         vec![dclaws_spec_strategy],
-        SpecRestorePolicy::RestoreEveryKill,
-        None,
+        SpecRestorePolicy::NeverRestore,
+        Some(DeathCharge::Double),
         false,
     );
 
     let simulation = SingleWayFight::new(player, monster, config, Some(spec_config), false)
         .expect("Error setting up single way fight.");
-    let results = simulate_n_fights(Box::new(simulation), 1_000_000).expect("Simulation failed.");
+    let results = simulate_n_fights(Box::new(simulation), 10_000_000).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     println!("Ttk: {:.4} seconds", stats.ttk);
     println!("Acc: {:.4}%", stats.accuracy);
-    // println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
+    println!("Avg. leftover burn: {}", stats.avg_leftover_burn);
 }
 
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(92, None);
-    player.stats.magic = Stat::new(92, None);
+    player.stats.ranged = Stat::new(81, None);
+    player.stats.magic = Stat::new(78, None);
     player.stats.defence = Stat::new(75, None);
     player.stats.hitpoints = Stat::new(85, None);
-    player.stats.attack = Stat::new(78, None);
-    player.stats.strength = Stat::new(86, None);
+    player.stats.attack = Stat::new(76, None);
+    player.stats.strength = Stat::new(85, None);
     player.reset_current_stats(false);
     let _ = player.equip("Corrupted staff (perfected)", None);
     let _ = player.equip("Crystal helm (basic)", None);
@@ -178,7 +182,7 @@ fn simulate_hunllef() {
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
     player.add_prayer(Prayer::MysticMight);
-    // player.add_prayer(Prayer::SteelSkin);
+    player.add_prayer(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).expect("Error creating monster.");
     calc_active_player_rolls(&mut player, &hunllef);
@@ -216,8 +220,8 @@ fn simulate_hunllef() {
         eat_strategy: HunllefEatStrategy::EatAtHp(64),
         redemption_strategy: None,
         attack_strategy: AttackStrategy::TwoT3Weapons {
-            style1: SwitchType::Magic,
-            style2: SwitchType::Ranged,
+            style1: SwitchType::Ranged,
+            style2: SwitchType::Melee,
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),

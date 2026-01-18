@@ -1,5 +1,3 @@
-use lazy_static::lazy_static;
-
 use crate::calc::rolls;
 use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
@@ -12,14 +10,9 @@ use crate::types::stats::MonsterStats;
 use rand::Rng;
 use serde::{Deserialize, de::Error};
 use std::cmp::{max, min};
-use std::fs;
-use std::path::PathBuf;
 use strum_macros::Display;
 
-lazy_static! {
-    static ref MONSTER_JSON: PathBuf =
-        fs::canonicalize("src/databases/monsters.json").expect("Failed to get database path");
-}
+const MONSTER_JSON_STR: &str = include_str!("../databases/monsters.json");
 
 // Enum for combat stats
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
@@ -512,8 +505,7 @@ impl Monster {
         Ok(monster)
     }
     pub fn new(name: &str, version: Option<&str>) -> Result<Monster, MonsterError> {
-        let json_content = fs::read_to_string(MONSTER_JSON.as_path())?;
-        Self::from_json_str(name, version, json_content.as_str())
+        Self::from_json_str(name, version, MONSTER_JSON_STR)
     }
 
     pub fn attack(
