@@ -168,21 +168,21 @@ fn simulate_single_way() {
 #[allow(unused)]
 fn simulate_hunllef() {
     let mut player = Player::new();
-    player.stats.ranged = Stat::new(81, None);
-    player.stats.magic = Stat::new(78, None);
-    player.stats.defence = Stat::new(75, None);
-    player.stats.hitpoints = Stat::new(85, None);
-    player.stats.attack = Stat::new(76, None);
-    player.stats.strength = Stat::new(85, None);
-    player.reset_current_stats(false);
+    // player.stats.ranged = Stat::new(81, None);
+    // player.stats.magic = Stat::new(78, None);
+    // player.stats.defence = Stat::new(75, None);
+    // player.stats.hitpoints = Stat::new(85, None);
+    // player.stats.attack = Stat::new(76, None);
+    // player.stats.strength = Stat::new(85, None);
+    // player.reset_current_stats(false);
     let _ = player.equip("Corrupted staff (perfected)", None);
-    let _ = player.equip("Crystal helm (basic)", None);
-    let _ = player.equip("Crystal body (basic)", None);
-    let _ = player.equip("Crystal legs (basic)", None);
+    let _ = player.equip("Corrupted helm (basic)", None);
+    let _ = player.equip("Corrupted body (basic)", None);
+    let _ = player.equip("Corrupted legs (basic)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
-    player.add_prayer(Prayer::MysticMight);
-    player.add_prayer(Prayer::SteelSkin);
+    player.add_prayer(Prayer::Augury);
+    // player.add_prayer(Prayer::SteelSkin);
 
     let hunllef = Monster::new("Corrupted Hunllef", None).expect("Error creating monster.");
     calc_active_player_rolls(&mut player, &hunllef);
@@ -193,7 +193,7 @@ fn simulate_hunllef() {
     // let _ = player.equip("Corrupted bow (attuned)", None);
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
-    player.add_prayer(Prayer::EagleEye);
+    player.add_prayer(Prayer::Rigour);
 
     calc_active_player_rolls(&mut player, &hunllef);
 
@@ -217,11 +217,11 @@ fn simulate_hunllef() {
 
     let fight_config = HunllefConfig {
         food_count: 20,
-        eat_strategy: HunllefEatStrategy::EatAtHp(64),
+        eat_strategy: HunllefEatStrategy::EatAtHp(50),
         redemption_strategy: None,
         attack_strategy: AttackStrategy::TwoT3Weapons {
             style1: SwitchType::Ranged,
-            style2: SwitchType::Melee,
+            style2: SwitchType::Magic,
         },
         lost_ticks: 0,
         logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),

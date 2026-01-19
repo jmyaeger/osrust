@@ -23,7 +23,7 @@ const PADDLEFISH_HEAL: u32 = 20;
 const PADDLEFISH_DELAY: i32 = 3;
 const HUNLLEF_REGEN_TICKS: i32 = 100;
 const HUNLLEF_ATTACK_SPEED: i32 = 5;
-const ALLOWED_GEAR: [&str; 23] = [
+const ALLOWED_GEAR: [&str; 32] = [
     "Crystal helm (basic)",
     "Crystal helm (attuned)",
     "Crystal helm (perfected)",
@@ -33,6 +33,15 @@ const ALLOWED_GEAR: [&str; 23] = [
     "Crystal legs (basic)",
     "Crystal legs (attuned)",
     "Crystal legs (perfected)",
+    "Corrupted helm (basic)",
+    "Corrupted helm (attuned)",
+    "Corrupted helm (perfected)",
+    "Corrupted body (basic)",
+    "Corrupted body (attuned)",
+    "Corrupted body (perfected)",
+    "Corrupted legs (basic)",
+    "Corrupted legs (attuned)",
+    "Corrupted legs (perfected)",
     "Corrupted sceptre",
     "Corrupted axe",
     "Corrupted pickaxe",
