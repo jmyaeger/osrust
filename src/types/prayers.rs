@@ -1,8 +1,9 @@
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::Display;
 
 // Most combat-related prayers (excluding protection prayers)
-#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Display)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Display, Serialize, Deserialize)]
 pub enum Prayer {
     #[default]
     None,
@@ -51,7 +52,7 @@ pub enum Prayer {
 }
 
 // Contains the type of prayer, and the percentage boost to each style
-#[derive(Debug, Default, PartialEq, Clone, Copy, Eq)]
+#[derive(Debug, Default, PartialEq, Clone, Copy, Eq, Serialize, Deserialize)]
 pub struct PrayerBoost {
     pub prayer_type: Prayer,
     pub attack: u32,
@@ -315,7 +316,7 @@ impl PrayerBoost {
 }
 
 // Collection of active prayers and their cumulative boosts
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Debug, Default, PartialEq, Clone, Serialize, Deserialize)]
 pub struct PrayerBoosts {
     pub active_prayers: Option<Vec<PrayerBoost>>,
     pub attack: u32,

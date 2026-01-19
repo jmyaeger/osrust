@@ -96,8 +96,20 @@ pub enum SwitchType {
     Melee,
     Ranged,
     Magic,
-    Spec(#[serde(serialize_with = "serialize_rc_str", deserialize_with = "deserialize_rc_str")] Rc<str>),
-    Custom(#[serde(serialize_with = "serialize_rc_str", deserialize_with = "deserialize_rc_str")] Rc<str>),
+    Spec(
+        #[serde(
+            serialize_with = "serialize_rc_str",
+            deserialize_with = "deserialize_rc_str"
+        )]
+        Rc<str>,
+    ),
+    Custom(
+        #[serde(
+            serialize_with = "serialize_rc_str",
+            deserialize_with = "deserialize_rc_str"
+        )]
+        Rc<str>,
+    ),
 }
 
 fn serialize_rc_str<S>(rc: &Rc<str>, serializer: S) -> Result<S::Ok, S::Error>
@@ -495,7 +507,12 @@ impl Player {
             GearSlot::Neck => gear.neck = None,
             GearSlot::Ring => gear.ring = None,
             GearSlot::Shield => gear.shield = None,
-            GearSlot::Weapon => gear.weapon = Weapon::default(),
+            GearSlot::Weapon => {
+                gear.weapon = Weapon::default();
+                self.set_active_style(CombatStyle::Kick);
+                self.combat_type =
+                    self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
+            }
             GearSlot::None => {}
         }
         self.update_bonuses();
