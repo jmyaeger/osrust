@@ -199,8 +199,10 @@ fn simulate_hunllef() {
 
     let ranged_switch = GearSwitch::from(&player);
 
-    player.unequip_slot(&GearSlot::Weapon);
-    player.set_active_style(CombatStyle::Kick);
+    // player.unequip_slot(&GearSlot::Weapon);
+    // player.set_active_style(CombatStyle::Kick);
+    let _ = player.equip("Corrupted sceptre", None);
+    player.set_active_style(CombatStyle::Pummel);
     // let _ = player.equip("Corrupted halberd (perfected)", None);
     // player.set_active_style(CombatStyle::Swipe);
     player.update_bonuses();

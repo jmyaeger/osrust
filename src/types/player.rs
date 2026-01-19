@@ -510,8 +510,6 @@ impl Player {
             GearSlot::Weapon => {
                 gear.weapon = Weapon::default();
                 self.set_active_style(CombatStyle::Kick);
-                self.combat_type =
-                    self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
             }
             GearSlot::None => {}
         }
