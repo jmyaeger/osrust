@@ -2,7 +2,7 @@ use crate::combat::simulation::CumulativeResults;
 use crate::constants::SECONDS_PER_TICK;
 use core::f64;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SimulationStats {
     pub ttk: f64,
     pub ttk_dist: Vec<f64>,

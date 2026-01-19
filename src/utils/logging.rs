@@ -7,7 +7,7 @@ use log::{LevelFilter, debug};
 use simplelog::{Config, WriteLogger};
 use std::fs::File;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FightLogger {
     pub enabled: bool,
 }

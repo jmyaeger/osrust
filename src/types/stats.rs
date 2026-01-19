@@ -1,11 +1,11 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::constants::*;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
 // Stats of the player (both base stats and current stats)
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Default)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct PlayerStats {
     pub hitpoints: Stat,
     pub attack: Stat,
@@ -74,7 +74,7 @@ impl TryFrom<&HashMap<&str, u32>> for PlayerStats {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct SpecEnergy(u8);
 
 impl SpecEnergy {
@@ -129,7 +129,7 @@ impl Default for SpecEnergy {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize)]
 pub struct Stat {
     pub base: u32,
     pub current: u32,

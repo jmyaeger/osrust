@@ -58,7 +58,7 @@ const ALLOWED_GEAR: [&str; 32] = [
     "Unarmed",
 ];
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub struct HunllefConfig {
     pub food_count: u32, // Only normal paddlefish for now
     pub eat_strategy: HunllefEatStrategy,
@@ -86,14 +86,14 @@ impl Default for HunllefConfig {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum HunllefEatStrategy {
     EatAtHp(u32),          // Eat as soon as HP goes below threshold
     TickEatOnly,           // Allow health to go below max hit and then tick eat
     EatToFullDuringNadoes, // Don't eat until tornadoes unless necessary, then eat to full
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum AttackStrategy {
     TwoT3Weapons {
         style1: SwitchType,
@@ -106,7 +106,7 @@ pub enum AttackStrategy {
     },
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum HunllefRedemptionStrat {
     // Inner values are the maximum redemption procs
     BeforeEating(u32), // Redemption at the start before eating any food

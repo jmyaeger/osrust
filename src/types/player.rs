@@ -14,6 +14,7 @@ use crate::types::prayers::{Prayer, PrayerBoosts};
 use crate::types::spells;
 use crate::types::stats::{PlayerStats, SpecEnergy, Stat};
 use reqwest;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::cmp::max;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -90,13 +91,28 @@ pub struct SetEffects {
     pub bloodbark_pieces: usize,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SwitchType {
     Melee,
     Ranged,
     Magic,
-    Spec(Rc<str>),
-    Custom(Rc<str>),
+    Spec(#[serde(serialize_with = "serialize_rc_str", deserialize_with = "deserialize_rc_str")] Rc<str>),
+    Custom(#[serde(serialize_with = "serialize_rc_str", deserialize_with = "deserialize_rc_str")] Rc<str>),
+}
+
+fn serialize_rc_str<S>(rc: &Rc<str>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(rc)
+}
+
+fn deserialize_rc_str<'de, D>(deserializer: D) -> Result<Rc<str>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    Ok(Rc::from(s.as_str()))
 }
 
 impl SwitchType {

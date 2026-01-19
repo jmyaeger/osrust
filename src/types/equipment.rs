@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::error::GearError;
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
@@ -401,7 +401,7 @@ pub enum CombatStance {
 }
 
 // Name of the combat style as seen in the weapon interface
-#[derive(Debug, PartialEq, Eq, Hash, Default, Deserialize, Clone, Copy, Display)]
+#[derive(Debug, PartialEq, Eq, Hash, Default, Serialize, Deserialize, Clone, Copy, Display)]
 pub enum CombatStyle {
     Chop,
     Slash,
