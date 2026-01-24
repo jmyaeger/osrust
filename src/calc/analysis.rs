@@ -34,11 +34,12 @@ impl SimulationStats {
         let total_fights = total_successful_fights + results.player_deaths;
         let success_rate = 1.0 - (results.player_deaths as f64 / total_fights as f64);
 
-        let avg_food_eaten = results.food_eaten.iter().sum::<u32>() as f64 / total_fights as f64;
+        let avg_food_eaten =
+            results.food_eaten.iter().sum::<u32>() as f64 / total_successful_fights as f64;
         let avg_damage_taken =
-            results.damage_taken.iter().sum::<u32>() as f64 / total_fights as f64;
+            results.damage_taken.iter().sum::<u32>() as f64 / total_successful_fights as f64;
         let avg_leftover_burn =
-            results.leftover_burn.iter().sum::<u32>() as f64 / total_fights as f64;
+            results.leftover_burn.iter().sum::<u32>() as f64 / total_successful_fights as f64;
 
         Self {
             ttk,
