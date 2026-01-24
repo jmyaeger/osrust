@@ -179,6 +179,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
 pub fn simulate_n_fights(
     mut simulation: Box<dyn Simulation>,
     n: u32,
+    only_success_stats: bool,
 ) -> Result<CumulativeResults, SimulationError> {
     // Check if the monster is immune before running simulations
     if simulation.is_immune() {
@@ -202,14 +203,16 @@ pub fn simulate_n_fights(
             }
             Err(e) => match e {
                 SimulationError::PlayerDeathError(result) => {
+                    if !only_success_stats {
+                        results.hit_amounts.extend(&result.hit_amounts);
+                        results.hit_attempt_counts.push(result.hit_attempts);
+                        results.hit_counts.push(result.hit_count);
+                        results.food_eaten.push(result.food_eaten);
+                        results.damage_taken.push(result.damage_taken);
+                        results.leftover_burn.push(result.leftover_burn);
+                        results.thrall_damage.push(result.thrall_damage);
+                    }
                     results.player_deaths += 1;
-                    results.hit_amounts.extend(&result.hit_amounts);
-                    results.hit_attempt_counts.push(result.hit_attempts);
-                    results.hit_counts.push(result.hit_count);
-                    results.food_eaten.push(result.food_eaten);
-                    results.damage_taken.push(result.damage_taken);
-                    results.leftover_burn.push(result.leftover_burn);
-                    results.thrall_damage.push(result.thrall_damage);
                 }
                 _ => return Err(e),
             },
@@ -262,7 +265,8 @@ mod tests {
         let simulation =
             SingleWayFight::new(player, monster, SingleWayConfig::default(), None, false)
                 .expect("Error setting up single way fight.");
-        let results = simulate_n_fights(Box::new(simulation), 100000).expect("Simulation failed.");
+        let results =
+            simulate_n_fights(Box::new(simulation), 100000, true).expect("Simulation failed.");
         let stats = SimulationStats::new(&results);
 
         assert!(num::abs(stats.ttk - 10.2) < 0.1);

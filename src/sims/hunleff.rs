@@ -67,6 +67,7 @@ pub struct HunllefConfig {
     pub lost_ticks: i32,
     pub logger: FightLogger,
     pub armor_tier: u32,
+    pub only_success_stats: bool,
 }
 
 impl Default for HunllefConfig {
@@ -82,6 +83,7 @@ impl Default for HunllefConfig {
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),
             armor_tier: 0,
+            only_success_stats: true,
         }
     }
 }
@@ -889,6 +891,7 @@ mod tests {
             lost_ticks: 0,
             logger: FightLogger::new(false, "hunllef").expect("Error initializing logger."),
             armor_tier: 0,
+            only_success_stats: true,
         };
 
         let mut fight =
