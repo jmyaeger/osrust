@@ -118,6 +118,30 @@ pub enum PotionStat {
     Magic,
 }
 
+macro_rules! potion_boost {
+    (
+        $potion_var:ident;
+        $(
+            $($potion:ident)|+ => { $($field:ident: $value:expr),* $(,)? }
+        ),*
+        $(,)?
+    ) => {
+        match $potion_var {
+            $(
+                $(Potion::$potion)|+ => PotionBoost {
+                    potion_type: *$potion_var,
+                    $($field: $value,)*
+                    ..Default::default()
+                },
+            )*
+            _ => PotionBoost {
+                potion_type: *$potion_var,
+                ..Default::default()
+            }
+        }
+    };
+}
+
 // Contains the type of potion, the boost calc formula, and the calced boost
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct PotionBoost {
@@ -129,133 +153,20 @@ pub struct PotionBoost {
 
 impl PotionBoost {
     pub fn new(potion: &Potion) -> Self {
-        match potion {
-            Potion::Attack | Potion::Strength | Potion::Defence => PotionBoost {
-                potion_type: *potion,
-                factor: 10,
-                constant: 3,
-                boost: 0, // All boosts initialized to 0, calculated based on player stats
-            },
-            Potion::Ranging => PotionBoost {
-                potion_type: *potion,
-                factor: 10,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::Magic => PotionBoost {
-                potion_type: *potion,
-                factor: 0,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::SuperAttack
-            | Potion::SuperStrength
-            | Potion::SuperDefence
-            | Potion::SuperRanging
-            | Potion::SuperMagic
-            | Potion::SuperCombat => PotionBoost {
-                potion_type: *potion,
-                factor: 15,
-                constant: 5,
-                boost: 0,
-            },
-            Potion::OverloadMinus => PotionBoost {
-                potion_type: *potion,
-                factor: 10,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::Overload => PotionBoost {
-                potion_type: *potion,
-                factor: 13,
-                constant: 5,
-                boost: 0,
-            },
-            Potion::OverloadPlus => PotionBoost {
-                potion_type: *potion,
-                factor: 16,
-                constant: 6,
-                boost: 0,
-            },
-            Potion::ZamorakBrew => PotionBoost {
-                potion_type: *potion,
-                factor: 0,
-                constant: 0,
-                boost: 0, // Custom implementation
-            },
-            Potion::DragonBattleaxe => PotionBoost {
-                potion_type: *potion,
-                factor: 0,
-                constant: 0,
-                boost: 0, // Custom implementation
-            },
-            Potion::SaradominBrew => PotionBoost {
-                potion_type: *potion,
-                factor: 20,
-                constant: 2,
-                boost: 0,
-            },
-            Potion::AncientBrew => PotionBoost {
-                potion_type: *potion,
-                factor: 5,
-                constant: 2,
-                boost: 0,
-            },
-            Potion::ForgottenBrew => PotionBoost {
-                potion_type: *potion,
-                factor: 8,
-                constant: 3,
-                boost: 0,
-            },
-            Potion::ImbuedHeart => PotionBoost {
-                potion_type: *potion,
-                factor: 10,
-                constant: 1,
-                boost: 0,
-            },
-            Potion::SaturatedHeart => PotionBoost {
-                potion_type: *potion,
-                factor: 10,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::SmellingSalts => PotionBoost {
-                potion_type: *potion,
-                factor: 16,
-                constant: 11,
-                boost: 0,
-            },
-            Potion::RubyHarvest => PotionBoost {
-                potion_type: *potion,
-                factor: 15,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::SapphireGlacialis => PotionBoost {
-                potion_type: *potion,
-                factor: 15,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::BlackWarlock => PotionBoost {
-                potion_type: *potion,
-                factor: 15,
-                constant: 4,
-                boost: 0,
-            },
-            Potion::Moonlight => PotionBoost {
-                potion_type: *potion,
-                factor: 0,
-                constant: 0,
-                boost: 0, // Custom implementation
-            },
-            _ => PotionBoost {
-                potion_type: *potion,
-                factor: 0,
-                constant: 0,
-                boost: 0,
-            },
-        }
+        potion_boost!(potion;
+            Attack | Strength | Defence => { factor: 10, constant: 3 },
+            Ranging | OverloadMinus | SaturatedHeart => { factor: 10, constant: 4 },
+            Magic => { factor: 0, constant: 4 },
+            SuperAttack | SuperStrength | SuperDefence | SuperRanging | SuperMagic | SuperCombat => { factor: 15, constant: 5 },
+            Overload => { factor: 13, constant: 5 },
+            OverloadPlus => { factor: 16, constant: 6 },
+            SaradominBrew => { factor: 20, constant: 2 },
+            AncientBrew => { factor: 5, constant: 2 },
+            ForgottenBrew => { factor: 8, constant: 3 },
+            ImbuedHeart => { factor: 10, constant: 1 },
+            SmellingSalts => { factor: 16, constant: 11 },
+            RubyHarvest | SapphireGlacialis | BlackWarlock => { factor: 15, constant: 4 }
+        )
     }
 
     pub fn calc_boost(&mut self, level: Stat) {
@@ -353,6 +264,14 @@ impl PotionBoosts {
 mod tests {
     use super::*;
     use crate::types::stats::Stat;
+
+    #[test]
+    fn test_smelling_salt_boost() {
+        let mut potion = PotionBoost::new(&Potion::SmellingSalts);
+        potion.calc_boost(Stat::from(99));
+        assert_eq!(potion.boost, 26);
+    }
+
     #[test]
     fn test_dragon_battleaxe_boost() {
         let mut potion = PotionBoost::new(&Potion::DragonBattleaxe);

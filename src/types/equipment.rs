@@ -765,6 +765,27 @@ where
     Ok(Weapon::get_styles_from_weapon_type(weapon_type.as_str()))
 }
 
+macro_rules! weapon_styles {
+    (
+        $weapon_type:expr;
+        $(
+            $lit:literal => [
+                $(($style:ident, $combat_type:ident, $stance:ident)),* $(,)?
+            ]
+        ),*
+        $(,)?
+    ) => {
+        match $weapon_type {
+            $(
+                $lit => HashMap::from([
+                    $((CombatStyle::$style, CombatOption::new(CombatType::$combat_type, CombatStance::$stance)),)*
+                ]),
+            )*
+            _ => HashMap::new(),
+        }
+    };
+}
+
 impl Weapon {
     pub fn new(name: &str, version: Option<&str>) -> Result<Self, GearError> {
         let mut weapon = Weapon::default();
@@ -785,426 +806,156 @@ impl Weapon {
     }
 
     pub fn get_styles_from_weapon_type(weapon_type: &str) -> HashMap<CombatStyle, CombatOption> {
-        // Translate a weapon type string into a set of combat styles that it can use
-        match weapon_type {
-            "2h Sword" => HashMap::from([
-                (
-                    CombatStyle::Chop,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Slash,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Smash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Axe" => HashMap::from([
-                (
-                    CombatStyle::Chop,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Hack,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Smash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Banner" => HashMap::from([
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Swipe,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Blunt" => HashMap::from([
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Pummel,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-            ]),
-            "Bludgeon" => HashMap::from([
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Pummel,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Smash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-            ]),
-            "Bulwark" => HashMap::from([
-                (
-                    CombatStyle::Pummel,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::None, CombatStance::None),
-                ),
-            ]),
-            "Claw" => HashMap::from([
-                (
-                    CombatStyle::Chop,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Slash,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Partisan" => HashMap::from([
-                (
-                    CombatStyle::Stab,
-                    CombatOption::new(CombatType::Stab, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Pickaxe" => HashMap::from([
-                (
-                    CombatStyle::Spike,
-                    CombatOption::new(CombatType::Stab, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Impale,
-                    CombatOption::new(CombatType::Stab, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Smash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Polearm" => HashMap::from([
-                (
-                    CombatStyle::Jab,
-                    CombatOption::new(CombatType::Stab, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Swipe,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Fend,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Polestaff" => HashMap::from([
-                (
-                    CombatStyle::Bash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-            ]),
-            "Scythe" => HashMap::from([
-                (
-                    CombatStyle::Reap,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Chop,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Jab,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Slash Sword" => HashMap::from([
-                (
-                    CombatStyle::Chop,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Slash,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Spear" => HashMap::from([
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Swipe,
-                    CombatOption::new(CombatType::Slash, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Spiked" => HashMap::from([
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Pummel,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Spike,
-                    CombatOption::new(CombatType::Stab, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-            ]),
-            "Stab Sword" => HashMap::from([
-                (
-                    CombatStyle::Stab,
-                    CombatOption::new(CombatType::Stab, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Slash,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Lunge,
-                    CombatOption::new(CombatType::Stab, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Stab, CombatStance::Defensive),
-                ),
-            ]),
-            "Unarmed" => HashMap::from([
-                (
-                    CombatStyle::Punch,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Kick,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Block,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-            ]),
-            "Whip" => HashMap::from([
-                (
-                    CombatStyle::Flick,
-                    CombatOption::new(CombatType::Slash, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Lash,
-                    CombatOption::new(CombatType::Slash, CombatStance::Controlled),
-                ),
-                (
-                    CombatStyle::Deflect,
-                    CombatOption::new(CombatType::Slash, CombatStance::Defensive),
-                ),
-            ]),
-            "Bow" => HashMap::from([
-                (
-                    CombatStyle::Accurate,
-                    CombatOption::new(CombatType::Standard, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Rapid,
-                    CombatOption::new(CombatType::Standard, CombatStance::Rapid),
-                ),
-                (
-                    CombatStyle::Longrange,
-                    CombatOption::new(CombatType::Standard, CombatStance::Longrange),
-                ),
-            ]),
-            "Crossbow" => HashMap::from([
-                (
-                    CombatStyle::Accurate,
-                    CombatOption::new(CombatType::Heavy, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Rapid,
-                    CombatOption::new(CombatType::Heavy, CombatStance::Rapid),
-                ),
-                (
-                    CombatStyle::Longrange,
-                    CombatOption::new(CombatType::Heavy, CombatStance::Longrange),
-                ),
-            ]),
-            "Thrown" => HashMap::from([
-                (
-                    CombatStyle::Accurate,
-                    CombatOption::new(CombatType::Light, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Rapid,
-                    CombatOption::new(CombatType::Light, CombatStance::Rapid),
-                ),
-                (
-                    CombatStyle::Longrange,
-                    CombatOption::new(CombatType::Light, CombatStance::Longrange),
-                ),
-            ]),
-            "Chinchompa" => HashMap::from([
-                (
-                    CombatStyle::ShortFuse,
-                    CombatOption::new(CombatType::Heavy, CombatStance::ShortFuse),
-                ),
-                (
-                    CombatStyle::MediumFuse,
-                    CombatOption::new(CombatType::Heavy, CombatStance::MediumFuse),
-                ),
-                (
-                    CombatStyle::LongFuse,
-                    CombatOption::new(CombatType::Heavy, CombatStance::LongFuse),
-                ),
-            ]),
-            "Bladed Staff" => HashMap::from([
-                (
-                    CombatStyle::Jab,
-                    CombatOption::new(CombatType::Stab, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Swipe,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Fend,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-                (
-                    CombatStyle::DefensiveSpell,
-                    CombatOption::new(CombatType::Magic, CombatStance::DefensiveAutocast),
-                ),
-                (
-                    CombatStyle::Spell,
-                    CombatOption::new(CombatType::Magic, CombatStance::Autocast),
-                ),
-            ]),
-            "Powered Staff" => HashMap::from([
-                (
-                    CombatStyle::Accurate,
-                    CombatOption::new(CombatType::Magic, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Longrange,
-                    CombatOption::new(CombatType::Magic, CombatStance::Longrange),
-                ),
-            ]),
-            "Staff" => HashMap::from([
-                (
-                    CombatStyle::Bash,
-                    CombatOption::new(CombatType::Crush, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Pound,
-                    CombatOption::new(CombatType::Crush, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Fend,
-                    CombatOption::new(CombatType::Crush, CombatStance::Defensive),
-                ),
-                (
-                    CombatStyle::DefensiveSpell,
-                    CombatOption::new(CombatType::Magic, CombatStance::DefensiveAutocast),
-                ),
-                (
-                    CombatStyle::Spell,
-                    CombatOption::new(CombatType::Magic, CombatStance::Autocast),
-                ),
-            ]),
-            "Salamander" => HashMap::from([
-                (
-                    CombatStyle::Scorch,
-                    CombatOption::new(CombatType::Slash, CombatStance::Aggressive),
-                ),
-                (
-                    CombatStyle::Flare,
-                    CombatOption::new(CombatType::Standard, CombatStance::Accurate),
-                ),
-                (
-                    CombatStyle::Blaze,
-                    CombatOption::new(CombatType::Magic, CombatStance::Defensive),
-                ),
-            ]),
-            _ => HashMap::new(),
-        }
+        weapon_styles!(weapon_type;
+            "2h Sword" => [
+                (Chop, Slash, Accurate),
+                (Slash, Slash, Aggressive),
+                (Smash, Crush, Aggressive),
+                (Block, Slash, Defensive),
+            ],
+            "Axe" => [
+                (Chop, Slash, Accurate),
+                (Hack, Slash, Aggressive),
+                (Smash, Crush, Aggressive),
+                (Block, Slash, Defensive),
+            ],
+            "Banner" => [
+                (Lunge, Stab, Accurate),
+                (Swipe, Slash, Aggressive),
+                (Pound, Crush, Controlled),
+                (Block, Stab, Defensive),
+            ],
+            "Blunt" => [
+                (Pound, Crush, Accurate),
+                (Pummel, Crush, Aggressive),
+                (Block, Crush, Defensive),
+            ],
+            "Bludgeon" => [
+                (Pound, Crush, Aggressive),
+                (Pummel, Crush, Aggressive),
+                (Smash, Crush, Aggressive),
+            ],
+            "Bulwark" => [
+                (Pummel, Crush, Accurate),
+                (Block, None, None),
+            ],
+            "Claw" => [
+                (Chop, Slash, Accurate),
+                (Slash, Slash, Aggressive),
+                (Lunge, Stab, Controlled),
+                (Block, Slash, Defensive),
+            ],
+            "Egg" => [
+                (Pound, Crush, Accurate),
+                (Pummel, Crush, Aggressive),
+                (Block, Crush, Defensive),
+            ],
+            "Partisan" => [
+                (Stab, Stab, Accurate),
+                (Lunge, Stab, Aggressive),
+                (Pound, Crush, Aggressive),
+                (Block, Stab, Defensive),
+            ],
+            "Pickaxe" => [
+                (Spike, Stab, Accurate),
+                (Impale, Stab, Aggressive),
+                (Smash, Crush, Aggressive),
+                (Block, Stab, Defensive),
+            ],
+            "Polearm" => [
+                (Jab, Stab, Controlled),
+                (Swipe, Slash, Aggressive),
+                (Fend, Stab, Defensive),
+            ],
+            "Polestaff" => [
+                (Bash, Crush, Accurate),
+                (Pound, Crush, Aggressive),
+                (Block, Crush, Defensive),
+            ],
+            "Scythe" => [
+                (Reap, Slash, Accurate),
+                (Chop, Slash, Aggressive),
+                (Jab, Crush, Aggressive),
+                (Block, Slash, Defensive),
+            ],
+            "Slash Sword" => [
+                (Chop, Slash, Accurate),
+                (Slash, Slash, Aggressive),
+                (Lunge, Stab, Controlled),
+                (Block, Slash, Defensive),
+            ],
+            "Spear" => [
+                (Lunge, Stab, Controlled),
+                (Swipe, Slash, Controlled),
+                (Pound, Crush, Controlled),
+                (Block, Stab, Defensive),
+            ],
+            "Spiked" => [
+                (Pound, Crush, Accurate),
+                (Pummel, Crush, Aggressive),
+                (Spike, Stab, Controlled),
+                (Block, Crush, Defensive),
+            ],
+            "Stab Sword" => [
+                (Stab, Stab, Accurate),
+                (Slash, Slash, Aggressive),
+                (Lunge, Stab, Aggressive),
+                (Block, Stab, Defensive),
+            ],
+            "Unarmed" => [
+                (Punch, Crush, Accurate),
+                (Kick, Crush, Aggressive),
+                (Block, Crush, Defensive),
+            ],
+            "Whip" => [
+                (Flick, Slash, Accurate),
+                (Lash, Slash, Controlled),
+                (Deflect, Slash, Defensive),
+            ],
+            "Bow" => [
+                (Accurate, Standard, Accurate),
+                (Rapid, Standard, Rapid),
+                (Longrange, Standard, Longrange),
+            ],
+            "Crossbow" => [
+                (Accurate, Heavy, Accurate),
+                (Rapid, Heavy, Rapid),
+                (Longrange, Heavy, Longrange),
+            ],
+            "Thrown" => [
+                (Accurate, Light, Accurate),
+                (Rapid, Light, Rapid),
+                (Longrange, Light, Longrange),
+            ],
+            "Chinchompa" => [
+                (ShortFuse, Heavy, ShortFuse),
+                (MediumFuse, Heavy, MediumFuse),
+                (LongFuse, Heavy, LongFuse),
+            ],
+            "Bladed Staff" => [
+                (Jab, Stab, Accurate),
+                (Swipe, Slash, Aggressive),
+                (Fend, Crush, Defensive),
+                (DefensiveSpell, Magic, DefensiveAutocast),
+                (Spell, Magic, Autocast),
+            ],
+            "Powered Staff" => [
+                (Accurate, Magic, Accurate),
+                (Longrange, Magic, Longrange),
+            ],
+            "Staff" => [
+                (Bash, Crush, Accurate),
+                (Pound, Crush, Aggressive),
+                (Fend, Crush, Defensive),
+                (DefensiveSpell, Magic, DefensiveAutocast),
+                (Spell, Magic, Autocast),
+            ],
+            "Salamander" => [
+                (Scorch, Slash, Aggressive),
+                (Flare, Standard, Accurate),
+                (Blaze, Magic, Defensive),
+            ]
+        )
     }
 }
 
