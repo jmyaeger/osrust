@@ -51,6 +51,30 @@ pub enum Prayer {
     Augury,
 }
 
+macro_rules! prayer_boost {
+    (
+        $prayer_var:ident;
+        $(
+            $prayer:ident => { $($field:ident: $value:expr),* $(,)? }
+        ),*
+        $(,)?
+    ) => {
+        match $prayer_var {
+            $(
+                Prayer::$prayer => PrayerBoost {
+                    prayer_type: $prayer_var,
+                    $($field: $value,)*
+                    ..Default::default()
+                },
+            )*
+            _ => PrayerBoost {
+                prayer_type: $prayer_var,
+                ..Default::default()
+            }
+        }
+    };
+}
+
 // Contains the type of prayer, and the percentage boost to each style
 #[derive(Debug, Default, PartialEq, Clone, Copy, Eq, Serialize, Deserialize)]
 pub struct PrayerBoost {
@@ -72,228 +96,29 @@ impl fmt::Display for PrayerBoost {
 
 impl PrayerBoost {
     pub fn new(prayer: Prayer) -> Self {
-        match prayer {
-            Prayer::ClarityOfThought => PrayerBoost {
-                prayer_type: prayer,
-                attack: 5,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::ImprovedReflexes => PrayerBoost {
-                prayer_type: prayer,
-                attack: 10,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::IncredibleReflexes => PrayerBoost {
-                prayer_type: prayer,
-                attack: 15,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::Chivalry => PrayerBoost {
-                prayer_type: prayer,
-                attack: 15,
-                strength: 18,
-                defence: 20,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::Piety => PrayerBoost {
-                prayer_type: prayer,
-                attack: 20,
-                strength: 23,
-                defence: 25,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::BurstOfStrength => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 5,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::SuperhumanStrength => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 10,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::UltimateStrength => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 15,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::ThickSkin => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 5,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::RockSkin => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 10,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::SteelSkin => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 15,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::SharpEye => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 5,
-                ranged_str: 5,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::HawkEye => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 10,
-                ranged_str: 10,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::EagleEye => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 15,
-                ranged_str: 15,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::Deadeye => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 5,
-                ranged_att: 18,
-                ranged_str: 18,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::Rigour => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 25,
-                ranged_att: 20,
-                ranged_str: 23,
-                magic_att: 0,
-                magic_str: 0,
-            },
-            Prayer::MysticWill => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 5,
-                magic_str: 0,
-            },
-            Prayer::MysticLore => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 10,
-                magic_str: 1,
-            },
-            Prayer::MysticMight => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 15,
-                magic_str: 2,
-            },
-            Prayer::MysticVigour => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 5,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 18,
-                magic_str: 3,
-            },
-            Prayer::Augury => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 25,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 25,
-                magic_str: 4,
-            },
-            _ => PrayerBoost {
-                prayer_type: prayer,
-                attack: 0,
-                strength: 0,
-                defence: 0,
-                ranged_att: 0,
-                ranged_str: 0,
-                magic_att: 0,
-                magic_str: 0,
-            },
-        }
+        prayer_boost!(prayer;
+            ClarityOfThought => { attack: 5 },
+            ImprovedReflexes => { attack: 10 },
+            IncredibleReflexes => { attack: 15 },
+            Chivalry => { attack: 15, strength: 18, defence: 20 },
+            Piety => { attack: 20, strength: 23, defence: 25 },
+            BurstOfStrength => { strength: 5 },
+            SuperhumanStrength => { strength: 10 },
+            UltimateStrength => { strength: 15 },
+            ThickSkin => { defence: 5 },
+            RockSkin => { defence: 10 },
+            SteelSkin => { defence: 15 },
+            SharpEye => { ranged_att: 5, ranged_str: 5 },
+            HawkEye => { ranged_att: 10, ranged_str: 10 },
+            EagleEye => { ranged_att: 15, ranged_str: 15 },
+            Deadeye => { defence: 5, ranged_att: 18, ranged_str: 18 },
+            Rigour => { defence: 25, ranged_att: 20, ranged_str: 23 },
+            MysticWill => { magic_att: 5 },
+            MysticLore => { magic_att: 10, magic_str: 1 },
+            MysticMight => { magic_att: 15, magic_str: 2 },
+            MysticVigour => { defence: 5, magic_att: 18, magic_str: 3 },
+            Augury => { defence: 25, magic_att: 25, magic_str: 4 },
+        )
     }
 
     pub fn conflicts_with(&self, p2: &PrayerBoost) -> bool {
