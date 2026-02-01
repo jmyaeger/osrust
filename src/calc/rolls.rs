@@ -185,15 +185,21 @@ fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         // Silver weapons against vampyres; non-silver weapons return zeros
         (att_roll, max_hit) = apply_vampyre_boost(att_roll, max_hit, player, monster);
 
-        let _ = player.att_rolls.set(combat_type, att_roll);
+        player
+            .att_rolls
+            .set(combat_type, att_roll)
+            .unwrap_or_else(|_| panic!("Failed to set attack rolls for {combat_type}"));
         player.max_hits.set(combat_type, max_hit);
     }
 
     // Apply inquisitor boost last
-    let _ = player.att_rolls.set(
-        CombatType::Crush,
-        player.att_rolls.get(CombatType::Crush).unwrap() * inquisitor_boost as i32 / 1000,
-    );
+    player
+        .att_rolls
+        .set(
+            CombatType::Crush,
+            player.att_rolls.get(CombatType::Crush).unwrap() * inquisitor_boost as i32 / 1000,
+        )
+        .unwrap_or_else(|_| panic!("Failed to apply Inquisitor's set accuracy boost."));
     player.max_hits.set(
         CombatType::Crush,
         player.max_hits.get(CombatType::Crush) * inquisitor_boost / 1000,
@@ -254,7 +260,10 @@ fn calc_player_ranged_rolls(player: &mut Player, monster: &Monster) {
     }
 
     for combat_type in [CombatType::Light, CombatType::Standard, CombatType::Heavy] {
-        let _ = player.att_rolls.set(combat_type, att_roll);
+        player
+            .att_rolls
+            .set(combat_type, att_roll)
+            .unwrap_or_else(|_| panic!("Failed to set attack roll for {combat_type}"));
         player.max_hits.set(combat_type, max_hit);
     }
 }
@@ -360,7 +369,10 @@ fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
         max_hit = max_hit * 11 / 10;
     }
 
-    let _ = player.att_rolls.set(CombatType::Magic, att_roll);
+    player
+        .att_rolls
+        .set(CombatType::Magic, att_roll)
+        .unwrap_or_else(|_| panic!("Failed to set magic attack roll."));
     player.max_hits.set(CombatType::Magic, max_hit);
 }
 

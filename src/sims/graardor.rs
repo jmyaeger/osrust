@@ -288,16 +288,18 @@ mod tests {
         player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
-        let _ = player.equip("Bow of faerdhinen (c)", None);
-        let _ = player.equip("Crystal helm", Some("Active"));
-        let _ = player.equip("Crystal body", Some("Active"));
-        let _ = player.equip("Crystal legs", Some("Active"));
-        let _ = player.equip("Zaryte vambraces", None);
-        let _ = player.equip("Dizana's quiver", Some("Uncharged"));
-        let _ = player.equip("Necklace of anguish", None);
-        let _ = player.equip("Pegasian boots", None);
-        let _ = player.equip("Ring of suffering (i)", Some("Uncharged"));
-        let _ = player.equip("Rada's blessing 4", None);
+        player.equip("Bow of faerdhinen (c)", None).unwrap();
+        player.equip("Crystal helm", Some("Active")).unwrap();
+        player.equip("Crystal body", Some("Active")).unwrap();
+        player.equip("Crystal legs", Some("Active")).unwrap();
+        player.equip("Zaryte vambraces", None).unwrap();
+        player.equip("Dizana's quiver", Some("Uncharged")).unwrap();
+        player.equip("Necklace of anguish", None).unwrap();
+        player.equip("Pegasian boots", None).unwrap();
+        player
+            .equip("Ring of suffering (i)", Some("Uncharged"))
+            .unwrap();
+        player.equip("Rada's blessing 4", None).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
 

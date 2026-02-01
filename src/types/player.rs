@@ -1623,7 +1623,7 @@ mod test {
     #[tokio::test]
     async fn test_lookup_stats() {
         let mut player = Player::new();
-        let _ = player.lookup_stats("Lynx Titan").await;
+        player.lookup_stats("Lynx Titan").await.unwrap();
         assert_eq!(player.stats.attack.base, 99);
         assert_eq!(player.stats.defence.base, 99);
         assert_eq!(player.stats.strength.base, 99);
@@ -1645,7 +1645,7 @@ mod test {
     #[test]
     fn test_equip_armor() {
         let mut player = Player::new();
-        let _ = player.equip("Torva full helm", None);
+        player.equip("Torva full helm", None).unwrap();
         player.update_bonuses();
         let torva_full_helm =
             Armor::new("Torva full helm", None).expect("Error creating equipment.");
@@ -1656,7 +1656,7 @@ mod test {
     #[test]
     fn test_equip_weapon() {
         let mut player = Player::new();
-        let _ = player.equip("Osmumten's fang", None);
+        player.equip("Osmumten's fang", None).unwrap();
         player.update_bonuses();
         let osmumtens_fang =
             Weapon::new("Osmumten's fang", None).expect("Error creating equipment.");
@@ -1667,9 +1667,9 @@ mod test {
     #[test]
     fn test_replace_gear() {
         let mut player = Player::new();
-        let _ = player.equip("Torva full helm", None);
+        player.equip("Torva full helm", None).unwrap();
         player.update_bonuses();
-        let _ = player.equip("Neitiznot faceguard", None);
+        player.equip("Neitiznot faceguard", None).unwrap();
         player.update_bonuses();
         let neitiznot_faceguard =
             Armor::new("Neitiznot faceguard", None).expect("Error creating equipment.");
@@ -1779,11 +1779,15 @@ mod test {
     #[test]
     fn test_twinflame_detection() {
         let mut player = Player::new();
-        let _ = player.equip("Twinflame staff", None);
-        let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
+        player.equip("Twinflame staff", None).unwrap();
+        player
+            .set_spell(Spell::Standard(StandardSpell::EarthBolt))
+            .unwrap();
         assert!(player.gets_second_twinflame_hit());
 
-        let _ = player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
+        player
+            .set_spell(Spell::Standard(StandardSpell::EarthSurge))
+            .unwrap();
         assert!(!player.gets_second_twinflame_hit());
     }
 

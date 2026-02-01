@@ -401,7 +401,9 @@ mod tests {
     #[test]
     fn test_strike_max_hits() {
         let mut player = Player::new();
-        let _ = player.set_spell(Spell::Standard(StandardSpell::WindStrike));
+        player
+            .set_spell(Spell::Standard(StandardSpell::WindStrike))
+            .unwrap();
         for level in 1..5 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 2);
@@ -410,29 +412,45 @@ mod tests {
         for level in 5..9 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 4);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 4);
         }
 
         for level in 9..13 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 6);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 6);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 6);
         }
 
         for level in 13..20 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 8);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 8);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 8);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::FireStrike));
+            player
+                .set_spell(Spell::Standard(StandardSpell::FireStrike))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 8);
         }
     }
@@ -440,7 +458,9 @@ mod tests {
     #[test]
     fn test_bolt_max_hits() {
         let mut player = Player::new();
-        let _ = player.set_spell(Spell::Standard(StandardSpell::WindBolt));
+        player
+            .set_spell(Spell::Standard(StandardSpell::WindBolt))
+            .unwrap();
         for level in 17..23 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 9);
@@ -449,29 +469,45 @@ mod tests {
         for level in 23..29 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 10);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 10);
         }
 
         for level in 29..35 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 11);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 11);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 11);
         }
 
         for level in 35..42 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 12);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 12);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 12);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::FireBolt));
+            player
+                .set_spell(Spell::Standard(StandardSpell::FireBolt))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 12);
         }
     }
@@ -479,7 +515,9 @@ mod tests {
     #[test]
     fn test_blast_max_hits() {
         let mut player = Player::new();
-        let _ = player.set_spell(Spell::Standard(StandardSpell::WindBlast));
+        player
+            .set_spell(Spell::Standard(StandardSpell::WindBlast))
+            .unwrap();
         for level in 41..47 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 13);
@@ -488,29 +526,45 @@ mod tests {
         for level in 47..53 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 14);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 14);
         }
 
         for level in 53..59 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 15);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 15);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 15);
         }
 
         for level in 59..66 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 16);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 16);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 16);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::FireBlast));
+            player
+                .set_spell(Spell::Standard(StandardSpell::FireBlast))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 16);
         }
     }
@@ -518,7 +572,9 @@ mod tests {
     #[test]
     fn test_wave_max_hits() {
         let mut player = Player::new();
-        let _ = player.set_spell(Spell::Standard(StandardSpell::WindWave));
+        player
+            .set_spell(Spell::Standard(StandardSpell::WindWave))
+            .unwrap();
         for level in 62..65 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 17);
@@ -527,29 +583,45 @@ mod tests {
         for level in 65..70 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 18);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 18);
         }
 
         for level in 70..75 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 19);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 19);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 19);
         }
 
         for level in 75..81 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 20);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 20);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 20);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::FireWave));
+            player
+                .set_spell(Spell::Standard(StandardSpell::FireWave))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 20);
         }
     }
@@ -557,7 +629,9 @@ mod tests {
     #[test]
     fn test_surge_max_hits() {
         let mut player = Player::new();
-        let _ = player.set_spell(Spell::Standard(StandardSpell::WindSurge));
+        player
+            .set_spell(Spell::Standard(StandardSpell::WindSurge))
+            .unwrap();
         for level in 81..85 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 21);
@@ -566,29 +640,45 @@ mod tests {
         for level in 85..90 {
             player.stats.magic.current = level;
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 22);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 22);
         }
 
         for level in 90..95 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 23);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 23);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 23);
         }
 
         for level in 95..101 {
             player.stats.magic.current = level;
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WindSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WindSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 24);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::WaterSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::WaterSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 24);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::EarthSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::EarthSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 24);
-            let _ = player.set_spell(Spell::Standard(StandardSpell::FireSurge));
+            player
+                .set_spell(Spell::Standard(StandardSpell::FireSurge))
+                .unwrap();
             assert_eq!(player.attrs.spell.unwrap().max_hit(&player), 24);
         }
     }

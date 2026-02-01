@@ -1,25 +1,16 @@
-#![allow(unused)]
-use std::rc::Rc;
-
 use osrs::calc::analysis::SimulationStats;
-use osrs::calc::rolls;
 use osrs::calc::rolls::calc_active_player_rolls;
-use osrs::combat::attacks::standard::get_attack_functions;
-use osrs::combat::simulation::{Simulation, simulate_n_fights};
+use osrs::combat::simulation::simulate_n_fights;
 use osrs::combat::thralls::Thrall;
 use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
-use osrs::sims::hunleff::{
-    AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight, HunllefRedemptionStrat,
-};
+use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
 use osrs::sims::single_way::{
-    DeathCharge, SingleWayConfig, SingleWayFight, SpecCondition, SpecConfig, SpecRestorePolicy,
-    SpecStrategy, SpecStrategyState,
+    DeathCharge, SingleWayConfig, SingleWayFight, SpecConfig, SpecRestorePolicy, SpecStrategy,
 };
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
-use osrs::types::equipment::{CombatStyle, GearSlot, Weapon};
-use osrs::types::monster::{CombatStat, Monster};
+use osrs::types::equipment::CombatStyle;
+use osrs::types::monster::Monster;
 use osrs::types::player::{GearSwitch, Player, SwitchType};
-use osrs::types::potions::Potion;
 use osrs::types::prayers::Prayer;
 use osrs::types::stats::Stat;
 use osrs::utils::{loadouts, logging::FightLogger};
@@ -45,23 +36,23 @@ fn main() {
 #[allow(unused)]
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
-    let _ = player.equip("Avernic treads (max)", None);
-    let _ = player.equip("Scythe of vitur", Some("Charged"));
-    let _ = player.equip("Slayer helmet (i)", None);
-    let _ = player.equip("Inquisitor's hauberk", None);
-    let _ = player.equip("Inquisitor's plateskirt", None);
+    player.equip("Avernic treads (max)", None).unwrap();
+    player.equip("Scythe of vitur", Some("Charged")).unwrap();
+    player.equip("Slayer helmet (i)", None).unwrap();
+    player.equip("Inquisitor's hauberk", None).unwrap();
+    player.equip("Inquisitor's plateskirt", None).unwrap();
 
     player.set_active_style(CombatStyle::Jab);
-    // let _ = player.equip("Amulet of torture", None);
-    // let _ = player.equip("Scythe of vitur", Some("Charged"));
-    // let _ = player.equip("Oathplate helm", None);
-    // let _ = player.equip("Oathplate chest", None);
-    // let _ = player.equip("Oathplate legs", None);
-    // let _ = player.equip("Neitiznot faceguard", None);
-    // let _ = player.equip("Bandos chestplate", None);
-    // let _ = player.equip("Bandos tassets", None);
-    // let _ = player.equip("Scythe of vitur", Some("Charged"));
-    // let _ = player.equip("Lightbearer", None);
+    // player.equip("Amulet of torture", None).unwrap();
+    // player.equip("Scythe of vitur", Some("Charged")).unwrap();
+    // player.equip("Oathplate helm", None).unwrap();
+    // player.equip("Oathplate chest", None).unwrap();
+    // player.equip("Oathplate legs", None).unwrap();
+    // player.equip("Neitiznot faceguard", None).unwrap();
+    // player.equip("Bandos chestplate", None).unwrap();
+    // player.equip("Bandos tassets", None).unwrap();
+    // player.equip("Scythe of vitur", Some("Charged")).unwrap();
+    // player.equip("Lightbearer", None).unwrap();
     // player.add_potion(Potion::OverloadPlus);
 
     player.update_bonuses();
@@ -86,8 +77,8 @@ fn simulate_single_way() {
     let mut main_hand = GearSwitch::from(&player);
     player.switches.push(main_hand);
 
-    let _ = player.equip("Crimson bludgeon", None);
-    let _ = player.equip("Avernic defender", None);
+    player.equip("Crimson bludgeon", None).unwrap();
+    player.equip("Avernic defender", None).unwrap();
     player.set_active_style(CombatStyle::Pummel);
     let bludgeon_switch = GearSwitch::new(
         SwitchType::Spec("Crimson bludgeon spec".into()),
@@ -99,7 +90,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(bludgeon_switch);
 
-    let _ = player.equip("Voidwaker", None);
+    player.equip("Voidwaker", None).unwrap();
     player.set_active_style(CombatStyle::Slash);
     let vw_switch = GearSwitch::new(SwitchType::Spec("Voidwaker spec".into()), &player, &monster);
     let vw_spec_strategy = SpecStrategy::builder(&vw_switch)
@@ -107,7 +98,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(vw_switch);
 
-    let _ = player.equip("Dragon warhammer", None);
+    player.equip("Dragon warhammer", None).unwrap();
     player.set_active_style(CombatStyle::Pound);
     let dwh_switch = GearSwitch::new(SwitchType::Spec("DWH spec".into()), &player, &monster);
     let dwh_spec_strategy = SpecStrategy::builder(&dwh_switch)
@@ -115,7 +106,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(dwh_switch);
 
-    let _ = player.equip("Dragon claws", None);
+    player.equip("Dragon claws", None).unwrap();
     player.set_active_style(CombatStyle::Slash);
     let dclaws_switch = GearSwitch::new(
         SwitchType::Spec("Dragon claws spec".into()),
@@ -128,7 +119,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(dclaws_switch);
 
-    let _ = player.equip("Burning claws", None);
+    player.equip("Burning claws", None).unwrap();
     player.set_active_style(CombatStyle::Slash);
     let bclaws_switch = GearSwitch::new(
         SwitchType::Spec("Burning claws spec".into()),
@@ -141,7 +132,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(bclaws_switch);
 
-    let _ = player.equip("Bandos godsword", None);
+    player.equip("Bandos godsword", None).unwrap();
     player.set_active_style(CombatStyle::Slash);
     let bgs_switch = GearSwitch::new(SwitchType::Spec("BGS spec".into()), &player, &monster);
     let bgs_spec_strategy = SpecStrategy::builder(&bgs_switch)
@@ -149,7 +140,7 @@ fn simulate_single_way() {
         .build();
     player.switches.push(bgs_switch);
 
-    let _ = player.equip("Elder maul", None);
+    player.equip("Elder maul", None).unwrap();
     player.set_active_style(CombatStyle::Pound);
     let maul_switch = GearSwitch::new(
         SwitchType::Spec("Elder maul spec".into()),
@@ -190,10 +181,10 @@ fn simulate_hunllef() {
     // player.stats.attack = Stat::new(76, None);
     // player.stats.strength = Stat::new(85, None);
     // player.reset_current_stats(false);
-    let _ = player.equip("Corrupted staff (perfected)", None);
-    let _ = player.equip("Corrupted helm (basic)", None);
-    let _ = player.equip("Corrupted body (basic)", None);
-    let _ = player.equip("Corrupted legs (basic)", None);
+    player.equip("Corrupted staff (perfected)", None).unwrap();
+    player.equip("Corrupted helm (basic)", None).unwrap();
+    player.equip("Corrupted body (basic)", None).unwrap();
+    player.equip("Corrupted legs (basic)", None).unwrap();
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
     player.add_prayer(Prayer::Augury);
@@ -204,8 +195,8 @@ fn simulate_hunllef() {
 
     let mage_switch = GearSwitch::from(&player);
 
-    // let _ = player.equip("Corrupted bow (perfected)", None);
-    let _ = player.equip("Corrupted bow (attuned)", None);
+    // player.equip("Corrupted bow (perfected)", None).unwrap();
+    player.equip("Corrupted bow (attuned)", None).unwrap();
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
     player.add_prayer(Prayer::Rigour);
@@ -216,9 +207,9 @@ fn simulate_hunllef() {
 
     // player.unequip_slot(&GearSlot::Weapon);
     // player.set_active_style(CombatStyle::Kick);
-    let _ = player.equip("Corrupted sceptre", None);
+    player.equip("Corrupted sceptre", None).unwrap();
     player.set_active_style(CombatStyle::Pummel);
-    // let _ = player.equip("Corrupted halberd (perfected)", None);
+    // player.equip("Corrupted halberd (perfected)", None).unwrap();
     // player.set_active_style(CombatStyle::Swipe);
     player.update_bonuses();
     player.add_prayer(Prayer::Piety);
@@ -283,17 +274,17 @@ fn simulate_vardorvis() {
     // player.stats.strength = Stat::new(98, None);
     // player.stats.defence = Stat::new(91, None);
     // player.reset_current_stats(false);
-    let _ = player.equip("Soulreaper axe", None);
-    // let _ = player.equip("Blade of saeldor (c)", None);
-    // let _ = player.equip("Dragon defender", None);
-    let _ = player.equip("Oathplate chest", None);
-    let _ = player.equip("Oathplate legs", None);
-    let _ = player.equip("Oathplate helm", None);
-    // let _ = player.equip("Berserker ring (i)", None);
-    // let _ = player.equip("Barrows gloves", None);
-    // let _ = player.equip("Dragon boots", None);
-    let _ = player.equip("Bellator ring", None);
-    let _ = player.equip("Avernic treads (max)", None);
+    player.equip("Soulreaper axe", None).unwrap();
+    // player.equip("Blade of saeldor (c)", None).unwrap();
+    // player.equip("Dragon defender", None).unwrap();
+    player.equip("Oathplate chest", None).unwrap();
+    player.equip("Oathplate legs", None).unwrap();
+    player.equip("Oathplate helm", None).unwrap();
+    // player.equip("Berserker ring (i)", None).unwrap();
+    // player.equip("Barrows gloves", None).unwrap();
+    // player.equip("Dragon boots", None).unwrap();
+    player.equip("Bellator ring", None);
+    player.equip("Avernic treads (max)", None);
     player.update_bonuses();
     player.update_set_effects();
     player.set_active_style(CombatStyle::Hack);
@@ -343,12 +334,12 @@ fn simulate_door_altar_graardor() {
     player.reset_current_stats(false);
     player.add_prayer(Prayer::EagleEye);
     player.add_prayer(Prayer::SteelSkin);
-    let _ = player.equip("Barrows gloves", None);
-    let _ = player.equip("Zamorak d'hide boots", None);
-    let _ = player.equip("Ava's assembler", None);
-    let _ = player.equip("Amulet of fury", None);
-    // let _ = player.equip("Ring of suffering (i)", Some("Uncharged"));
-    let _ = player.equip("Explorer's ring 4", None);
+    player.equip("Barrows gloves", None).unwrap();
+    player.equip("Zamorak d'hide boots", None).unwrap();
+    player.equip("Ava's assembler", None).unwrap();
+    player.equip("Amulet of fury", None).unwrap();
+    // player.equip("Ring of suffering (i)", Some("Uncharged")).unwrap();
+    player.equip("Explorer's ring 4", None).unwrap();
 
     player.update_bonuses();
 

@@ -202,7 +202,9 @@ pub fn eldritch_staff_spec(
     let previous_spell = player.attrs.spell;
 
     // Set spell to Invocate and recalculate max hit
-    let _ = player.set_spell(Spell::Special(SpecialSpell::Invocate));
+    player
+        .set_spell(Spell::Special(SpecialSpell::Invocate))
+        .unwrap_or_else(|_| panic!("Error setting spell to Invocate."));
     calc_active_player_rolls(player, monster);
 
     // Perform an accurate hit
@@ -215,7 +217,9 @@ pub fn eldritch_staff_spec(
 
     // Restore previous spell and recalculate max hit
     if let Some(spell) = previous_spell {
-        let _ = player.set_spell(spell);
+        player.set_spell(spell).unwrap_or_else(|_| {
+            panic!("Error setting spell to previous spell after eldritch spec.")
+        });
     } else {
         player.attrs.spell = None;
     }
@@ -735,14 +739,20 @@ pub fn acb_spec(
     player.boosts.acb_spec = true;
 
     // Double accuracy
-    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll * 2);
+    player
+        .att_rolls
+        .set(CombatType::Heavy, old_att_roll * 2)
+        .unwrap_or_else(|_| panic!("Error setting accuracy roll during ACB spec."));
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll);
+    player
+        .att_rolls
+        .set(CombatType::Heavy, old_att_roll)
+        .unwrap_or_else(|_| panic!("Error setting accuracy roll during ACB spec."));
     player.boosts.acb_spec = false;
 
     hit
@@ -759,14 +769,20 @@ pub fn zcb_spec(
     player.boosts.zcb_spec = true;
 
     // Double accuracy
-    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll * 2);
+    player
+        .att_rolls
+        .set(CombatType::Heavy, old_att_roll * 2)
+        .unwrap_or_else(|_| panic!("Error setting accuracy roll during ZCB spec."));
 
     // Get the attack function corresponding to the bolt type being used
     let attack_fn = crate::combat::attacks::standard::get_attack_functions(player);
     let hit = attack_fn(player, monster, rng, limiter);
 
     // Restore base attack roll
-    let _ = player.att_rolls.set(CombatType::Heavy, old_att_roll);
+    player
+        .att_rolls
+        .set(CombatType::Heavy, old_att_roll)
+        .unwrap_or_else(|_| panic!("Error setting accuracy roll during ZCB spec."));
     player.boosts.zcb_spec = false;
 
     hit
@@ -985,7 +1001,9 @@ pub fn volatile_staff_spec(
     let previous_spell = player.attrs.spell;
 
     // Set spell to Immolate and recalculate max hit
-    let _ = player.set_spell(Spell::Special(SpecialSpell::Immolate));
+    player
+        .set_spell(Spell::Special(SpecialSpell::Immolate))
+        .unwrap_or_else(|_| panic!("Error setting spell to Immolate."));
     calc_active_player_rolls(player, monster);
 
     let mut info = AttackInfo::new(player, monster);
@@ -1001,7 +1019,9 @@ pub fn volatile_staff_spec(
 
     // Restore previous spell and recalculate max hit
     if let Some(spell) = previous_spell {
-        let _ = player.set_spell(spell);
+        player.set_spell(spell).unwrap_or_else(|_| {
+            panic!("Error setting spell to previous spell after volatile spec.")
+        });
     } else {
         player.attrs.spell = None;
     }
@@ -1765,7 +1785,7 @@ mod tests {
     #[test]
     fn test_dragon_dagger() {
         let mut player = max_melee_player();
-        let _ = player.equip("Dragon dagger", Some("Unpoisoned"));
+        player.equip("Dragon dagger", Some("Unpoisoned")).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Lunge);
         let mut monster =
@@ -1789,7 +1809,7 @@ mod tests {
     #[test]
     fn test_dragon_claws() {
         let mut player = max_melee_player();
-        let _ = player.equip("Dragon claws", None);
+        player.equip("Dragon claws", None).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Slash);
         let mut monster =
@@ -1813,7 +1833,7 @@ mod tests {
     #[test]
     fn test_chally() {
         let mut player = max_melee_player();
-        let _ = player.equip("Crystal halberd", Some("Active"));
+        player.equip("Crystal halberd", Some("Active")).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Swipe);
         let mut monster =

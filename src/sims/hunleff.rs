@@ -831,10 +831,10 @@ mod tests {
         player.stats.ranged = Stat::new(70, None);
         player.stats.magic = Stat::new(70, None);
         player.reset_current_stats(false);
-        let _ = player.equip("Corrupted staff (perfected)", None);
-        let _ = player.equip("Crystal helm (basic)", None);
-        let _ = player.equip("Crystal body (basic)", None);
-        let _ = player.equip("Crystal legs (basic)", None);
+        player.equip("Corrupted staff (perfected)", None).unwrap();
+        player.equip("Crystal helm (basic)", None).unwrap();
+        player.equip("Crystal body (basic)", None).unwrap();
+        player.equip("Crystal legs (basic)", None).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Accurate);
         player.add_prayer(Prayer::MysticMight);
@@ -845,7 +845,7 @@ mod tests {
 
         let mage_switch = GearSwitch::from(&player);
 
-        let _ = player.equip("Corrupted bow (perfected)", None);
+        player.equip("Corrupted bow (perfected)", None).unwrap();
         player.update_bonuses();
         player.set_active_style(CombatStyle::Rapid);
         player.add_prayer(Prayer::EagleEye);
@@ -942,31 +942,31 @@ mod tests {
         let mut player = Player::new();
         assert_eq!(armor_tier(&player), 0);
 
-        let _ = player.equip("Crystal helm (basic)", None);
-        let _ = player.equip("Crystal body (basic)", None);
-        let _ = player.equip("Crystal legs (basic)", None);
+        player.equip("Crystal helm (basic)", None).unwrap();
+        player.equip("Crystal body (basic)", None).unwrap();
+        player.equip("Crystal legs (basic)", None).unwrap();
         assert_eq!(armor_tier(&player), 1);
 
-        let _ = player.equip("Crystal helm (attuned)", None);
+        player.equip("Crystal helm (attuned)", None).unwrap();
         assert_eq!(armor_tier(&player), 1);
 
-        let _ = player.equip("Crystal body (attuned)", None);
+        player.equip("Crystal body (attuned)", None).unwrap();
         assert_eq!(armor_tier(&player), 1);
 
-        let _ = player.equip("Crystal legs (attuned)", None);
+        player.equip("Crystal legs (attuned)", None).unwrap();
         assert_eq!(armor_tier(&player), 2);
 
-        let _ = player.equip("Crystal helm (perfected)", None);
+        player.equip("Crystal helm (perfected)", None).unwrap();
         assert_eq!(armor_tier(&player), 2);
 
-        let _ = player.equip("Crystal body (perfected)", None);
+        player.equip("Crystal body (perfected)", None).unwrap();
         assert_eq!(armor_tier(&player), 2);
 
-        let _ = player.equip("Crystal legs (perfected)", None);
+        player.equip("Crystal legs (perfected)", None).unwrap();
         assert_eq!(armor_tier(&player), 3);
 
-        let _ = player.equip("Crystal body (attuned)", None);
-        let _ = player.equip("Crystal legs (basic)", None);
+        player.equip("Crystal body (attuned)", None).unwrap();
+        player.equip("Crystal legs (basic)", None).unwrap();
         assert_eq!(armor_tier(&player), 2);
     }
 }

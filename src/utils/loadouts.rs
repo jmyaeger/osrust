@@ -12,17 +12,17 @@ pub fn max_melee_player() -> Player {
     player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
-    let _ = player.equip("Torva full helm", None);
-    let _ = player.equip("Torva platebody", None);
-    let _ = player.equip("Torva platelegs", None);
-    let _ = player.equip("Ferocious gloves", None);
-    let _ = player.equip("Primordial boots", None);
-    let _ = player.equip("Ghrazi rapier", None);
-    let _ = player.equip("Avernic defender", None);
-    let _ = player.equip("Rada's blessing 4", None);
-    let _ = player.equip("Amulet of rancour", None);
-    let _ = player.equip("Infernal cape", None);
-    let _ = player.equip("Ultor ring", None);
+    player.equip("Torva full helm", None).unwrap();
+    player.equip("Torva platebody", None).unwrap();
+    player.equip("Torva platelegs", None).unwrap();
+    player.equip("Ferocious gloves", None).unwrap();
+    player.equip("Primordial boots", None).unwrap();
+    player.equip("Ghrazi rapier", None).unwrap();
+    player.equip("Avernic defender", None).unwrap();
+    player.equip("Rada's blessing 4", None).unwrap();
+    player.equip("Amulet of rancour", None).unwrap();
+    player.equip("Infernal cape", None).unwrap();
+    player.equip("Ultor ring", None).unwrap();
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Lunge);
@@ -36,17 +36,17 @@ pub fn max_ranged_zcb_player() -> Player {
     player.add_prayer(Prayer::Rigour);
     player.add_potion(Potion::Ranging);
 
-    let _ = player.equip("Masori mask (f)", None);
-    let _ = player.equip("Necklace of anguish", None);
-    let _ = player.equip("Dizana's quiver", Some("Charged"));
-    let _ = player.equip("Dragon bolts", Some("Unpoisoned"));
-    let _ = player.equip("Zaryte crossbow", None);
-    let _ = player.equip("Twisted buckler", None);
-    let _ = player.equip("Masori body (f)", None);
-    let _ = player.equip("Masori chaps (f)", None);
-    let _ = player.equip("Zaryte vambraces", None);
-    let _ = player.equip("Pegasian boots", None);
-    let _ = player.equip("Venator ring", None);
+    player.equip("Masori mask (f)", None).unwrap();
+    player.equip("Necklace of anguish", None).unwrap();
+    player.equip("Dizana's quiver", Some("Charged")).unwrap();
+    player.equip("Dragon bolts", Some("Unpoisoned")).unwrap();
+    player.equip("Zaryte crossbow", None).unwrap();
+    player.equip("Twisted buckler", None).unwrap();
+    player.equip("Masori body (f)", None).unwrap();
+    player.equip("Masori chaps (f)", None).unwrap();
+    player.equip("Zaryte vambraces", None).unwrap();
+    player.equip("Pegasian boots", None).unwrap();
+    player.equip("Venator ring", None).unwrap();
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Rapid);
@@ -60,17 +60,17 @@ pub fn max_mage_sang_staff_player() -> Player {
     player.add_prayer(Prayer::Augury);
     player.add_potion(Potion::SaturatedHeart);
 
-    let _ = player.equip("Ancestral hat", None);
-    let _ = player.equip("Occult necklace", None);
-    let _ = player.equip("Imbued guthix cape", None);
-    let _ = player.equip("Rada's blessing 4", None);
-    let _ = player.equip("Sanguinesti staff", Some("Charged"));
-    let _ = player.equip("Elidinis' ward (f)", None);
-    let _ = player.equip("Ancestral robe top", None);
-    let _ = player.equip("Ancestral robe bottom", None);
-    let _ = player.equip("Tormented bracelet", None);
-    let _ = player.equip("Eternal boots", None);
-    let _ = player.equip("Magus ring", None);
+    player.equip("Ancestral hat", None).unwrap();
+    player.equip("Occult necklace", None).unwrap();
+    player.equip("Imbued guthix cape", None).unwrap();
+    player.equip("Rada's blessing 4", None).unwrap();
+    player.equip("Sanguinesti staff", Some("Charged")).unwrap();
+    player.equip("Elidinis' ward (f)", None).unwrap();
+    player.equip("Ancestral robe top", None).unwrap();
+    player.equip("Ancestral robe bottom", None).unwrap();
+    player.equip("Tormented bracelet", None).unwrap();
+    player.equip("Eternal boots", None).unwrap();
+    player.equip("Magus ring", None).unwrap();
 
     player.update_bonuses();
     player.set_active_style(CombatStyle::Accurate);
@@ -81,12 +81,12 @@ pub fn max_mage_sang_staff_player() -> Player {
 pub fn bowfa_crystal_player() -> Player {
     let mut player = max_ranged_zcb_player();
 
-    let _ = player.equip("Bow of faerdhinen (c)", None);
-    let _ = player.equip("Crystal helm", Some("Active"));
-    let _ = player.equip("Crystal body", Some("Active"));
-    let _ = player.equip("Crystal legs", Some("Active"));
+    player.equip("Bow of faerdhinen (c)", None).unwrap();
+    player.equip("Crystal helm", Some("Active")).unwrap();
+    player.equip("Crystal body", Some("Active")).unwrap();
+    player.equip("Crystal legs", Some("Active")).unwrap();
     Rc::make_mut(&mut player.gear).ammo = None;
-    let _ = player.equip("Rada's blessing 4", None);
+    player.equip("Rada's blessing 4", None).unwrap();
 
     player.update_bonuses();
     player.update_set_effects();
