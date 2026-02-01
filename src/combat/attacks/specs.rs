@@ -136,17 +136,17 @@ fn demonbane_melee_spec(
 
         // Drain stats by 1 + 5%, 10%, or 15% of their base values
         monster.drain_stat(
-            CombatStat::Attack,
+            &CombatStat::Attack,
             monster.stats.attack.base * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
-            CombatStat::Strength,
+            &CombatStat::Strength,
             monster.stats.strength.base * demon_mod / 20 + 1,
             None,
         );
         monster.drain_stat(
-            CombatStat::Defence,
+            &CombatStat::Defence,
             monster.stats.defence.base * demon_mod / 20 + 1,
             None,
         );
@@ -186,7 +186,7 @@ pub fn ancient_gs_spec(
             tick_counter: Some(9),
             num_heals: 1,
             heal: 25,
-        })
+        });
     }
 
     hit
@@ -390,11 +390,15 @@ pub fn bulwark_spec(
 
         // If either attack or strength is the highest stat, drain both of them by 5%
         if highest_stat.0 == CombatStat::Attack || highest_stat.0 == CombatStat::Strength {
-            monster.drain_stat(CombatStat::Attack, monster.stats.attack.base / 20, None);
-            monster.drain_stat(CombatStat::Strength, monster.stats.strength.base / 20, None);
+            monster.drain_stat(&CombatStat::Attack, monster.stats.attack.base / 20, None);
+            monster.drain_stat(
+                &CombatStat::Strength,
+                monster.stats.strength.base / 20,
+                None,
+            );
         } else {
             // Otherwise, drain the highest stat by 5%
-            monster.drain_stat(highest_stat.0, highest_stat.1 / 20, None);
+            monster.drain_stat(&highest_stat.0, highest_stat.1 / 20, None);
         }
     }
 
@@ -476,12 +480,12 @@ pub fn accursed_sceptre_spec(
 
         if monster.stats.defence.current > def_level_cap {
             let def_drain_cap = monster.stats.defence.base - def_level_cap;
-            monster.drain_stat(CombatStat::Defence, def_drain_cap, Some(def_level_cap));
+            monster.drain_stat(&CombatStat::Defence, def_drain_cap, Some(def_level_cap));
         }
 
         if monster.stats.magic.current > magic_level_cap {
             let magic_drain_cap = monster.stats.magic.base - magic_level_cap;
-            monster.drain_stat(CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
+            monster.drain_stat(&CombatStat::Magic, magic_drain_cap, Some(magic_level_cap));
         }
     }
     hit
@@ -590,7 +594,7 @@ pub fn dorgeshuun_weapon_spec(
         if monster.stats.defence.current == monster.stats.defence.base
             && !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default())
         {
-            monster.drain_stat(CombatStat::Defence, hit.damage, None);
+            monster.drain_stat(&CombatStat::Defence, hit.damage, None);
         }
 
         // Apply other transforms after drain
@@ -640,7 +644,7 @@ pub fn dragon_warhammer_spec(
         // DWH spec always hits on first attack on Tekton
         if player.state.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-            monster.drain_stat(CombatStat::Defence, def_drain, None);
+            monster.drain_stat(&CombatStat::Defence, def_drain, None);
             hit.apply_transforms(player, monster, rng, limiter);
 
             hit
@@ -648,11 +652,11 @@ pub fn dragon_warhammer_spec(
             let mut hit = base_attack(&info, rng, false);
             if hit.success {
                 hit.apply_transforms(player, monster, rng, limiter);
-                monster.drain_stat(CombatStat::Defence, def_drain, None);
+                monster.drain_stat(&CombatStat::Defence, def_drain, None);
             } else {
                 // DWH spec still drains 5% of Tekton's defence on a miss
                 monster.drain_stat(
-                    CombatStat::Defence,
+                    &CombatStat::Defence,
                     monster.stats.defence.current / 20,
                     None,
                 );
@@ -666,7 +670,7 @@ pub fn dragon_warhammer_spec(
             hit.apply_transforms(player, monster, rng, limiter);
 
             if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
-                monster.drain_stat(CombatStat::Defence, def_drain, None);
+                monster.drain_stat(&CombatStat::Defence, def_drain, None);
             }
         }
 
@@ -692,7 +696,7 @@ pub fn seercull_spec(
     hit.damage = max(hit.damage, 1);
 
     if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
-        monster.drain_stat(CombatStat::Magic, hit.damage, None);
+        monster.drain_stat(&CombatStat::Magic, hit.damage, None);
     }
 
     hit.apply_transforms(player, monster, rng, limiter);
@@ -1415,7 +1419,7 @@ pub fn ursine_chainmace_spec(
             damage_per_hit: 4,
             total_hits: 5,
             apply_on_hit: false,
-        })
+        });
     }
 
     hit
@@ -1469,7 +1473,7 @@ pub fn tonalztics_of_ralos_spec(
     let mut hit1 = base_attack(&info, rng, false);
     if hit1.success {
         hit1.damage = max(1, hit1.damage);
-        monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+        monster.drain_stat(&CombatStat::Defence, drain_amount, drain_cap);
         hit1.apply_transforms(player, monster, rng, limiter);
     }
     if player.gear.weapon.matches_version("Charged") {
@@ -1477,7 +1481,7 @@ pub fn tonalztics_of_ralos_spec(
         let mut hit2 = base_attack(&info, rng, false);
         if hit2.success {
             hit2.damage = max(1, hit2.damage);
-            monster.drain_stat(CombatStat::Defence, drain_amount, drain_cap);
+            monster.drain_stat(&CombatStat::Defence, drain_amount, drain_cap);
             hit2.apply_transforms(player, monster, rng, limiter);
         }
         return hit1.combine(&hit2);
@@ -1547,13 +1551,10 @@ pub fn atlatl_spec(
 
     let mut stack_damage = 0;
 
-    for effect in monster.active_effects.iter() {
-        match effect {
-            CombatEffect::Burn { stacks, .. } => {
-                stack_damage += stacks.iter().sum::<u32>();
-                break;
-            }
-            _ => continue,
+    for effect in &monster.active_effects {
+        if let CombatEffect::Burn { stacks, .. } = effect {
+            stack_damage += stacks.iter().sum::<u32>();
+            break;
         }
     }
 
@@ -1618,7 +1619,7 @@ pub fn elder_maul_spec(
         // DWH spec always hits on first attack on Tekton
         if player.state.first_attack {
             let mut hit = Hit::accurate(damage_roll(info.min_hit, info.max_hit, rng));
-            monster.drain_stat(CombatStat::Defence, def_drain, None);
+            monster.drain_stat(&CombatStat::Defence, def_drain, None);
             hit.apply_transforms(player, monster, rng, limiter);
 
             hit
@@ -1626,11 +1627,11 @@ pub fn elder_maul_spec(
             let mut hit = base_attack(&info, rng, false);
             if hit.success {
                 hit.apply_transforms(player, monster, rng, limiter);
-                monster.drain_stat(CombatStat::Defence, def_drain, None);
+                monster.drain_stat(&CombatStat::Defence, def_drain, None);
             } else {
                 // DWH spec still drains 5% of Tekton's defence on a miss
                 monster.drain_stat(
-                    CombatStat::Defence,
+                    &CombatStat::Defence,
                     monster.stats.defence.current / 20,
                     None,
                 );
@@ -1644,7 +1645,7 @@ pub fn elder_maul_spec(
             hit.apply_transforms(player, monster, rng, limiter);
 
             if !IMMUNE_TO_STAT_DRAIN.contains(&monster.info.id.unwrap_or_default()) {
-                monster.drain_stat(CombatStat::Defence, def_drain, None);
+                monster.drain_stat(&CombatStat::Defence, def_drain, None);
             }
         }
 
@@ -1773,7 +1774,7 @@ mod tests {
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
-        let n = 1000000;
+        let n = 1_000_000;
 
         for _ in 0..n {
             let hit = dragon_dagger_spec(&mut player, &mut monster, &mut rng, &limiter);
@@ -1797,7 +1798,7 @@ mod tests {
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
-        let n = 1000000;
+        let n = 1_000_000;
 
         for _ in 0..n {
             let hit = dragon_claw_spec(&mut player, &mut monster, &mut rng, &limiter);
@@ -1821,7 +1822,7 @@ mod tests {
         let limiter = assign_limiter(&player, &monster);
         let mut rng = SmallRng::from_os_rng();
         let mut total_damage = 0;
-        let n = 1000000;
+        let n = 1_000_000;
 
         for _ in 0..n {
             let hit = crystal_halberd_spec(&mut player, &mut monster, &mut rng, &limiter);

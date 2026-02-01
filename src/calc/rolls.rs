@@ -31,20 +31,20 @@ pub fn monster_def_rolls(monster: &Monster) -> MonsterDefRolls {
     }
 
     // Use magic level for magic defence in most cases
-    if !MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
-        def_rolls.set(
-            CombatType::Magic,
-            calc_roll(
-                9 + monster.stats.magic.current,
-                monster.bonuses.defence.magic,
-            ),
-        );
-    } else {
+    if MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
         // Use defence level in some special cases
         def_rolls.set(
             CombatType::Magic,
             calc_roll(
                 9 + monster.stats.defence.current,
+                monster.bonuses.defence.magic,
+            ),
+        );
+    } else {
+        def_rolls.set(
+            CombatType::Magic,
+            calc_roll(
+                9 + monster.stats.magic.current,
                 monster.bonuses.defence.magic,
             ),
         );
@@ -147,7 +147,7 @@ pub fn calc_active_player_rolls(player: &mut Player, monster: &Monster) {
             }
         }
         _ => {}
-    };
+    }
     calc_player_def_rolls(player);
 }
 
@@ -590,7 +590,7 @@ fn apply_melee_weapon_boosts(
         }
         "Bone mace" => {
             if monster.is_rat() {
-                max_hit += 10
+                max_hit += 10;
             }
         }
         _ => {}

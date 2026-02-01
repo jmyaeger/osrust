@@ -66,13 +66,13 @@ impl SpecConfig {
         }
 
         for strategy in &self.strategies {
-            self.validate_conditions(&strategy.conditions)?;
+            Self::validate_conditions(&strategy.conditions)?;
         }
 
         Ok(())
     }
 
-    fn validate_conditions(&self, conditions: &[SpecCondition]) -> Result<(), String> {
+    fn validate_conditions(conditions: &[SpecCondition]) -> Result<(), String> {
         // Check for HP conflicts
         let hp_above: Vec<_> = conditions
             .iter()
@@ -151,29 +151,29 @@ impl SpecStrategy {
         }
         self.conditions
             .iter()
-            .all(|condition| self.evaluate_condition(condition, player, monster))
+            .all(|condition| self.evaluate_condition(*condition, player, monster))
     }
 
     fn evaluate_condition(
         &self,
-        condition: &SpecCondition,
+        condition: SpecCondition,
         player: &Player,
         monster: &Monster,
     ) -> bool {
         match condition {
-            SpecCondition::MaxAttempts(attempts) => self.state.attempt_count < *attempts,
-            SpecCondition::MinSuccesses(successes) => self.state.success_count < *successes,
-            SpecCondition::MonsterHpAbove(hp) => monster.stats.hitpoints.current > *hp,
-            SpecCondition::MonsterHpBelow(hp) => monster.stats.hitpoints.current <= *hp,
-            SpecCondition::PlayerHpAbove(hp) => player.stats.hitpoints.current > *hp,
-            SpecCondition::PlayerHpBelow(hp) => player.stats.hitpoints.current <= *hp,
+            SpecCondition::MaxAttempts(attempts) => self.state.attempt_count < attempts,
+            SpecCondition::MinSuccesses(successes) => self.state.success_count < successes,
+            SpecCondition::MonsterHpAbove(hp) => monster.stats.hitpoints.current > hp,
+            SpecCondition::MonsterHpBelow(hp) => monster.stats.hitpoints.current <= hp,
+            SpecCondition::PlayerHpAbove(hp) => player.stats.hitpoints.current > hp,
+            SpecCondition::PlayerHpBelow(hp) => player.stats.hitpoints.current <= hp,
             SpecCondition::TargetAttackReduction(amt) => {
                 monster
                     .stats
                     .attack
                     .base
                     .saturating_sub(monster.stats.attack.current)
-                    < *amt
+                    < amt
             }
             SpecCondition::TargetStrengthReduction(amt) => {
                 monster
@@ -181,7 +181,7 @@ impl SpecStrategy {
                     .strength
                     .base
                     .saturating_sub(monster.stats.strength.current)
-                    < *amt
+                    < amt
             }
             SpecCondition::TargetDefenceReduction(amt) => {
                 monster
@@ -189,7 +189,7 @@ impl SpecStrategy {
                     .defence
                     .base
                     .saturating_sub(monster.stats.defence.current)
-                    < *amt
+                    < amt
             }
             SpecCondition::TargetRangedReduction(amt) => {
                 monster
@@ -197,7 +197,7 @@ impl SpecStrategy {
                     .ranged
                     .base
                     .saturating_sub(monster.stats.ranged.current)
-                    < *amt
+                    < amt
             }
             SpecCondition::TargetMagicReduction(amt) => {
                 monster
@@ -205,7 +205,7 @@ impl SpecStrategy {
                     .magic
                     .base
                     .saturating_sub(monster.stats.magic.current)
-                    < *amt
+                    < amt
             }
             SpecCondition::TargetMagicDefReduction(amt) => {
                 monster
@@ -213,7 +213,7 @@ impl SpecStrategy {
                     .defence
                     .magic_base
                     .saturating_sub(monster.bonuses.defence.magic)
-                    < *amt
+                    < amt
             }
         }
     }
@@ -504,7 +504,7 @@ impl SingleWayMechanics {
                 );
                 scale_monster_hp_only(&mut fight.monster, true);
                 fight_vars.hit_attempts += 1;
-                fight_vars.hit_count += if hit.success { 1 } else { 0 };
+                fight_vars.hit_count += u32::from(hit.success);
                 fight_vars.hit_amounts.push(hit.damage);
                 fight_vars.attack_tick += fight.player.gear.weapon.speed;
 

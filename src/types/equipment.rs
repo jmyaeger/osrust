@@ -4,6 +4,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
+use std::string::ToString;
 use strum_macros::{Display, EnumIter};
 
 const EQUIPMENT_JSON_STR: &str = include_str!("../databases/equipment.json");
@@ -183,14 +184,11 @@ impl Gear {
             cape.name == "Dizana's quiver"
                 && cape.matches_version("Charged")
                 && self.weapon.uses_bolts_or_arrows()
-                && (self
-                    .ammo
-                    .as_ref()
-                    .is_some_and(|ammo| ammo.is_bolt_or_arrow())
+                && (self.ammo.as_ref().is_some_and(Armor::is_bolt_or_arrow)
                     || self
                         .second_ammo
                         .as_ref()
-                        .is_some_and(|ammo| ammo.is_bolt_or_arrow()))
+                        .is_some_and(Armor::is_bolt_or_arrow))
         })
     }
 
@@ -237,73 +235,73 @@ impl GearBuilder {
 
     /// Set the head slot item.
     pub fn head(mut self, name: &str, version: Option<&str>) -> Self {
-        self.head = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.head = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the neck slot item.
     pub fn neck(mut self, name: &str, version: Option<&str>) -> Self {
-        self.neck = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.neck = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the cape slot item.
     pub fn cape(mut self, name: &str, version: Option<&str>) -> Self {
-        self.cape = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.cape = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the ammo slot item.
     pub fn ammo(mut self, name: &str, version: Option<&str>) -> Self {
-        self.ammo = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.ammo = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the second ammo slot item (for quiver).
     pub fn second_ammo(mut self, name: &str, version: Option<&str>) -> Self {
-        self.second_ammo = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.second_ammo = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the weapon slot item.
     pub fn weapon(mut self, name: &str, version: Option<&str>) -> Self {
-        self.weapon = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.weapon = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the shield slot item.
     pub fn shield(mut self, name: &str, version: Option<&str>) -> Self {
-        self.shield = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.shield = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the body slot item.
     pub fn body(mut self, name: &str, version: Option<&str>) -> Self {
-        self.body = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.body = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the legs slot item.
     pub fn legs(mut self, name: &str, version: Option<&str>) -> Self {
-        self.legs = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.legs = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the hands slot item.
     pub fn hands(mut self, name: &str, version: Option<&str>) -> Self {
-        self.hands = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.hands = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the feet slot item.
     pub fn feet(mut self, name: &str, version: Option<&str>) -> Self {
-        self.feet = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.feet = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
     /// Set the ring slot item.
     pub fn ring(mut self, name: &str, version: Option<&str>) -> Self {
-        self.ring = Some((name.to_string(), version.map(|v| v.to_string())));
+        self.ring = Some((name.to_string(), version.map(ToString::to_string)));
         self
     }
 
@@ -548,7 +546,7 @@ impl Equipment for Armor {
         version: Option<&str>,
     ) -> Result<(), GearError> {
         let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
-        let version_string = version.map(|v| v.to_string());
+        let version_string = version.map(ToString::to_string);
         let matched_item = all_items
             .into_iter()
             .find(|a| a.name == item_name && a.version == version_string)
@@ -676,7 +674,7 @@ impl Equipment for Weapon {
         version: Option<&str>,
     ) -> Result<(), GearError> {
         let all_items: Vec<EquipmentJson> = serde_json::from_str(json)?;
-        let version_string = version.map(|v| v.to_string());
+        let version_string = version.map(ToString::to_string);
         let matching_item = all_items
             .into_iter()
             .find(|a| a.name == item_name && a.version == version_string)

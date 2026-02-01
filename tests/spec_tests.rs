@@ -170,11 +170,11 @@ mod spec_tests {
         assert!(check_spec_conditions(&strategy, &fight));
 
         // Drain some defence
-        fight.monster.drain_stat(CombatStat::Defence, 30, None);
+        fight.monster.drain_stat(&CombatStat::Defence, 30, None);
         assert!(check_spec_conditions(&strategy, &fight)); // 30 < 50, still can spec
 
         // Drain more
-        fight.monster.drain_stat(CombatStat::Defence, 20, None);
+        fight.monster.drain_stat(&CombatStat::Defence, 20, None);
         assert!(!check_spec_conditions(&strategy, &fight)); // 50 = 50, can't spec anymore
     }
 

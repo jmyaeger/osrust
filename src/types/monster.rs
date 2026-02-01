@@ -268,7 +268,7 @@ where
     let mut attack_types: Option<Vec<AttackType>> = None;
     if let Some(attack_styles) = attack_styles {
         attack_types = Some(Vec::new());
-        for style in attack_styles.iter() {
+        for style in &attack_styles {
             let attack_type = AttackType::from(style);
             attack_types.as_mut().unwrap().push(attack_type);
         }
@@ -305,10 +305,9 @@ impl MonsterAttRolls {
             CombatType::Stab => self.stab,
             CombatType::Slash => self.slash,
             CombatType::Crush => self.crush,
-            CombatType::Light => self.ranged,
-            CombatType::Standard => self.ranged,
-            CombatType::Heavy => self.ranged,
-            CombatType::Ranged => self.ranged,
+            CombatType::Light | CombatType::Standard | CombatType::Heavy | CombatType::Ranged => {
+                self.ranged
+            }
             CombatType::Magic => self.magic,
             CombatType::None => 0,
         }
@@ -319,10 +318,9 @@ impl MonsterAttRolls {
             CombatType::Stab => self.stab = value,
             CombatType::Slash => self.slash = value,
             CombatType::Crush => self.crush = value,
-            CombatType::Light => self.ranged = value,
-            CombatType::Standard => self.ranged = value,
-            CombatType::Heavy => self.ranged = value,
-            CombatType::Ranged => self.ranged = value,
+            CombatType::Light | CombatType::Standard | CombatType::Heavy | CombatType::Ranged => {
+                self.ranged = value;
+            }
             CombatType::Magic => self.magic = value,
             CombatType::None => {}
         }
@@ -462,7 +460,7 @@ impl Monster {
     ) -> Result<Monster, MonsterError> {
         // Create a monster by name and version (optional)
 
-        let string_version = version.map(|v| v.to_string());
+        let string_version = version.map(ToString::to_string);
         let all_monsters: Vec<Monster> = serde_json::from_str(json_str)?;
 
         // Find the monster matching the given name and version
@@ -809,7 +807,7 @@ impl Monster {
         self.stats.magic.restore(1, None);
     }
 
-    pub fn drain_stat(&mut self, stat: CombatStat, amount: u32, cap: Option<u32>) -> u32 {
+    pub fn drain_stat(&mut self, stat: &CombatStat, amount: u32, cap: Option<u32>) -> u32 {
         let mut amount = amount;
         let mut remainder = 0;
 
@@ -875,7 +873,7 @@ impl Monster {
                 break;
             }
 
-            amount = self.drain_stat(drain.stat, amount, drain.cap);
+            amount = self.drain_stat(&drain.stat, amount, drain.cap);
         }
     }
 
@@ -1008,13 +1006,13 @@ impl Monster {
     pub fn clear_inactive_effects(&mut self) {
         // Clear all combat effects that are no longer active
         self.active_effects.retain(|event| match event {
-            CombatEffect::Poison { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Poison { tick_counter, .. }
+            | CombatEffect::Venom { tick_counter, .. }
+            | CombatEffect::Burn { tick_counter, .. }
+            | CombatEffect::DelayedHeal { tick_counter, .. }
+            | CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
-            CombatEffect::DelayedHeal { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
-        })
+        });
     }
 
     pub fn freeze(&mut self, duration: u32) {
@@ -1032,10 +1030,9 @@ impl Monster {
         let floor = match self.info.name.as_str() {
             "Verzik Vitur" => self.stats.defence.base,
             "Soteseg" => 100,
-            "The Nightmare" | "Phosani's Nightmare" => 120,
+            "The Nightmare" | "Phosani's Nightmare" | "The Hueycoatl" => 120,
             "Akkha" => 70,
-            "Ba-Ba" => 60,
-            "Kephri" => 60,
+            "Ba-Ba" | "Obelisk (Tombs of Amascut)" | "Kephri" => 60,
             "Zebak" => 50,
             "Tumeken's Warden" | "Elidinis' Warden" => {
                 match self
@@ -1050,10 +1047,8 @@ impl Monster {
                     _ => 0,
                 }
             }
-            "Obelisk (Tombs of Amascut)" => 60,
             "Nex" => 250,
             "Araxxor" => 90,
-            "The Hueycoatl" => 120,
             "Yama" => 145,
             _ => 0,
         };
@@ -1083,7 +1078,7 @@ mod tests {
     fn test_set_info() {
         let vorkath = Monster::new("Vorkath", Some("Post-quest")).expect("Error creating monster.");
         assert_eq!(vorkath.info.name, "Vorkath".to_string());
-        assert_eq!(vorkath.info.combat_level, 732)
+        assert_eq!(vorkath.info.combat_level, 732);
     }
 
     #[test]
@@ -1178,7 +1173,7 @@ mod tests {
     fn test_toa_scaling_with_drain() {
         let mut zebak = Monster::new("Zebak", Some("Normal")).expect("Error creating monster.");
         let initial_def_roll = zebak.def_rolls.get(CombatType::Standard);
-        zebak.drain_stat(CombatStat::Defence, 20, None);
+        zebak.drain_stat(&CombatStat::Defence, 20, None);
         assert_ne!(zebak.def_rolls.get(CombatType::Ranged), initial_def_roll);
         let drained_roll = zebak.def_rolls.get(CombatType::Standard);
         zebak.info.toa_level = 400;

@@ -145,8 +145,8 @@ impl std::fmt::Display for SwitchType {
             Self::Melee => write!(f, "Melee"),
             Self::Ranged => write!(f, "Ranged"),
             Self::Magic => write!(f, "Magic"),
-            Self::Spec(s) => write!(f, "Spec ({})", s),
-            Self::Custom(c) => write!(f, "Custom ({})", c),
+            Self::Spec(s) => write!(f, "Spec ({s})"),
+            Self::Custom(c) => write!(f, "Custom ({c})"),
         }
     }
 }
@@ -271,7 +271,7 @@ impl PlayerAttRolls {
             CombatType::Ranged => return Err(PlayerError::NoGenericRangedStyle),
             CombatType::Magic => self.magic = value,
             CombatType::None => {}
-        };
+        }
 
         Ok(())
     }
@@ -292,10 +292,9 @@ impl PlayerDefRolls {
             CombatType::Stab => self.stab,
             CombatType::Slash => self.slash,
             CombatType::Crush => self.crush,
-            CombatType::Ranged => self.ranged,
-            CombatType::Light => self.ranged,
-            CombatType::Standard => self.ranged,
-            CombatType::Heavy => self.ranged,
+            CombatType::Ranged | CombatType::Light | CombatType::Standard | CombatType::Heavy => {
+                self.ranged
+            }
             CombatType::Magic => self.magic,
             CombatType::None => 0,
         }
@@ -306,10 +305,9 @@ impl PlayerDefRolls {
             CombatType::Stab => self.stab = value,
             CombatType::Slash => self.slash = value,
             CombatType::Crush => self.crush = value,
-            CombatType::Ranged => self.ranged = value,
-            CombatType::Light => self.ranged = value,
-            CombatType::Standard => self.ranged = value,
-            CombatType::Heavy => self.ranged = value,
+            CombatType::Ranged | CombatType::Light | CombatType::Standard | CombatType::Heavy => {
+                self.ranged = value;
+            }
             CombatType::Magic => self.magic = value,
             CombatType::None => {}
         }
@@ -446,12 +444,12 @@ impl Player {
 
     pub fn reset_current_stats(&mut self, include_spec: bool) {
         // Restore to base stats, full spec energy, and reapply potion boosts
-        if !include_spec {
+        if include_spec {
+            self.stats.reset_all();
+        } else {
             let current_spec = self.stats.spec;
             self.stats.reset_all();
             self.stats.spec = current_spec;
-        } else {
-            self.stats.reset_all();
         }
         if let Some(hp) = self.state.current_hp {
             self.stats.hitpoints.current = hp;
@@ -737,10 +735,10 @@ impl Player {
                     potion.calc_moonlight_boost(
                         self.stats.attack,
                         self.stats.herblore,
-                        PotionStat::Attack,
+                        &PotionStat::Attack,
                     );
                 } else if potion.potion_type == Potion::ZamorakBrew {
-                    potion.calc_zamorak_brew_boost(self.stats.attack, PotionStat::Attack);
+                    potion.calc_zamorak_brew_boost(self.stats.attack, &PotionStat::Attack);
                 } else {
                     potion.calc_boost(self.stats.attack);
                 }
@@ -752,7 +750,7 @@ impl Player {
                     potion.calc_moonlight_boost(
                         self.stats.strength,
                         self.stats.herblore,
-                        PotionStat::Strength,
+                        &PotionStat::Strength,
                     );
                 } else if potion.potion_type == Potion::DragonBattleaxe {
                     potion.calc_dragon_battleaxe_boost(
@@ -762,7 +760,7 @@ impl Player {
                         self.stats.magic,
                     );
                 } else if potion.potion_type == Potion::ZamorakBrew {
-                    potion.calc_zamorak_brew_boost(self.stats.strength, PotionStat::Strength);
+                    potion.calc_zamorak_brew_boost(self.stats.strength, &PotionStat::Strength);
                 } else {
                     potion.calc_boost(self.stats.strength);
                 }
@@ -774,7 +772,7 @@ impl Player {
                     potion.calc_moonlight_boost(
                         self.stats.defence,
                         self.stats.herblore,
-                        PotionStat::Defence,
+                        &PotionStat::Defence,
                     );
                 } else {
                     potion.calc_boost(self.stats.defence);
@@ -1202,11 +1200,11 @@ impl Player {
     }
 
     pub fn add_prayer(&mut self, prayer: Prayer) {
-        Rc::make_mut(&mut self.prayers).add(prayer)
+        Rc::make_mut(&mut self.prayers).add(prayer);
     }
 
     pub fn remove_prayer(&mut self, prayer: Prayer) {
-        Rc::make_mut(&mut self.prayers).remove(prayer)
+        Rc::make_mut(&mut self.prayers).remove(prayer);
     }
 
     pub fn bulwark_bonus(&self) -> i32 {
@@ -1261,13 +1259,13 @@ impl Player {
 
     pub fn clear_inactive_effects(&mut self) {
         self.active_effects.retain(|event| match event {
-            CombatEffect::Poison { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::Venom { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::Burn { tick_counter, .. } => tick_counter.is_some(),
+            CombatEffect::Poison { tick_counter, .. }
+            | CombatEffect::Venom { tick_counter, .. }
+            | CombatEffect::Burn { tick_counter, .. }
+            | CombatEffect::DelayedHeal { tick_counter, .. }
+            | CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
             CombatEffect::DelayedAttack { tick_delay, .. } => tick_delay.is_some(),
-            CombatEffect::DelayedHeal { tick_counter, .. } => tick_counter.is_some(),
-            CombatEffect::DamageOverTime { tick_counter, .. } => tick_counter.is_some(),
-        })
+        });
     }
 
     pub fn restore_prayer(&mut self, amount: u32, max_level: Option<u32>) {
@@ -1652,7 +1650,7 @@ mod test {
         let torva_full_helm =
             Armor::new("Torva full helm", None).expect("Error creating equipment.");
         assert_eq!(player.gear.head.clone().unwrap(), torva_full_helm);
-        assert_eq!(player.bonuses, torva_full_helm.bonuses)
+        assert_eq!(player.bonuses, torva_full_helm.bonuses);
     }
 
     #[test]
@@ -1663,7 +1661,7 @@ mod test {
         let osmumtens_fang =
             Weapon::new("Osmumten's fang", None).expect("Error creating equipment.");
         assert_eq!(player.gear.weapon, osmumtens_fang);
-        assert_eq!(player.bonuses, osmumtens_fang.bonuses)
+        assert_eq!(player.bonuses, osmumtens_fang.bonuses);
     }
 
     #[test]
@@ -1676,7 +1674,7 @@ mod test {
         let neitiznot_faceguard =
             Armor::new("Neitiznot faceguard", None).expect("Error creating equipment.");
         assert_eq!(player.gear.head.clone().unwrap(), neitiznot_faceguard);
-        assert_eq!(player.bonuses, neitiznot_faceguard.bonuses)
+        assert_eq!(player.bonuses, neitiznot_faceguard.bonuses);
     }
 
     #[test]

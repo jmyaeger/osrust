@@ -5,6 +5,8 @@ use std::collections::HashMap;
 
 use crate::utils::math::Fraction;
 
+const FLOAT_ACCURACY: f64 = 1e-9;
+
 pub trait HitTransformer: Fn(&Hitsplat) -> HitDistribution {}
 
 impl<F> HitTransformer for F where F: Fn(&Hitsplat) -> HitDistribution {}
@@ -126,7 +128,7 @@ impl WeightedHit {
     pub fn zip(&self, other: &Self) -> Self {
         // Zip two hits together into a single WeightedHit, combining the probabilities
         let mut hitsplats = self.hitsplats.clone();
-        hitsplats.extend(other.hitsplats.iter().cloned());
+        hitsplats.extend(other.hitsplats.iter().copied());
 
         Self::new(self.probability * other.probability, hitsplats)
     }
@@ -138,20 +140,20 @@ impl WeightedHit {
         (head, tail)
     }
 
-    pub fn transform<F>(&self, t: &F, _opts: &TransformOpts) -> HitDistribution
+    pub fn transform<F>(&self, t: &F, opts: &TransformOpts) -> HitDistribution
     where
         F: HitTransformer,
     {
         // Apply a transform function to each hitsplat in the WeightedHit and return a HitDistribution
         if self.hitsplats.len() == 1 {
             return self.hitsplats[0]
-                .transform(t, _opts)
+                .transform(t, opts)
                 .scale_probability(self.probability);
         }
 
         // Recursively zip first hitsplat with remaining hitsplats
         let (head, tail) = self.shift();
-        head.transform(t, _opts).zip(&tail.transform(t, _opts))
+        head.transform(t, opts).zip(&tail.transform(t, opts))
     }
 
     pub fn any_accurate(&self) -> bool {
@@ -172,7 +174,7 @@ impl WeightedHit {
             acc <<= 8;
             acc |= hitsplat.damage as u64;
             acc <<= 1;
-            acc |= if hitsplat.accurate { 1 } else { 0 };
+            acc |= u64::from(hitsplat.accurate);
         }
         acc
     }
@@ -296,7 +298,11 @@ impl HitDistribution {
 
     pub fn get_max(&self) -> u32 {
         // Get the max hit in the distribution, combining multi-hits
-        self.hits.iter().map(|h| h.get_sum()).max().unwrap_or(0)
+        self.hits
+            .iter()
+            .map(WeightedHit::get_sum)
+            .max()
+            .unwrap_or(0)
     }
 
     pub fn with_probabilistic_delays(
@@ -321,14 +327,14 @@ impl HitDistribution {
         // Dedupe the results and merge entries
         let mut acc: HashMap<u64, f64> = HashMap::new();
         for DelayedHit { wh, delay } in hits {
-            let key = (wh.get_sum() as u64 & 0xFFFFFF) | ((delay as u64) << 24);
+            let key = (wh.get_sum() as u64 & 0x00FF_FFFF) | ((delay as u64) << 24);
             *acc.entry(key).or_default() += wh.probability;
         }
 
         acc.into_iter()
             .map(|(key, prob)| {
-                let delay = (key & 0x8F000000) >> 24;
-                let dmg = key & 0xFFFFFF;
+                let delay = (key & 0x8F00_0000) >> 24;
+                let dmg = key & 0x00FF_FFFF;
                 DelayedHit::new(
                     WeightedHit::new(prob, vec![Hitsplat::new(dmg as u32, true)]),
                     delay as u32,
@@ -358,7 +364,7 @@ impl HitDistribution {
         let mut d = HitDistribution::new(vec![WeightedHit::new(accuracy, hitsplats)]);
 
         // Add an inaccurate hit if the accuracy is not 1.0
-        if accuracy != 1.0 {
+        if (accuracy - 1.0).abs() > FLOAT_ACCURACY {
             d.add_hit(WeightedHit::new(
                 1.0 - accuracy,
                 vec![Hitsplat::inaccurate()],
@@ -413,7 +419,7 @@ impl AttackDistribution {
 
     pub fn flatten(&self) -> AttackDistribution {
         // Flatten all hit distributions
-        let dists = self.dists.iter().map(|d| d.flatten()).collect();
+        let dists = self.dists.iter().map(HitDistribution::flatten).collect();
         AttackDistribution::new(dists)
     }
 
@@ -434,11 +440,11 @@ impl AttackDistribution {
     }
 
     pub fn get_max(&self) -> u32 {
-        self.dists.iter().map(|d| d.get_max()).sum()
+        self.dists.iter().map(HitDistribution::get_max).sum()
     }
 
     pub fn get_expected_damage(&self) -> f64 {
-        self.dists.iter().map(|d| d.expected_hit()).sum()
+        self.dists.iter().map(HitDistribution::expected_hit).sum()
     }
 
     pub fn as_histogram(&mut self, hide_misses: bool) -> Vec<ChartEntry> {

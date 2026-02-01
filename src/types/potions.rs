@@ -191,7 +191,7 @@ impl PotionBoost {
         &mut self,
         combat_level: Stat,
         herblore_level: Stat,
-        skill: PotionStat,
+        skill: &PotionStat,
     ) {
         match skill {
             PotionStat::Attack => {
@@ -221,7 +221,7 @@ impl PotionBoost {
         }
     }
 
-    pub fn calc_zamorak_brew_boost(&mut self, combat_level: Stat, skill: PotionStat) {
+    pub fn calc_zamorak_brew_boost(&mut self, combat_level: Stat, skill: &PotionStat) {
         match skill {
             PotionStat::Attack => self.boost = 2 + combat_level.base * 20 / 100,
             PotionStat::Strength => self.boost = 2 + combat_level.base * 12 / 100,

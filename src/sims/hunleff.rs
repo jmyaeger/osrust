@@ -227,10 +227,10 @@ impl HunllefMechanics {
                 state.tornado_chance = TORNADO_BASE_CHANCE;
                 state.tornado_timer = TORNADO_MAX_TIMER;
                 return true;
-            } else {
-                // Decrease the denominator by 1 for each failed proc
-                state.tornado_chance = std::cmp::max(state.tornado_chance.saturating_sub(1), 1);
             }
+
+            // Decrease the denominator by 1 for each failed proc
+            state.tornado_chance = std::cmp::max(state.tornado_chance.saturating_sub(1), 1);
         }
 
         false

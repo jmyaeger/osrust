@@ -154,7 +154,7 @@ fn apply_burn(tick_counter: &mut Option<i32>, stacks: &mut Vec<u32>) -> u32 {
         // Decrease each stack by 1 and remove stacks with 0 values
         *stacks = stacks.iter().map(|&s| s.saturating_sub(1)).collect();
         stacks.retain(|s| *s > 0);
-    };
+    }
 
     if let Some(tick) = tick_counter {
         *tick_counter = Some(*tick + 1);

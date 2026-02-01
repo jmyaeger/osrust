@@ -360,7 +360,7 @@ pub fn get_distribution(
         dist = AttackDistribution::new(vec![
             standard_hit_dist.clone(),
             HitDistribution::linear(second_hit_acc, min_hit, max_hit),
-        ])
+        ]);
     }
 
     // Simple multi-hit specs
@@ -491,9 +491,7 @@ pub fn get_distribution(
             dist = AttackDistribution::new(vec![first_hit]);
         } else {
             let second_hit = HitDistribution::linear(acc, 0, three_fourths);
-            if !using_spec {
-                dist = AttackDistribution::new(vec![first_hit, second_hit]);
-            } else {
+            if using_spec {
                 // Defence drain from first hit affects accuracy of second hit
                 let mut monster_copy = monster.clone();
 
@@ -517,6 +515,8 @@ pub fn get_distribution(
                     },
                     &TransformOpts::default(),
                 );
+            } else {
+                dist = AttackDistribution::new(vec![first_hit, second_hit]);
             }
         }
     }
@@ -621,10 +621,7 @@ pub fn get_distribution(
             ("Ivandis flail", _, _) => {
                 dist = dist.scale_damage(Fraction::new(6, 5).unwrap());
             }
-            ("Rod of ivandis", _, 1 | 2) => {
-                dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
-            }
-            (_, true, 1) => {
+            ("Rod of ivandis", _, 1 | 2) | (_, true, 1) => {
                 dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
             }
             (_, _, _) => {}
@@ -738,7 +735,7 @@ pub fn get_distribution(
                 )
             },
             &TransformOpts::default(),
-        )
+        );
     }
 
     Ok(apply_limiters(dist, player, monster))
@@ -770,7 +767,11 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         | "Saradomin's blessed sword"
         | "Heavy ballista"
         | "Light ballista" => (0, base_max_hit * 5 / 4),
-        "Dragon warhammer" | "Toxic blowpipe" | "Dragon mace" => (0, base_max_hit * 3 / 2),
+        "Dragon warhammer"
+        | "Toxic blowpipe"
+        | "Dragon mace"
+        | "Accursed sceptre"
+        | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
         "Voidwaker" => (base_max_hit / 2, base_max_hit * 3 / 2),
         "Dragon dagger" => (0, base_max_hit * 23 / 20),
         "Abyssal dagger" => (0, base_max_hit * 17 / 20),
@@ -789,7 +790,6 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
             let damage_factor = if descent_of_dragons { 15 } else { 13 };
             (min_hit, base_max_hit * damage_factor / 10)
         }
-        "Accursed sceptre" | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
         _ => {
@@ -949,7 +949,7 @@ fn apply_limiters(
 }
 
 pub fn get_max(
-    dist: AttackDistribution,
+    dist: &AttackDistribution,
     player: &Player,
     monster: &Monster,
     using_spec: bool,
@@ -958,7 +958,7 @@ pub fn get_max(
 }
 
 pub fn get_expected_damage(
-    dist: AttackDistribution,
+    dist: &AttackDistribution,
     player: &Player,
     monster: &Monster,
     using_spec: bool,
@@ -967,18 +967,18 @@ pub fn get_expected_damage(
 }
 
 // Get the average damage per tick
-fn get_dpt(dist: AttackDistribution, player: &Player) -> f64 {
+fn get_dpt(dist: &AttackDistribution, player: &Player) -> f64 {
     dist.get_expected_damage() / player.gear.weapon.speed as f64
 }
 
 // Get the average damage per second
-pub fn get_dps(dist: AttackDistribution, player: &Player) -> f64 {
+pub fn get_dps(dist: &AttackDistribution, player: &Player) -> f64 {
     get_dpt(dist, player) / SECONDS_PER_TICK
 }
 
 // Get the expected number of hits per kill
-fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
-    let mut dist = dist;
+fn get_htk(dist: &AttackDistribution, monster: &Monster) -> f64 {
+    let mut dist = dist.clone();
     let hist = dist.as_histogram(false);
     let start_hp = monster.stats.hitpoints.current as usize;
     let max_hit = min(start_hp, dist.get_max() as usize);
@@ -1003,7 +1003,7 @@ fn get_htk(dist: AttackDistribution, monster: &Monster) -> f64 {
 
 // Get the expected time to kill
 pub fn get_ttk(
-    dist: AttackDistribution,
+    dist: &AttackDistribution,
     player: &Player,
     monster: &Monster,
     using_spec: bool,
@@ -1246,7 +1246,7 @@ mod tests {
 
         let dist = get_distribution(&player, &monster, false)
             .expect("Error calculating attack distribution.");
-        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
+        let ttk = get_ttk(&dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 10.2) < 0.1);
     }
@@ -1276,7 +1276,7 @@ mod tests {
         calc_active_player_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
-        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
+        let ttk = get_ttk(&dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 44.2) < 0.1);
     }
@@ -1308,7 +1308,7 @@ mod tests {
         calc_active_player_rolls(&mut player, &monster);
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
-        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
+        let ttk = get_ttk(&dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 90.8) < 0.1);
     }
@@ -1342,7 +1342,7 @@ mod tests {
 
         let dist = get_distribution(&player, &monster, false)
             .expect("Error creating attack distribution.");
-        let ttk = get_ttk(dist, &player, &monster, false, false).expect("Error calculating ttk.");
+        let ttk = get_ttk(&dist, &player, &monster, false, false).expect("Error calculating ttk.");
 
         assert!(num::abs(ttk - 236.2) < 0.1);
     }

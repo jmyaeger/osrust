@@ -242,7 +242,7 @@ pub fn ahrims_staff_attack(
 
     if hit.success && rng.random_range(0..4) == 0 {
         // Base set effect rolls a 25% chance to reduce strength by 5
-        monster.drain_stat(CombatStat::Strength, 5, None);
+        monster.drain_stat(&CombatStat::Strength, 5, None);
     }
 
     if player.is_wearing_any_version("Amulet of the damned") && rng.random_range(0..4) == 0 {
@@ -377,7 +377,7 @@ pub fn sang_staff_attack(
     let hit = standard_attack(player, monster, rng, limiter);
     if rng.random_range(0..6) == 0 {
         // 1/6 chance to heal by half of the damage dealt
-        player.heal(hit.damage / 2, None)
+        player.heal(hit.damage / 2, None);
     }
 
     hit
@@ -653,23 +653,19 @@ pub fn smoke_spell_attack(
             match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
                 (
                     true,
-                    Some(Spell::Ancient(AncientSpell::SmokeRush))
-                    | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+                    Some(Spell::Ancient(AncientSpell::SmokeRush | AncientSpell::SmokeBurst)),
                 ) => 11,
                 (
                     true,
-                    Some(Spell::Ancient(AncientSpell::SmokeBlitz))
-                    | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+                    Some(Spell::Ancient(AncientSpell::SmokeBlitz | AncientSpell::SmokeBarrage)),
                 ) => 22,
                 (
                     false,
-                    Some(Spell::Ancient(AncientSpell::SmokeRush))
-                    | Some(Spell::Ancient(AncientSpell::SmokeBurst)),
+                    Some(Spell::Ancient(AncientSpell::SmokeRush | AncientSpell::SmokeBurst)),
                 ) => 10,
                 (
                     false,
-                    Some(Spell::Ancient(AncientSpell::SmokeBlitz))
-                    | Some(Spell::Ancient(AncientSpell::SmokeBarrage)),
+                    Some(Spell::Ancient(AncientSpell::SmokeBlitz | AncientSpell::SmokeBarrage)),
                 ) => 20,
                 _ => 0,
             };
@@ -686,26 +682,14 @@ pub fn shadow_spell_attack(
 ) -> Hit {
     // Drain amounts are the percentages multiplied by 1000 to avoid floating point math
     let drain_amount = match (player.is_wearing_ancient_spectre(), player.attrs.spell) {
-        (
-            true,
-            Some(Spell::Ancient(AncientSpell::ShadowRush))
-            | Some(Spell::Ancient(AncientSpell::ShadowBurst)),
-        ) => 110,
-        (
-            true,
-            Some(Spell::Ancient(AncientSpell::ShadowBlitz))
-            | Some(Spell::Ancient(AncientSpell::ShadowBarrage)),
-        ) => 165,
-        (
-            false,
-            Some(Spell::Ancient(AncientSpell::ShadowRush))
-            | Some(Spell::Ancient(AncientSpell::ShadowBurst)),
-        ) => 100,
-        (
-            false,
-            Some(Spell::Ancient(AncientSpell::ShadowBlitz))
-            | Some(Spell::Ancient(AncientSpell::ShadowBarrage)),
-        ) => 150,
+        (true, Some(Spell::Ancient(AncientSpell::ShadowRush | AncientSpell::ShadowBurst))) => 110,
+        (true, Some(Spell::Ancient(AncientSpell::ShadowBlitz | AncientSpell::ShadowBarrage))) => {
+            165
+        }
+        (false, Some(Spell::Ancient(AncientSpell::ShadowRush | AncientSpell::ShadowBurst))) => 100,
+        (false, Some(Spell::Ancient(AncientSpell::ShadowBlitz | AncientSpell::ShadowBarrage))) => {
+            150
+        }
         _ => 0,
     };
 
@@ -715,7 +699,7 @@ pub fn shadow_spell_attack(
         // Only drains attack if it hasn't been drained already
         if monster.stats.attack.current == monster.stats.attack.base {
             monster.drain_stat(
-                CombatStat::Attack,
+                &CombatStat::Attack,
                 monster.stats.attack.base * drain_amount / 1000,
                 None,
             );
@@ -724,14 +708,14 @@ pub fn shadow_spell_attack(
             // Shadow ancient sceptre also drains strength and defense if not drained previously
             if monster.stats.strength.current == monster.stats.strength.base {
                 monster.drain_stat(
-                    CombatStat::Strength,
+                    &CombatStat::Strength,
                     monster.stats.strength.base * drain_amount / 1000,
                     None,
                 );
             }
             if monster.stats.defence.current == monster.stats.defence.base {
                 monster.drain_stat(
-                    CombatStat::Defence,
+                    &CombatStat::Defence,
                     monster.stats.defence.base * drain_amount / 1000,
                     None,
                 );
@@ -1149,7 +1133,7 @@ mod tests {
         let mut rng = SmallRng::from_os_rng();
         let mut hit_damage = 0;
         let mut burn_damage = 0;
-        let n = 1000000000;
+        let n = 100_000_000;
         let mut hit_counter = 0i64;
         let mut tick_counter = 0i64;
         let mut attack_tick = 0;

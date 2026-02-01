@@ -126,10 +126,10 @@ impl StandardSpell {
             StandardSpell::WindWave | StandardSpell::WaterWave | StandardSpell::EarthWave => {
                 wave_spell_max_hit(player)
             }
-            StandardSpell::FireWave => 20,
-            StandardSpell::SaradominStrike => 20,
-            StandardSpell::ClawsOfGuthix => 20,
-            StandardSpell::FlamesOfZamorak => 20,
+            StandardSpell::FireWave
+            | StandardSpell::SaradominStrike
+            | StandardSpell::ClawsOfGuthix
+            | StandardSpell::FlamesOfZamorak => 20,
             StandardSpell::WindSurge | StandardSpell::WaterSurge | StandardSpell::EarthSurge => {
                 surge_spell_max_hit(player)
             }
@@ -142,8 +142,7 @@ impl StandardSpell {
 
     pub fn required_level(&self) -> u32 {
         match self {
-            StandardSpell::None => 1,
-            StandardSpell::WindStrike => 1,
+            StandardSpell::None | StandardSpell::WindStrike => 1,
             StandardSpell::WaterStrike => 5,
             StandardSpell::EarthStrike => 9,
             StandardSpell::FireStrike => 13,
@@ -167,9 +166,8 @@ impl StandardSpell {
             StandardSpell::WaterSurge => 85,
             StandardSpell::EarthSurge => 90,
             StandardSpell::FireSurge => 95,
-            StandardSpell::IbanBlast | StandardSpell::MagicDart => 50,
+            StandardSpell::IbanBlast | StandardSpell::MagicDart | StandardSpell::Snare => 50,
             StandardSpell::Bind => 20,
-            StandardSpell::Snare => 50,
             StandardSpell::Entangle => 79,
         }
     }
@@ -391,9 +389,7 @@ pub fn is_bind_spell(spell: &Spell) -> bool {
         || is_grasp_spell(spell)
         || matches!(
             spell,
-            Spell::Standard(StandardSpell::Bind)
-                | Spell::Standard(StandardSpell::Snare)
-                | Spell::Standard(StandardSpell::Entangle)
+            Spell::Standard(StandardSpell::Bind | StandardSpell::Snare | StandardSpell::Entangle)
         )
 }
 

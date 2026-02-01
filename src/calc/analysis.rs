@@ -69,7 +69,7 @@ fn calculate_dist(data: &[u32]) -> Vec<f64> {
     }
 
     let total = data.len() as f64;
-    for count in dist.iter_mut() {
+    for count in &mut dist {
         *count /= total;
     }
 
