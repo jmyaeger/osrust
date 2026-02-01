@@ -2,7 +2,7 @@ use crate::calc::rolls::calc_active_player_rolls;
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::attacks::specs::{SpecialAttackFn, get_spec_attack_function};
 use crate::combat::attacks::standard::{AttackFn, get_attack_functions, standard_attack};
-use crate::constants::*;
+use crate::constants;
 use crate::error::{GearError, PlayerError};
 use crate::types::equipment::{
     Armor, CombatStance, CombatStyle, CombatType, Equipment, EquipmentBonuses, Gear, GearSlot,
@@ -681,7 +681,7 @@ impl Player {
         }
 
         // Don't add ammo bonuses if the weapon uses its own ammo
-        if !USES_OWN_AMMO.contains(&(
+        if !constants::USES_OWN_AMMO.contains(&(
             self.gear.weapon.name.as_str(),
             self.gear.weapon.version.as_deref(),
         )) {
@@ -708,20 +708,20 @@ impl Player {
 
     pub fn update_set_effects(&mut self) {
         // Update status of all set effects at once
-        self.set_effects.full_ahrims = self.is_wearing_all(FULL_AHRIMS);
-        self.set_effects.full_blood_moon = self.is_wearing_all(FULL_BLOOD_MOON);
-        self.set_effects.full_blue_moon = self.is_wearing_all(FULL_BLUE_MOON);
-        self.set_effects.full_dharoks = self.is_wearing_all(FULL_DHAROKS);
-        self.set_effects.full_guthans = self.is_wearing_all(FULL_GUTHANS);
-        self.set_effects.full_eclipse_moon = self.is_wearing_all(FULL_ECLIPSE_MOON);
-        self.set_effects.full_inquisitor = self.is_wearing_all(FULL_INQUISITOR);
-        self.set_effects.full_justiciar = self.is_wearing_all(FULL_JUSTICIAR);
-        self.set_effects.full_karils = self.is_wearing_all(FULL_KARILS);
-        self.set_effects.full_obsidian = self.is_wearing_all(FULL_OBSIDIAN);
-        self.set_effects.full_torags = self.is_wearing_all(FULL_TORAGS);
+        self.set_effects.full_ahrims = self.is_wearing_all(constants::FULL_AHRIMS);
+        self.set_effects.full_blood_moon = self.is_wearing_all(constants::FULL_BLOOD_MOON);
+        self.set_effects.full_blue_moon = self.is_wearing_all(constants::FULL_BLUE_MOON);
+        self.set_effects.full_dharoks = self.is_wearing_all(constants::FULL_DHAROKS);
+        self.set_effects.full_guthans = self.is_wearing_all(constants::FULL_GUTHANS);
+        self.set_effects.full_eclipse_moon = self.is_wearing_all(constants::FULL_ECLIPSE_MOON);
+        self.set_effects.full_inquisitor = self.is_wearing_all(constants::FULL_INQUISITOR);
+        self.set_effects.full_justiciar = self.is_wearing_all(constants::FULL_JUSTICIAR);
+        self.set_effects.full_karils = self.is_wearing_all(constants::FULL_KARILS);
+        self.set_effects.full_obsidian = self.is_wearing_all(constants::FULL_OBSIDIAN);
+        self.set_effects.full_torags = self.is_wearing_all(constants::FULL_TORAGS);
         self.set_effects.full_void = self.is_wearing_full_void();
         self.set_effects.full_elite_void = self.is_wearing_full_elite_void();
-        self.set_effects.bloodbark_pieces = BLOODBARK_ARMOR
+        self.set_effects.bloodbark_pieces = constants::BLOODBARK_ARMOR
             .iter()
             .filter(|armor| self.is_wearing(armor.0, armor.1))
             .count();
@@ -902,47 +902,47 @@ impl Player {
 
     pub fn is_wearing_black_mask(&self) -> bool {
         // Check if the player is wearing any type of black mask or slayer helmet
-        self.is_wearing_any(BLACK_MASKS)
+        self.is_wearing_any(constants::BLACK_MASKS)
     }
 
     pub fn is_wearing_imbued_black_mask(&self) -> bool {
         // Check if the player is wearing an imbued black mask or slayer helmet
-        self.is_wearing_any(BLACK_MASKS_IMBUED)
+        self.is_wearing_any(constants::BLACK_MASKS_IMBUED)
     }
 
     pub fn is_wearing_salve(&self) -> bool {
         // Check if the player is wearing an unenchanted salve amulet
-        self.is_wearing_any(SALVE_UNENCHANTED)
+        self.is_wearing_any(constants::SALVE_UNENCHANTED)
     }
 
     pub fn is_wearing_salve_e(&self) -> bool {
         // Check if the player is wearing an enchanted salve amulet
-        self.is_wearing_any(SALVE_ENCHANTED)
+        self.is_wearing_any(constants::SALVE_ENCHANTED)
     }
 
     pub fn is_wearing_salve_i(&self) -> bool {
         // Check if the player is wearing an imbued salve amulet
-        self.is_wearing_any(SALVE_IMBUED)
+        self.is_wearing_any(constants::SALVE_IMBUED)
     }
 
     pub fn is_wearing_wildy_mace(&self) -> bool {
         // Check if the player is wearing either type of wilderness mace
-        self.is_wearing_any(WILDY_MACES)
+        self.is_wearing_any(constants::WILDY_MACES)
     }
 
     pub fn is_wearing_wildy_bow(&self) -> bool {
         // Check if the player is wearing either type of wilderness bow
-        self.is_wearing_any(WILDY_BOWS)
+        self.is_wearing_any(constants::WILDY_BOWS)
     }
 
     pub fn is_wearing_wildy_staff(&self) -> bool {
         // Check if the player is wearing any form of wilderness staff
-        self.is_wearing_any(WILDY_STAVES)
+        self.is_wearing_any(constants::WILDY_STAVES)
     }
 
     pub fn is_wearing_elf_bow(&self) -> bool {
         // Check if the player is wearing a crystal bow or bowfa
-        self.is_wearing_any(ELF_BOWS)
+        self.is_wearing_any(constants::ELF_BOWS)
     }
 
     pub fn is_wearing_tzhaar_weapon(&self) -> bool {
@@ -957,36 +957,36 @@ impl Player {
 
     pub fn is_wearing_smoke_staff(&self) -> bool {
         // Check if the player is wearing either type of smoke staff
-        self.is_wearing_any(SMOKE_STAVES)
+        self.is_wearing_any(constants::SMOKE_STAVES)
     }
 
     pub fn is_wearing_silver_weapon(&self) -> bool {
         // Check if the player is wearing any type of silver weapon
-        self.is_wearing_any(SILVER_WEAPONS)
+        self.is_wearing_any(constants::SILVER_WEAPONS)
             || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
     }
 
     pub fn is_wearing_ivandis_weapon(&self) -> bool {
         // Check if the player is wearing one of the weapons that can harm T3 vampyres
-        self.is_wearing_any(IVANDIS_WEAPONS)
+        self.is_wearing_any(constants::IVANDIS_WEAPONS)
     }
 
     pub fn is_wearing_keris(&self) -> bool {
         // Check if the player is wearing any type of keris
-        self.is_wearing_any(KERIS_WEAPONS)
+        self.is_wearing_any(constants::KERIS_WEAPONS)
     }
 
     pub fn is_wearing_leaf_bladed_weapon(&self) -> bool {
         // Check if the player is wearing any type of leaf-bladed weapon or broad bolts
-        (self.is_using_melee() && self.is_wearing_any(LEAF_BLADED_WEAPONS))
+        (self.is_using_melee() && self.is_wearing_any(constants::LEAF_BLADED_WEAPONS))
             || (self.combat_type() == CombatType::Ranged
-                && (self.is_using_crossbow() && self.is_wearing_any(BROAD_BOLTS)))
+                && (self.is_using_crossbow() && self.is_wearing_any(constants::BROAD_BOLTS)))
             || self.is_wearing("Broad arrows", None)
     }
 
     pub fn is_wearing_full_void(&self) -> bool {
         // Check if the player is wearing a full void set
-        FULL_VOID
+        constants::FULL_VOID
             .iter()
             .filter(|(x, _)| self.is_wearing(x, None))
             .count()
@@ -995,7 +995,7 @@ impl Player {
 
     pub fn is_wearing_full_elite_void(&self) -> bool {
         // Check if the player is wearing a full elite void set
-        FULL_ELITE_VOID
+        constants::FULL_ELITE_VOID
             .iter()
             .filter(|(x, _)| self.is_wearing(x, None))
             .count()
@@ -1004,12 +1004,12 @@ impl Player {
 
     pub fn is_wearing_ancient_spectre(&self) -> bool {
         // Check if the player is wearing any type of ancient spectre
-        self.is_wearing_any(ANCIENT_SPECTRES)
+        self.is_wearing_any(constants::ANCIENT_SPECTRES)
     }
 
     pub fn is_wearing_ratbone_weapon(&self) -> bool {
         // Check if the player is wearing any type of ratbone weapon
-        self.is_wearing_any(RATBANE_WEAPONS)
+        self.is_wearing_any(constants::RATBANE_WEAPONS)
     }
 
     pub fn is_using_spell(&self) -> bool {
@@ -1100,7 +1100,7 @@ impl Player {
     }
 
     pub fn is_using_demonbane(&self) -> bool {
-        self.is_using_demonbane_spell() || self.is_wearing_any(DEMONBANE_WEAPONS)
+        self.is_using_demonbane_spell() || self.is_wearing_any(constants::DEMONBANE_WEAPONS)
     }
 
     pub fn is_using_corpbane_weapon(&self) -> bool {
@@ -1303,7 +1303,7 @@ impl Player {
     }
 
     pub fn is_wearing_ogre_bow(&self) -> bool {
-        self.is_wearing_any(OGRE_BOWS)
+        self.is_wearing_any(constants::OGRE_BOWS)
     }
 
     pub fn gets_second_twinflame_hit(&self) -> bool {

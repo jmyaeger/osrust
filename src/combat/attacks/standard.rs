@@ -1,7 +1,7 @@
 use crate::calc::rolls::{self, calc_active_player_rolls};
 use crate::combat::attacks::effects::CombatEffect;
 use crate::combat::limiters::Limiter;
-use crate::constants::*;
+use crate::constants;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::monster::{CombatStat, Monster};
 use crate::types::player::Player;
@@ -448,7 +448,7 @@ pub fn opal_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(OPAL_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::OPAL_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.stats.ranged.current / 9
@@ -475,7 +475,7 @@ pub fn pearl_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(PEARL_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::PEARL_PROC_CHANCE);
 
     // Bolt effect is extra effective against fiery monsters
     let mut denominator = if monster.is_fiery() { 15 } else { 20 };
@@ -503,7 +503,7 @@ pub fn emerald_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(EMERALD_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::EMERALD_PROC_CHANCE);
 
     let poison_severity = if player.is_wearing("Zaryte crossbow", None) {
         27
@@ -527,7 +527,7 @@ pub fn ruby_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(RUBY_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::RUBY_PROC_CHANCE);
 
     let ruby_damage = if player.is_wearing("Zaryte crossbow", None) {
         // Verified to be 22/100, not 2/9
@@ -562,7 +562,7 @@ pub fn diamond_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(DIAMOND_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::DIAMOND_PROC_CHANCE);
 
     let base_max_hit = player.max_hits.get(player.combat_type());
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
@@ -587,7 +587,7 @@ pub fn onyx_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(ONYX_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::ONYX_PROC_CHANCE);
 
     let base_max_hit = player.max_hits.get(player.combat_type());
     let max_hit = if player.is_wearing("Zaryte crossbow", None) {
@@ -616,7 +616,7 @@ pub fn dragonstone_bolt_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let proc_chance = player.bolt_proc_chance(DRAGONSTONE_PROC_CHANCE);
+    let proc_chance = player.bolt_proc_chance(constants::DRAGONSTONE_PROC_CHANCE);
 
     let extra_damage = if player.is_wearing("Zaryte crossbow", None) {
         player.stats.ranged.current * 2 / 9
@@ -832,7 +832,7 @@ pub fn soulreaper_axe_attack(
 
     if player.boosts.soulreaper_stacks < 5 && player.stats.hitpoints.current > 8 {
         // Add a soulreaper stack if the player has less than 5 stacks and can survive the self-damage
-        player.take_damage(SOULREAPER_STACK_DAMAGE);
+        player.take_damage(constants::SOULREAPER_STACK_DAMAGE);
         player.boosts.soulreaper_stacks += 1;
 
         // Recalculate melee rolls with stack boost added

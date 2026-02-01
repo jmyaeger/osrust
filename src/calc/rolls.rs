@@ -1,4 +1,4 @@
-use crate::constants::*;
+use crate::constants;
 use crate::types::equipment::{CombatStance, CombatStyle, CombatType};
 use crate::types::monster::{Monster, MonsterAttRolls, MonsterDefRolls};
 use crate::types::player::Player;
@@ -31,7 +31,7 @@ pub fn monster_def_rolls(monster: &Monster) -> MonsterDefRolls {
     }
 
     // Use magic level for magic defence in most cases
-    if MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
+    if constants::MAGIC_DEF_EXCEPTIONS.contains(&monster.info.id.unwrap_or(0)) {
         // Use defence level in some special cases
         def_rolls.set(
             CombatType::Magic,
@@ -750,7 +750,7 @@ fn apply_ranged_weapon_boosts(
     att_roll = att_factor.multiply_to_int(att_roll);
     max_hit = max_hit_factor.multiply_to_int(max_hit);
 
-    if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
+    if constants::P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or_default())
         && player.is_wearing("Twisted bow", None)
     {
         // Tbow accuracy bonus is applied a second time at P2 Wardens
@@ -976,7 +976,7 @@ fn get_elemental_weakness_boost(player: &Player, monster: &Monster) -> u32 {
 }
 
 pub fn get_demonbane_factor(weapon_boost: i32, monster: &Monster) -> Fraction {
-    DEMONBANE_VULNERABILITY
+    constants::DEMONBANE_VULNERABILITY
         .iter()
         .find_map(|v| {
             if v.0 == monster.info.name {

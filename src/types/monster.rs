@@ -2,7 +2,7 @@ use crate::calc::rolls;
 use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
 use crate::combat::thralls::Thrall;
-use crate::constants::*;
+use crate::constants;
 use crate::error::MonsterError;
 use crate::types::equipment::{CombatStyle, CombatType};
 use crate::types::player::Player;
@@ -618,7 +618,7 @@ impl Monster {
 
     pub fn scale_toa(&mut self) {
         // Scale the HP and defence rolls based on the toa_level field of the monster
-        if TOA_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
+        if constants::TOA_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
             self.scale_toa_hp();
             self.scale_toa_defence();
         }
@@ -645,12 +645,13 @@ impl Monster {
         let level_scaled_hp = self.stats.hitpoints.base * toa_level_bonus / 100;
 
         // If the NPC is affected by path scaling, apply it
-        self.stats.hitpoints.current = if TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
-            let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
-            round_toa_hp(path_scaled_hp)
-        } else {
-            round_toa_hp(level_scaled_hp)
-        };
+        self.stats.hitpoints.current =
+            if constants::TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
+                let path_scaled_hp = level_scaled_hp * toa_path_level_bonus / 100;
+                round_toa_hp(path_scaled_hp)
+            } else {
+                round_toa_hp(level_scaled_hp)
+            };
     }
 
     fn scale_toa_defence(&mut self) {
@@ -693,12 +694,12 @@ impl Monster {
 
         let tbow_m = highest_magic * 3 / 10; // Intermediate value
         let acc_bonus = min(
-            TBOW_ACC_CAP,
-            TBOW_ACC_CAP + (tbow_m * 10 - 10) / 100 - (tbow_m - 100).pow(2) / 100,
+            constants::TBOW_ACC_CAP,
+            constants::TBOW_ACC_CAP + (tbow_m * 10 - 10) / 100 - (tbow_m - 100).pow(2) / 100,
         );
         let dmg_bonus = min(
-            TBOW_DMG_CAP,
-            TBOW_DMG_CAP + (tbow_m * 10 - 14) / 100 - (tbow_m - 140).pow(2) / 100,
+            constants::TBOW_DMG_CAP,
+            constants::TBOW_DMG_CAP + (tbow_m * 10 - 14) / 100 - (tbow_m - 140).pow(2) / 100,
         );
 
         (acc_bonus, dmg_bonus)
@@ -759,7 +760,7 @@ impl Monster {
     }
 
     pub fn is_in_wilderness(&self) -> bool {
-        WILDERNESS_MONSTERS.contains(&self.info.name.as_str())
+        constants::WILDERNESS_MONSTERS.contains(&self.info.name.as_str())
     }
 
     pub fn is_revenant(&self) -> bool {
@@ -767,11 +768,11 @@ impl Monster {
     }
 
     pub fn is_toa_monster(&self) -> bool {
-        TOA_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        constants::TOA_MONSTERS.contains(&self.info.id.unwrap_or(0))
     }
 
     pub fn is_toa_path_monster(&self) -> bool {
-        TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0))
+        constants::TOA_PATH_MONSTERS.contains(&self.info.id.unwrap_or(0))
     }
 
     pub fn heal(&mut self, amount: u32) {
@@ -894,11 +895,11 @@ impl Monster {
         let combat_type = &player.combat_type();
 
         if combat_type == &CombatType::Magic
-            && IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            && constants::IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
             || (player.is_using_ranged()
-                && IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0)))
+                && constants::IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0)))
             || (player.is_using_melee()
-                && (IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+                && (constants::IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
                     || (self.info.name == "Zulrah" && player.gear.weapon.attack_range < 2)))
         {
             return true;
@@ -906,7 +907,8 @@ impl Monster {
 
         if player.is_using_melee()
             && player.gear.weapon.attack_range < 2
-            && IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            && constants::IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS
+                .contains(&self.info.id.unwrap_or(0))
         {
             return true;
         }
@@ -964,11 +966,11 @@ impl Monster {
 
     pub fn is_immune_to_thrall(&self, thrall: Thrall) -> bool {
         if thrall.attack_type() == AttackType::Melee
-            && IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
+            && constants::IMMUNE_TO_MELEE_MONSTERS.contains(&self.info.id.unwrap_or(0))
             || thrall.attack_type() == AttackType::Ranged
-                && IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0))
+                && constants::IMMUNE_TO_RANGED_MONSTERS.contains(&self.info.id.unwrap_or(0))
             || thrall.attack_type() == AttackType::Magic
-                && IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
+                && constants::IMMUNE_TO_MAGIC_MONSTERS.contains(&self.info.id.unwrap_or(0))
         {
             return true;
         }

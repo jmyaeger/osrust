@@ -1,4 +1,4 @@
-use crate::constants::*;
+use crate::constants;
 use crate::error::GearError;
 use serde::{Deserialize, Deserializer, Serialize};
 use std::any::Any;
@@ -695,7 +695,7 @@ impl Equipment for Weapon {
         weapon.slot = GearSlot::Weapon;
 
         // Set spec cost, if applicable
-        let spec_cost = SPEC_COSTS.iter().find(|w| w.0 == weapon.name);
+        let spec_cost = constants::SPEC_COSTS.iter().find(|w| w.0 == weapon.name);
         if let Some(cost) = spec_cost {
             weapon.spec_cost = Some(cost.1);
         }
@@ -793,7 +793,7 @@ impl Weapon {
 
     pub fn uses_bolts_or_arrows(&self) -> bool {
         // Check if the weapon fires bolts or arrows (used for determining quiver bonuses)
-        !NON_BOLT_OR_ARROW_AMMO
+        !constants::NON_BOLT_OR_ARROW_AMMO
             .iter()
             .any(|(name, _)| name == &self.name)
             && self.combat_styles.contains_key(&CombatStyle::Rapid)

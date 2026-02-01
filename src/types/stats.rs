@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::constants::*;
+use crate::constants;
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -22,7 +22,7 @@ pub struct PlayerStats {
 impl PlayerStats {
     pub fn min_stats() -> Self {
         Self {
-            hitpoints: Stat::from(MIN_HITPOINTS),
+            hitpoints: Stat::from(constants::MIN_HITPOINTS),
             attack: Stat::min_level(),
             strength: Stat::min_level(),
             defence: Stat::min_level(),
@@ -54,7 +54,7 @@ impl TryFrom<&HashMap<&str, u32>> for PlayerStats {
 
     fn try_from(stats_map: &HashMap<&str, u32>) -> Result<Self, Self::Error> {
         let mut stats = Self::default();
-        for stat_name in STAT_NAMES {
+        for stat_name in constants::STAT_NAMES {
             if let Some(&value) = stats_map.get(stat_name) {
                 match stat_name {
                     "hitpoints" => stats.hitpoints = Stat::from(value),
@@ -79,15 +79,15 @@ pub struct SpecEnergy(u8);
 
 impl SpecEnergy {
     pub fn new(value: u8) -> Self {
-        if value <= FULL_SPEC {
+        if value <= constants::FULL_SPEC {
             Self(value)
         } else {
-            Self(FULL_SPEC)
+            Self(constants::FULL_SPEC)
         }
     }
 
     pub fn regen_full(&mut self) {
-        self.0 = FULL_SPEC;
+        self.0 = constants::FULL_SPEC;
     }
 
     pub fn value(&self) -> u8 {
@@ -95,7 +95,7 @@ impl SpecEnergy {
     }
 
     pub fn is_full(&self) -> bool {
-        self.0 == FULL_SPEC
+        self.0 == constants::FULL_SPEC
     }
 
     pub fn has_enough(&self, amount: u8) -> bool {
@@ -103,15 +103,15 @@ impl SpecEnergy {
     }
 
     pub fn regen(&mut self) {
-        self.0 = min(self.0 + SPEC_REGEN, FULL_SPEC);
+        self.0 = min(self.0 + constants::SPEC_REGEN, constants::FULL_SPEC);
     }
 
     pub fn death_charge(&mut self) {
-        self.0 = min(self.0 + DEATH_CHARGE, FULL_SPEC);
+        self.0 = min(self.0 + constants::DEATH_CHARGE, constants::FULL_SPEC);
     }
 
     pub fn surge_potion(&mut self) {
-        self.0 = min(self.0 + SURGE_POTION, FULL_SPEC);
+        self.0 = min(self.0 + constants::SURGE_POTION, constants::FULL_SPEC);
     }
 
     pub fn drain(&mut self, amount: u8) {
@@ -125,7 +125,7 @@ impl SpecEnergy {
 
 impl Default for SpecEnergy {
     fn default() -> Self {
-        Self(FULL_SPEC)
+        Self(constants::FULL_SPEC)
     }
 }
 
@@ -145,7 +145,7 @@ impl Stat {
         }
     }
     pub fn min_level() -> Self {
-        Self::new(MIN_LEVEL, None)
+        Self::new(constants::MIN_LEVEL, None)
     }
 
     pub fn restore(&mut self, amount: u32, overboost: Option<u32>) {
@@ -177,7 +177,7 @@ impl From<u32> for Stat {
 
 impl Default for Stat {
     fn default() -> Self {
-        Self::new(MAX_LEVEL, None)
+        Self::new(constants::MAX_LEVEL, None)
     }
 }
 
@@ -228,7 +228,7 @@ pub struct MonsterStats {
 impl Default for MonsterStats {
     fn default() -> Self {
         Self {
-            hitpoints: Stat::new(MIN_HITPOINTS, None),
+            hitpoints: Stat::new(constants::MIN_HITPOINTS, None),
             attack: Stat::min_level(),
             strength: Stat::min_level(),
             defence: Stat::min_level(),

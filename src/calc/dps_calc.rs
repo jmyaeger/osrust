@@ -8,7 +8,7 @@ use crate::calc::hit_dist::{
 };
 use crate::calc::monster_scaling;
 use crate::calc::rolls::{calc_active_player_rolls, get_demonbane_factor, monster_def_rolls};
-use crate::constants::*;
+use crate::constants;
 use crate::dists;
 use crate::dists::bolts::{self, BoltContext};
 use crate::error::DpsCalcError;
@@ -53,20 +53,20 @@ fn get_normal_accuracy(
     }
 
     if player.is_wearing("Keris partisan of the sun", None)
-        && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+        && constants::TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
         && monster.stats.hitpoints.current < monster.stats.hitpoints.base / 4
     {
         max_att_roll = max_att_roll * 5 / 4;
     }
 
     let mut def_roll = if using_spec {
-        if STAB_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+        if constants::STAB_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
             monster.def_rolls.get(CombatType::Stab)
-        } else if SLASH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+        } else if constants::SLASH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
             monster.def_rolls.get(CombatType::Slash)
-        } else if CRUSH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+        } else if constants::CRUSH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
             monster.def_rolls.get(CombatType::Crush)
-        } else if MAGIC_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+        } else if constants::MAGIC_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
             monster.def_rolls.get(CombatType::Magic)
         } else {
             monster.def_rolls.get(combat_type)
@@ -169,9 +169,9 @@ fn get_hit_chance(
         && player.is_wearing("Dawnbringer", None))
         || (monster.info.name.as_str() == "Giant rat (Scurrius)"
             && player.combat_stance() != CombatStance::ManualCast)
-        || (using_spec && player.is_wearing_any(ALWAYS_HITS_SPEC))
-        || P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0))
-        || GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+        || (using_spec && player.is_wearing_any(constants::ALWAYS_HITS_SPEC))
+        || constants::P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0))
+        || constants::GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or(0))
     {
         return Ok(1.0);
     }
@@ -238,7 +238,7 @@ fn burning_claw_dot(player: &Player, monster: &Monster) -> Result<f64, DpsCalcEr
     for acc_roll in 0..3 {
         let prev_rolls_fail = (1.0 - accuracy).powi(acc_roll);
         let this_roll_hits = prev_rolls_fail * accuracy;
-        dot += this_roll_hits * BURN_EXPECTED[acc_roll as usize];
+        dot += this_roll_hits * constants::BURN_EXPECTED[acc_roll as usize];
     }
 
     Ok(dot)
@@ -254,7 +254,7 @@ pub fn get_distribution(
     let combat_type = player.combat_type();
     let (mut min_hit, max_hit) = if using_spec {
         get_spec_min_max_hit(player, monster)?
-    } else if P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0)) {
+    } else if constants::P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0)) {
         get_wardens_p2_min_max(player, monster)?
     } else {
         (0, player.max_hits.get(combat_type))
@@ -270,7 +270,7 @@ pub fn get_distribution(
     let mut accurate_zero_applicable = true;
 
     // Check if the monster always dies in one hit
-    if ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
+    if constants::ONE_HIT_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
         return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             vec![Hitsplat::new(monster.stats.hitpoints.base, true)],
@@ -287,9 +287,11 @@ pub fn get_distribution(
 
     // Check if the monster always takes the maximum hit for the current combat type
     if player.combat_type() == CombatType::Magic
-        && ALWAYS_MAX_HIT_MAGIC.contains(&monster.info.id.unwrap_or(0))
-        || player.is_using_melee() && ALWAYS_MAX_HIT_MELEE.contains(&monster.info.id.unwrap_or(0))
-        || player.is_using_ranged() && ALWAYS_MAX_HIT_RANGED.contains(&monster.info.id.unwrap_or(0))
+        && constants::ALWAYS_MAX_HIT_MAGIC.contains(&monster.info.id.unwrap_or(0))
+        || player.is_using_melee()
+            && constants::ALWAYS_MAX_HIT_MELEE.contains(&monster.info.id.unwrap_or(0))
+        || player.is_using_ranged()
+            && constants::ALWAYS_MAX_HIT_RANGED.contains(&monster.info.id.unwrap_or(0))
     {
         return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
@@ -368,7 +370,7 @@ pub fn get_distribution(
         let mut hit_count = 1;
         if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Dragon knife")
-            || player.is_wearing_any(MAGIC_SHORTBOWS)
+            || player.is_wearing_any(constants::MAGIC_SHORTBOWS)
         {
             hit_count = 2;
         } else if player.is_wearing("Webweaver bow", None) {
@@ -395,7 +397,7 @@ pub fn get_distribution(
     // Saradomin sword spec
     if using_spec && player.is_wearing("Saradomin sword", None) {
         let magic_hit = HitDistribution::linear(1.0, 1, 16);
-        if !IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
+        if !constants::IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.info.id.unwrap_or(0)) {
             dist = dist.transform(
                 &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&magic_hit),
                 &TransformOpts {
@@ -475,7 +477,7 @@ pub fn get_distribution(
     }
 
     // Double-hitting weapon distribution (Torag's hammers/sulphur blades)
-    if player.is_using_melee() && player.is_wearing_any(DOUBLE_HIT_WEAPONS) {
+    if player.is_using_melee() && player.is_wearing_any(constants::DOUBLE_HIT_WEAPONS) {
         let half_max = max_hit / 2;
         let first_hit = HitDistribution::linear(acc, 0, half_max);
         let second_hit = HitDistribution::linear(acc, 0, max_hit - half_max);
@@ -541,7 +543,7 @@ pub fn get_distribution(
         && monster.info.name.contains("Guardian (Chambers")
         && player.gear.weapon.name.contains("pickaxe")
     {
-        let pick_bonus = PICKAXE_BONUSES
+        let pick_bonus = constants::PICKAXE_BONUSES
             .iter()
             .find(|b| b.0 == player.gear.weapon.name)
             .ok_or_else(|| DpsCalcError::NoPickaxeBonus(player.gear.weapon.name.clone()))?
@@ -650,12 +652,12 @@ pub fn get_distribution(
     // Enchanted bolt distributions
     if player.is_using_ranged() && player.is_using_crossbow() {
         // Opal bolts
-        if player.is_wearing_any(OPAL_BOLTS) {
+        if player.is_wearing_any(constants::OPAL_BOLTS) {
             dist = dist.transform(&bolts::opal_bolts(&bolt_context), &TransformOpts::default());
         }
 
         // Pearl bolts
-        if player.is_wearing_any(PEARL_BOLTS) {
+        if player.is_wearing_any(constants::PEARL_BOLTS) {
             dist = dist.transform(
                 &bolts::pearl_bolts(&bolt_context),
                 &TransformOpts::default(),
@@ -663,7 +665,7 @@ pub fn get_distribution(
         }
 
         // Diamond bolts
-        if player.is_wearing_any(DIAMOND_BOLTS) {
+        if player.is_wearing_any(constants::DIAMOND_BOLTS) {
             dist = dist.transform(
                 &bolts::diamond_bolts(&bolt_context),
                 &TransformOpts::default(),
@@ -671,7 +673,8 @@ pub fn get_distribution(
         }
 
         // Dragonstone bolts
-        if player.is_wearing_any(DRAGONSTONE_BOLTS) && (!monster.is_fiery() || !monster.is_dragon())
+        if player.is_wearing_any(constants::DRAGONSTONE_BOLTS)
+            && (!monster.is_fiery() || !monster.is_dragon())
         {
             dist = dist.transform(
                 &bolts::dragonstone_bolts(&bolt_context),
@@ -680,7 +683,7 @@ pub fn get_distribution(
         }
 
         // Onyx bolts
-        if player.is_wearing_any(ONYX_BOLTS) {
+        if player.is_wearing_any(constants::ONYX_BOLTS) {
             dist = dist.transform(&bolts::onyx_bolts(&bolt_context), &TransformOpts::default());
         }
     }
@@ -691,7 +694,10 @@ pub fn get_distribution(
     }
 
     // Ruby bolts
-    if player.is_using_ranged() && player.is_using_crossbow() && player.is_wearing_any(RUBY_BOLTS) {
+    if player.is_using_ranged()
+        && player.is_using_crossbow()
+        && player.is_wearing_any(constants::RUBY_BOLTS)
+    {
         dist = dist.transform(&bolts::ruby_bolts(&bolt_context), &TransformOpts::default());
     }
 
@@ -911,7 +917,7 @@ fn apply_limiters(
         dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
     }
 
-    if monster.info.id == Some(HUEYCOATL_TAIL_ID) {
+    if monster.info.id == Some(constants::HUEYCOATL_TAIL_ID) {
         let using_crush = player.combat_type() == CombatType::Crush
             && player.bonuses.attack.crush > player.bonuses.attack.stab
             && player.bonuses.attack.crush > player.bonuses.attack.slash;
@@ -973,7 +979,7 @@ fn get_dpt(dist: &AttackDistribution, player: &Player) -> f64 {
 
 // Get the average damage per second
 pub fn get_dps(dist: &AttackDistribution, player: &Player) -> f64 {
-    get_dpt(dist, player) / SECONDS_PER_TICK
+    get_dpt(dist, player) / constants::SECONDS_PER_TICK
 }
 
 // Get the expected number of hits per kill
@@ -1018,13 +1024,13 @@ pub fn get_ttk(
             .iter()
             .map(|(ticks, prob)| *prob * *ticks as f64)
             .sum::<f64>()
-            * SECONDS_PER_TICK
+            * constants::SECONDS_PER_TICK
     } else {
-        get_htk(dist, monster) * player.gear.weapon.speed as f64 * SECONDS_PER_TICK
+        get_htk(dist, monster) * player.gear.weapon.speed as f64 * constants::SECONDS_PER_TICK
     };
 
     if remove_final_hit_delay {
-        Ok(ttk - (player.gear.weapon.speed - 1) as f64 * SECONDS_PER_TICK)
+        Ok(ttk - (player.gear.weapon.speed - 1) as f64 * constants::SECONDS_PER_TICK)
     } else {
         Ok(ttk)
     }
@@ -1069,8 +1075,8 @@ pub fn get_ttk_distribution(
 
     // Loop until the number of non-zero hp probabilities is less than TTK_DIST_EPSILON
     // or the number of iterations exceeds TTK_DIST_MAX_ITER_ROUNDS
-    for hit in 0..=TTK_DIST_MAX_ITER_ROUNDS {
-        if epsilon < TTK_DIST_EPSILON {
+    for hit in 0..=constants::TTK_DIST_MAX_ITER_ROUNDS {
+        if epsilon < constants::TTK_DIST_EPSILON {
             break;
         }
 
@@ -1139,12 +1145,12 @@ fn dist_is_current_hp_dependent(player: &Player, monster: &Monster) -> bool {
         return true;
     }
 
-    if player.is_using_crossbow() && player.is_wearing_any(RUBY_BOLTS) {
+    if player.is_using_crossbow() && player.is_wearing_any(constants::RUBY_BOLTS) {
         return true;
     }
 
     if player.is_wearing("Keris partisan of the sun", None)
-        && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+        && constants::TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
     {
         return true;
     }
@@ -1168,11 +1174,11 @@ fn dist_at_hp<'a>(
     if !dist_is_current_hp_dependent(player, monster)
         || hp == monster.stats.hitpoints.current as usize
         || (player.is_wearing("Keris partisan of the sun", None)
-            && TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+            && constants::TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
             && hp >= monster.stats.hitpoints.current as usize / 4)
         || (player.is_using_ranged()
             && player.is_using_crossbow()
-            && player.is_wearing_any(RUBY_BOLTS)
+            && player.is_wearing_any(constants::RUBY_BOLTS)
             && monster.stats.hitpoints.current >= 500
             && hp >= 500)
     {
