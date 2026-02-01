@@ -201,560 +201,230 @@ impl Food {
         self
     }
 }
+macro_rules! simple_foods {
+    ($map:ident; $($name:ident: $heal:expr, $eat:expr, $atk:expr, $type:ident),* $(,)?) => {
+        $($map.insert(Foods::$name, Food::new(Foods::$name, $heal, $eat, $atk, FoodType::$type));)*
+    };
+}
+
+macro_rules! multibite_foods {
+    ($map:ident; $($name:ident: $heal:expr, $eat:expr, $atk:expr; $bites:expr, $bite_heal:expr, $bite_delay:expr),* $(,)?) => {
+        $(
+            $map.insert(Foods::$name, Food::new(Foods::$name, $heal, $eat, $atk, FoodType::MultiBite)
+                .with_properties(FoodPropertiesBuilder::new()
+                    .total_bites($bites).bite_heal_amount($bite_heal).bite_eat_delay($bite_delay).build()));
+        )*
+    };
+}
+
+macro_rules! delayed_heal_foods {
+    ($map:ident; $($name:ident: $heal:expr => $delayed:expr; $tick_delay:expr),* $(,)?) => {
+        $(
+            $map.insert(Foods::$name, Food::new(Foods::$name, $heal, 3, 3, FoodType::DelayedHeal)
+                .with_properties(FoodPropertiesBuilder::new()
+                    .delayed_heal(CombatEffect::DelayedHeal {
+                        tick_delay: $tick_delay, tick_counter: Some($tick_delay), num_heals: 1, heal: $delayed
+                    }).build()));
+        )*
+    };
+}
+
 lazy_static! {
     static ref FOOD_DB: HashMap<Foods, Food> = {
         let mut map = HashMap::new();
-        map.insert(Foods::Anchovies, Food::new(Foods::Anchovies, 1, 3, 3, FoodType::Normal));
-        map.insert(Foods::Sardine, Food::new(Foods::Sardine, 4, 3, 3, FoodType::Normal));
-        map.insert(Foods::Trout, Food::new(Foods::Trout, 7, 3, 3, FoodType::Normal));
-        map.insert(Foods::Cod, Food::new(Foods::Cod, 7, 3, 3, FoodType::Normal));
-        map.insert(Foods::UgthankiKebab, Food::new(Foods::UgthankiKebab, 19, 3, 3, FoodType::Normal));
-        map.insert(Foods::Kebab, Food::new(Foods::Kebab, 3, 3, 3, FoodType::Normal));
-        map.insert(Foods::Stew, Food::new(Foods::Stew, 11, 3, 3, FoodType::Normal));
-        map.insert(Foods::Shrimps, Food::new(Foods::Shrimps, 3, 3, 3, FoodType::Normal));
-        map.insert(Foods::Chicken, Food::new(Foods::Chicken, 3, 3, 3, FoodType::Normal));
-        map.insert(Foods::Meat, Food::new(Foods::Meat, 3, 3, 3, FoodType::Normal));
-        map.insert(Foods::Bread, Food::new(Foods::Bread, 5, 3, 3, FoodType::Normal));
-        map.insert(Foods::Herring, Food::new(Foods::Herring, 5, 3, 3, FoodType::Normal));
-        map.insert(Foods::Mackerel, Food::new(Foods::Mackerel, 6, 3, 3, FoodType::Normal));
-        map.insert(Foods::Pike, Food::new(Foods::Pike, 8, 3, 3, FoodType::Normal));
-        map.insert(Foods::Peach, Food::new(Foods::Peach, 8, 3, 3, FoodType::Normal));
-        map.insert(Foods::Salmon, Food::new(Foods::Salmon, 9, 3, 3, FoodType::Normal));
-        map.insert(Foods::Tuna, Food::new(Foods::Tuna, 10, 3, 3, FoodType::Normal));
-        map.insert(Foods::JugOfWine, Food::new(Foods::JugOfWine, 11, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::Cake,
-            Food::new(Foods::Cake, 12, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(3)
-                        .bite_heal_amount(4)
-                        .bite_eat_delay(2)
-                        .build()
-                ),
-        );
-        map.insert(
-            Foods::MeatPie,
-            Food::new(Foods::MeatPie, 12, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(6)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(Foods::Lobster, Food::new(Foods::Lobster, 12, 3, 3, FoodType::Normal));
-        map.insert(Foods::Bass, Food::new(Foods::Bass, 13, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::PlainPizza,
-            Food::new(Foods::PlainPizza, 14, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(7)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(Foods::Swordfish, Food::new(Foods::Swordfish, 14, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::ApplePie,
-            Food::new(Foods::ApplePie, 14, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(7)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::ChocolateCake,
-            Food::new(Foods::ChocolateCake, 15, 3, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(3)
-                        .bite_heal_amount(5)
-                        .bite_eat_delay(2)
-                        .build()
-                )
-        );
-        map.insert(Foods::SnowyKnight, Food::new(Foods::SnowyKnight, 15, 3, 0, FoodType::Potion));
-        map.insert(Foods::PotatoWithCheese, Food::new(Foods::PotatoWithCheese, 16, 3, 3, FoodType::Normal));
-        map.insert(Foods::Monkfish, Food::new(Foods::Monkfish, 16, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::Kyatt,
-            Food::new(Foods::Kyatt, 9, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 8
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::AnchovyPizza,
-            Food::new(Foods::AnchovyPizza, 18, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(9)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(Foods::Karambwan, Food::new(Foods::Karambwan, 18, 3, 2, FoodType::Combo));
-        map.insert(Foods::Curry, Food::new(Foods::Curry, 19, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::PyreFox,
-            Food::new(Foods::PyreFox, 11, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 8
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::GuthixRest,
-            Food::new(Foods::GuthixRest, 20, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .bite_heal_amount(5)
-                        .total_bites(4)
-                        .build()
-                )
-        );
-        map.insert(Foods::Shark, Food::new(Foods::Shark, 20, 3, 3, FoodType::Normal));
-        map.insert(Foods::SeaTurtle, Food::new(Foods::SeaTurtle, 21, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::SunlightAntelope,
-            Food::new(Foods::SunlightAntelope, 12, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 9
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::PineapplePizza,
-            Food::new(Foods::PineapplePizza, 22, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(11)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::DragonfruitPie,
-            Food::new(Foods::DragonfruitPie, 20, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(10)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::SummerPie,
-            Food::new(Foods::SummerPie, 22, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(11)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::BasketOfStrawberries,
-            Food::new(Foods::BasketOfStrawberries, 0, 3, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(5)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 6 / 100 + 1)
-                        .build()
-                )
+
+        // Simple foods (Normal, Combo, Potion without special properties)
+        // Format: name: heal, eat_delay, atk_delay, food_type
+        simple_foods!(map;
+            Anchovies: 1, 3, 3, Normal,
+            Sardine: 4, 3, 3, Normal,
+            Trout: 7, 3, 3, Normal,
+            Cod: 7, 3, 3, Normal,
+            UgthankiKebab: 19, 3, 3, Normal,
+            Kebab: 3, 3, 3, Normal,
+            Stew: 11, 3, 3, Normal,
+            Shrimps: 3, 3, 3, Normal,
+            Chicken: 3, 3, 3, Normal,
+            Meat: 3, 3, 3, Normal,
+            Bread: 5, 3, 3, Normal,
+            Herring: 5, 3, 3, Normal,
+            Mackerel: 6, 3, 3, Normal,
+            Pike: 8, 3, 3, Normal,
+            Peach: 8, 3, 3, Normal,
+            Salmon: 9, 3, 3, Normal,
+            Tuna: 10, 3, 3, Normal,
+            JugOfWine: 11, 3, 3, Normal,
+            Lobster: 12, 3, 3, Normal,
+            Bass: 13, 3, 3, Normal,
+            Swordfish: 14, 3, 3, Normal,
+            PotatoWithCheese: 16, 3, 3, Normal,
+            Monkfish: 16, 3, 3, Normal,
+            Curry: 19, 3, 3, Normal,
+            Shark: 20, 3, 3, Normal,
+            SeaTurtle: 21, 3, 3, Normal,
+            MantaRay: 22, 3, 3, Normal,
+            TunaPotato: 22, 3, 3, Normal,
+            DarkCrab: 22, 3, 3, Normal,
+            PurpleSweets: 1, 3, 3, Normal,
+            MushroomPotato: 20, 3, 3, Normal,
+            Paddlefish: 20, 3, 3, Normal,
+            MossLizard: 33, 3, 3, Normal,
+            Bream: 33, 3, 3, Normal,
+            SnowyKnight: 15, 3, 0, Potion,
+            Karambwan: 18, 3, 2, Combo,
+            CorruptedPaddlefish: 16, 3, 2, Combo,
+            ToadCrunchies: 8, 3, 2, Combo,
+            SpicyCrunchies: 7, 3, 2, Combo,
+            WormCrunchies: 8, 3, 2, Combo,
+            ChocchipCrunchies: 7, 3, 2, Combo,
+            MeatPizza: 16, 1, 3, Combo,
+            FruitBatta: 11, 3, 2, Combo,
+            ToadBatta: 11, 3, 2, Combo,
+            WormBatta: 11, 3, 2, Combo,
+            VegetableBatta: 11, 3, 2, Combo,
+            CheeseTomBatta: 11, 3, 2, Combo,
+            WormHole: 12, 3, 2, Combo,
+            VegBall: 12, 3, 2, Combo,
+            ChocolateBomb: 15, 3, 2, Combo,
+            TangledToadsLegs: 15, 3, 2, Combo,
         );
 
-
-
-        map.insert(
-            Foods::SaradominBrew,
-            Food::new(Foods::SaradominBrew, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 2)
-                        .stat_effect(
-                            |player| {
-                                let def_boost = player.stats.defence.base / 5 + 2;
-                                player.stats.defence.restore(
-                                    def_boost, Some(def_boost + player.stats.defence.base)
-                                );
-
-                                player.stats.attack.drain(player.stats.attack.current / 10 + 2);
-                                player.stats.strength.drain(player.stats.strength.current / 10 + 2);
-                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 2);
-                                player.stats.magic.drain(player.stats.magic.current / 10 + 2);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
-        map.insert(Foods::Paddlefish, Food::new(Foods::Paddlefish, 20, 3, 3, FoodType::Normal));
-        map.insert(Foods::CorruptedPaddlefish, Food::new(Foods::CorruptedPaddlefish, 16, 3, 2, FoodType::Combo));
-        map.insert(
-            Foods::WildKebbit,
-            Food::new(Foods::WildKebbit, 44, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 4
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::Larupia,
-            Food::new(Foods::Larupia, 6, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 5
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::BarbTailedKebbit,
-            Food::new(Foods::BarbTailedKebbit, 7, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 5
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::Graahk,
-            Food::new(Foods::Graahk, 8, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 6
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::WildPie,
-            Food::new(Foods::WildPie, 22, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(11)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(Foods::MantaRay, Food::new(Foods::MantaRay, 22, 3, 3, FoodType::Normal));
-        map.insert(Foods::TunaPotato, Food::new(Foods::TunaPotato, 22, 3, 3, FoodType::Normal));
-        map.insert(Foods::DarkCrab, Food::new(Foods::DarkCrab, 22, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::Anglerfish,
-            Food::new(Foods::Anglerfish, 0, 3, 3, FoodType::Normal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .heal_function(|player| player.stats.hitpoints.base * 6 / 100 + 1)
-                        .overheal()
-                        .build()
-                )
+        // MultiBite foods (pies, cakes, pizzas)
+        // Format: name: heal, eat_delay, atk_delay; bites, bite_heal, bite_delay
+        multibite_foods!(map;
+            Cake: 12, 2, 3; 3, 4, 2,
+            ChocolateCake: 15, 3, 3; 3, 5, 2,
+            MeatPie: 12, 2, 3; 2, 6, 1,
+            PlainPizza: 14, 2, 3; 2, 7, 1,
+            ApplePie: 14, 2, 3; 2, 7, 1,
+            AnchovyPizza: 18, 2, 3; 2, 9, 1,
+            PineapplePizza: 22, 2, 3; 2, 11, 1,
+            RedberryPie: 10, 2, 3; 2, 5, 1,
+            DragonfruitPie: 20, 1, 3; 2, 10, 1,
+            SummerPie: 22, 1, 3; 2, 11, 1,
+            WildPie: 22, 1, 3; 2, 11, 1,
+            GardenPie: 12, 1, 3; 2, 6, 1,
+            FishPie: 12, 1, 3; 2, 6, 1,
+            BotanicalPie: 14, 1, 3; 2, 7, 1,
+            MushroomPie: 16, 1, 3; 2, 8, 1,
+            AdmiralPie: 16, 1, 3; 2, 8, 1,
         );
 
-        map.insert(
-            Foods::DashingKebbit,
-            Food::new(Foods::DashingKebbit, 13, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 10
-                            }
-                        )
-                        .build()
-                )
+        // Delayed heal foods (hunter kebbits/antelope)
+        // Format: name: initial_heal => delayed_heal; tick_delay
+        delayed_heal_foods!(map;
+            Kyatt: 9 => 8; 7,
+            PyreFox: 11 => 8; 7,
+            SunlightAntelope: 12 => 9; 7,
+            WildKebbit: 44 => 4; 7,
+            Larupia: 6 => 5; 7,
+            BarbTailedKebbit: 7 => 5; 7,
+            Graahk: 8 => 6; 7,
+            DashingKebbit: 13 => 10; 7,
+            MoonlightAntelope: 14 => 12; 7,
         );
-        map.insert(
-            Foods::MoonlightAntelope,
-            Food::new(Foods::MoonlightAntelope, 14, 3, 3, FoodType::DelayedHeal)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .delayed_heal(
-                            CombatEffect::DelayedHeal {
-                                tick_delay: 7, tick_counter: Some(7), num_heals: 1, heal: 12
-                            }
-                        )
-                        .build()
-                )
-        );
-        map.insert(Foods::PurpleSweets, Food::new(Foods::PurpleSweets, 1, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::RedberryPie,
-            Food::new(Foods::RedberryPie, 10, 2, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(5)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::GardenPie,
-            Food::new(Foods::GardenPie, 12, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(6)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::FishPie,
-            Food::new(Foods::FishPie, 12, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(6)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::BotanicalPie,
-            Food::new(Foods::BotanicalPie, 14, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(7)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::MushroomPie,
-            Food::new(Foods::MushroomPie, 16, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(8)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::AdmiralPie,
-            Food::new(Foods::AdmiralPie, 16, 1, 3, FoodType::MultiBite)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(2)
-                        .bite_heal_amount(8)
-                        .bite_eat_delay(1)
-                        .build()
-                )
-        );
-        map.insert(Foods::ToadCrunchies, Food::new(Foods::ToadCrunchies, 8, 3, 2, FoodType::Combo));
-        map.insert(Foods::SpicyCrunchies, Food::new(Foods::SpicyCrunchies, 7, 3, 2, FoodType::Combo));
-        map.insert(Foods::WormCrunchies, Food::new(Foods::WormCrunchies, 8, 3, 2, FoodType::Combo));
-        map.insert(Foods::ChocchipCrunchies, Food::new(Foods::ChocchipCrunchies, 7, 3, 2, FoodType::Combo));
-        map.insert(Foods::MeatPizza, Food::new(Foods::MeatPizza, 16, 1, 3, FoodType::Combo));
-        map.insert(Foods::FruitBatta, Food::new(Foods::FruitBatta, 11, 3, 2, FoodType::Combo));
-        map.insert(Foods::ToadBatta, Food::new(Foods::ToadBatta, 11, 3, 2, FoodType::Combo));
-        map.insert(Foods::WormBatta, Food::new(Foods::WormBatta, 11, 3, 2, FoodType::Combo));
-        map.insert(Foods::VegetableBatta, Food::new(Foods::VegetableBatta, 11, 3, 2, FoodType::Combo));
-        map.insert(Foods::CheeseTomBatta, Food::new(Foods::CheeseTomBatta, 11, 3, 2, FoodType::Combo));
-        map.insert(Foods::WormHole, Food::new(Foods::WormHole, 12, 3, 2, FoodType::Combo));
-        map.insert(Foods::VegBall, Food::new(Foods::VegBall, 12, 3, 2, FoodType::Combo));
-        map.insert(Foods::ChocolateBomb, Food::new(Foods::ChocolateBomb, 15, 3, 2, FoodType::Combo));
-        map.insert(Foods::TangledToadsLegs, Food::new(Foods::TangledToadsLegs, 15, 3, 2, FoodType::Combo));
-        map.insert(Foods::MushroomPotato, Food::new(Foods::MushroomPotato, 20, 3, 3, FoodType::Normal));
-        map.insert(
-            Foods::XericsAidMinus,
-            Food::new(Foods::XericsAidMinus, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 7 / 100 + 1)
-                        .stat_effect(
-                            |player| {
-                                let def_boost = player.stats.defence.base * 14 / 100 + 1;
-                                player.stats.defence.restore(
-                                    def_boost, Some(def_boost + player.stats.defence.base)
-                                );
 
-                                player.stats.attack.drain(player.stats.attack.current * 7 / 100 + 1);
-                                player.stats.strength.drain(player.stats.strength.current * 7 / 100 + 1);
-                                player.stats.ranged.drain(player.stats.ranged.current * 7 / 100 + 1);
-                                player.stats.magic.drain(player.stats.magic.current * 7 / 100 + 1);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::XericsAid,
-            Food::new(Foods::XericsAid, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 12 / 100 + 2)
-                        .stat_effect(
-                            |player| {
-                                let def_boost = player.stats.defence.base * 18 / 100 + 2;
-                                player.stats.defence.restore(
-                                    def_boost, Some(def_boost + player.stats.defence.base)
-                                );
+        // Complex foods with custom properties (heal functions, stat effects, etc.)
+        map.insert(Foods::GuthixRest, Food::new(Foods::GuthixRest, 20, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .bite_heal_amount(5).total_bites(4).build()));
 
-                                player.stats.attack.drain(player.stats.attack.current * 9 / 100 + 2);
-                                player.stats.strength.drain(player.stats.strength.current * 9 / 100 + 2);
-                                player.stats.ranged.drain(player.stats.ranged.current * 9 / 100 + 2);
-                                player.stats.magic.drain(player.stats.magic.current * 9 / 100 + 2);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::XericsAidPlus,
-            Food::new(Foods::XericsAidPlus, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 5)
-                        .stat_effect(
-                            |player| {
-                                let def_boost = player.stats.defence.base / 5 + 5;
-                                player.stats.defence.restore(
-                                    def_boost, Some(def_boost + player.stats.defence.base)
-                                );
+        map.insert(Foods::BasketOfStrawberries, Food::new(Foods::BasketOfStrawberries, 0, 3, 3, FoodType::MultiBite)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(5).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 6 / 100 + 1).build()));
 
-                                player.stats.attack.drain(player.stats.attack.current / 10 + 4);
-                                player.stats.strength.drain(player.stats.strength.current / 10 + 4);
-                                player.stats.ranged.drain(player.stats.ranged.current / 10 + 4);
-                                player.stats.magic.drain(player.stats.magic.current / 10 + 4);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::Nectar,
-            Food::new(Foods::Nectar, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 3)
-                        .stat_effect(
-                            |player| {
-                                player.stats.attack.drain(player.stats.attack.current / 20 + 5);
-                                player.stats.strength.drain(player.stats.strength.current / 20 + 5);
-                                player.stats.defence.drain(player.stats.defence.current / 20 + 5);
-                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5);
-                                player.stats.magic.drain(player.stats.magic.current / 20 + 5);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
-        map.insert(
-            Foods::Nectar,
-            Food::new(Foods::Nectar, 0, 3, 0, FoodType::Potion)
-                .with_properties(
-                    FoodPropertiesBuilder::new()
-                        .total_bites(4)
-                        .bite_eat_delay(3)
-                        .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 3)
-                        .stat_effect(
-                            |player| {
-                                player.stats.attack.drain(player.stats.attack.current / 20 + 5);
-                                player.stats.strength.drain(player.stats.strength.current / 20 + 5);
-                                player.stats.defence.drain(player.stats.defence.current / 20 + 5);
-                                player.stats.ranged.drain(player.stats.ranged.current / 20 + 5);
-                                player.stats.magic.drain(player.stats.magic.current / 20 + 5);
-                            }
-                        )
-                        .overheal()
-                        .build()
-                )
-        );
+        map.insert(Foods::Anglerfish, Food::new(Foods::Anglerfish, 0, 3, 3, FoodType::Normal)
+            .with_properties(FoodPropertiesBuilder::new()
+                .heal_function(|player| player.stats.hitpoints.base * 6 / 100 + 1)
+                .overheal().build()));
+
+        map.insert(Foods::SaradominBrew, Food::new(Foods::SaradominBrew, 0, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(4).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 2)
+                .stat_effect(|player| {
+                    let def_boost = player.stats.defence.base / 5 + 2;
+                    player.stats.defence.restore(def_boost, Some(def_boost + player.stats.defence.base));
+                    player.stats.attack.drain(player.stats.attack.current / 10 + 2);
+                    player.stats.strength.drain(player.stats.strength.current / 10 + 2);
+                    player.stats.ranged.drain(player.stats.ranged.current / 10 + 2);
+                    player.stats.magic.drain(player.stats.magic.current / 10 + 2);
+                })
+                .overheal().build()));
+
+        map.insert(Foods::XericsAidMinus, Food::new(Foods::XericsAidMinus, 0, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(4).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 7 / 100 + 1)
+                .stat_effect(|player| {
+                    let def_boost = player.stats.defence.base * 14 / 100 + 1;
+                    player.stats.defence.restore(def_boost, Some(def_boost + player.stats.defence.base));
+                    player.stats.attack.drain(player.stats.attack.current * 7 / 100 + 1);
+                    player.stats.strength.drain(player.stats.strength.current * 7 / 100 + 1);
+                    player.stats.ranged.drain(player.stats.ranged.current * 7 / 100 + 1);
+                    player.stats.magic.drain(player.stats.magic.current * 7 / 100 + 1);
+                })
+                .overheal().build()));
+
+        map.insert(Foods::XericsAid, Food::new(Foods::XericsAid, 0, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(4).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 12 / 100 + 2)
+                .stat_effect(|player| {
+                    let def_boost = player.stats.defence.base * 18 / 100 + 2;
+                    player.stats.defence.restore(def_boost, Some(def_boost + player.stats.defence.base));
+                    player.stats.attack.drain(player.stats.attack.current * 9 / 100 + 2);
+                    player.stats.strength.drain(player.stats.strength.current * 9 / 100 + 2);
+                    player.stats.ranged.drain(player.stats.ranged.current * 9 / 100 + 2);
+                    player.stats.magic.drain(player.stats.magic.current * 9 / 100 + 2);
+                })
+                .overheal().build()));
+
+        map.insert(Foods::XericsAidPlus, Food::new(Foods::XericsAidPlus, 0, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(4).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 5)
+                .stat_effect(|player| {
+                    let def_boost = player.stats.defence.base / 5 + 5;
+                    player.stats.defence.restore(def_boost, Some(def_boost + player.stats.defence.base));
+                    player.stats.attack.drain(player.stats.attack.current / 10 + 4);
+                    player.stats.strength.drain(player.stats.strength.current / 10 + 4);
+                    player.stats.ranged.drain(player.stats.ranged.current / 10 + 4);
+                    player.stats.magic.drain(player.stats.magic.current / 10 + 4);
+                })
+                .overheal().build()));
+
+        map.insert(Foods::Nectar, Food::new(Foods::Nectar, 0, 3, 0, FoodType::Potion)
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(4).bite_eat_delay(3)
+                .heal_function(|player| player.stats.hitpoints.base * 3 / 20 + 3)
+                .stat_effect(|player| {
+                    player.stats.attack.drain(player.stats.attack.current / 20 + 5);
+                    player.stats.strength.drain(player.stats.strength.current / 20 + 5);
+                    player.stats.defence.drain(player.stats.defence.current / 20 + 5);
+                    player.stats.ranged.drain(player.stats.ranged.current / 20 + 5);
+                    player.stats.magic.drain(player.stats.magic.current / 20 + 5);
+                })
+                .overheal().build()));
 
         map.insert(Foods::SilkDressing, Food::new(Foods::SilkDressing, 0, 3, 0, FoodType::DelayedHeal)
-            .with_properties(
-                FoodPropertiesBuilder::new()
-                    .total_bites(2)
-                    .delayed_heal(
-                        CombatEffect::DelayedHeal {
-                            tick_delay: 5, tick_counter: Some(5), num_heals: 20, heal: 5
-                        }
-                    )
-                    .build()
-            )
-        );
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(2)
+                .delayed_heal(CombatEffect::DelayedHeal {
+                    tick_delay: 5, tick_counter: Some(5), num_heals: 20, heal: 5
+                }).build()));
+
         map.insert(Foods::Ambrosia, Food::new(Foods::Ambrosia, 0, 3, 0, FoodType::Potion)
-            .with_properties(
-                FoodPropertiesBuilder::new()
-                    .total_bites(2)
-                    .bite_eat_delay(3)
-                    .stat_effect(
-                        |player| {
-                            let hp_boost = player.stats.hitpoints.base / 4 + 2;
-                            player.stats.hitpoints.current = player.stats.hitpoints.base + hp_boost;
-                            let prayer_boost = player.stats.prayer.base / 5 + 5;
-                            player.stats.prayer.current = player.stats.prayer.base + prayer_boost;
-                        }
-                    )
-                    .overheal()
-                    .build()
-            ));
-        // TODO: Add player fishing and hunter levels for these foods
-        map.insert(Foods::MossLizard, Food::new(Foods::MossLizard, 33, 3, 3, FoodType::Normal));
-        map.insert(Foods::Bream, Food::new(Foods::Bream, 33, 3, 3, FoodType::Normal));
+            .with_properties(FoodPropertiesBuilder::new()
+                .total_bites(2).bite_eat_delay(3)
+                .stat_effect(|player| {
+                    let hp_boost = player.stats.hitpoints.base / 4 + 2;
+                    player.stats.hitpoints.current = player.stats.hitpoints.base + hp_boost;
+                    let prayer_boost = player.stats.prayer.base / 5 + 5;
+                    player.stats.prayer.current = player.stats.prayer.base + prayer_boost;
+                })
+                .overheal().build()));
 
         map
     };
