@@ -1652,6 +1652,46 @@ pub fn elder_maul_spec(
     }
 }
 
+pub fn crimson_bludgeon_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut SmallRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let info = AttackInfo::new(player, monster);
+    let mut successful_rolls = 0;
+    let def_roll = defence_roll(info.max_def_roll, rng);
+    for _ in 0..4 {
+        if accuracy_roll(info.max_att_roll, rng) > def_roll {
+            successful_rolls += 1;
+        }
+    }
+    // for _ in 0..4 {
+    //     if accuracy_roll(info.max_att_roll, rng) > defence_roll(info.max_def_roll, rng) {
+    //         successful_rolls += 1;
+    //     }
+    // }
+
+    if successful_rolls == 0 {
+        return Hit::inaccurate();
+    }
+
+    let pct_low = 50 + successful_rolls * 20;
+    let pct_high = 90 + successful_rolls * 20;
+    let base_max = info.max_hit;
+    let min_hit = base_max * pct_low / 100;
+    let mut max_hit = base_max * pct_high / 100;
+    if successful_rolls == 4 {
+        max_hit -= 1;
+    }
+
+    let damage = damage_roll(min_hit, max_hit, rng);
+    let mut hit = Hit::accurate(damage);
+    hit.apply_transforms(player, monster, rng, limiter);
+
+    hit
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
@@ -1706,6 +1746,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Eclipse atlatl" => atlatl_spec,
         "Scorching bow" => scorching_bow_spec,
         "Elder maul" => elder_maul_spec,
+        "Crimson bludgeon" => crimson_bludgeon_spec,
         _ => player.attack,
     }
 }

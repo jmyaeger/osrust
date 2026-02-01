@@ -51810,6 +51810,39 @@
     "attack_range": null
   },
   {
+    "name": "Crimson bludgeon",
+    "id": 0,
+    "version": null,
+    "slot": "weapon",
+    "image": "",
+    "speed": 4,
+    "category": "Spiked",
+    "bonuses": {
+      "strength": {
+        "melee": 56,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 57,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
     "name": "Crone-made amulet",
     "id": 10500,
     "version": null,

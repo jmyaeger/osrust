@@ -692,7 +692,7 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
 pub const EAT_DELAY: u32 = 3;
 
-pub const SPEC_COSTS: [(&str, u8); 70] = [
+pub const SPEC_COSTS: [(&str, u8); 71] = [
     ("Ancient godsword", 50),
     ("Eldritch nightmare staff", 55),
     ("Keris partisan of the sun", 75),
@@ -763,6 +763,7 @@ pub const SPEC_COSTS: [(&str, u8); 70] = [
     ("Zamorak godsword", 50),
     ("Soulreaper axe", 0),
     ("Brine sabre", 75),
+    ("Crimson bludgeon", 50),
 ];
 
 pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =

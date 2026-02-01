@@ -28,9 +28,9 @@ fn main() {
     let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
-    // simulate_single_way();
+    simulate_single_way();
 
-    simulate_hunllef();
+    // simulate_hunllef();
 
     // simulate_vardorvis();
 
@@ -46,10 +46,12 @@ fn main() {
 fn simulate_single_way() {
     let mut player = loadouts::max_melee_player();
     let _ = player.equip("Avernic treads (max)", None);
-    let _ = player.equip("Emberlight", None);
+    let _ = player.equip("Scythe of vitur", Some("Charged"));
     let _ = player.equip("Slayer helmet (i)", None);
+    let _ = player.equip("Inquisitor's hauberk", None);
+    let _ = player.equip("Inquisitor's plateskirt", None);
 
-    player.set_active_style(CombatStyle::Slash);
+    player.set_active_style(CombatStyle::Jab);
     // let _ = player.equip("Amulet of torture", None);
     // let _ = player.equip("Scythe of vitur", Some("Charged"));
     // let _ = player.equip("Oathplate helm", None);
@@ -66,8 +68,7 @@ fn simulate_single_way() {
     player.update_set_effects();
     // player.set_active_style(CombatStyle::Chop);
 
-    let mut monster =
-        Monster::new("Nechryael", Some("Slayer task")).expect("Error creating monster.");
+    let mut monster = Monster::new("Araxxor", None).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -84,6 +85,19 @@ fn simulate_single_way() {
 
     let mut main_hand = GearSwitch::from(&player);
     player.switches.push(main_hand);
+
+    let _ = player.equip("Crimson bludgeon", None);
+    let _ = player.equip("Avernic defender", None);
+    player.set_active_style(CombatStyle::Pummel);
+    let bludgeon_switch = GearSwitch::new(
+        SwitchType::Spec("Crimson bludgeon spec".into()),
+        &player,
+        &monster,
+    );
+    let bludgeon_spec_strategy = SpecStrategy::builder(&bludgeon_switch)
+        .with_monster_hp_above(100)
+        .build();
+    player.switches.push(bludgeon_switch);
 
     let _ = player.equip("Voidwaker", None);
     player.set_active_style(CombatStyle::Slash);
@@ -110,7 +124,7 @@ fn simulate_single_way() {
     );
     let dclaws_spec_strategy = SpecStrategy::builder(&dclaws_switch)
         // .with_max_attempts(1)
-        .with_monster_hp_above(50)
+        .with_monster_hp_above(100)
         .build();
     player.switches.push(dclaws_switch);
 
@@ -123,7 +137,7 @@ fn simulate_single_way() {
     );
     let bclaws_spec_strategy = SpecStrategy::builder(&bclaws_switch)
         // .with_max_attempts(1)
-        .with_monster_hp_above(70)
+        .with_monster_hp_above(100)
         .build();
     player.switches.push(bclaws_switch);
 
@@ -149,7 +163,7 @@ fn simulate_single_way() {
 
     player.switch(&SwitchType::Melee);
     let spec_config = SpecConfig::new(
-        vec![dclaws_spec_strategy],
+        vec![bludgeon_spec_strategy],
         SpecRestorePolicy::NeverRestore,
         Some(DeathCharge::Double),
         false,
