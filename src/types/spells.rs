@@ -338,6 +338,26 @@ fn surge_spell_max_hit(player: &Player) -> u32 {
     min(24, player.stats.magic.current / 5 + 5)
 }
 
+macro_rules! spell_check {
+    (
+        $(
+            $fn_name:ident => $spellbook:ident: [$($variant:ident),* $(,)?]
+        ),*
+        $(,)?
+    ) => {
+        paste::paste! {
+            $(
+                pub fn $fn_name(spell: &Spell) -> bool {
+                    matches!(
+                        spell,
+                        $(Spell::$spellbook([<$spellbook Spell>]::$variant))|*
+                    )
+                }
+            )*
+        }
+    };
+}
+
 pub fn is_standard_spell(spell: &Spell) -> bool {
     matches!(spell, Spell::Standard(_))
 }
@@ -350,97 +370,21 @@ pub fn is_arceuus_spell(spell: &Spell) -> bool {
     matches!(spell, Spell::Arceuus(_))
 }
 
-pub fn is_water_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::WaterStrike)
-            | Spell::Standard(StandardSpell::WaterBolt)
-            | Spell::Standard(StandardSpell::WaterWave)
-            | Spell::Standard(StandardSpell::WaterBlast)
-            | Spell::Standard(StandardSpell::WaterSurge)
-    )
-}
-
-pub fn is_fire_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::FireStrike)
-            | Spell::Standard(StandardSpell::FireBolt)
-            | Spell::Standard(StandardSpell::FireWave)
-            | Spell::Standard(StandardSpell::FireBlast)
-            | Spell::Standard(StandardSpell::FireSurge)
-    )
-}
-
-pub fn is_air_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::WindStrike)
-            | Spell::Standard(StandardSpell::WindBolt)
-            | Spell::Standard(StandardSpell::WindWave)
-            | Spell::Standard(StandardSpell::WindBlast)
-            | Spell::Standard(StandardSpell::WindSurge)
-    )
-}
-
-pub fn is_earth_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::EarthBolt)
-            | Spell::Standard(StandardSpell::EarthWave)
-            | Spell::Standard(StandardSpell::EarthBlast)
-            | Spell::Standard(StandardSpell::EarthSurge)
-    )
-}
-
-pub fn is_smoke_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Ancient(AncientSpell::SmokeRush)
-            | Spell::Ancient(AncientSpell::SmokeBurst)
-            | Spell::Ancient(AncientSpell::SmokeBlitz)
-            | Spell::Ancient(AncientSpell::SmokeBarrage)
-    )
-}
-
-pub fn is_shadow_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Ancient(AncientSpell::ShadowRush)
-            | Spell::Ancient(AncientSpell::ShadowBurst)
-            | Spell::Ancient(AncientSpell::ShadowBlitz)
-            | Spell::Ancient(AncientSpell::ShadowBarrage)
-    )
-}
-
-pub fn is_blood_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Ancient(AncientSpell::BloodRush)
-            | Spell::Ancient(AncientSpell::BloodBurst)
-            | Spell::Ancient(AncientSpell::BloodBlitz)
-            | Spell::Ancient(AncientSpell::BloodBarrage)
-    )
-}
-
-pub fn is_ice_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Ancient(AncientSpell::IceRush)
-            | Spell::Ancient(AncientSpell::IceBurst)
-            | Spell::Ancient(AncientSpell::IceBlitz)
-            | Spell::Ancient(AncientSpell::IceBarrage)
-    )
-}
-
-pub fn is_demonbane_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Arceuus(ArceuusSpell::InferiorDemonbane)
-            | Spell::Arceuus(ArceuusSpell::SuperiorDemonbane)
-            | Spell::Arceuus(ArceuusSpell::DarkDemonbane)
-    )
-}
+spell_check!(
+    is_water_spell => Standard: [WaterStrike, WaterBolt, WaterBlast, WaterWave, WaterSurge],
+    is_fire_spell => Standard: [FireStrike, FireBolt, FireBlast, FireWave, FireSurge],
+    is_earth_spell => Standard: [EarthStrike, EarthBolt, EarthBlast, EarthWave, EarthSurge],
+    is_air_spell => Standard: [WindStrike, WindBolt, WindBlast, WindWave, WindSurge],
+    is_smoke_spell => Ancient: [SmokeRush, SmokeBurst, SmokeBlitz, SmokeBarrage],
+    is_shadow_spell => Ancient: [ShadowRush, ShadowBurst, ShadowBlitz, ShadowBarrage],
+    is_blood_spell => Ancient: [BloodRush, BloodBurst, BloodBlitz, BloodBarrage],
+    is_ice_spell => Ancient: [IceRush, IceBurst, IceBlitz, IceBarrage],
+    is_demonbane_spell => Arceuus: [InferiorDemonbane, SuperiorDemonbane, DarkDemonbane],
+    is_grasp_spell => Arceuus: [GhostlyGrasp, SkeletalGrasp, UndeadGrasp],
+    is_bolt_spell => Standard: [WindBolt, EarthBolt, WaterBolt, FireBolt],
+    is_blast_spell => Standard: [WindBlast, EarthBlast, WaterBlast, FireBlast],
+    is_wave_spell => Standard: [WindWave, EarthWave, WaterWave, FireWave],
+);
 
 pub fn is_bind_spell(spell: &Spell) -> bool {
     is_ice_spell(spell)
@@ -451,45 +395,6 @@ pub fn is_bind_spell(spell: &Spell) -> bool {
                 | Spell::Standard(StandardSpell::Snare)
                 | Spell::Standard(StandardSpell::Entangle)
         )
-}
-
-pub fn is_grasp_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Arceuus(ArceuusSpell::GhostlyGrasp)
-            | Spell::Arceuus(ArceuusSpell::SkeletalGrasp)
-            | Spell::Arceuus(ArceuusSpell::UndeadGrasp)
-    )
-}
-
-pub fn is_bolt_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::WindBolt)
-            | Spell::Standard(StandardSpell::EarthBolt)
-            | Spell::Standard(StandardSpell::WaterBolt)
-            | Spell::Standard(StandardSpell::FireBolt)
-    )
-}
-
-pub fn is_blast_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::WindBlast)
-            | Spell::Standard(StandardSpell::EarthBlast)
-            | Spell::Standard(StandardSpell::WaterBlast)
-            | Spell::Standard(StandardSpell::FireBlast)
-    )
-}
-
-pub fn is_wave_spell(spell: &Spell) -> bool {
-    matches!(
-        spell,
-        Spell::Standard(StandardSpell::WindWave)
-            | Spell::Standard(StandardSpell::EarthWave)
-            | Spell::Standard(StandardSpell::WaterWave)
-            | Spell::Standard(StandardSpell::FireWave)
-    )
 }
 
 #[cfg(test)]
