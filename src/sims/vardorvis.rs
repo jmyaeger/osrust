@@ -163,7 +163,19 @@ impl VardorvisFight {
 
         // Build precomputed scaling table
         vard.hp_scaling_table = Some(build_vard_scaling_table(&vard));
-        scale_monster_hp_only(&mut vard, true);
+        vard.stats.defence.base = vard
+            .hp_scaling_table
+            .as_ref()
+            .unwrap()
+            .get(vard.stats.hitpoints.base as usize)
+            .defence;
+        vard.stats.strength.base = vard
+            .hp_scaling_table
+            .as_ref()
+            .unwrap()
+            .get(vard.stats.hitpoints.base as usize)
+            .strength;
+        vard.reset();
 
         let limiter = assign_limiter(&player, &vard);
         let rng = SmallRng::from_os_rng();
@@ -181,9 +193,12 @@ impl VardorvisFight {
     fn simulate_vardorvis_fight(&mut self) -> Result<FightResult, SimulationError> {
         let mut vars = FightVars::new();
         let mut state = VardorvisState::default();
-        self.config
-            .logger
-            .log_initial_setup(&self.player, &self.vard);
+        let logging_enabled = self.config.logger.enabled;
+        if logging_enabled {
+            self.config
+                .logger
+                .log_initial_setup(&self.player, &self.vard);
+        }
 
         while self.vard.stats.hitpoints.current > 0 {
             if vars.tick_counter % VARDORVIS_REGEN_TICKS == 0 {
@@ -211,6 +226,10 @@ impl VardorvisFight {
                     &mut vars,
                     &mut self.config.logger,
                 );
+                if logging_enabled {
+                    self.config.logger.log_current_monster_stats(&self.vard);
+                    self.config.logger.log_current_monster_rolls(&self.vard);
+                }
             }
 
             if let Some(thrall) = self.config.thralls

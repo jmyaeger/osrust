@@ -19,11 +19,11 @@ fn main() {
     let start_time = std::time::Instant::now();
     // simulate_door_altar_graardor();
 
-    simulate_single_way();
+    // simulate_single_way();
 
     // simulate_hunllef();
 
-    // simulate_vardorvis();
+    simulate_vardorvis();
 
     let end_time = std::time::Instant::now();
 
@@ -274,20 +274,23 @@ fn simulate_vardorvis() {
     // player.stats.strength = Stat::new(98, None);
     // player.stats.defence = Stat::new(91, None);
     // player.reset_current_stats(false);
-    player.equip("Soulreaper axe", None).unwrap();
+    player.equip("Noxious halberd", None).unwrap();
     // player.equip("Blade of saeldor (c)", None).unwrap();
     // player.equip("Dragon defender", None).unwrap();
+    // player.equip("Bandos chestplate", None).unwrap();
+    // player.equip("Bandos tassets", None).unwrap();
+    // player.equip("Neitiznot faceguard", None).unwrap();
     player.equip("Oathplate chest", None).unwrap();
     player.equip("Oathplate legs", None).unwrap();
     player.equip("Oathplate helm", None).unwrap();
-    // player.equip("Berserker ring (i)", None).unwrap();
+    player.equip("Berserker ring (i)", None).unwrap();
     // player.equip("Barrows gloves", None).unwrap();
     // player.equip("Dragon boots", None).unwrap();
-    player.equip("Bellator ring", None);
+    // player.equip("Bellator ring", None);
     player.equip("Avernic treads (max)", None);
     player.update_bonuses();
     player.update_set_effects();
-    player.set_active_style(CombatStyle::Hack);
+    player.set_active_style(CombatStyle::Swipe);
 
     let vard = Monster::new("Vardorvis", Some("Post-quest")).expect("Error creating monster.");
     calc_active_player_rolls(&mut player, &vard);
@@ -297,12 +300,12 @@ fn simulate_vardorvis() {
         food_eat_delay: 3,
         eat_strategy: VardorvisEatStrategy::EatAtHp(10),
         thralls: Some(Thrall::GreaterMagic),
-        logger: FightLogger::new(false, "vardorvis").expect("Error initializing logger."),
+        logger: FightLogger::new(true, "vardorvis").expect("Error initializing logger."),
     };
 
     let mut fight =
         VardorvisFight::new(player, fight_config).expect("Error creating the Vardorvis fight.");
-    let results = simulate_n_fights(Box::new(fight), 1_000_000, true).expect("Simulation failed.");
+    let results = simulate_n_fights(Box::new(fight), 2, true).expect("Simulation failed.");
     let stats = SimulationStats::new(&results);
 
     let mut odds_of_gm = 0.0;

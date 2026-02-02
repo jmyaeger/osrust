@@ -1,3 +1,4 @@
+use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::calc::rolls;
 use crate::combat::attacks::effects::{BurnType, CombatEffect};
 use crate::combat::attacks::standard::Hit;
@@ -888,6 +889,7 @@ impl Monster {
         self.def_rolls = self.base_def_rolls;
         self.scale_toa();
         self.active_effects = Vec::new();
+        scale_monster_hp_only(self, false);
     }
 
     pub fn is_immune(&self, player: &Player) -> bool {
