@@ -1,6 +1,9 @@
 #[cfg(test)]
 mod spec_tests {
     use osrs::combat::simulation::Simulation;
+    use osrs::combat::spec::{
+        CoreCondition, SpecCondition, SpecConfig, SpecRestorePolicy, SpecStrategy,
+    };
     use osrs::sims::single_way::*;
     use osrs::types::equipment::CombatStyle;
     use osrs::types::monster::{CombatStat, Monster};
@@ -10,7 +13,6 @@ mod spec_tests {
     use osrs::types::prayers::Prayer;
     use osrs::types::stats::PlayerStats;
 
-    // Helper function to create a test player
     fn create_test_player() -> Player {
         let mut player = Player::new();
         player.stats = PlayerStats::default();
@@ -27,32 +29,29 @@ mod spec_tests {
         player
     }
 
-    // Test basic spec strategy creation
     #[test]
     fn test_spec_strategy_creation() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
 
-        let strategy = SpecStrategy::new(&switch, None);
+        let strategy: SpecStrategy<CoreCondition> = SpecStrategy::new(&switch, None);
 
         assert_eq!(strategy.switch_type.label(), "Test spec");
-        assert_eq!(strategy.spec_cost, 25); // Fang spec cost
+        assert_eq!(strategy.spec_cost, 25);
         assert!(strategy.conditions.is_empty());
         assert_eq!(strategy.state.attempt_count, 0);
         assert_eq!(strategy.state.success_count, 0);
     }
 
-    // Test spec config creation and lowest cost
     #[test]
     fn test_spec_config_lowest_cost() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
-        // Create multiple strategies with different costs
         let fang_switch =
             GearSwitch::new(SwitchType::Custom("Fang spec".into()), &player, &monster);
-        let fang_strategy = SpecStrategy::new(&fang_switch, None);
+        let fang_strategy: SpecStrategy<CoreCondition> = SpecStrategy::new(&fang_switch, None);
 
         let mut player2 = player.clone();
         player2.equip("Dragon claws", None).unwrap();
@@ -67,44 +66,44 @@ mod spec_tests {
             false,
         );
 
-        assert_eq!(config.lowest_cost(), Some(25)); // Fang is lower than claws
+        assert_eq!(config.lowest_cost(), Some(25));
     }
 
-    // Test condition evaluation
     #[test]
-    fn test_condition_evaluation() {
+    fn test_max_attempts() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy = SpecStrategy::new(&switch, None);
-
-        // Test MaxAttempts condition
-        strategy.add_condition(SpecCondition::MaxAttempts(2));
-        let config = SpecConfig::new(
-            vec![strategy.clone()],
-            SpecRestorePolicy::NeverRestore,
-            None,
-            false,
-        );
-        let fight = SingleWayFight::new(
-            player.clone(),
-            monster.clone(),
-            SingleWayConfig::default(),
-            Some(config),
-            false,
-        )
-        .expect("Error setting up single way fight.");
+        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
+            .with_max_attempts(2)
+            .build();
 
         // Should allow first two attempts
-        assert!(check_spec_conditions(&strategy, &fight));
+        assert!(strategy.can_execute(&player, &monster, &()));
         strategy.state.attempt_count = 1;
-        assert!(check_spec_conditions(&strategy, &fight));
+        assert!(strategy.can_execute(&player, &monster, &()));
         strategy.state.attempt_count = 2;
-        assert!(!check_spec_conditions(&strategy, &fight));
+        assert!(!strategy.can_execute(&player, &monster, &()));
     }
 
-    // Test HP-based conditions
+    #[test]
+    fn test_min_successes() {
+        let player = create_test_player();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
+
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
+        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
+            .with_min_successes(2)
+            .build();
+
+        assert!(strategy.can_execute(&player, &monster, &()));
+        strategy.state.success_count = 1;
+        assert!(strategy.can_execute(&player, &monster, &()));
+        strategy.state.success_count = 2;
+        assert!(!strategy.can_execute(&player, &monster, &()));
+    }
+
     #[test]
     fn test_hp_conditions() {
         let player = create_test_player();
@@ -112,84 +111,84 @@ mod spec_tests {
         monster.stats.hitpoints.current = 100;
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy = SpecStrategy::new(&switch, None);
+        let strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
+            .with_monster_hp_below(50)
+            .build();
 
-        // Test MonsterHpBelow
-        strategy.add_condition(SpecCondition::MonsterHpBelow(50));
-        let config = SpecConfig::new(
-            vec![strategy.clone()],
-            SpecRestorePolicy::NeverRestore,
-            None,
-            false,
-        );
-        let mut fight = SingleWayFight::new(
-            player.clone(),
-            monster.clone(),
-            SingleWayConfig::default(),
-            Some(config),
-            false,
-        )
-        .expect("Error setting up single way fight.");
+        assert!(!strategy.can_execute(&player, &monster, &())); // HP is 100, not below 50
 
-        assert!(!check_spec_conditions(&strategy, &fight)); // HP is 100, not below 50
+        monster.stats.hitpoints.current = 50;
+        assert!(strategy.can_execute(&player, &monster, &())); // HP is 50, equals threshold
 
-        fight.monster.stats.hitpoints.current = 50;
-        assert!(check_spec_conditions(&strategy, &fight)); // HP is 50, equals threshold
-
-        fight.monster.stats.hitpoints.current = 49;
-        assert!(check_spec_conditions(&strategy, &fight)); // HP is 49, below threshold
+        monster.stats.hitpoints.current = 49;
+        assert!(strategy.can_execute(&player, &monster, &())); // HP is 49, below threshold
     }
 
-    // Test stat reduction conditions
+    #[test]
+    fn test_hp_above_condition() {
+        let player = create_test_player();
+        let mut monster = Monster::new("General Graardor", None).expect("Error creating monster.");
+
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
+        let strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
+            .with_monster_hp_above(100)
+            .build();
+
+        assert!(strategy.can_execute(&player, &monster, &())); // HP is 255, above 100
+
+        monster.stats.hitpoints.current = 100;
+        assert!(!strategy.can_execute(&player, &monster, &())); // HP is 100, not above 100
+
+        monster.stats.hitpoints.current = 101;
+        assert!(strategy.can_execute(&player, &monster, &())); // HP is 101, above 100
+    }
+
     #[test]
     fn test_stat_reduction_conditions() {
         let player = create_test_player();
-        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
+        let mut monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy = SpecStrategy::new(&switch, None);
-
-        // Test TargetDefenceReduction
-        strategy.add_condition(SpecCondition::TargetDefenceReduction(50));
-        let config = SpecConfig::new(
-            vec![strategy.clone()],
-            SpecRestorePolicy::NeverRestore,
-            None,
-            false,
-        );
-        let mut fight = SingleWayFight::new(
-            player.clone(),
-            monster.clone(),
-            SingleWayConfig::default(),
-            Some(config),
-            false,
-        )
-        .expect("Error setting up single way fight.");
+        let strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
+            .with_target_def_reduction(50)
+            .build();
 
         // Initially no reduction
-        assert!(check_spec_conditions(&strategy, &fight));
+        assert!(strategy.can_execute(&player, &monster, &()));
 
         // Drain some defence
-        fight.monster.drain_stat(&CombatStat::Defence, 30, None);
-        assert!(check_spec_conditions(&strategy, &fight)); // 30 < 50, still can spec
+        monster.drain_stat(&CombatStat::Defence, 30, None);
+        assert!(strategy.can_execute(&player, &monster, &())); // 30 < 50, still can spec
 
         // Drain more
-        fight.monster.drain_stat(&CombatStat::Defence, 20, None);
-        assert!(!check_spec_conditions(&strategy, &fight)); // 50 = 50, can't spec anymore
+        monster.drain_stat(&CombatStat::Defence, 20, None);
+        assert!(!strategy.can_execute(&player, &monster, &())); // 50 >= 50, can't spec anymore
     }
 
-    // Test edge cases
+    #[test]
+    fn test_core_condition_evaluate() {
+        let player = create_test_player();
+        let mut monster = Monster::new("General Graardor", None).expect("Error creating monster.");
+        monster.stats.hitpoints.current = 75;
+
+        // Test evaluate directly
+        assert!(CoreCondition::MonsterHpBelow(100).evaluate(&player, &monster, &()));
+        assert!(!CoreCondition::MonsterHpBelow(50).evaluate(&player, &monster, &()));
+        assert!(CoreCondition::MonsterHpAbove(50).evaluate(&player, &monster, &()));
+        assert!(!CoreCondition::MonsterHpAbove(100).evaluate(&player, &monster, &()));
+    }
+
     #[test]
     fn test_edge_cases() {
         let player = create_test_player();
 
         // Empty strategies
-        let config = SpecConfig::new(vec![], SpecRestorePolicy::RestoreEveryKill, None, false);
+        let config: SpecConfig<CoreCondition> =
+            SpecConfig::new(vec![], SpecRestorePolicy::RestoreEveryKill, None, false);
         assert_eq!(config.strategies.len(), 0);
-        // lowest_cost() should handle empty strategies gracefully
 
         // Test with immune monster
-        let immune_monster = Monster::new("Dawn", None).expect("Error creating monster."); // Immune to melee
+        let immune_monster = Monster::new("Dawn", None).expect("Error creating monster.");
         let fight = SingleWayFight::new(
             player.clone(),
             immune_monster,
@@ -201,85 +200,37 @@ mod spec_tests {
         assert!(fight.is_immune());
     }
 
-    // Test state reset
     #[test]
     fn test_state_reset() {
         let player = create_test_player();
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy = SpecStrategy::new(&switch, None);
+        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::new(&switch, None);
 
-        // Modify state
         strategy.state.attempt_count = 5;
         strategy.state.success_count = 3;
 
-        // Reset
-        strategy.state.reset();
+        strategy.reset();
 
         assert_eq!(strategy.state.attempt_count, 0);
         assert_eq!(strategy.state.success_count, 0);
     }
 
-    // Helper function to check conditions (extracted from actual implementation)
-    fn check_spec_conditions(strategy: &SpecStrategy, fight: &SingleWayFight) -> bool {
-        strategy.conditions.iter().all(|condition| match condition {
-            SpecCondition::MaxAttempts(attempts) => strategy.state.attempt_count < *attempts,
-            SpecCondition::MinSuccesses(successes) => strategy.state.success_count < *successes,
-            SpecCondition::MonsterHpAbove(hp) => fight.monster.stats.hitpoints.current > *hp,
-            SpecCondition::MonsterHpBelow(hp) => fight.monster.stats.hitpoints.current <= *hp,
-            SpecCondition::PlayerHpAbove(hp) => fight.player.stats.hitpoints.current > *hp,
-            SpecCondition::PlayerHpBelow(hp) => fight.player.stats.hitpoints.current <= *hp,
-            SpecCondition::TargetDefenceReduction(amt) => {
-                fight
-                    .monster
-                    .stats
-                    .defence
-                    .base
-                    .saturating_sub(fight.monster.stats.defence.current)
-                    < *amt
-            }
-            SpecCondition::TargetMagicReduction(amt) => {
-                fight
-                    .monster
-                    .stats
-                    .magic
-                    .base
-                    .saturating_sub(fight.monster.stats.magic.current)
-                    < *amt
-            }
-            SpecCondition::TargetMagicDefReduction(amt) => {
-                let base_def = fight.monster.bonuses.defence.magic_base;
-                let current_def = fight.monster.bonuses.defence.magic;
-                (base_def - current_def) < *amt
-            }
-            SpecCondition::TargetAttackReduction(amt) => {
-                fight
-                    .monster
-                    .stats
-                    .attack
-                    .base
-                    .saturating_sub(fight.monster.stats.attack.current)
-                    < *amt
-            }
-            SpecCondition::TargetStrengthReduction(amt) => {
-                fight
-                    .monster
-                    .stats
-                    .strength
-                    .base
-                    .saturating_sub(fight.monster.stats.strength.current)
-                    < *amt
-            }
-            SpecCondition::TargetRangedReduction(amt) => {
-                fight
-                    .monster
-                    .stats
-                    .ranged
-                    .base
-                    .saturating_sub(fight.monster.stats.ranged.current)
-                    < *amt
-            }
-        })
+    #[test]
+    fn test_strategy_reset_via_method() {
+        let player = create_test_player();
+        let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
+
+        let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
+        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::new(&switch, None);
+
+        strategy.state.attempt_count = 5;
+        strategy.state.success_count = 3;
+
+        // Test SpecStrategy::reset() calls state.reset()
+        strategy.reset();
+        assert_eq!(strategy.state.attempt_count, 0);
+        assert_eq!(strategy.state.success_count, 0);
     }
 }

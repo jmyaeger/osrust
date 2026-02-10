@@ -4,326 +4,16 @@ use crate::combat::limiters::Limiter;
 use crate::combat::mechanics::Mechanics;
 use crate::combat::mechanics::handle_blood_fury;
 use crate::combat::simulation::{FightResult, FightVars, Simulation};
+use crate::combat::spec::CoreCondition;
+use crate::combat::spec::SpecConfig;
+use crate::combat::spec::SpecState;
 use crate::combat::thralls::Thrall;
-use crate::constants;
 use crate::constants::P2_WARDEN_IDS;
 use crate::error::SimulationError;
-use crate::types::player::SwitchType;
-use crate::types::timers::Timer;
 use crate::types::{monster::Monster, player::GearSwitch, player::Player};
 use crate::utils::logging::FightLogger;
 use rand::SeedableRng;
 use rand::rngs::SmallRng;
-
-#[derive(Debug, Clone, PartialEq, Copy)]
-pub enum DeathCharge {
-    Single,
-    Double,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct SpecConfig {
-    pub strategies: Vec<SpecStrategy>,
-    pub restore_policy: SpecRestorePolicy,
-    pub death_charge: Option<DeathCharge>,
-    pub surge_potion: bool,
-    lowest_cost: Option<u8>,
-}
-
-impl SpecConfig {
-    pub fn new(
-        strategies: Vec<SpecStrategy>,
-        restore_policy: SpecRestorePolicy,
-        death_charge: Option<DeathCharge>,
-        surge_potion: bool,
-    ) -> Self {
-        let lowest_cost = strategies.iter().map(|s| s.spec_cost).min();
-        Self {
-            strategies,
-            restore_policy,
-            death_charge,
-            surge_potion,
-            lowest_cost,
-        }
-    }
-
-    pub fn add_strategy(&mut self, strategy: SpecStrategy, position: Option<usize>) {
-        if let Some(ind) = position {
-            self.strategies.insert(ind, strategy);
-        } else {
-            self.strategies.push(strategy);
-        }
-    }
-
-    pub fn lowest_cost(&self) -> Option<u8> {
-        self.lowest_cost
-            .or_else(|| self.strategies.iter().map(|s| s.spec_cost).min())
-    }
-
-    pub fn validate(&self) -> Result<(), String> {
-        if self.strategies.is_empty() {
-            return Err("No spec strategies defined".to_string());
-        }
-
-        for strategy in &self.strategies {
-            Self::validate_conditions(&strategy.conditions)?;
-        }
-
-        Ok(())
-    }
-
-    fn validate_conditions(conditions: &[SpecCondition]) -> Result<(), String> {
-        // Check for HP conflicts
-        let hp_above: Vec<_> = conditions
-            .iter()
-            .filter_map(|c| {
-                if let SpecCondition::MonsterHpAbove(hp) = c {
-                    Some(*hp)
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        let hp_below: Vec<_> = conditions
-            .iter()
-            .filter_map(|c| {
-                if let SpecCondition::MonsterHpBelow(hp) = c {
-                    Some(*hp)
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        for above in &hp_above {
-            for below in &hp_below {
-                if above >= below {
-                    return Err(format!(
-                        "Conflicting HP conditions: above {above} and below {below}"
-                    ));
-                }
-            }
-        }
-
-        Ok(())
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum SpecRestorePolicy {
-    RestoreEveryKill,
-    RestoreAfter(u32),
-    NeverRestore,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct SpecStrategy {
-    pub conditions: Vec<SpecCondition>,
-    pub state: SpecStrategyState,
-    pub switch_type: SwitchType,
-    pub spec_cost: u8,
-}
-
-impl SpecStrategy {
-    pub fn new(gear: &GearSwitch, conditions: Option<Vec<SpecCondition>>) -> Self {
-        let spec_cost = constants::SPEC_COSTS
-            .iter()
-            .find(|w| w.0 == gear.gear.weapon.name)
-            .expect("Spec cost not found")
-            .1;
-
-        Self {
-            conditions: conditions.unwrap_or_default(),
-            state: SpecStrategyState::default(),
-            switch_type: gear.switch_type.clone(),
-            spec_cost,
-        }
-    }
-
-    pub fn add_condition(&mut self, condition: SpecCondition) {
-        self.conditions.push(condition);
-    }
-
-    pub fn can_execute(&self, player: &Player, monster: &Monster) -> bool {
-        if !player.stats.spec.has_enough(self.spec_cost) {
-            return false;
-        }
-        self.conditions
-            .iter()
-            .all(|condition| self.evaluate_condition(*condition, player, monster))
-    }
-
-    fn evaluate_condition(
-        &self,
-        condition: SpecCondition,
-        player: &Player,
-        monster: &Monster,
-    ) -> bool {
-        match condition {
-            SpecCondition::MaxAttempts(attempts) => self.state.attempt_count < attempts,
-            SpecCondition::MinSuccesses(successes) => self.state.success_count < successes,
-            SpecCondition::MonsterHpAbove(hp) => monster.stats.hitpoints.current > hp,
-            SpecCondition::MonsterHpBelow(hp) => monster.stats.hitpoints.current <= hp,
-            SpecCondition::PlayerHpAbove(hp) => player.stats.hitpoints.current > hp,
-            SpecCondition::PlayerHpBelow(hp) => player.stats.hitpoints.current <= hp,
-            SpecCondition::TargetAttackReduction(amt) => {
-                monster
-                    .stats
-                    .attack
-                    .base
-                    .saturating_sub(monster.stats.attack.current)
-                    < amt
-            }
-            SpecCondition::TargetStrengthReduction(amt) => {
-                monster
-                    .stats
-                    .strength
-                    .base
-                    .saturating_sub(monster.stats.strength.current)
-                    < amt
-            }
-            SpecCondition::TargetDefenceReduction(amt) => {
-                monster
-                    .stats
-                    .defence
-                    .base
-                    .saturating_sub(monster.stats.defence.current)
-                    < amt
-            }
-            SpecCondition::TargetRangedReduction(amt) => {
-                monster
-                    .stats
-                    .ranged
-                    .base
-                    .saturating_sub(monster.stats.ranged.current)
-                    < amt
-            }
-            SpecCondition::TargetMagicReduction(amt) => {
-                monster
-                    .stats
-                    .magic
-                    .base
-                    .saturating_sub(monster.stats.magic.current)
-                    < amt
-            }
-            SpecCondition::TargetMagicDefReduction(amt) => {
-                monster
-                    .bonuses
-                    .defence
-                    .magic_base
-                    .saturating_sub(monster.bonuses.defence.magic)
-                    < amt
-            }
-        }
-    }
-
-    pub fn builder(gear: &GearSwitch) -> SpecStrategyBuilder {
-        SpecStrategyBuilder::new(gear)
-    }
-}
-
-#[derive(Debug)]
-pub struct SpecStrategyBuilder {
-    strategy: SpecStrategy,
-}
-
-impl SpecStrategyBuilder {
-    pub fn new(gear: &GearSwitch) -> Self {
-        Self {
-            strategy: SpecStrategy::new(gear, None),
-        }
-    }
-
-    fn with_condition(mut self, condition: SpecCondition) -> Self {
-        self.strategy.add_condition(condition);
-        self
-    }
-
-    pub fn with_max_attempts(self, attempts: u8) -> Self {
-        self.with_condition(SpecCondition::MaxAttempts(attempts))
-    }
-
-    pub fn with_min_successes(self, successes: u8) -> Self {
-        self.with_condition(SpecCondition::MinSuccesses(successes))
-    }
-
-    pub fn with_monster_hp_below(self, hp: u32) -> Self {
-        self.with_condition(SpecCondition::MonsterHpBelow(hp))
-    }
-
-    pub fn with_monster_hp_above(self, hp: u32) -> Self {
-        self.with_condition(SpecCondition::MonsterHpAbove(hp))
-    }
-
-    pub fn with_target_def_reduction(self, amount: u32) -> Self {
-        self.with_condition(SpecCondition::TargetDefenceReduction(amount))
-    }
-
-    pub fn build(self) -> SpecStrategy {
-        self.strategy
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum SpecCondition {
-    MonsterHpBelow(u32),
-    MonsterHpAbove(u32),
-    PlayerHpBelow(u32),
-    PlayerHpAbove(u32),
-    MaxAttempts(u8),
-    MinSuccesses(u8),
-    TargetDefenceReduction(u32),
-    TargetMagicReduction(u32),
-    TargetMagicDefReduction(i32),
-    TargetAttackReduction(u32),
-    TargetStrengthReduction(u32),
-    TargetRangedReduction(u32),
-}
-
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct SpecStrategyState {
-    pub attempt_count: u8,
-    pub success_count: u8,
-}
-
-impl SpecStrategyState {
-    pub fn reset(&mut self) {
-        self.attempt_count = 0;
-        self.success_count = 0;
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct SingleWayState {
-    pub kill_counter: u32,
-    pub death_charge_procs: u8,
-    pub death_charge_cd: Timer,
-    pub surge_potion_cd: Timer,
-    pub spec_regen_timer: Timer,
-}
-
-impl Default for SingleWayState {
-    fn default() -> Self {
-        Self {
-            kill_counter: 0,
-            death_charge_procs: 0,
-            death_charge_cd: Timer::new(Some(constants::DEATH_CHARGE_CD)),
-            surge_potion_cd: Timer::new(Some(constants::SURGE_POTION_CD)),
-            spec_regen_timer: Timer::new(None),
-        }
-    }
-}
-
-impl SingleWayState {
-    pub fn reset(&mut self) {
-        self.kill_counter = 0;
-        self.death_charge_procs = 0;
-        self.death_charge_cd.reset();
-        self.surge_potion_cd.reset();
-        self.spec_regen_timer.reset();
-    }
-}
 
 pub struct SingleWayFight {
     pub player: Player,
@@ -333,8 +23,8 @@ pub struct SingleWayFight {
     pub mechanics: SingleWayMechanics,
     pub logger: FightLogger,
     pub config: SingleWayConfig,
-    pub spec_config: Option<SpecConfig>,
-    pub state: SingleWayState,
+    pub spec_config: Option<SpecConfig<CoreCondition>>,
+    pub spec_state: SpecState,
 }
 
 impl SingleWayFight {
@@ -342,7 +32,7 @@ impl SingleWayFight {
         player: Player,
         monster: Monster,
         config: SingleWayConfig,
-        spec_config: Option<SpecConfig>,
+        spec_config: Option<SpecConfig<CoreCondition>>,
         use_logger: bool,
     ) -> Result<SingleWayFight, SimulationError> {
         let limiter = crate::combat::simulation::assign_limiter(&player, &monster);
@@ -360,7 +50,7 @@ impl SingleWayFight {
             logger,
             config,
             spec_config,
-            state: SingleWayState::default(),
+            spec_state: SpecState::default(),
         })
     }
 }
@@ -394,24 +84,11 @@ impl Simulation for SingleWayFight {
     }
 
     fn reset(&mut self) {
-        if let Some(spec_config) = &self.spec_config {
-            let restore_spec = match spec_config.restore_policy {
-                SpecRestorePolicy::NeverRestore => false,
-                SpecRestorePolicy::RestoreAfter(kills) => self.state.kill_counter >= kills,
-                SpecRestorePolicy::RestoreEveryKill => true,
-            };
+        if let Some(ref mut spec_config) = self.spec_config {
+            let restore_spec = self.spec_state.on_kill(&mut self.player, spec_config);
             self.player.reset_current_stats(restore_spec);
-            if restore_spec {
-                self.state.reset();
-            }
         }
 
-        if let Some(ref mut spec_config) = self.spec_config {
-            spec_config
-                .strategies
-                .iter_mut()
-                .for_each(|s| s.state.reset());
-        }
         self.monster.reset();
         self.player.state.first_attack = true;
         self.player.state.last_attack_hit = true;
@@ -434,7 +111,7 @@ impl SingleWayMechanics {
     ) -> Result<bool, SimulationError> {
         if let Some(ref mut spec_config) = fight.spec_config {
             for strategy in &mut spec_config.strategies {
-                if !strategy.can_execute(&fight.player, &fight.monster) {
+                if !strategy.can_execute(&fight.player, &fight.monster, &()) {
                     continue;
                 }
 
@@ -509,8 +186,8 @@ impl SingleWayMechanics {
                 fight_vars.attack_tick += fight.player.gear.weapon.speed;
 
                 fight.player.stats.spec.drain(strategy.spec_cost);
-                if !fight.state.spec_regen_timer.is_active() {
-                    fight.state.spec_regen_timer.activate();
+                if !fight.spec_state.spec_regen_timer.is_active() {
+                    fight.spec_state.spec_regen_timer.activate();
                 }
 
                 // Switch back to the previous set of gear
@@ -591,26 +268,19 @@ fn simulate_fight(fight: &mut SingleWayFight) -> Result<FightResult, SimulationE
         fight
             .mechanics
             .process_freeze(&mut fight.monster, &mut vars, &mut fight.logger);
-        fight.mechanics.increment_spec(
-            &mut fight.player,
-            &mut vars,
-            &mut fight.state,
-            &mut fight.logger,
-        );
-        fight.mechanics.increment_timers(&mut fight.state);
-        fight.mechanics.process_surge_potion(
-            &mut fight.player,
-            &fight.spec_config,
-            &mut fight.state,
-        );
+        fight
+            .spec_state
+            .increment_spec(&mut fight.player, vars.tick_counter, &mut fight.logger);
+        fight.spec_state.increment_timers();
+        if let Some(ref spec_config) = fight.spec_config {
+            fight
+                .spec_state
+                .process_surge_potion(&mut fight.player, spec_config);
+        }
 
         vars.tick_counter += 1;
     }
 
-    fight.state.kill_counter += 1;
-    fight
-        .mechanics
-        .process_death_charge(&mut fight.player, &fight.spec_config, &mut fight.state);
     fight.mechanics.get_fight_result(
         &fight.monster,
         &vars,
