@@ -1,5 +1,4 @@
-use gcd::Gcd;
-use num::{FromPrimitive, ToPrimitive};
+use num::{FromPrimitive, Integer as _, ToPrimitive};
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 use std::str::FromStr;
@@ -25,7 +24,7 @@ impl Fraction {
     fn reduce(&mut self) {
         let numer = self.numer.unsigned_abs();
         let denom = self.denom.unsigned_abs();
-        let gcd = numer.gcd(denom);
+        let gcd = numer.gcd(&denom);
         self.numer /= gcd as i32;
         self.denom /= gcd as i32;
         if self.denom < 0 {

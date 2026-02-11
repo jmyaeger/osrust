@@ -8,24 +8,21 @@ edition = "2024"
 [dependencies]
 chrono = "0.4.39"
 dyn-clone = "1.0.17"
-gcd = "2.3.0"
-lazy_static = "1.4.0"
 log = "0.4.25"
 num = "0.4.2"
 paste = "1.0.15"
 rand = "0.9.1"
 reqwest = { version = "0.12.3", features = ["blocking", "json"] }
-rstest = "0.26.1"
 serde = { version = "1.0.199", features = ["derive"] }
 serde_json = "1.0.116"
 simplelog = "0.12.2"
 strum = "0.27"
 strum_macros = "0.27"
 thiserror = "2.0.17"
-url = "2.5.0"
 
 [dev-dependencies]
 tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
+rstest = "0.26.1"
 
 [features]
 default = []
