@@ -1,3 +1,4 @@
+use crate::calc::monster_scaling::build_vard_scaling_table;
 use crate::calc::monster_scaling::scale_monster_hp_only;
 use crate::combat::attacks::standard::AttackFn;
 use crate::combat::limiters::Limiter;
@@ -30,7 +31,7 @@ pub struct SingleWayFight {
 impl SingleWayFight {
     pub fn new(
         player: Player,
-        monster: Monster,
+        mut monster: Monster,
         config: SingleWayConfig,
         spec_config: Option<SpecConfig<CoreCondition>>,
         use_logger: bool,
@@ -40,6 +41,23 @@ impl SingleWayFight {
         let monster_name = monster.info.name.clone();
         let logger = FightLogger::new(use_logger, monster_name.as_str())
             .map_err(|e| SimulationError::ConfigError(format!("Error initializing logger: {e}")))?;
+
+        if monster.info.name == "Vardorvis" {
+            monster.hp_scaling_table = Some(build_vard_scaling_table(&monster));
+            monster.stats.defence.base = monster
+                .hp_scaling_table
+                .as_ref()
+                .unwrap()
+                .get(monster.stats.hitpoints.base as usize)
+                .defence;
+            monster.stats.strength.base = monster
+                .hp_scaling_table
+                .as_ref()
+                .unwrap()
+                .get(monster.stats.hitpoints.base as usize)
+                .strength;
+            monster.reset();
+        }
 
         Ok(SingleWayFight {
             player,
@@ -87,18 +105,34 @@ impl Simulation for SingleWayFight {
         if let Some(ref mut spec_config) = self.spec_config {
             let restore_spec = self.spec_state.on_kill(&mut self.player, spec_config);
             self.player.reset_current_stats(restore_spec);
+        } else {
+            self.player.reset_current_stats(false);
         }
 
         self.monster.reset();
         self.player.state.first_attack = true;
         self.player.state.last_attack_hit = true;
+        if let Some(stacks) = self.config.reset_soulreaper_stacks {
+            self.player.boosts.soulreaper_stacks = stacks;
+        }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SingleWayConfig {
     pub thralls: Option<Thrall>,
     pub remove_final_attack_delay: bool,
+    pub reset_soulreaper_stacks: Option<u32>,
+}
+
+impl Default for SingleWayConfig {
+    fn default() -> Self {
+        Self {
+            thralls: None,
+            remove_final_attack_delay: false,
+            reset_soulreaper_stacks: Some(0),
+        }
+    }
 }
 
 #[derive(Debug)]

@@ -893,6 +893,7 @@ impl Player {
                 self.current_switch = Some(switch.switch_type.clone());
                 self.combat_type =
                     self.gear.weapon.combat_styles[&self.attrs.active_style].combat_type;
+                self.update_bonuses();
 
                 return Ok(());
             }
