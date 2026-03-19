@@ -159,6 +159,17 @@ fn get_fang_accuracy(
     }
 }
 
+fn get_confliction_gauntlets_accuracy(
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
+    let single_roll = get_normal_accuracy(player, monster, using_spec)?;
+    let double_roll = get_fang_accuracy(player, monster, using_spec)?;
+
+    Ok(double_roll / (1.0 - double_roll - single_roll))
+}
+
 fn get_hit_chance(
     player: &Player,
     monster: &Monster,
@@ -177,7 +188,14 @@ fn get_hit_chance(
         return Ok(1.0);
     }
 
-    let mut hit_chance = get_normal_accuracy(player, monster, using_spec)?;
+    let mut hit_chance = if player.is_wearing("Confliction gauntlets", None)
+        && player.combat_type() == CombatType::Magic
+        && !player.gear.weapon.is_two_handed
+    {
+        get_confliction_gauntlets_accuracy(player, monster, using_spec)?
+    } else {
+        get_normal_accuracy(player, monster, using_spec)?
+    };
 
     if player.is_wearing("Osmumten's fang", None) && player.combat_type() == CombatType::Stab {
         if monster.is_toa_monster() {
