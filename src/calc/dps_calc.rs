@@ -48,6 +48,7 @@ fn get_normal_accuracy(
             }
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
             "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
+            "Rosewood blowpipe" => Fraction::new(4, 5),
             _ => Fraction::new(1, 1),
         }
         .unwrap();
@@ -422,6 +423,7 @@ pub fn get_distribution(
         if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Dragon knife")
             || player.is_wearing_any(constants::MAGIC_SHORTBOWS)
+            || player.is_wearing_any_version("Rosewood blowpipe")
         {
             hit_count = 2;
         } else if player.is_wearing("Webweaver bow", None) {
@@ -824,7 +826,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
             )
         }
         "Saradomin godsword" | "Zamorak godsword" | "Ancient godsword" | "Dragon halberd"
-        | "Crystal halberd" | "Saradomin sword" | "Barrelchest anchor" => {
+        | "Crystal halberd" | "Saradomin sword" | "Barrelchest anchor" | "Rosewood blowpipe" => {
             (0, base_max_hit * 11 / 10)
         }
         "Armadyl godsword" => (0, (base_max_hit * 11 / 10) * 5 / 4),

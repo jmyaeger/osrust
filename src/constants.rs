@@ -700,7 +700,7 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
 pub const EAT_DELAY: u32 = 3;
 
-pub const SPEC_COSTS: [(&str, u8); 73] = [
+pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Ancient godsword", 50),
     ("Eldritch nightmare staff", 55),
     ("Keris partisan of the sun", 75),
@@ -774,6 +774,7 @@ pub const SPEC_COSTS: [(&str, u8); 73] = [
     ("Crimson bludgeon", 50),
     ("Eye of ayak", 50),
     ("Arkan blade", 30),
+    ("Rosewood blowpipe", 25),
 ];
 
 pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =

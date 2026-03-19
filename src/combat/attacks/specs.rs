@@ -1768,6 +1768,28 @@ pub fn arkan_blade_spec(
     hit
 }
 
+pub fn rosewood_bp_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut SmallRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Reduce accuracy by 20% and boost damage by 10%
+    info.max_att_roll = info.max_att_roll * 4 / 5;
+    info.max_hit = info.max_hit * 11 / 10;
+
+    // Rolls two independent hits
+    let mut hit1 = base_attack(&info, rng, false);
+    let mut hit2 = base_attack(&info, rng, false);
+
+    hit1.apply_transforms(player, monster, rng, limiter);
+    hit2.apply_transforms(player, monster, rng, limiter);
+
+    hit1.combine(&hit2)
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
@@ -1824,6 +1846,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Elder maul" => elder_maul_spec,
         "Crimson bludgeon" => crimson_bludgeon_spec,
         "Eye of ayak" => eye_of_ayak_spec,
+        "Rosewood blowpipe" => rosewood_bp_spec,
         _ => player.attack,
     }
 }
