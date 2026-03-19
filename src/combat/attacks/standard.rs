@@ -96,7 +96,7 @@ impl Hit {
         // Subtract flat armour from damage, post-roll (clamping at 1 damage)
         if monster.bonuses.flat_armour > 0 {
             self.damage = max(
-                1,
+                0,
                 self.damage
                     .saturating_sub(monster.bonuses.flat_armour.try_into().unwrap_or(0)),
             );
