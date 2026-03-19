@@ -559,6 +559,10 @@ fn apply_melee_weapon_boosts(
             Fraction::new(133, 100).unwrap(),
             Fraction::new(133, 100).unwrap(),
         ),
+        "Keris partisan of amascut" if monster.is_kalphite() => (
+            Fraction::new(115, 100).unwrap(),
+            Fraction::new(115, 100).unwrap(),
+        ),
         // Other keris variants against kalphites
         _ if monster.is_kalphite() && player.is_wearing_keris() => (
             Fraction::new(1, 1).unwrap(),

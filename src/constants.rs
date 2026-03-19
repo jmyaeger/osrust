@@ -628,12 +628,13 @@ pub const IVANDIS_WEAPONS: [(&str, Option<&str>); 3] = [
     ("Ivandis flail", None),
 ];
 
-pub const KERIS_WEAPONS: [(&str, Option<&str>); 5] = [
+pub const KERIS_WEAPONS: [(&str, Option<&str>); 6] = [
     ("Keris", None),
     ("Keris partisan", None),
     ("Keris partisan of the sun", None),
     ("Keris partisan of corruption", None),
     ("Keris partisan of breaching", None),
+    ("Keris partisan of amascut", None),
 ];
 
 pub const LEAF_BLADED_WEAPONS: [(&str, Option<&str>); 3] = [
