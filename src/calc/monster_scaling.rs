@@ -25,7 +25,7 @@ pub fn scale_monster_hp_only(monster: &mut Monster, one_way: bool) {
                 monster.def_rolls = entry.def_rolls;
             }
         }
-    } else if monster.info.name.as_str() == "Vardorvis" {
+    } else if monster.name() == "Vardorvis" {
         // Fallback for single way simulations
         apply_vard_scaling(monster);
     }

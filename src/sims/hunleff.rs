@@ -175,7 +175,7 @@ impl HunllefMechanics {
                 fight_vars.tick_counter,
                 hit.damage,
                 monster.stats.hitpoints.current,
-                monster.info.name.as_str(),
+                monster.name(),
             );
         }
 

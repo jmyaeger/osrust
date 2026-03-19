@@ -91,7 +91,7 @@ impl Simulation for SingleWayFight {
     }
 
     fn set_attack_function(&mut self) {
-        if P2_WARDEN_IDS.contains(&self.monster.info.id.unwrap_or_default()) {
+        if P2_WARDEN_IDS.contains(&self.monster.id_with_default()) {
             self.player.attack = crate::combat::attacks::standard::wardens_p2_attack as AttackFn;
         } else {
             self.player.attack =
@@ -195,7 +195,7 @@ impl SingleWayMechanics {
                         fight_vars.tick_counter,
                         hit.damage,
                         fight.monster.stats.hitpoints.current,
-                        fight.monster.info.name.as_str(),
+                        fight.monster.name(),
                     );
                     fight.logger.log_current_monster_stats(&fight.monster);
                     fight.logger.log_current_monster_rolls(&fight.monster);

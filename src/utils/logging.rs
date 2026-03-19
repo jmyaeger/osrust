@@ -266,7 +266,7 @@ impl FightLogger {
         } else {
             AttackType::None
         };
-        let name = monster.info.name.as_str();
+        let name = monster.name();
 
         if success {
             debug!("[Tick {tick}] {name} hit with {style} for {damage} damage");

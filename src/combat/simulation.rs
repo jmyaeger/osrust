@@ -110,7 +110,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::Seren {}));
     }
 
-    if ["Kraken", "Cave kraken"].contains(&monster.info.name.as_str()) && player.is_using_ranged() {
+    if ["Kraken", "Cave kraken"].contains(&monster.name()) && player.is_using_ranged() {
         return Some(Box::new(limiters::Kraken {}));
     }
 
@@ -142,7 +142,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::OneThirdDamage {}));
     }
 
-    if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.info.name.as_str()) {
+    if ["Slash Bash", "Zogre", "Skogre"].contains(&monster.name()) {
         if player.attrs.spell == Some(Spell::Standard(StandardSpell::CrumbleUndead)) {
             return Some(Box::new(limiters::HalfDamage {}));
         } else if !player.is_using_ranged()

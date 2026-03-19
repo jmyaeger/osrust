@@ -48,7 +48,7 @@ pub trait Mechanics {
                 fight_vars.tick_counter,
                 hit.damage,
                 monster.stats.hitpoints.current,
-                monster.info.name.as_str(),
+                monster.name(),
             );
         }
 
@@ -133,7 +133,7 @@ pub trait Mechanics {
                 fight_vars.tick_counter,
                 thrall_hit,
                 monster.stats.hitpoints.current,
-                monster.info.name.as_str(),
+                monster.name(),
             );
         }
 
@@ -176,7 +176,7 @@ pub trait Mechanics {
                 logger.log_monster_effect_damage(
                     fight_vars.tick_counter,
                     effect_damage,
-                    monster.info.name.as_str(),
+                    monster.name(),
                     monster.stats.hitpoints.current,
                 );
             }
@@ -198,7 +198,7 @@ pub trait Mechanics {
             monster.info.freeze_duration -= 1;
             if monster.info.freeze_duration == 0 {
                 if logger.enabled {
-                    logger.log_freeze_end(fight_vars.tick_counter, monster.info.name.as_str());
+                    logger.log_freeze_end(fight_vars.tick_counter, monster.name());
                 }
 
                 // 5 tick freeze immunity when it runs out
@@ -225,7 +225,7 @@ pub trait Mechanics {
         remove_final_attack_delay: bool,
     ) -> Result<FightResult, SimulationError> {
         if logger.enabled {
-            logger.log_monster_death(fight_vars.tick_counter, monster.info.name.as_str());
+            logger.log_monster_death(fight_vars.tick_counter, monster.name());
         }
 
         let ttk_ticks = if remove_final_attack_delay {
@@ -283,7 +283,7 @@ pub trait Mechanics {
             logger.log_hp_regen(
                 fight_vars.tick_counter,
                 monster.stats.hitpoints.current,
-                monster.info.name.as_str(),
+                monster.name(),
             );
         }
     }
@@ -297,7 +297,7 @@ pub trait Mechanics {
         monster.regen_stats();
 
         if logger.enabled {
-            logger.log_stats_regen(fight_vars.tick_counter, monster.info.name.as_str());
+            logger.log_stats_regen(fight_vars.tick_counter, monster.name());
         }
     }
 
@@ -384,8 +384,7 @@ pub fn handle_recoil(
     fight_vars: &mut FightVars,
     logger: &mut FightLogger,
 ) {
-    if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.info.id.unwrap_or_default())
-        && hit.damage > 0
+    if !constants::IMMUNE_TO_RECOIL_MONSTERS.contains(&monster.id_with_default()) && hit.damage > 0
     {
         if player.is_wearing("Ring of suffering", Some("Recoil"))
             || player.is_wearing("Ring of suffering (i)", Some("Recoil"))
