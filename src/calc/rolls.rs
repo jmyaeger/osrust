@@ -585,6 +585,10 @@ fn apply_melee_weapon_boosts(
             Fraction::new(1, 1).unwrap(),
             Fraction::new(115, 100).unwrap(),
         ),
+        "Granite hammer" if monster.is_golem() => (
+            Fraction::new(13, 10).unwrap(),
+            Fraction::new(13, 10).unwrap(),
+        ),
         // Wildy mace against wildy monsters
         _ if (monster.is_in_wilderness() || player.boosts.in_wilderness)
             && player.is_wearing_wildy_mace() =>

@@ -37,7 +37,8 @@ fn get_normal_accuracy(
             "Accursed sceptre"
             | "Accursed sceptre (a)"
             | "Volatile nightmare staff"
-            | "Arkan blade" => Fraction::new(3, 2),
+            | "Arkan blade"
+            | "Granite hammer" => Fraction::new(3, 2),
             "Dragon dagger" => Fraction::new(115, 100),
             "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
                 Fraction::new(5, 4)
@@ -455,6 +456,16 @@ pub fn get_distribution(
                 },
             );
         }
+    }
+
+    // Granite hammer spec
+    if using_spec && player.is_wearing("Granite hammer", None) {
+        dist = dist.transform(
+            &flat_add_transformer(5, 0),
+            &TransformOpts {
+                transform_inaccurate: true,
+            },
+        );
     }
 
     // Verac's set effect distribution
