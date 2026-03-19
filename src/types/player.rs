@@ -1332,6 +1332,7 @@ impl Player {
         !self.state.last_attack_hit
             && self.combat_type() == CombatType::Magic
             && self.is_wearing("Confliction gauntlets", None)
+            && !self.gear.weapon.is_two_handed
     }
 }
 

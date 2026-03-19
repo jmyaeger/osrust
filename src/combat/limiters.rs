@@ -127,7 +127,7 @@ impl Limiter for HueycoatlTail {
 pub struct VampyreT2 {}
 
 impl Limiter for VampyreT2 {
-    fn apply(&self, damage: u32, rng: &mut SmallRng) -> u32 {
+    fn apply(&self, damage: u32, _: &mut SmallRng) -> u32 {
         min(10, damage)
     }
 }

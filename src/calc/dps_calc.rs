@@ -46,6 +46,7 @@ fn get_normal_accuracy(
             }
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
             "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
+            "Eye of ayak" => Fraction::new(2, 1),
             _ => Fraction::new(1, 1),
         }
         .unwrap();
@@ -819,6 +820,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         }
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
+        "Eye of ayak" => (0, base_max_hit * 13 / 10),
         _ => {
             return Err(DpsCalcError::SpecNotImplemented(
                 player.gear.weapon.name.clone(),

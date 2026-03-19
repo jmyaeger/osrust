@@ -1713,6 +1713,32 @@ pub fn crimson_bludgeon_spec(
     hit
 }
 
+pub fn eye_of_ayak_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut SmallRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Double accuracy and +30% damage
+    info.max_att_roll *= 2;
+    info.max_hit = info.max_hit * 13 / 10;
+    let mut hit = base_attack(&info, rng, player.rolls_accuracy_twice());
+
+    if hit.success {
+        // Drain the monster's magic defence bonus by the damage dealt, capped at 0
+        monster.bonuses.defence.magic = max(0, monster.bonuses.defence.magic - hit.damage as i32);
+
+        hit.apply_transforms(player, monster, rng, limiter);
+    }
+
+    // Spec has a 5-tick attack speed
+    Rc::make_mut(&mut player.gear).weapon.speed = 5;
+
+    hit
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
@@ -1768,6 +1794,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Scorching bow" => scorching_bow_spec,
         "Elder maul" => elder_maul_spec,
         "Crimson bludgeon" => crimson_bludgeon_spec,
+        "Eye of ayak" => eye_of_ayak_spec,
         _ => player.attack,
     }
 }
