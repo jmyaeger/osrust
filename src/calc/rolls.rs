@@ -349,10 +349,9 @@ fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
 
     // Apply dragonbane boosts - still works for DHL and DHCB when manual casting
     if monster.is_dragon() {
-        if player.is_wearing_any(vec![
-            ("Dragon hunter wand", None),
-            ("Dragon hunter lance", None),
-        ]) {
+        if player.is_wearing("Dragon hunter wand", None) {
+            max_hit = max_hit * 7 / 5;
+        } else if player.is_wearing("Dragon hunter lance", None) {
             max_hit = max_hit * 6 / 5;
         } else if player.is_wearing("Dragon hunter crossbow", None) {
             max_hit = max_hit * 5 / 4;
@@ -561,7 +560,7 @@ fn apply_melee_weapon_boosts(
             (Fraction::new(6, 5).unwrap(), Fraction::new(6, 5).unwrap())
         }
         "Dragon hunter wand" if monster.is_dragon() => {
-            (Fraction::new(3, 2).unwrap(), Fraction::new(6, 5).unwrap())
+            (Fraction::new(7, 4).unwrap(), Fraction::new(6, 5).unwrap())
         }
         "Keris partisan of breaching" if monster.is_kalphite() => (
             Fraction::new(133, 100).unwrap(),
