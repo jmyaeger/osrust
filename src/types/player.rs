@@ -1104,6 +1104,15 @@ impl Player {
         self.is_using_demonbane_spell() || self.is_wearing_any(constants::DEMONBANE_WEAPONS)
     }
 
+    pub fn is_using_vampyrebane(&self, tier: u8) -> bool {
+        let mut weapons = vec!["Blisterwood flail", "Blisterwood sickle", "Ivandis flail"];
+        if tier == 2 {
+            weapons.push("Rod of ivandis");
+        }
+
+        weapons.contains(&self.gear.weapon.name.as_str())
+    }
+
     pub fn is_using_corpbane_weapon(&self) -> bool {
         // Check if the player's weapon does full damage to Corp
         let weapon_name = &self.gear.weapon.name;

@@ -925,6 +925,14 @@ impl Monster {
             return true;
         }
 
+        if self.vampyre_tier() == Some(2)
+            && !player.is_using_vampyrebane(2)
+            && !player.is_wearing("Efaritay's aid", None)
+            && !player.is_wearing_silver_weapon()
+        {
+            return true;
+        }
+
         if !self.is_demon()
             && (player.is_wearing("Holy water", None) || player.is_using_demonbane_spell())
         {

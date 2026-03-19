@@ -122,3 +122,12 @@ impl Limiter for HueycoatlTail {
         min(damage, second_roll)
     }
 }
+
+#[derive(Clone)]
+pub struct VampyreT2 {}
+
+impl Limiter for VampyreT2 {
+    fn apply(&self, damage: u32, rng: &mut SmallRng) -> u32 {
+        min(10, damage)
+    }
+}

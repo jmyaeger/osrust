@@ -937,9 +937,14 @@ fn apply_limiters(
     }
 
     // Efaritay's aid with non-silver weapons against T2 vampyres deals 50% damage, applied post-roll
-    if player.is_wearing("Efaritay's aid", None) && monster.vampyre_tier() == Some(2) {
-        dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
+    if monster.vampyre_tier() == Some(2) {
+        if !player.is_using_vampyrebane(2) && player.is_wearing("Efaritay's aid", None) {
+            dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
+        } else if player.is_wearing_silver_weapon() {
+            dist = dist.transform(&flat_limit_transformer(0, 10), &TransformOpts::default());
+        }
     }
+    if player.is_wearing("Efaritay's aid", None) && monster.vampyre_tier() == Some(2) {}
 
     if monster.info.id == Some(constants::HUEYCOATL_TAIL_ID) {
         let using_crush = player.combat_type() == CombatType::Crush
