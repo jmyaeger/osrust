@@ -293,6 +293,26 @@ pub fn get_distribution(
         || player.is_using_ranged()
             && constants::ALWAYS_MAX_HIT_RANGED.contains(&monster.info.id.unwrap_or(0))
     {
+        if monster.info.name == "Void Flare"
+            && player.boosts.mark_of_darkness
+            && player.is_using_demonbane_spell()
+        {
+            let damage_boost = if player.is_wearing("Purging staff", None) {
+                50
+            } else {
+                25
+            };
+            return Ok(AttackDistribution::new(vec![HitDistribution::single(
+                1.0,
+                vec![Hitsplat::new(
+                    max_hit
+                        + get_demonbane_factor(100, monster)
+                            .multiply_to_int(max_hit * damage_boost / 100),
+                    true,
+                )],
+            )]));
+        }
+
         return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
             vec![Hitsplat::new(max_hit, true)],

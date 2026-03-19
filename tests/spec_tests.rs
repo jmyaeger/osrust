@@ -75,9 +75,8 @@ mod spec_tests {
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
-            .with_max_attempts(2)
-            .build();
+        let mut strategy: SpecStrategy<CoreCondition> =
+            SpecStrategy::builder(&switch).with_max_attempts(2).build();
 
         // Should allow first two attempts
         assert!(strategy.can_execute(&player, &monster, &()));
@@ -93,9 +92,8 @@ mod spec_tests {
         let monster = Monster::new("General Graardor", None).expect("Error creating monster.");
 
         let switch = GearSwitch::new(SwitchType::Custom("Test spec".into()), &player, &monster);
-        let mut strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&switch)
-            .with_min_successes(2)
-            .build();
+        let mut strategy: SpecStrategy<CoreCondition> =
+            SpecStrategy::builder(&switch).with_min_successes(2).build();
 
         assert!(strategy.can_execute(&player, &monster, &()));
         strategy.state.success_count = 1;
