@@ -194,7 +194,7 @@ fn get_hit_chance(
     }
 
     let mut hit_chance = if player.is_wearing("Confliction gauntlets", None)
-        && player.combat_type() == CombatType::Magic
+        && player.is_using_magic()
         && !player.gear.weapon.is_two_handed
     {
         get_confliction_gauntlets_accuracy(player, monster, using_spec)?
@@ -210,7 +210,7 @@ fn get_hit_chance(
         }
     }
 
-    if player.combat_type() == CombatType::Magic && player.is_wearing("Brimstone ring", None) {
+    if player.is_using_magic() && player.is_wearing("Brimstone ring", None) {
         let mut monster_copy = monster.clone();
         let def_roll = monster.def_rolls.get(CombatType::Magic) * 9 / 10;
         monster_copy.def_rolls.set(CombatType::Magic, def_roll);
@@ -317,7 +317,7 @@ pub fn get_distribution(
     }
 
     // Check if the monster always takes the maximum hit for the current combat type
-    if player.combat_type() == CombatType::Magic
+    if player.is_using_magic()
         && constants::ALWAYS_MAX_HIT_MAGIC.contains(&monster.id_with_default())
         || player.is_using_melee()
             && constants::ALWAYS_MAX_HIT_MELEE.contains(&monster.id_with_default())
@@ -652,7 +652,7 @@ pub fn get_distribution(
     }
 
     // Full Ahrim's + amulet of the damned distribution
-    if player.combat_type() == CombatType::Magic
+    if player.is_using_magic()
         && player.set_effects.full_ahrims
         && player.is_wearing_any_version("Amulet of the damned")
     {
@@ -920,7 +920,7 @@ fn apply_limiters(
     }
 
     // Tekton divides all magic damage by 5, with a minimum accurate hit of 1
-    if monster.info.name.contains("Tekton") && player.combat_type() == CombatType::Magic {
+    if monster.info.name.contains("Tekton") && player.is_using_magic() {
         dist = dist.transform(
             &division_transformer(5, 1),
             &TransformOpts {
@@ -930,14 +930,14 @@ fn apply_limiters(
     }
 
     // Vasa crystal takes 1/3 magic damage
-    if monster.info.name.contains("Glowing crystal") && player.combat_type() == CombatType::Magic {
+    if monster.info.name.contains("Glowing crystal") && player.is_using_magic() {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
     // Olm melee hand or head takes 1/3 magic damage
     if (monster.matches_version("Left claw")
         || (monster.info.name.contains("Great Olm") && monster.matches_version("Head")))
-        && player.combat_type() == CombatType::Magic
+        && player.is_using_magic()
     {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }

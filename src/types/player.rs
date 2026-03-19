@@ -837,6 +837,10 @@ impl Player {
         ranged_types.contains(&self.combat_type())
     }
 
+    pub fn is_using_magic(&self) -> bool {
+        self.combat_type() == CombatType::Magic
+    }
+
     pub fn set_active_style(&mut self, style: CombatStyle) {
         // Set the active combat style and make any necessary attack speed adjustments
         self.attrs.active_style = style;
@@ -1330,7 +1334,7 @@ impl Player {
 
     pub fn rolls_accuracy_twice(&self) -> bool {
         !self.state.last_attack_hit
-            && self.combat_type() == CombatType::Magic
+            && self.is_using_magic()
             && self.is_wearing("Confliction gauntlets", None)
             && !self.gear.weapon.is_two_handed
     }
