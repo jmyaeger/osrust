@@ -345,7 +345,7 @@ pub fn get_distribution(
 
         return Ok(AttackDistribution::new(vec![HitDistribution::single(
             1.0,
-            vec![Hitsplat::new(max_hit, true)],
+            vec![Hitsplat::new(dist.get_max(), true)],
         )]));
     }
 
