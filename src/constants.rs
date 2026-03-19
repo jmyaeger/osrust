@@ -173,17 +173,22 @@ pub const IMMUNE_TO_RANGED_MONSTERS: [i32; 14] = [
 pub const ALWAYS_MAX_HIT_MELEE: &[i32] = &[
     11710, 11713, // Baboon thrower
     12814, // Fremennik warband archer
+    14179, // Void flare
 ];
 
 pub const ALWAYS_MAX_HIT_RANGED: &[i32] = &[
     11711, 11714, // Baboon mage
     12815, // Fremennik warband seer
+    11717, // Cursed baboon
+    11715, // Baboon shaman
+    14179, // Void flare
 ];
 
 pub const ALWAYS_MAX_HIT_MAGIC: &[i32] = &[
     11709, 11712, // Baboon brawler
     12816, // Fremennik warband berserker
     14151, 14150, // Royal titans elementals
+    14179, // Void flare
 ];
 
 pub const GUARANTEED_ACCURACY_MONSTERS: &[i32] = &[
