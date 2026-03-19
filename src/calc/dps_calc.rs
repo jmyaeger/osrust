@@ -1047,13 +1047,18 @@ pub fn get_expected_damage(
 }
 
 // Get the average damage per tick
-fn get_dpt(dist: &AttackDistribution, player: &Player) -> f64 {
-    dist.get_expected_damage() / player.gear.weapon.speed as f64
+fn get_dpt(dist: &AttackDistribution, player: &Player, using_spec: bool) -> f64 {
+    let speed = if using_spec && player.is_wearing("Eye of ayak", None) {
+        5
+    } else {
+        player.gear.weapon.speed
+    };
+    dist.get_expected_damage() / speed as f64
 }
 
 // Get the average damage per second
-pub fn get_dps(dist: &AttackDistribution, player: &Player) -> f64 {
-    get_dpt(dist, player) / constants::SECONDS_PER_TICK
+pub fn get_dps(dist: &AttackDistribution, player: &Player, using_spec: bool) -> f64 {
+    get_dpt(dist, player, using_spec) / constants::SECONDS_PER_TICK
 }
 
 // Get the expected number of hits per kill
