@@ -992,7 +992,11 @@ fn apply_limiters(
         let using_crush = player.combat_type() == CombatType::Crush
             && player.bonuses.attack.crush > player.bonuses.attack.stab
             && player.bonuses.attack.crush > player.bonuses.attack.slash;
-        let dist_max = if using_crush { 9 } else { 4 };
+        let dist_max = if using_crush || player.is_using_earth_spell() {
+            9
+        } else {
+            4
+        };
         dist = dist.transform(
             &linear_min_transformer(dist_max, 0),
             &TransformOpts::default(),
