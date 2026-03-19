@@ -913,7 +913,8 @@ impl Monster {
         }
 
         if player.is_using_melee()
-            && player.gear.weapon.attack_range < 2
+            && (player.gear.weapon.attack_range < 2
+                && !(player.is_wearing_salamander() && player.is_using_melee()))
             && (constants::IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS
                 .contains(&self.info.id.unwrap_or(0))
                 || (self.is_flying() && self.info.name.as_str() != "Vespula"))
