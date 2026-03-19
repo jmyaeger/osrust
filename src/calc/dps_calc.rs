@@ -837,7 +837,7 @@ fn apply_limiters(
     }
 
     // Kraken divides all ranged damage by 7
-    if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
+    if ["Kraken", "Cave kraken"].contains(&monster.info.name.as_str()) && player.is_using_ranged() {
         dist = dist.transform(
             &division_transformer(7, 1),
             &TransformOpts {

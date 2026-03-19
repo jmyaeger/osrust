@@ -110,7 +110,7 @@ pub fn assign_limiter(player: &Player, monster: &Monster) -> Option<Box<dyn limi
         return Some(Box::new(limiters::Seren {}));
     }
 
-    if monster.info.name.as_str() == "Kraken (Kraken)" && player.is_using_ranged() {
+    if ["Kraken", "Cave kraken"].contains(&monster.info.name.as_str()) && player.is_using_ranged() {
         return Some(Box::new(limiters::Kraken {}));
     }
 
