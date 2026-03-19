@@ -184,6 +184,9 @@ fn get_hit_chance(
         || (using_spec && player.is_wearing_any(constants::ALWAYS_HITS_SPEC))
         || constants::P2_WARDEN_IDS.contains(&monster.info.id.unwrap_or(0))
         || constants::GUARANTEED_ACCURACY_MONSTERS.contains(&monster.info.id.unwrap_or(0))
+        || (monster.info.name.as_str() == "Eclipse Moon"
+            && monster.matches_version("Clone")
+            && player.is_using_melee())
     {
         return Ok(1.0);
     }
@@ -998,7 +1001,6 @@ fn apply_limiters(
     }
 
     // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
-
     if monster.bonuses.flat_armour > 0 && player.combat_type() != CombatType::Magic {
         dist = dist.transform(
             &flat_add_transformer(-monster.bonuses.flat_armour, 1),
