@@ -750,6 +750,10 @@ impl Monster {
         self.has_attribute(Attribute::Shade)
     }
 
+    pub fn is_flying(&self) -> bool {
+        self.has_attribute(Attribute::Flying)
+    }
+
     pub fn vampyre_tier(&self) -> Option<u8> {
         if let Some(attrs) = self.info.attributes.as_ref() {
             for attr in attrs {
@@ -910,8 +914,9 @@ impl Monster {
 
         if player.is_using_melee()
             && player.gear.weapon.attack_range < 2
-            && constants::IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS
+            && (constants::IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS
                 .contains(&self.info.id.unwrap_or(0))
+                || self.is_flying())
         {
             return true;
         }
