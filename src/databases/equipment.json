@@ -429,6 +429,138 @@
     "attack_range": null
   },
   {
+    "name": "25th anniversary 5x5 hat",
+    "id": 33086,
+    "version": null,
+    "slot": "head",
+    "image": "25th anniversary 5x5 hat.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "25th anniversary helmet",
+    "id": 33080,
+    "version": null,
+    "slot": "head",
+    "image": "25th anniversary helmet.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "25th anniversary skeleton tabard",
+    "id": 33084,
+    "version": null,
+    "slot": "body",
+    "image": "25th anniversary skeleton tabard.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "25th anniversary warrior tabard",
+    "id": 33082,
+    "version": null,
+    "slot": "body",
+    "image": "25th anniversary warrior tabard.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "3rd age amulet",
     "id": 10344,
     "version": null,
@@ -11454,7 +11586,7 @@
     "name": "Aquanite hopper",
     "id": 32879,
     "version": null,
-    "slot": "Shield",
+    "slot": "shield",
     "image": "Aquanite hopper.png",
     "speed": null,
     "category": null,
@@ -12339,7 +12471,7 @@
       "prayer": 1
     },
     "is_two_handed": false,
-    "attack_range": 0
+    "attack_range": 1
   },
   {
     "name": "Armadyl bracers",
@@ -22992,7 +23124,7 @@
         "stab": 23,
         "slash": 30,
         "crush": 30,
-        "magic": 26,
+        "magic": 28,
         "ranged": 40
       },
       "prayer": 0
@@ -23025,7 +23157,7 @@
         "stab": 23,
         "slash": 30,
         "crush": 30,
-        "magic": 26,
+        "magic": 28,
         "ranged": 40
       },
       "prayer": 0
@@ -23058,7 +23190,7 @@
         "stab": 23,
         "slash": 30,
         "crush": 30,
-        "magic": 26,
+        "magic": 28,
         "ranged": 40
       },
       "prayer": 0
@@ -26339,6 +26471,39 @@
     "version": null,
     "slot": "weapon",
     "image": "Bow of faerdhinen (c) (Trahaearn).png",
+    "speed": 5,
+    "category": "Bow",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 106,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 128
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 10
+  },
+  {
+    "name": "Bow of faerdhinen (c) (deadman)",
+    "id": 33021,
+    "version": null,
+    "slot": "weapon",
+    "image": "Bow of faerdhinen (c) (deadman).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -31317,6 +31482,39 @@
     "attack_range": null
   },
   {
+    "name": "Brutus slippers",
+    "id": 33099,
+    "version": null,
+    "slot": "feet",
+    "image": "Brutus slippers.png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Bryophyta's staff",
     "id": 22370,
     "version": "Charged",
@@ -32524,6 +32722,171 @@
         "crush": 0,
         "magic": 0,
         "ranged": 12
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Camphor blowpipe",
+    "id": 31575,
+    "version": "Bronze",
+    "slot": "weapon",
+    "image": "Camphor blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 3,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Camphor blowpipe",
+    "id": 31575,
+    "version": "Iron",
+    "slot": "weapon",
+    "image": "Camphor blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 4,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Camphor blowpipe",
+    "id": 31575,
+    "version": "Steel",
+    "slot": "weapon",
+    "image": "Camphor blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 5,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Camphor blowpipe",
+    "id": 31575,
+    "version": "Black",
+    "slot": "weapon",
+    "image": "Camphor blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 8,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Camphor blowpipe",
+    "id": 31575,
+    "version": "Mithril",
+    "slot": "weapon",
+    "image": "Camphor blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 11,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
       },
       "defence": {
         "stab": 0,
@@ -37431,7 +37794,7 @@
     "category": "Claw",
     "bonuses": {
       "strength": {
-        "melee": 45,
+        "melee": 48,
         "ranged": 0,
         "magic": 0
       },
@@ -38808,6 +39171,138 @@
     "attack_range": null
   },
   {
+    "name": "Cow slippers",
+    "id": 33093,
+    "version": "1",
+    "slot": "feet",
+    "image": "Cow slippers (1).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Cow slippers",
+    "id": 33096,
+    "version": "2",
+    "slot": "feet",
+    "image": "Cow slippers (2).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Cow slippers",
+    "id": 33097,
+    "version": "3",
+    "slot": "feet",
+    "image": "Cow slippers (3).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Cow slippers",
+    "id": 33098,
+    "version": "4",
+    "slot": "feet",
+    "image": "Cow slippers (4).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Cow top",
     "id": 12956,
     "version": null,
@@ -38846,6 +39341,72 @@
     "version": null,
     "slot": "legs",
     "image": "Cow trousers.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Cowbell amulet",
+    "id": 33104,
+    "version": "Charged",
+    "slot": "neck",
+    "image": "Cowbell amulet (charged).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Cowbell amulet",
+    "id": 33103,
+    "version": "Empty",
+    "slot": "neck",
+    "image": "Cowbell amulet (empty).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -39077,8 +39638,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of adamantite ore (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39102,7 +39663,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of adamantite ore",
@@ -39110,8 +39671,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of adamantite ore (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39135,7 +39696,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of adamantite ore",
@@ -39143,8 +39704,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of adamantite ore (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39168,7 +39729,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of alpaca wool",
@@ -39176,8 +39737,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of alpaca wool.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39201,7 +39762,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of amulets",
@@ -39209,8 +39770,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of amulets.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39234,7 +39795,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of angler outfit pieces",
@@ -39242,8 +39803,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of angler outfit pieces.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39267,7 +39828,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of antelope fur",
@@ -39275,8 +39836,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of antelope fur (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39300,7 +39861,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of antelope fur",
@@ -39308,8 +39869,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of antelope fur (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39333,7 +39894,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of antelope meat",
@@ -39341,8 +39902,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of antelope meat.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39366,7 +39927,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39374,8 +39935,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of arrowtips (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39399,7 +39960,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39407,8 +39968,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of arrowtips (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39432,7 +39993,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39440,8 +40001,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of arrowtips (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39465,7 +40026,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39473,8 +40034,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of arrowtips (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39498,7 +40059,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39506,8 +40067,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of arrowtips (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39531,7 +40092,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39539,8 +40100,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of arrowtips (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39564,7 +40125,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of arrowtips",
@@ -39572,8 +40133,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of arrowtips (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39597,7 +40158,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of astral runes",
@@ -39605,8 +40166,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of astral runes (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39630,7 +40191,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of astral runes",
@@ -39638,8 +40199,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of astral runes (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39663,7 +40224,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of astral runes",
@@ -39671,8 +40232,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of astral runes (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39696,7 +40257,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of astral runes",
@@ -39704,8 +40265,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of astral runes (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39729,7 +40290,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bait",
@@ -39737,8 +40298,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of bait.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39762,7 +40323,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39770,8 +40331,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of bananas (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39795,7 +40356,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39803,8 +40364,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of bananas (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39828,7 +40389,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39836,8 +40397,8 @@
     "version": "Entrana",
     "slot": "weapon",
     "image": "Crate of bananas (Entrana).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39861,7 +40422,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39869,8 +40430,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of bananas (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39894,7 +40455,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39902,8 +40463,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of bananas (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39927,7 +40488,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bananas",
@@ -39935,8 +40496,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of bananas (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39960,7 +40521,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of barley",
@@ -39968,8 +40529,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of barley.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -39993,7 +40554,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of battleaxes",
@@ -40001,8 +40562,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of battleaxes (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40026,7 +40587,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of battleaxes",
@@ -40034,8 +40595,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of battleaxes (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40059,7 +40620,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bear meat",
@@ -40067,8 +40628,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of bear meat (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40092,7 +40653,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bear meat",
@@ -40100,8 +40661,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of bear meat (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40125,7 +40686,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bear meat",
@@ -40133,8 +40694,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of bear meat (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40158,7 +40719,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer",
@@ -40166,8 +40727,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of beer (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40191,7 +40752,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer",
@@ -40199,8 +40760,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of beer (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40224,7 +40785,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer",
@@ -40232,8 +40793,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of beer (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40257,7 +40818,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer",
@@ -40265,8 +40826,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of beer (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40290,7 +40851,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer",
@@ -40298,8 +40859,8 @@
     "version": "Sunset Coast",
     "slot": "weapon",
     "image": "Crate of beer (Sunset Coast).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40323,7 +40884,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of beer glasses",
@@ -40331,8 +40892,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of beer glasses.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40356,7 +40917,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of berries",
@@ -40364,8 +40925,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of berries (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40389,7 +40950,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of berries",
@@ -40397,8 +40958,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of berries (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40422,7 +40983,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of books",
@@ -40562,8 +41123,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of bows (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40587,7 +41148,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bows",
@@ -40595,8 +41156,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of bows (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40620,7 +41181,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of bread",
@@ -40628,8 +41189,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of bread.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40653,7 +41214,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cacti",
@@ -40661,8 +41222,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of cacti (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40686,7 +41247,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cacti",
@@ -40694,8 +41255,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of cacti (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40719,7 +41280,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cacti",
@@ -40727,8 +41288,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of cacti (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40752,7 +41313,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cacti",
@@ -40760,8 +41321,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of cacti (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40785,7 +41346,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of calquat",
@@ -40793,8 +41354,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of calquat.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40818,7 +41379,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of camphor logs",
@@ -40826,8 +41387,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of camphor logs (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40851,7 +41412,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of camphor logs",
@@ -40859,8 +41420,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of camphor logs (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40884,7 +41445,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of camphor logs",
@@ -40892,8 +41453,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of camphor logs (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40917,7 +41478,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cannonballs",
@@ -40925,8 +41486,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of cannonballs.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40950,7 +41511,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of chainbodies",
@@ -40958,8 +41519,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of chainbodies.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -40983,7 +41544,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of chinchompas",
@@ -40991,8 +41552,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of chinchompas.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41016,7 +41577,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of clothes",
@@ -41024,8 +41585,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of clothes (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41049,7 +41610,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of clothes",
@@ -41057,8 +41618,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of clothes (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41082,7 +41643,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41090,8 +41651,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of coal (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41115,7 +41676,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41123,8 +41684,8 @@
     "version": "Neitiznot",
     "slot": "weapon",
     "image": "Crate of coal (Neitiznot).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41148,7 +41709,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41156,8 +41717,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of coal (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41181,7 +41742,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41189,8 +41750,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of coal (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41214,7 +41775,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41222,8 +41783,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of coal (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41247,7 +41808,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coal",
@@ -41255,8 +41816,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of coal (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41280,7 +41841,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cocktails",
@@ -41288,8 +41849,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of cocktails (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41313,7 +41874,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of cocktails",
@@ -41321,8 +41882,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of cocktails (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41346,7 +41907,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coconuts",
@@ -41354,8 +41915,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of coconuts (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41379,7 +41940,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coconuts",
@@ -41387,8 +41948,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of coconuts (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41412,7 +41973,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of compost",
@@ -41420,8 +41981,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of compost.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41445,7 +42006,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coral",
@@ -41453,8 +42014,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of coral (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41478,7 +42039,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coral",
@@ -41486,8 +42047,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of coral (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41511,7 +42072,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coral",
@@ -41519,8 +42080,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of coral (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41544,7 +42105,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coral",
@@ -41552,8 +42113,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of coral (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41577,7 +42138,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of coral",
@@ -41585,8 +42146,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of coral (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41610,7 +42171,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of crab paste",
@@ -41618,8 +42179,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of crab paste (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41643,7 +42204,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of crab paste",
@@ -41651,8 +42212,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of crab paste (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41676,7 +42237,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of crystal seeds",
@@ -41684,8 +42245,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of crystal seeds (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41709,7 +42270,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of crystal seeds",
@@ -41717,8 +42278,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of crystal seeds (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41742,7 +42303,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of crystal seeds",
@@ -41750,8 +42311,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of crystal seeds (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41775,7 +42336,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of daggers",
@@ -41783,8 +42344,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of daggers (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41808,7 +42369,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of daggers",
@@ -41816,8 +42377,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of daggers (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41841,7 +42402,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of dragon bitter",
@@ -41849,8 +42410,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of dragon bitter.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41874,7 +42435,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of dragonhide",
@@ -41882,8 +42443,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of dragonhide.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41907,7 +42468,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of dyes",
@@ -41915,8 +42476,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of dyes.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41940,7 +42501,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of eye patches",
@@ -41948,8 +42509,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of eye patches.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -41973,7 +42534,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -41981,8 +42542,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of fabrics (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42006,7 +42567,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42014,8 +42575,8 @@
     "version": "Piscatoris",
     "slot": "weapon",
     "image": "Crate of fabrics (Piscatoris).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42039,7 +42600,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42047,8 +42608,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of fabrics (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42072,7 +42633,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42080,8 +42641,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of fabrics (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42105,7 +42666,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42113,8 +42674,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of fabrics (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42138,7 +42699,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42146,8 +42707,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of fabrics (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42171,7 +42732,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fabrics",
@@ -42179,8 +42740,8 @@
     "version": "Sunset Coast",
     "slot": "weapon",
     "image": "Crate of fabrics (Sunset Coast).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42204,7 +42765,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of feathers",
@@ -42212,8 +42773,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of feathers.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42237,7 +42798,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fish",
@@ -42872,8 +43433,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of fishing supplies.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -42897,7 +43458,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of flax",
@@ -43037,8 +43598,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of fruit (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43062,7 +43623,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fruit",
@@ -43070,8 +43631,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of fruit (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43095,7 +43656,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fruit",
@@ -43103,8 +43664,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of fruit (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43128,7 +43689,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fruit",
@@ -43136,8 +43697,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of fruit (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43161,7 +43722,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of fruit",
@@ -43169,8 +43730,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of fruit (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43194,7 +43755,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43202,8 +43763,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of furs (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43227,7 +43788,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43235,8 +43796,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of furs (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43260,7 +43821,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43268,8 +43829,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of furs (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43293,7 +43854,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43301,8 +43862,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of furs (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43326,7 +43887,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43334,8 +43895,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of furs (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43359,7 +43920,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43367,8 +43928,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of furs (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43392,7 +43953,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43400,8 +43961,8 @@
     "version": "Piscatoris",
     "slot": "weapon",
     "image": "Crate of furs (Piscatoris).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43425,7 +43986,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43433,8 +43994,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of furs (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43458,7 +44019,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43466,8 +44027,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of furs (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43491,7 +44052,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43499,8 +44060,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of furs (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43524,7 +44085,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of furs",
@@ -43532,8 +44093,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of furs (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43557,7 +44118,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43565,8 +44126,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of gems (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43590,7 +44151,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43598,8 +44159,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of gems (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43623,7 +44184,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43631,8 +44192,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of gems (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43656,7 +44217,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43664,8 +44225,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of gems (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43689,7 +44250,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43697,8 +44258,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of gems (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43722,7 +44283,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43730,8 +44291,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of gems (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43755,7 +44316,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gems",
@@ -43763,8 +44324,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of gems (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43788,7 +44349,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gin",
@@ -43796,8 +44357,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of gin.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43821,16 +44382,16 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of glassmaking supplies",
-    "id": 32488,
+    "id": 32640,
     "version": null,
     "slot": "weapon",
     "image": "Crate of glassmaking supplies.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43854,7 +44415,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gold bars",
@@ -43862,8 +44423,8 @@
     "version": "Cairn Isle",
     "slot": "weapon",
     "image": "Crate of gold bars (Cairn Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43887,7 +44448,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gold bars",
@@ -43895,8 +44456,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of gold bars (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43920,7 +44481,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gold ore",
@@ -43928,8 +44489,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of gold ore (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43953,7 +44514,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gold ore",
@@ -43961,8 +44522,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of gold ore (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -43986,7 +44547,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of granite",
@@ -43994,8 +44555,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of granite (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44019,7 +44580,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of granite",
@@ -44027,8 +44588,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of granite (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44052,7 +44613,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of granite",
@@ -44060,8 +44621,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of granite (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44085,7 +44646,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of granite",
@@ -44093,8 +44654,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of granite (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44118,7 +44679,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of grog",
@@ -44126,8 +44687,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of grog.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44151,7 +44712,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of gunpowder",
@@ -44159,8 +44720,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of gunpowder.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44184,7 +44745,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of halberds",
@@ -44192,8 +44753,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of halberds (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44217,7 +44778,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of halberds",
@@ -44225,8 +44786,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of halberds (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44250,7 +44811,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of halberds",
@@ -44258,8 +44819,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of halberds (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44283,7 +44844,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of herbs",
@@ -44291,8 +44852,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of herbs (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44316,7 +44877,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of herbs",
@@ -44324,8 +44885,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of herbs (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44349,7 +44910,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of herbs",
@@ -44357,8 +44918,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of herbs (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44382,7 +44943,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of herbs",
@@ -44390,8 +44951,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of herbs (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44415,7 +44976,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of herbs",
@@ -44423,8 +44984,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of herbs (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44448,7 +45009,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of high importance",
@@ -44456,8 +45017,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of high importance.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44481,7 +45042,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of honey",
@@ -44489,8 +45050,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of honey (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44514,7 +45075,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of honey",
@@ -44522,8 +45083,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of honey (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44547,7 +45108,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of honey",
@@ -44555,8 +45116,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of honey (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44580,7 +45141,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of honey",
@@ -44588,8 +45149,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of honey (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44613,7 +45174,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of huasca",
@@ -44621,8 +45182,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of huasca.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44646,7 +45207,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of iron bars",
@@ -44654,8 +45215,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of iron bars.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44679,7 +45240,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of iron ore",
@@ -44687,8 +45248,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of iron ore.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44712,7 +45273,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of javelins",
@@ -44720,8 +45281,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of javelins (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44745,7 +45306,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of javelins",
@@ -44753,8 +45314,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of javelins (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44778,7 +45339,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of javelins",
@@ -44786,8 +45347,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of javelins (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44811,7 +45372,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of javelins",
@@ -44819,8 +45380,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of javelins (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44844,7 +45405,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -44852,8 +45413,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of jewellery (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44877,7 +45438,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -44885,8 +45446,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of jewellery (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44910,7 +45471,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -44918,8 +45479,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of jewellery (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44943,7 +45504,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -44951,8 +45512,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of jewellery (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -44976,7 +45537,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -44984,8 +45545,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of jewellery (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45009,7 +45570,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -45017,8 +45578,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of jewellery (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45042,7 +45603,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -45050,8 +45611,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of jewellery (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45075,7 +45636,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of jewellery",
@@ -45083,8 +45644,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of jewellery (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45108,7 +45669,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of karambwans",
@@ -45116,8 +45677,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of karambwans (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45141,7 +45702,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of karambwans",
@@ -45149,8 +45710,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of karambwans (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45174,7 +45735,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of kebabs",
@@ -45182,8 +45743,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of kebabs.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45207,7 +45768,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of kebbit fur",
@@ -45215,8 +45776,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of kebbit fur (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45240,7 +45801,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of kebbit fur",
@@ -45248,8 +45809,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of kebbit fur (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45273,7 +45834,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of kebbit fur",
@@ -45281,8 +45842,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of kebbit fur (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45306,7 +45867,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of khali brews",
@@ -45314,8 +45875,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of khali brews.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45339,7 +45900,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of kyatt teeth",
@@ -45347,8 +45908,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of kyatt teeth.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45372,7 +45933,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of lead ore",
@@ -45380,8 +45941,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of lead ore (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45405,7 +45966,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of lead ore",
@@ -45413,8 +45974,8 @@
     "version": "Hosidius",
     "slot": "weapon",
     "image": "Crate of lead ore (Hosidius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45438,7 +45999,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of lead ore",
@@ -45446,8 +46007,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of lead ore (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45471,7 +46032,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of leather",
@@ -45479,8 +46040,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of leather.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45504,7 +46065,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of lobsters",
@@ -45512,8 +46073,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of lobsters.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45537,7 +46098,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45545,8 +46106,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of logs (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45570,7 +46131,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45578,8 +46139,8 @@
     "version": "Jatizso",
     "slot": "weapon",
     "image": "Crate of logs (Jatizso).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45603,7 +46164,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45611,8 +46172,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of logs (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45636,7 +46197,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45644,8 +46205,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of logs (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45669,7 +46230,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45677,8 +46238,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of logs (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45702,7 +46263,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45710,8 +46271,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of logs (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45735,7 +46296,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45743,8 +46304,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of logs (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45768,7 +46329,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of logs",
@@ -45776,8 +46337,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of logs (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45801,7 +46362,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of looty",
@@ -45809,8 +46370,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of looty.png",
-    "speed": null,
-    "category": null,
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45834,7 +46395,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of maces",
@@ -45842,8 +46403,8 @@
     "version": "Sunset Coast",
     "slot": "weapon",
     "image": "Crate of maces (Sunset Coast).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45867,7 +46428,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of maces",
@@ -45875,8 +46436,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of maces (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45900,7 +46461,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of machinery parts",
@@ -45908,8 +46469,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of machinery parts (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45933,7 +46494,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of machinery parts",
@@ -45941,8 +46502,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of machinery parts (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45966,7 +46527,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of mahogany logs",
@@ -45974,8 +46535,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of mahogany logs (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -45999,7 +46560,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of mahogany logs",
@@ -46007,8 +46568,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of mahogany logs (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46032,16 +46593,16 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of mahogany logs",
     "id": 32604,
-    "version": "neitiznot",
+    "version": "Neitiznot",
     "slot": "weapon",
-    "image": "Crate of mahogany logs (neitiznot).png",
-    "speed": null,
-    "category": "Blunt",
+    "image": "Crate of mahogany logs (Neitiznot).png",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46065,16 +46626,16 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of mahogany logs",
     "id": 32644,
-    "version": "port piscarilius",
+    "version": "Port Piscarilius",
     "slot": "weapon",
-    "image": "Crate of mahogany logs (port piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "image": "Crate of mahogany logs (Port Piscarilius).png",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46098,7 +46659,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of meat",
@@ -46271,8 +46832,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of mithril ore.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46296,7 +46857,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of monkfish",
@@ -46304,8 +46865,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of monkfish (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46329,7 +46890,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of monkfish",
@@ -46337,8 +46898,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of monkfish (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46362,7 +46923,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of monkfish",
@@ -46370,8 +46931,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of monkfish (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46395,7 +46956,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of nickel ore",
@@ -46403,8 +46964,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of nickel ore (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46428,7 +46989,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of nickel ore",
@@ -46436,8 +46997,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of nickel ore (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46461,7 +47022,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of nickel ore",
@@ -46469,8 +47030,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of nickel ore (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46494,7 +47055,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of nickel ore",
@@ -46502,8 +47063,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of nickel ore (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46527,7 +47088,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of nothing sinister",
@@ -46535,8 +47096,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of nothing sinister.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46560,7 +47121,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of onions",
@@ -46568,8 +47129,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of onions.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46593,7 +47154,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of oranges",
@@ -46601,8 +47162,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of oranges.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46626,7 +47187,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46634,8 +47195,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of ores (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46659,7 +47220,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46667,8 +47228,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of ores (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46692,7 +47253,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46700,8 +47261,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of ores (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46725,7 +47286,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46733,8 +47294,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of ores (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46758,7 +47319,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46766,8 +47327,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of ores (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46791,7 +47352,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46799,8 +47360,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of ores (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46824,7 +47385,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ores",
@@ -46832,8 +47393,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of ores (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46857,7 +47418,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of peg legs",
@@ -46865,8 +47426,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of peg legs.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46890,7 +47451,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pest remains",
@@ -46898,8 +47459,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of pest remains (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46923,7 +47484,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pest remains",
@@ -46931,8 +47492,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of pest remains (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46956,7 +47517,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pest remains",
@@ -46964,8 +47525,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of pest remains (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -46989,7 +47550,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pest remains",
@@ -46997,8 +47558,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of pest remains (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47022,7 +47583,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pickaxes",
@@ -47030,8 +47591,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of pickaxes.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47055,7 +47616,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pies",
@@ -47063,8 +47624,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of pies.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47088,7 +47649,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pineapples",
@@ -47096,8 +47657,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of pineapples (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47121,7 +47682,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pineapples",
@@ -47129,8 +47690,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of pineapples (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47154,7 +47715,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pineapples",
@@ -47162,8 +47723,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of pineapples (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47187,7 +47748,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of pineapples",
@@ -47195,8 +47756,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of pineapples (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47220,7 +47781,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47228,8 +47789,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of planks (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47253,7 +47814,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47261,8 +47822,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of planks (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47286,7 +47847,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47294,8 +47855,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of planks (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47319,7 +47880,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47327,8 +47888,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of planks (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47352,7 +47913,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47360,8 +47921,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of planks (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47385,7 +47946,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of planks",
@@ -47393,8 +47954,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of planks (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47418,7 +47979,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47426,8 +47987,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of platebodies (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47451,7 +48012,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47459,8 +48020,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of platebodies (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47484,7 +48045,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47492,8 +48053,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of platebodies (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47517,7 +48078,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47525,8 +48086,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of platebodies (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47550,7 +48111,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47558,8 +48119,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of platebodies (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47583,7 +48144,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47591,8 +48152,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of platebodies (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47616,7 +48177,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of platebodies",
@@ -47624,8 +48185,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of platebodies (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47649,7 +48210,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of poison",
@@ -47657,8 +48218,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of poison.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47682,7 +48243,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potatoes",
@@ -47690,8 +48251,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of potatoes.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47715,7 +48276,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potions",
@@ -47723,8 +48284,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of potions (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47748,7 +48309,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potions",
@@ -47756,8 +48317,8 @@
     "version": "Piscatoris",
     "slot": "weapon",
     "image": "Crate of potions (Piscatoris).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47781,7 +48342,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potions",
@@ -47789,8 +48350,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of potions (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47814,7 +48375,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potions",
@@ -47822,8 +48383,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of potions (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47847,7 +48408,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of potions",
@@ -47855,8 +48416,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of potions (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47880,7 +48441,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of protective clothing",
@@ -47888,8 +48449,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of protective clothing.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47913,7 +48474,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rabbit meat",
@@ -47921,8 +48482,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of rabbit meat.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47946,7 +48507,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -47954,8 +48515,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of red coral (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -47979,7 +48540,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -47987,8 +48548,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of red coral (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48012,7 +48573,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -48020,8 +48581,8 @@
     "version": "Lunar Isle",
     "slot": "weapon",
     "image": "Crate of red coral (Lunar Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48045,7 +48606,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -48053,8 +48614,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of red coral (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48078,7 +48639,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -48086,8 +48647,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of red coral (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48111,7 +48672,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -48119,8 +48680,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of red coral (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48144,7 +48705,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of red coral",
@@ -48152,8 +48713,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of red coral (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48177,7 +48738,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of redwood logs",
@@ -48185,8 +48746,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of redwood logs.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48210,7 +48771,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rope",
@@ -48218,8 +48779,8 @@
     "version": "Hosidius",
     "slot": "weapon",
     "image": "Crate of rope (Hosidius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48243,7 +48804,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rope",
@@ -48251,8 +48812,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of rope (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48276,7 +48837,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rope",
@@ -48284,8 +48845,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of rope (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48309,7 +48870,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rotten bananas",
@@ -48317,8 +48878,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of rotten bananas.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48342,7 +48903,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rum",
@@ -48350,8 +48911,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of rum (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48375,7 +48936,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rum",
@@ -48383,8 +48944,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of rum (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48408,16 +48969,16 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of rum",
     "id": 32774,
-    "version": "Pandemonium",
+    "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of rum (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48441,7 +49002,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48449,8 +49010,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of runes (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48474,7 +49035,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48482,8 +49043,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of runes (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48507,7 +49068,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48515,8 +49076,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of runes (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48540,7 +49101,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48548,8 +49109,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of runes (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48573,7 +49134,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48581,8 +49142,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of runes (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48606,7 +49167,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48614,8 +49175,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of runes (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48639,7 +49200,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of runes",
@@ -48647,8 +49208,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of runes (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48672,7 +49233,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of salamanders",
@@ -48680,8 +49241,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of salamanders.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48705,7 +49266,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sand",
@@ -48713,8 +49274,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of sand (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48738,7 +49299,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sand",
@@ -48746,8 +49307,8 @@
     "version": "Entrana",
     "slot": "weapon",
     "image": "Crate of sand (Entrana).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48771,7 +49332,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sand",
@@ -48779,8 +49340,8 @@
     "version": "Neitiznot",
     "slot": "weapon",
     "image": "Crate of sand (Neitiznot).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48804,7 +49365,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sandstone",
@@ -48812,8 +49373,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of sandstone (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48837,7 +49398,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sandstone",
@@ -48845,8 +49406,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of sandstone (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48870,7 +49431,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of scimitars",
@@ -48878,8 +49439,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of scimitars (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48903,7 +49464,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of scimitars",
@@ -48911,8 +49472,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of scimitars (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48936,7 +49497,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sea shells",
@@ -48944,8 +49505,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of sea shells.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -48969,7 +49530,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of secret stuff",
@@ -48977,8 +49538,8 @@
     "version": "Cairn Isle",
     "slot": "weapon",
     "image": "Crate of secret stuff (Cairn Isle).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49002,7 +49563,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of secret stuff",
@@ -49010,8 +49571,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of secret stuff (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49035,7 +49596,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of secret stuff",
@@ -49043,8 +49604,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of secret stuff (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49068,7 +49629,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of secret things",
@@ -49076,8 +49637,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of secret things.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49101,7 +49662,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49109,8 +49670,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of seeds (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49134,7 +49695,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49142,8 +49703,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of seeds (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49167,7 +49728,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49175,8 +49736,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of seeds (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49200,7 +49761,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49208,8 +49769,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of seeds (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49233,7 +49794,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49241,8 +49802,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of seeds (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49266,7 +49827,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49274,8 +49835,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of seeds (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49299,7 +49860,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of seeds",
@@ -49307,8 +49868,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of seeds (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49332,7 +49893,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of shields",
@@ -49340,8 +49901,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of shields (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49365,7 +49926,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of shields",
@@ -49373,8 +49934,8 @@
     "version": "The Summer Shore",
     "slot": "weapon",
     "image": "Crate of shields (The Summer Shore).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49398,7 +49959,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49406,8 +49967,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of ship parts (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49431,7 +49992,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49439,8 +50000,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of ship parts (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49464,7 +50025,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49472,8 +50033,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of ship parts (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49497,7 +50058,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49505,8 +50066,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of ship parts (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49530,7 +50091,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49538,8 +50099,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of ship parts (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49563,7 +50124,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts",
@@ -49571,8 +50132,8 @@
     "version": "Ruins of Unkah",
     "slot": "weapon",
     "image": "Crate of ship parts (Ruins of Unkah).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49596,40 +50157,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
-  },
-  {
-    "name": "Crate of ship parts",
-    "id": 32807,
-    "version": "The Pandemonium",
-    "slot": "weapon",
-    "image": "Crate of ship parts (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of ship parts (Pandemonium)",
@@ -49670,8 +50198,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of silk (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49695,7 +50223,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silk",
@@ -49703,8 +50231,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of silk (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49728,7 +50256,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silk",
@@ -49736,8 +50264,8 @@
     "version": "Musa Point",
     "slot": "weapon",
     "image": "Crate of silk (Musa Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49761,7 +50289,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silk",
@@ -49769,8 +50297,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of silk (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49794,7 +50322,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silk",
@@ -49802,8 +50330,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of silk (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49827,7 +50355,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silver ore",
@@ -49835,8 +50363,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of silver ore (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49860,7 +50388,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silver ore",
@@ -49868,8 +50396,8 @@
     "version": "Catherby",
     "slot": "weapon",
     "image": "Crate of silver ore (Catherby).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49893,7 +50421,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of silver ore",
@@ -49901,8 +50429,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of silver ore (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49926,7 +50454,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of snakeskin",
@@ -49934,8 +50462,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of snakeskin.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49959,7 +50487,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spears",
@@ -49967,8 +50495,8 @@
     "version": "Aldarin",
     "slot": "weapon",
     "image": "Crate of spears (Aldarin).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -49992,7 +50520,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spears",
@@ -50000,8 +50528,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of spears (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50025,7 +50553,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spears",
@@ -50033,8 +50561,8 @@
     "version": "Void Knights' Outpost",
     "slot": "weapon",
     "image": "Crate of spears (Void Knights' Outpost).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50058,7 +50586,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50066,8 +50594,8 @@
     "version": "Ardougne",
     "slot": "weapon",
     "image": "Crate of spices (Ardougne).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50091,7 +50619,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50099,8 +50627,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of spices (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50124,7 +50652,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50132,8 +50660,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of spices (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50157,7 +50685,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50165,8 +50693,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of spices (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50190,7 +50718,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50198,8 +50726,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of spices (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50223,7 +50751,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50231,8 +50759,8 @@
     "version": "Red Rock",
     "slot": "weapon",
     "image": "Crate of spices (Red Rock).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50256,7 +50784,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of spices",
@@ -50264,8 +50792,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of spices (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50289,7 +50817,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of staffs",
@@ -50297,8 +50825,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of staffs (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50322,7 +50850,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of staffs",
@@ -50330,8 +50858,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of staffs (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50355,7 +50883,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of steel bars",
@@ -50363,8 +50891,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of steel bars.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50388,7 +50916,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of sunbeam ale",
@@ -50396,8 +50924,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of sunbeam ale.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50421,7 +50949,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of suqah hides",
@@ -50429,8 +50957,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of suqah hides.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50454,7 +50982,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swamp paste",
@@ -50462,8 +50990,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of swamp paste (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50487,7 +51015,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swamp paste",
@@ -50495,8 +51023,8 @@
     "version": "The Pandemonium",
     "slot": "weapon",
     "image": "Crate of swamp paste (The Pandemonium).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50520,7 +51048,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swords",
@@ -50528,8 +51056,8 @@
     "version": "Corsair Cove",
     "slot": "weapon",
     "image": "Crate of swords (Corsair Cove).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50553,7 +51081,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swords",
@@ -50561,8 +51089,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of swords (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50586,7 +51114,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swords",
@@ -50594,8 +51122,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of swords (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50619,7 +51147,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swords",
@@ -50627,8 +51155,8 @@
     "version": "Port Sarim",
     "slot": "weapon",
     "image": "Crate of swords (Port Sarim).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50652,7 +51180,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of swords",
@@ -50660,8 +51188,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of swords (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50685,7 +51213,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of teak logs",
@@ -50693,8 +51221,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of teak logs (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50718,7 +51246,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of teak logs",
@@ -50726,8 +51254,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of teak logs (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50751,7 +51279,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of tokens",
@@ -50759,8 +51287,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of tokens.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50784,7 +51312,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vegetables",
@@ -50792,8 +51320,8 @@
     "version": "Civitas illa Fortis",
     "slot": "weapon",
     "image": "Crate of vegetables (Civitas illa Fortis).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50817,7 +51345,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vegetables",
@@ -50825,8 +51353,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of vegetables (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50850,7 +51378,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vegetables",
@@ -50858,8 +51386,8 @@
     "version": "Port Tyras",
     "slot": "weapon",
     "image": "Crate of vegetables (Port Tyras).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50883,7 +51411,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vials",
@@ -50891,8 +51419,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of vials.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50916,7 +51444,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vodka",
@@ -50924,8 +51452,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of vodka (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50949,7 +51477,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vodka",
@@ -50957,8 +51485,8 @@
     "version": "Piscatoris",
     "slot": "weapon",
     "image": "Crate of vodka (Piscatoris).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -50982,7 +51510,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of vodka",
@@ -50990,8 +51518,8 @@
     "version": "Port Khazard",
     "slot": "weapon",
     "image": "Crate of vodka (Port Khazard).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51015,7 +51543,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of warhammers",
@@ -51023,8 +51551,8 @@
     "version": "Deepfin Point",
     "slot": "weapon",
     "image": "Crate of warhammers (Deepfin Point).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51048,7 +51576,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of warhammers",
@@ -51056,8 +51584,8 @@
     "version": "Etceteria",
     "slot": "weapon",
     "image": "Crate of warhammers (Etceteria).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51081,7 +51609,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of warhammers",
@@ -51089,8 +51617,8 @@
     "version": "Sunset Coast",
     "slot": "weapon",
     "image": "Crate of warhammers (Sunset Coast).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51114,7 +51642,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wax",
@@ -51122,8 +51650,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of wax.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51147,7 +51675,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51155,8 +51683,8 @@
     "version": "Brimhaven",
     "slot": "weapon",
     "image": "Crate of wine (Brimhaven).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51180,7 +51708,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51188,8 +51716,8 @@
     "version": "Land's End",
     "slot": "weapon",
     "image": "Crate of wine (Land's End).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51213,7 +51741,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51221,8 +51749,8 @@
     "version": "Port Piscarilius",
     "slot": "weapon",
     "image": "Crate of wine (Port Piscarilius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51246,7 +51774,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51254,8 +51782,8 @@
     "version": "Port Roberts",
     "slot": "weapon",
     "image": "Crate of wine (Port Roberts).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51279,7 +51807,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51287,8 +51815,8 @@
     "version": "Rellekka",
     "slot": "weapon",
     "image": "Crate of wine (Rellekka).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51312,7 +51840,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wine",
@@ -51320,8 +51848,8 @@
     "version": "Sunset Coast",
     "slot": "weapon",
     "image": "Crate of wine (Sunset Coast).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51345,7 +51873,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of wrath runes",
@@ -51353,8 +51881,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of wrath runes.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51378,7 +51906,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of xerician fabrics",
@@ -51386,8 +51914,8 @@
     "version": "Hosidius",
     "slot": "weapon",
     "image": "Crate of xerician fabrics (Hosidius).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51411,7 +51939,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of xerician fabrics",
@@ -51419,8 +51947,8 @@
     "version": "Prifddinas",
     "slot": "weapon",
     "image": "Crate of xerician fabrics (Prifddinas).png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51444,7 +51972,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate of yak hair",
@@ -51452,8 +51980,8 @@
     "version": null,
     "slot": "weapon",
     "image": "Crate of yak hair.png",
-    "speed": null,
-    "category": "Blunt",
+    "speed": 4,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,
@@ -51477,7 +52005,7 @@
       "prayer": 0
     },
     "is_two_handed": true,
-    "attack_range": null
+    "attack_range": 1
   },
   {
     "name": "Crate ring",
@@ -51808,39 +52336,6 @@
     },
     "is_two_handed": null,
     "attack_range": null
-  },
-  {
-    "name": "Crimson bludgeon",
-    "id": 0,
-    "version": null,
-    "slot": "weapon",
-    "image": "",
-    "speed": 4,
-    "category": "Spiked",
-    "bonuses": {
-      "strength": {
-        "melee": 56,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 57,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": false,
-    "attack_range": 1
   },
   {
     "name": "Crone-made amulet",
@@ -52630,6 +53125,72 @@
         "ranged": 53
       },
       "prayer": 3
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Crystal body (deadman)",
+    "id": 33023,
+    "version": "Active",
+    "slot": "body",
+    "image": "Crystal body (deadman).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": -18,
+        "ranged": 31
+      },
+      "defence": {
+        "stab": 46,
+        "slash": 38,
+        "crush": 48,
+        "magic": 44,
+        "ranged": 68
+      },
+      "prayer": 3
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Crystal body (deadman)",
+    "id": 33025,
+    "version": "Inactive",
+    "slot": "body",
+    "image": "Crystal body (inactive, deadman).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
     },
     "is_two_handed": null,
     "attack_range": null
@@ -54516,6 +55077,72 @@
     "attack_range": null
   },
   {
+    "name": "Crystal helm (deadman)",
+    "id": 33031,
+    "version": "Active",
+    "slot": "head",
+    "image": "Crystal helm (deadman).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": -10,
+        "ranged": 9
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 8,
+        "crush": 14,
+        "magic": 10,
+        "ranged": 18
+      },
+      "prayer": 2
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Crystal helm (deadman)",
+    "id": 33033,
+    "version": "Inactive",
+    "slot": "head",
+    "image": "Crystal helm (inactive, deadman).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Crystal helm (perfected)",
     "id": 23888,
     "version": null,
@@ -55138,6 +55765,72 @@
         "ranged": 29
       },
       "prayer": 2
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Crystal legs (deadman)",
+    "id": 33027,
+    "version": "Active",
+    "slot": "legs",
+    "image": "Crystal legs (deadman).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": -12,
+        "ranged": 18
+      },
+      "defence": {
+        "stab": 26,
+        "slash": 21,
+        "crush": 30,
+        "magic": 34,
+        "ranged": 38
+      },
+      "prayer": 2
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Crystal legs (deadman)",
+    "id": 33029,
+    "version": "Inactive",
+    "slot": "legs",
+    "image": "Crystal legs (inactive, deadman).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
     },
     "is_two_handed": null,
     "attack_range": null
@@ -57569,14 +58262,14 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": -30,
-        "ranged": -10
+        "magic": 0,
+        "ranged": 0
       },
       "defence": {
         "stab": 21,
         "slash": 20,
         "crush": 12,
-        "magic": -6,
+        "magic": 3,
         "ranged": 20
       },
       "prayer": 0
@@ -57635,14 +58328,14 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": -21,
-        "ranged": -7
+        "magic": 0,
+        "ranged": 0
       },
       "defence": {
         "stab": 11,
         "slash": 10,
         "crush": 10,
-        "magic": -4,
+        "magic": -2,
         "ranged": 10
       },
       "prayer": 0
@@ -65436,7 +66129,7 @@
       "prayer": 2
     },
     "is_two_handed": true,
-    "attack_range": 0
+    "attack_range": 1
   },
   {
     "name": "Easter basket",
@@ -75213,7 +75906,7 @@
     "slot": "weapon",
     "image": "Glacial temotli.png",
     "speed": 4,
-    "category": "Spiked",
+    "category": "Blunt",
     "bonuses": {
       "strength": {
         "melee": 64,
@@ -85536,6 +86229,39 @@
     "attack_range": 1
   },
   {
+    "name": "Holy moleys",
+    "id": 33002,
+    "version": null,
+    "slot": "feet",
+    "image": "Holy moleys.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 3
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Holy sandals",
     "id": 12598,
     "version": null,
@@ -85859,6 +86585,138 @@
         "crush": 0,
         "magic": 0,
         "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Hooded slayer helmet",
+    "id": 33066,
+    "version": null,
+    "slot": "head",
+    "image": "Hooded slayer helmet.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": -6,
+        "ranged": -2
+      },
+      "defence": {
+        "stab": 30,
+        "slash": 32,
+        "crush": 27,
+        "magic": -1,
+        "ranged": 30
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Hooded slayer helmet (i)",
+    "id": 33072,
+    "version": "Emir's Arena",
+    "slot": "head",
+    "image": "Hooded slayer helmet (i).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 3,
+        "ranged": 3
+      },
+      "defence": {
+        "stab": 30,
+        "slash": 32,
+        "crush": 27,
+        "magic": 10,
+        "ranged": 30
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Hooded slayer helmet (i)",
+    "id": 33068,
+    "version": null,
+    "slot": "head",
+    "image": "Hooded slayer helmet (i).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 3,
+        "ranged": 3
+      },
+      "defence": {
+        "stab": 30,
+        "slash": 32,
+        "crush": 27,
+        "magic": 10,
+        "ranged": 30
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Hooded slayer helmet (i)",
+    "id": 33070,
+    "version": "Soul Wars",
+    "slot": "head",
+    "image": "Hooded slayer helmet (i).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 3,
+        "ranged": 3
+      },
+      "defence": {
+        "stab": 30,
+        "slash": 32,
+        "crush": 27,
+        "magic": 10,
+        "ranged": 30
       },
       "prayer": 0
     },
@@ -91594,6 +92452,204 @@
         "crush": 0,
         "magic": 0,
         "ranged": 16
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Bronze",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 5,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Iron",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 6,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Steel",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 7,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Black",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 10,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Mithril",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 13,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Ironwood blowpipe",
+    "id": 31579,
+    "version": "Adamant",
+    "slot": "weapon",
+    "image": "Ironwood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 21,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
       },
       "defence": {
         "stab": 0,
@@ -101475,6 +102531,39 @@
     "attack_range": null
   },
   {
+    "name": "Mooleta",
+    "id": 33101,
+    "version": null,
+    "slot": "shield",
+    "image": "Mooleta.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 1,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 5,
+        "slash": 7,
+        "crush": 7,
+        "magic": -1,
+        "ranged": -1
+      },
+      "defence": {
+        "stab": 4,
+        "slash": 8,
+        "crush": 8,
+        "magic": -2,
+        "ranged": -1
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Moonclan armour",
     "id": 9070,
     "version": null,
@@ -101749,7 +102838,7 @@
     "bonuses": {
       "strength": {
         "melee": 0,
-        "ranged": 0,
+        "ranged": 1,
         "magic": 0
       },
       "attack": {
@@ -101757,14 +102846,14 @@
         "slash": 0,
         "crush": 0,
         "magic": -5,
-        "ranged": 13
+        "ranged": 10
       },
       "defence": {
-        "stab": 8,
-        "slash": 11,
-        "crush": 14,
-        "magic": 8,
-        "ranged": 12
+        "stab": 3,
+        "slash": 6,
+        "crush": 8,
+        "magic": 20,
+        "ranged": 7
       },
       "prayer": 0
     },
@@ -101881,7 +102970,7 @@
     "bonuses": {
       "strength": {
         "melee": 0,
-        "ranged": 0,
+        "ranged": 2,
         "magic": 0
       },
       "attack": {
@@ -101889,14 +102978,14 @@
         "slash": 0,
         "crush": 0,
         "magic": -15,
-        "ranged": 36
+        "ranged": 40
       },
       "defence": {
-        "stab": 61,
-        "slash": 53,
-        "crush": 66,
-        "magic": 75,
-        "ranged": 62
+        "stab": 11,
+        "slash": 13,
+        "crush": 16,
+        "magic": 50,
+        "ranged": 20
       },
       "prayer": 0
     },
@@ -101947,7 +103036,7 @@
     "bonuses": {
       "strength": {
         "melee": 0,
-        "ranged": 0,
+        "ranged": 1,
         "magic": 0
       },
       "attack": {
@@ -101955,14 +103044,14 @@
         "slash": 0,
         "crush": 0,
         "magic": -10,
-        "ranged": 23
+        "ranged": 24
       },
       "defence": {
-        "stab": 35,
-        "slash": 29,
-        "crush": 37,
-        "magic": 46,
-        "ranged": 35
+        "stab": 7,
+        "slash": 9,
+        "crush": 11,
+        "magic": 30,
+        "ranged": 13
       },
       "prayer": 0
     },
@@ -111014,7 +112103,7 @@
   {
     "name": "Prospector boots",
     "id": 12016,
-    "version": null,
+    "version": "Motherlode Mine",
     "slot": "feet",
     "image": "Prospector boots.png",
     "speed": null,
@@ -111047,7 +112136,7 @@
   {
     "name": "Prospector helmet",
     "id": 12013,
-    "version": null,
+    "version": "Motherlode Mine",
     "slot": "head",
     "image": "Prospector helmet.png",
     "speed": null,
@@ -111080,7 +112169,7 @@
   {
     "name": "Prospector jacket",
     "id": 12014,
-    "version": null,
+    "version": "Motherlode Mine",
     "slot": "body",
     "image": "Prospector jacket.png",
     "speed": null,
@@ -111113,7 +112202,7 @@
   {
     "name": "Prospector legs",
     "id": 12015,
-    "version": null,
+    "version": "Motherlode Mine",
     "slot": "legs",
     "image": "Prospector legs.png",
     "speed": null,
@@ -116652,7 +117741,7 @@
       "prayer": 0
     },
     "is_two_handed": false,
-    "attack_range": 0
+    "attack_range": 1
   },
   {
     "name": "Redwood shield",
@@ -119743,6 +120832,204 @@
         "crush": 0,
         "magic": 0,
         "ranged": 22
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Bronze",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 7,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Iron",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 8,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Steel",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 9,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Black",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 12,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Mithril",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 15,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 5
+  },
+  {
+    "name": "Rosewood blowpipe",
+    "id": 31583,
+    "version": "Adamant",
+    "slot": "weapon",
+    "image": "Rosewood blowpipe.png",
+    "speed": 3,
+    "category": "Thrown",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 23,
+        "magic": 0.0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 30
       },
       "defence": {
         "stab": 0,
@@ -125207,39 +126494,6 @@
     "version": null,
     "slot": "head",
     "image": "Sailing hood.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Sailors' amulet",
-    "id": 32399,
-    "version": "Active",
-    "slot": "neck",
-    "image": "Sailors' amulet.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -134063,7 +135317,7 @@
         "stab": 2,
         "slash": 0,
         "crush": 21,
-        "magic": 7,
+        "magic": 0,
         "ranged": 0
       },
       "defence": {
@@ -135828,6 +137082,39 @@
     "attack_range": 7
   },
   {
+    "name": "Starter cape",
+    "id": 33063,
+    "version": null,
+    "slot": "cape",
+    "image": "Starter cape.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 5,
+        "slash": 5,
+        "crush": 5,
+        "magic": 5,
+        "ranged": 5
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Starter staff",
     "id": 22335,
     "version": null,
@@ -135903,23 +137190,23 @@
     "category": null,
     "bonuses": {
       "strength": {
-        "melee": 3,
+        "melee": 5,
         "ranged": 0,
         "magic": 0
       },
       "attack": {
-        "stab": 3,
-        "slash": 3,
-        "crush": 4,
+        "stab": 15,
+        "slash": 15,
+        "crush": 15,
         "magic": -6,
         "ranged": -2
       },
       "defence": {
-        "stab": 65,
-        "slash": 70,
-        "crush": 63,
+        "stab": 20,
+        "slash": 25,
+        "crush": 23,
         "magic": -1,
-        "ranged": 71
+        "ranged": 28
       },
       "prayer": 0
     },
@@ -135974,18 +137261,18 @@
         "magic": 0
       },
       "attack": {
-        "stab": 5,
-        "slash": 5,
-        "crush": 7,
-        "magic": -30,
-        "ranged": -10
+        "stab": 6,
+        "slash": 6,
+        "crush": 35,
+        "magic": -6,
+        "ranged": -2
       },
       "defence": {
-        "stab": 154,
-        "slash": 145,
-        "crush": 121,
-        "magic": -6,
-        "ranged": 157
+        "stab": 35,
+        "slash": 38,
+        "crush": 36,
+        "magic": -10,
+        "ranged": 40
       },
       "prayer": 0
     },
@@ -136040,18 +137327,18 @@
         "magic": 0
       },
       "attack": {
-        "stab": 3,
-        "slash": 3,
-        "crush": 5,
-        "magic": -21,
-        "ranged": -7
+        "stab": 6,
+        "slash": 6,
+        "crush": 30,
+        "magic": -6,
+        "ranged": -2
       },
       "defence": {
-        "stab": 110,
-        "slash": 106,
-        "crush": 97,
-        "magic": -4,
-        "ranged": 121
+        "stab": 27,
+        "slash": 30,
+        "crush": 28,
+        "magic": -7,
+        "ranged": 34
       },
       "prayer": 0
     },
@@ -143517,6 +144804,39 @@
     "attack_range": 1
   },
   {
+    "name": "The dogsword (Deadman Mode)",
+    "id": 33038,
+    "version": null,
+    "slot": "weapon",
+    "image": "The dogsword.png",
+    "speed": 6,
+    "category": "2h Sword",
+    "bonuses": {
+      "strength": {
+        "melee": 132,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 132,
+        "crush": 80,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 8
+    },
+    "is_two_handed": true,
+    "attack_range": 1
+  },
+  {
     "name": "Thieving bag",
     "id": 23224,
     "version": null,
@@ -143680,6 +145000,39 @@
     },
     "is_two_handed": null,
     "attack_range": null
+  },
+  {
+    "name": "Thunder khopesh (Deadman Mode)",
+    "id": 33041,
+    "version": null,
+    "slot": "weapon",
+    "image": "Thunder khopesh.png",
+    "speed": 4,
+    "category": "Slash Sword",
+    "bonuses": {
+      "strength": {
+        "melee": 100,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 65,
+        "slash": 110,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
   },
   {
     "name": "Tiara",
@@ -145099,6 +146452,72 @@
     },
     "is_two_handed": true,
     "attack_range": 5
+  },
+  {
+    "name": "Toxic staff (deadman)",
+    "id": 33036,
+    "version": "Charged",
+    "slot": "weapon",
+    "image": "Toxic staff (deadman).png",
+    "speed": 4,
+    "category": "Bladed Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 72,
+        "ranged": 0,
+        "magic": 15
+      },
+      "attack": {
+        "stab": 55,
+        "slash": 70,
+        "crush": 0,
+        "magic": 25,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 3,
+        "crush": 3,
+        "magic": 17,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
+    "name": "Toxic staff (deadman)",
+    "id": 33035,
+    "version": "Uncharged",
+    "slot": "weapon",
+    "image": "Toxic staff (uncharged, deadman).png",
+    "speed": 4,
+    "category": "Bladed Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 72,
+        "ranged": 0,
+        "magic": 15
+      },
+      "attack": {
+        "stab": 55,
+        "slash": 70,
+        "crush": 0,
+        "magic": 17,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 3,
+        "crush": 3,
+        "magic": 17,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
   },
   {
     "name": "Toxic staff of the dead",
@@ -150753,23 +152172,23 @@
     "category": null,
     "bonuses": {
       "strength": {
-        "melee": 6,
+        "melee": 5,
         "ranged": 0,
         "magic": 0
       },
       "attack": {
-        "stab": 5,
-        "slash": 7,
-        "crush": 7,
-        "magic": -15,
-        "ranged": 0
+        "stab": 35,
+        "slash": 35,
+        "crush": 6,
+        "magic": -6,
+        "ranged": -2
       },
       "defence": {
-        "stab": 120,
-        "slash": 131,
-        "crush": 145,
-        "magic": -3,
-        "ranged": 140
+        "stab": 35,
+        "slash": 38,
+        "crush": 36,
+        "magic": -10,
+        "ranged": 40
       },
       "prayer": 0
     },
@@ -150890,18 +152309,18 @@
         "magic": 0
       },
       "attack": {
-        "stab": 3,
-        "slash": 5,
-        "crush": 5,
-        "magic": -17,
-        "ranged": -4
+        "stab": 30,
+        "slash": 30,
+        "crush": 6,
+        "magic": -6,
+        "ranged": -2
       },
       "defence": {
-        "stab": 86,
-        "slash": 100,
-        "crush": 112,
-        "magic": -4,
-        "ranged": 118
+        "stab": 27,
+        "slash": 30,
+        "crush": 28,
+        "magic": -7,
+        "ranged": 34
       },
       "prayer": 0
     },
@@ -160226,20 +161645,20 @@
       "strength": {
         "melee": 0,
         "ranged": 0,
-        "magic": 0
+        "magic": 3
       },
       "attack": {
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 8,
+        "magic": 7,
         "ranged": -2
       },
       "defence": {
-        "stab": 20,
-        "slash": 16,
-        "crush": 22,
-        "magic": 8,
+        "stab": 3,
+        "slash": 2,
+        "crush": 6,
+        "magic": 4,
         "ranged": 0
       },
       "prayer": 0
@@ -160292,20 +161711,20 @@
       "strength": {
         "melee": 0,
         "ranged": 0,
-        "magic": 0
+        "magic": 3
       },
       "attack": {
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 25,
+        "magic": 24,
         "ranged": -7
       },
       "defence": {
-        "stab": 38,
-        "slash": 35,
-        "crush": 44,
-        "magic": 25,
+        "stab": 7,
+        "slash": 5,
+        "crush": 11,
+        "magic": 8,
         "ranged": 0
       },
       "prayer": 0
@@ -160358,20 +161777,20 @@
       "strength": {
         "melee": 0,
         "ranged": 0,
-        "magic": 0
+        "magic": 3
       },
       "attack": {
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 35,
+        "magic": 33,
         "ranged": -10
       },
       "defence": {
-        "stab": 63,
-        "slash": 45,
-        "crush": 74,
-        "magic": 35,
+        "stab": 11,
+        "slash": 7,
+        "crush": 13,
+        "magic": 12,
         "ranged": 0
       },
       "prayer": 0

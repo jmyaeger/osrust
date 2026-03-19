@@ -2535,7 +2535,7 @@
       "id": 15224,
       "name": "Albatross",
       "version": null,
-      "combat_level": 93,
+      "combat_level": 121,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -2546,8 +2546,8 @@
     },
     "stats": {
       "attack": 100,
-      "defence": 0,
-      "hitpoints": 125,
+      "defence": 60,
+      "hitpoints": 179,
       "magic": 1,
       "ranged": 0,
       "strength": 90
@@ -2576,7 +2576,7 @@
     },
     "immunities": {
       "poison": false,
-      "venom": false,
+      "venom": true,
       "freeze": 0,
       "burn": null
     },
@@ -4267,7 +4267,7 @@
       "poison": true,
       "venom": true,
       "freeze": 0,
-      "burn": null
+      "burn": "Weak"
     },
     "max_hit": [
       "7"
@@ -5034,8 +5034,7 @@
       "combat_level": 75,
       "attack_speed": 4,
       "attack_styles": [
-        "Magic",
-        "Slash"
+        "Magic"
       ],
       "size": 1,
       "attributes": null,
@@ -5092,8 +5091,7 @@
       "combat_level": 75,
       "attack_speed": 4,
       "attack_styles": [
-        "Magic",
-        "Slash"
+        "Magic"
       ],
       "size": 1,
       "attributes": null,
@@ -5150,7 +5148,6 @@
       "combat_level": 81,
       "attack_speed": 4,
       "attack_styles": [
-        "Magic",
         "Slash"
       ],
       "size": 1,
@@ -5933,8 +5930,8 @@
     "info": {
       "id": 15210,
       "name": "Armoured kraken",
-      "version": "In combat",
-      "combat_level": 163,
+      "version": null,
+      "combat_level": 180,
       "attack_speed": 5,
       "attack_styles": [
         "Magic"
@@ -5948,8 +5945,8 @@
     },
     "stats": {
       "attack": 1,
-      "defence": 140,
-      "hitpoints": 175,
+      "defence": 150,
+      "hitpoints": 231,
       "magic": 175,
       "ranged": 1,
       "strength": 1
@@ -13192,6 +13189,63 @@
   },
   {
     "info": {
+      "id": 417,
+      "name": "Basilisk",
+      "version": null,
+      "combat_level": 61,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 30,
+      "defence": 75,
+      "hitpoints": 75,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 45
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 20,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 20,
+        "stab": 20
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "5"
+    ]
+  },
+  {
+    "info": {
       "id": 9283,
       "name": "Basilisk (The Fremennik Exiles)",
       "version": "1",
@@ -13252,6 +13306,63 @@
       "id": 9285,
       "name": "Basilisk (The Fremennik Exiles)",
       "version": "2",
+      "combat_level": 61,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 30,
+      "defence": 75,
+      "hitpoints": 75,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 45
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 20,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 20,
+        "stab": 20
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "5"
+    ]
+  },
+  {
+    "info": {
+      "id": 418,
+      "name": "Basilisk (unused)",
+      "version": null,
       "combat_level": 61,
       "attack_speed": 4,
       "attack_styles": [
@@ -13445,120 +13556,6 @@
       "magic": 1,
       "ranged": 1,
       "strength": 40
-    },
-    "bonuses": {
-      "attack": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "defence": {
-        "crush": 0,
-        "magic": 20,
-        "heavy": 0,
-        "standard": 0,
-        "light": 0,
-        "slash": 20,
-        "stab": 20
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "flat_armour": 0
-    },
-    "immunities": {
-      "poison": false,
-      "venom": false,
-      "freeze": 0,
-      "burn": null
-    },
-    "max_hit": [
-      "5"
-    ]
-  },
-  {
-    "info": {
-      "id": 417,
-      "name": "Basilisk",
-      "version": "Normal",
-      "combat_level": 61,
-      "attack_speed": 4,
-      "attack_styles": [
-        "Slash"
-      ],
-      "size": 2,
-      "attributes": null,
-      "weakness": {
-        "element": "earth",
-        "severity": 40
-      }
-    },
-    "stats": {
-      "attack": 30,
-      "defence": 75,
-      "hitpoints": 75,
-      "magic": 1,
-      "ranged": 1,
-      "strength": 45
-    },
-    "bonuses": {
-      "attack": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "defence": {
-        "crush": 0,
-        "magic": 20,
-        "heavy": 0,
-        "standard": 0,
-        "light": 0,
-        "slash": 20,
-        "stab": 20
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "flat_armour": 0
-    },
-    "immunities": {
-      "poison": false,
-      "venom": false,
-      "freeze": 0,
-      "burn": null
-    },
-    "max_hit": [
-      "5"
-    ]
-  },
-  {
-    "info": {
-      "id": 418,
-      "name": "Basilisk",
-      "version": "Unused",
-      "combat_level": 61,
-      "attack_speed": 4,
-      "attack_styles": [
-        "Slash"
-      ],
-      "size": 2,
-      "attributes": null,
-      "weakness": {
-        "element": "earth",
-        "severity": 40
-      }
-    },
-    "stats": {
-      "attack": 30,
-      "defence": 75,
-      "hitpoints": 75,
-      "magic": 1,
-      "ranged": 1,
-      "strength": 45
     },
     "bonuses": {
       "attack": {
@@ -13981,6 +13978,177 @@
   },
   {
     "info": {
+      "id": 13658,
+      "name": "Bee Swarm (Deadman)",
+      "version": "All-Stars",
+      "combat_level": 357,
+      "attack_speed": 1,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 400,
+      "defence": 30,
+      "hitpoints": 750,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "11"
+    ]
+  },
+  {
+    "info": {
+      "id": 13658,
+      "name": "Bee Swarm (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1420,
+      "attack_speed": 1,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 400,
+      "defence": 30,
+      "hitpoints": 5000,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "11"
+    ]
+  },
+  {
+    "info": {
+      "id": 13658,
+      "name": "Bee Swarm (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 670,
+      "attack_speed": 1,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 400,
+      "defence": 30,
+      "hitpoints": 2000,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "11"
+    ]
+  },
+  {
+    "info": {
       "id": 4132,
       "name": "Berry",
       "version": "Awake",
@@ -14150,6 +14318,114 @@
     },
     "max_hit": [
       "18"
+    ]
+  },
+  {
+    "info": {
+      "id": 15547,
+      "name": "Big Evil Chicken",
+      "version": "Annihilation",
+      "combat_level": 1047,
+      "attack_speed": 3,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 25,
+      "hitpoints": 3500,
+      "magic": 300,
+      "ranged": 0,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 255,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 25,
+        "stab": 25
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 15547,
+      "name": "Big Evil Chicken",
+      "version": "Factions",
+      "combat_level": 422,
+      "attack_speed": 3,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 25,
+      "hitpoints": 1000,
+      "magic": 300,
+      "ranged": 0,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 255,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 25,
+        "stab": 25
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
     ]
   },
   {
@@ -15387,7 +15663,7 @@
       "hitpoints": 180,
       "magic": 80,
       "ranged": 0,
-      "strength": 0
+      "strength": 210
     },
     "bonuses": {
       "attack": {
@@ -20406,6 +20682,64 @@
   },
   {
     "info": {
+      "id": 15626,
+      "name": "Brutus",
+      "version": null,
+      "combat_level": 30,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 25
+      }
+    },
+    "stats": {
+      "attack": 12,
+      "defence": 10,
+      "hitpoints": 58,
+      "magic": 8,
+      "ranged": 1,
+      "strength": 25
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -7,
+        "magic": -3,
+        "heavy": -7,
+        "standard": -7,
+        "light": -7,
+        "slash": -7,
+        "stab": -7
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "3 (melee)",
+      "19 (special)"
+    ]
+  },
+  {
+    "info": {
       "id": 8195,
       "name": "Bryophyta",
       "version": null,
@@ -20521,19 +20855,19 @@
       "id": 15194,
       "name": "Bull shark",
       "version": null,
-      "combat_level": 63,
+      "combat_level": 77,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
       ],
-      "size": 0,
+      "size": 3,
       "attributes": null,
       "weakness": null
     },
     "stats": {
       "attack": 80,
-      "defence": 0,
-      "hitpoints": 90,
+      "defence": 20,
+      "hitpoints": 128,
       "magic": 1,
       "ranged": 0,
       "strength": 45
@@ -20736,8 +21070,8 @@
     "info": {
       "id": 15216,
       "name": "Butterfly ray",
-      "version": "In combat",
-      "combat_level": 61,
+      "version": null,
+      "combat_level": 72,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -20748,8 +21082,8 @@
     },
     "stats": {
       "attack": 100,
-      "defence": 0,
-      "hitpoints": 70,
+      "defence": 15,
+      "hitpoints": 101,
       "magic": 1,
       "ranged": 0,
       "strength": 35
@@ -21602,6 +21936,114 @@
     },
     "max_hit": [
       "24"
+    ]
+  },
+  {
+    "info": {
+      "id": 12454,
+      "name": "Cave abomination (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 957,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 142,
+      "hitpoints": 3000,
+      "magic": 230,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12454,
+      "name": "Cave abomination (Deadman)",
+      "version": "Apocalypse, Armageddon",
+      "combat_level": 361,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 230,
+      "defence": 142,
+      "hitpoints": 750,
+      "magic": 230,
+      "ranged": 1,
+      "strength": 195
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "20"
     ]
   },
   {
@@ -23470,6 +23912,124 @@
   },
   {
     "info": {
+      "id": 13657,
+      "name": "Cerberus (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 726,
+      "attack_speed": 3,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 5,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 150,
+      "hitpoints": 2000,
+      "magic": 220,
+      "ranged": 220,
+      "strength": 280
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 50,
+        "ranged": 50,
+        "magic": 50
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "29"
+    ]
+  },
+  {
+    "info": {
+      "id": 13657,
+      "name": "Cerberus (Deadman)",
+      "version": "Apocalypse, Armageddon",
+      "combat_level": 430,
+      "attack_speed": 3,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 5,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 220,
+      "defence": 150,
+      "hitpoints": 1000,
+      "magic": 220,
+      "ranged": 220,
+      "strength": 220
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 50,
+        "ranged": 50,
+        "magic": 50
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "23"
+    ]
+  },
+  {
+    "info": {
       "id": 11482,
       "name": "Champion of Scabaras",
       "version": null,
@@ -23521,7 +24081,7 @@
     "immunities": {
       "poison": true,
       "venom": true,
-      "freeze": 0,
+      "freeze": 100,
       "burn": null
     },
     "max_hit": [
@@ -24252,6 +24812,60 @@
       "id": 2804,
       "name": "Chicken",
       "version": "Falador Farm",
+      "combat_level": 1,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 1,
+      "hitpoints": 3,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": -47,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -42,
+        "magic": -42,
+        "heavy": -42,
+        "standard": -42,
+        "light": -42,
+        "slash": -42,
+        "stab": -42
+      },
+      "strength": {
+        "melee": -42,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "0"
+    ]
+  },
+  {
+    "info": {
+      "id": 10495,
+      "name": "Chicken",
+      "version": "Gordon and Mary's Farm",
       "combat_level": 1,
       "attack_speed": 4,
       "attack_styles": [
@@ -25085,7 +25699,7 @@
     "info": {
       "id": 419,
       "name": "Cockatrice",
-      "version": "Normal",
+      "version": null,
       "combat_level": 37,
       "attack_speed": 4,
       "attack_styles": [
@@ -25138,8 +25752,8 @@
   {
     "info": {
       "id": 420,
-      "name": "Cockatrice",
-      "version": "Unused",
+      "name": "Cockatrice (unused)",
+      "version": null,
       "combat_level": 37,
       "attack_speed": 4,
       "attack_styles": [
@@ -25354,6 +25968,168 @@
     "max_hit": [
       "27 (melee)",
       "20 (magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12445,
+      "name": "Commander Zilyana (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 596,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 150,
+      "hitpoints": 1500,
+      "magic": 300,
+      "ranged": 250,
+      "strength": 196
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 195,
+        "ranged": 0,
+        "magic": 200
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 20,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12445,
+      "name": "Commander Zilyana (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 596,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 300,
+      "hitpoints": 500,
+      "magic": 300,
+      "ranged": 250,
+      "strength": 196
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 195,
+        "ranged": 0,
+        "magic": 200
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 20,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12445,
+      "name": "Commander Zilyana (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 596,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 150,
+      "hitpoints": 500,
+      "magic": 300,
+      "ranged": 250,
+      "strength": 196
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 195,
+        "ranged": 0,
+        "magic": 200
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 20,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
     ]
   },
   {
@@ -30659,9 +31435,9 @@
   },
   {
     "info": {
-      "id": 2236,
+      "id": 2235,
       "name": "Cyclops (God Wars Dungeon)",
-      "version": "Grey",
+      "version": "Green",
       "combat_level": 81,
       "attack_speed": 6,
       "attack_styles": [
@@ -30713,9 +31489,9 @@
   },
   {
     "info": {
-      "id": 2235,
+      "id": 2236,
       "name": "Cyclops (God Wars Dungeon)",
-      "version": "Teal",
+      "version": "Grey",
       "combat_level": 81,
       "attack_speed": 6,
       "attack_styles": [
@@ -31676,6 +32452,174 @@
   },
   {
     "info": {
+      "id": 12442,
+      "name": "Dagannoth Prime (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 947,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 125,
+      "hitpoints": 3000,
+      "magic": 255,
+      "ranged": 0,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 255,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12442,
+      "name": "Dagannoth Prime (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 417,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 255,
+      "hitpoints": 750,
+      "magic": 255,
+      "ranged": 0,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 255,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12442,
+      "name": "Dagannoth Prime (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 447,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 125,
+      "hitpoints": 1000,
+      "magic": 255,
+      "ranged": 0,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 255,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
       "id": 2267,
       "name": "Dagannoth Rex",
       "version": null,
@@ -31724,6 +32668,174 @@
     "immunities": {
       "poison": false,
       "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12439,
+      "name": "Dagannoth Rex (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1104,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 255,
+      "hitpoints": 3500,
+      "magic": 0,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 10,
+        "heavy": 255,
+        "standard": 255,
+        "light": 255,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12439,
+      "name": "Dagannoth Rex (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 417,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 255,
+      "hitpoints": 750,
+      "magic": 0,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 10,
+        "heavy": 255,
+        "standard": 255,
+        "light": 255,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
+    ]
+  },
+  {
+    "info": {
+      "id": 12439,
+      "name": "Dagannoth Rex (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 479,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 255,
+      "hitpoints": 1000,
+      "magic": 0,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 255,
+        "magic": 10,
+        "heavy": 255,
+        "standard": 255,
+        "light": 255,
+        "slash": 255,
+        "stab": 255
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
       "freeze": 0,
       "burn": null
     },
@@ -31844,6 +32956,168 @@
     "max_hit": [
       "30"
     ]
+  },
+  {
+    "info": {
+      "id": 12441,
+      "name": "Dagannoth Supreme (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 936,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 84,
+      "hitpoints": 3000,
+      "magic": 255,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 255,
+        "heavy": 550,
+        "standard": 550,
+        "light": 550,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": null
+  },
+  {
+    "info": {
+      "id": 12441,
+      "name": "Dagannoth Supreme (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 385,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 128,
+      "hitpoints": 750,
+      "magic": 255,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 255,
+        "heavy": 550,
+        "standard": 550,
+        "light": 550,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": null
+  },
+  {
+    "info": {
+      "id": 12441,
+      "name": "Dagannoth Supreme (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 436,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 255,
+      "defence": 84,
+      "hitpoints": 1000,
+      "magic": 255,
+      "ranged": 255,
+      "strength": 255
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 255,
+        "heavy": 550,
+        "standard": 550,
+        "light": 550,
+        "slash": 10,
+        "stab": 10
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": null
   },
   {
     "info": {
@@ -34052,6 +35326,122 @@
   },
   {
     "info": {
+      "id": 15628,
+      "name": "Demonic Brutus",
+      "version": "Brutus",
+      "combat_level": 1224,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 25
+      }
+    },
+    "stats": {
+      "attack": 380,
+      "defence": 200,
+      "hitpoints": 750,
+      "magic": 272,
+      "ranged": 1,
+      "strength": 418
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 216,
+        "magic": 520,
+        "heavy": 110,
+        "standard": 418,
+        "light": 460,
+        "slash": 65,
+        "stab": 182
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Melee)",
+      "56+ (Special)"
+    ]
+  },
+  {
+    "info": {
+      "id": 15629,
+      "name": "Demonic Brutus",
+      "version": "Ghost",
+      "combat_level": 1224,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 25
+      }
+    },
+    "stats": {
+      "attack": 380,
+      "defence": 200,
+      "hitpoints": 750,
+      "magic": 272,
+      "ranged": 1,
+      "strength": 418
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 216,
+        "magic": 520,
+        "heavy": 110,
+        "standard": 418,
+        "light": 460,
+        "slash": 65,
+        "stab": 182
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Melee)",
+      "56+ (Special)"
+    ]
+  },
+  {
+    "info": {
       "id": 7144,
       "name": "Demonic gorilla",
       "version": "1",
@@ -34284,8 +35674,176 @@
       "burn": null
     },
     "max_hit": [
-      "43 (magic)",
-      "16 (melee)"
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12450,
+      "name": "Derwen (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 655,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 2000,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12450,
+      "name": "Derwen (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 235,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 320,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12450,
+      "name": "Derwen (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 280,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 500,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
     ]
   },
   {
@@ -34900,7 +36458,7 @@
     },
     "max_hit": [
       "37 (Melee)",
-      "5 (Magic",
+      "5 (Magic)",
       "5 (Ranged)"
     ]
   },
@@ -35083,6 +36641,180 @@
     "max_hit": [
       "29 (normal)",
       "57 (at 1 Hitpoints)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12447,
+      "name": "Dharok the Wretched (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 666,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": [
+        "spectral"
+      ],
+      "weakness": {
+        "element": "air",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 200,
+      "hitpoints": 300,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -18,
+        "magic": -58
+      },
+      "defence": {
+        "crush": 244,
+        "magic": -11,
+        "heavy": 249,
+        "standard": 249,
+        "light": 249,
+        "slash": 250,
+        "stab": 252
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "29"
+    ]
+  },
+  {
+    "info": {
+      "id": 12447,
+      "name": "Dharok the Wretched (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 666,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": [
+        "spectral"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 100,
+      "hitpoints": 200,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -18,
+        "magic": -58
+      },
+      "defence": {
+        "crush": 244,
+        "magic": -11,
+        "heavy": 249,
+        "standard": 249,
+        "light": 249,
+        "slash": 250,
+        "stab": 252
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "29"
+    ]
+  },
+  {
+    "info": {
+      "id": 12447,
+      "name": "Dharok the Wretched (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 666,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": [
+        "spectral"
+      ],
+      "weakness": {
+        "element": "air",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 100,
+      "defence": 200,
+      "hitpoints": 200,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -18,
+        "magic": -58
+      },
+      "defence": {
+        "crush": 244,
+        "magic": -11,
+        "heavy": 249,
+        "standard": 249,
+        "light": 249,
+        "slash": 250,
+        "stab": 252
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "29"
     ]
   },
   {
@@ -35475,7 +37207,7 @@
       "id": 15234,
       "name": "Dolphin",
       "version": null,
-      "combat_level": 25,
+      "combat_level": 29,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -35486,8 +37218,8 @@
     },
     "stats": {
       "attack": 25,
-      "defence": 5,
-      "hitpoints": 50,
+      "defence": 0,
+      "hitpoints": 74,
       "magic": 1,
       "ranged": 0,
       "strength": 10
@@ -35807,7 +37539,7 @@
       "burn": null
     },
     "max_hit": [
-      "48 <br/>60 (charge)"
+      "50 <br/>60 (charge)"
     ]
   },
   {
@@ -36609,8 +38341,8 @@
     "info": {
       "id": 15175,
       "name": "Drink troll queen",
-      "version": "In combat",
-      "combat_level": 194,
+      "version": null,
+      "combat_level": 217,
       "attack_speed": 5,
       "attack_styles": [
         "Magic"
@@ -36625,7 +38357,7 @@
     "stats": {
       "attack": 1,
       "defence": 155,
-      "hitpoints": 225,
+      "hitpoints": 315,
       "magic": 205,
       "ranged": 1,
       "strength": 1
@@ -37335,6 +39067,174 @@
   },
   {
     "info": {
+      "id": 13662,
+      "name": "Durial321 (Deadman)",
+      "version": "All-Stars",
+      "combat_level": 209,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 95,
+      "defence": 88,
+      "hitpoints": 500,
+      "magic": 94,
+      "ranged": 80,
+      "strength": 98
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -12,
+        "magic": 47
+      },
+      "defence": {
+        "crush": 162,
+        "magic": 69,
+        "heavy": 88,
+        "standard": 88,
+        "light": 88,
+        "slash": 134,
+        "stab": 148
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "28 (Melee)",
+      "? (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 13662,
+      "name": "Durial321 (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 709,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 95,
+      "defence": 88,
+      "hitpoints": 2500,
+      "magic": 94,
+      "ranged": 80,
+      "strength": 98
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -12,
+        "magic": 150
+      },
+      "defence": {
+        "crush": 162,
+        "magic": 69,
+        "heavy": 88,
+        "standard": 88,
+        "light": 88,
+        "slash": 134,
+        "stab": 148
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "28 (Melee)",
+      "? (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 13662,
+      "name": "Durial321 (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 334,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 95,
+      "defence": 88,
+      "hitpoints": 1000,
+      "magic": 94,
+      "ranged": 80,
+      "strength": 98
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": -12,
+        "magic": 47
+      },
+      "defence": {
+        "crush": 162,
+        "magic": 69,
+        "heavy": 88,
+        "standard": 88,
+        "light": 88,
+        "slash": 134,
+        "stab": 148
+      },
+      "strength": {
+        "melee": 105,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "28 (Melee)",
+      "? (Magic)"
+    ]
+  },
+  {
+    "info": {
       "id": 7851,
       "name": "Dusk",
       "version": "First form",
@@ -37389,8 +39289,7 @@
       "burn": null
     },
     "max_hit": [
-      "15",
-      "33 (special attack)"
+      "15 (melee) 33 (special attack)"
     ]
   },
   {
@@ -37450,8 +39349,7 @@
       "burn": null
     },
     "max_hit": [
-      "26",
-      "65 (special attack)"
+      "26 (melee)<br/> 15x2 (ranged)<br/> 65 (special attack)"
     ]
   },
   {
@@ -37792,13 +39690,175 @@
   },
   {
     "info": {
-      "id": 290,
+      "id": 294,
       "name": "Dwarf",
-      "version": "Level 10",
+      "version": "Mining Guild (1)",
+      "combat_level": 11,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 12,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 5
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 295,
+      "name": "Dwarf",
+      "version": "Mining Guild (2)",
+      "combat_level": 11,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 5
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 10,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 296,
+      "name": "Dwarf",
+      "version": "Mining Guild (3)",
       "combat_level": 10,
       "attack_speed": 5,
       "attack_styles": [
-        "Crush"
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 10,
+      "hitpoints": 12,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 290,
+      "name": "Dwarf",
+      "version": "Standard",
+      "combat_level": 10,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Stab"
       ],
       "size": 1,
       "attributes": null,
@@ -37846,63 +39906,9 @@
   },
   {
     "info": {
-      "id": 294,
-      "name": "Dwarf",
-      "version": "Level 11",
-      "combat_level": 11,
-      "attack_speed": 5,
-      "attack_styles": [
-        "Crush"
-      ],
-      "size": 1,
-      "attributes": null,
-      "weakness": null
-    },
-    "stats": {
-      "attack": 8,
-      "defence": 8,
-      "hitpoints": 18,
-      "magic": 1,
-      "ranged": 1,
-      "strength": 8
-    },
-    "bonuses": {
-      "attack": {
-        "melee": 5,
-        "ranged": 0,
-        "magic": 0
-      },
-      "defence": {
-        "crush": 0,
-        "magic": 5,
-        "heavy": 10,
-        "standard": 10,
-        "light": 10,
-        "slash": 0,
-        "stab": 0
-      },
-      "strength": {
-        "melee": 7,
-        "ranged": 0,
-        "magic": 0
-      },
-      "flat_armour": 0
-    },
-    "immunities": {
-      "poison": false,
-      "venom": false,
-      "freeze": 0,
-      "burn": null
-    },
-    "max_hit": [
-      "2"
-    ]
-  },
-  {
-    "info": {
       "id": 292,
       "name": "Dwarf",
-      "version": "Level 20",
+      "version": "Standard (Level 20)",
       "combat_level": 20,
       "attack_speed": 6,
       "attack_styles": [
@@ -37954,13 +39960,391 @@
   },
   {
     "info": {
+      "id": 1401,
+      "name": "Dwarf",
+      "version": "Worker (1)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1402,
+      "name": "Dwarf",
+      "version": "Worker (2)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1403,
+      "name": "Dwarf",
+      "version": "Worker (3)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 10,
+        "magic": 10,
+        "heavy": 20,
+        "standard": 20,
+        "light": 20,
+        "slash": 10,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1404,
+      "name": "Dwarf",
+      "version": "Worker (4)",
+      "combat_level": 11,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 16,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1405,
+      "name": "Dwarf",
+      "version": "Worker (5)",
+      "combat_level": 10,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 8,
+      "hitpoints": 12,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1406,
+      "name": "Dwarf",
+      "version": "Worker (6)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 10,
+      "hitpoints": 18,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 6
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 1407,
+      "name": "Dwarf",
+      "version": "Worker (7)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 10,
+      "defence": 8,
+      "hitpoints": 13,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 8
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
       "id": 1408,
       "name": "Dwarf",
-      "version": "Level 7",
+      "version": "Worker (8)",
       "combat_level": 7,
       "attack_speed": 4,
       "attack_styles": [
-        "Crush"
+        "Stab"
       ],
       "size": 1,
       "attributes": null,
@@ -37970,6 +40354,60 @@
       "attack": 6,
       "defence": 6,
       "hitpoints": 10,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 6
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 5,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 5,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
+    ]
+  },
+  {
+    "info": {
+      "id": 8496,
+      "name": "Dwarf",
+      "version": "Worker (9)",
+      "combat_level": 11,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 8,
+      "defence": 10,
+      "hitpoints": 18,
       "magic": 1,
       "ranged": 1,
       "strength": 6
@@ -38064,8 +40502,8 @@
     "info": {
       "id": 15214,
       "name": "Eagle ray",
-      "version": "In combat",
-      "combat_level": 43,
+      "version": null,
+      "combat_level": 49,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -38077,7 +40515,7 @@
     "stats": {
       "attack": 70,
       "defence": 0,
-      "hitpoints": 50,
+      "hitpoints": 74,
       "magic": 1,
       "ranged": 0,
       "strength": 1
@@ -38848,6 +41286,114 @@
   },
   {
     "info": {
+      "id": 11728,
+      "name": "Egg (Tombs of Amascut)",
+      "version": "Explode",
+      "combat_level": 0,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 0,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -100,
+        "magic": -100,
+        "heavy": -100,
+        "standard": -100,
+        "light": -100,
+        "slash": -100,
+        "stab": -100
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "0"
+    ]
+  },
+  {
+    "info": {
+      "id": 11729,
+      "name": "Egg (Tombs of Amascut)",
+      "version": "Hatch",
+      "combat_level": 0,
+      "attack_speed": -1,
+      "attack_styles": [
+        "None"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 0,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -100,
+        "magic": -100,
+        "heavy": -100,
+        "standard": -100,
+        "light": -100,
+        "slash": -100,
+        "stab": -100
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "0"
+    ]
+  },
+  {
+    "info": {
       "id": 3675,
       "name": "Einar",
       "version": null,
@@ -39396,6 +41942,120 @@
     },
     "max_hit": [
       "10"
+    ]
+  },
+  {
+    "info": {
+      "id": 15552,
+      "name": "Elidinis' Warden (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 970,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 3000,
+      "magic": 400,
+      "ranged": 190,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 225,
+        "magic": 225
+      },
+      "defence": {
+        "crush": 70,
+        "magic": -30,
+        "heavy": 70,
+        "standard": 70,
+        "light": 70,
+        "slash": 70,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "41"
+    ]
+  },
+  {
+    "info": {
+      "id": 15552,
+      "name": "Elidinis' Warden (Deadman)",
+      "version": "Factions",
+      "combat_level": 255,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 140,
+      "magic": 400,
+      "ranged": 190,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 225,
+        "magic": 225
+      },
+      "defence": {
+        "crush": 70,
+        "magic": -30,
+        "heavy": 70,
+        "standard": 70,
+        "light": 70,
+        "slash": 70,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "41"
     ]
   },
   {
@@ -42029,7 +44689,8 @@
       "burn": null
     },
     "max_hit": [
-      "18"
+      "18 (Standard)",
+      "30+ (Charge)"
     ]
   },
   {
@@ -44131,7 +46792,7 @@
     "info": {
       "id": 5641,
       "name": "Feral Vampyre",
-      "version": "Level 100",
+      "version": "Level 100 (Temple Trekking)",
       "combat_level": 100,
       "attack_speed": 4,
       "attack_styles": [
@@ -44187,7 +46848,7 @@
     "info": {
       "id": 5642,
       "name": "Feral Vampyre",
-      "version": "Level 130",
+      "version": "Level 130 (Temple Trekking)",
       "combat_level": 130,
       "attack_speed": 4,
       "attack_styles": [
@@ -44299,7 +46960,7 @@
     "info": {
       "id": 3707,
       "name": "Feral Vampyre",
-      "version": "Level 64",
+      "version": "Level 64 (Juvenile/Juvinate)",
       "combat_level": 64,
       "attack_speed": 4,
       "attack_styles": [
@@ -44355,7 +47016,7 @@
     "info": {
       "id": 5640,
       "name": "Feral Vampyre",
-      "version": "Level 70",
+      "version": "Level 70 (Temple Trekking)",
       "combat_level": 70,
       "attack_speed": 4,
       "attack_styles": [
@@ -44411,7 +47072,7 @@
     "info": {
       "id": 3234,
       "name": "Feral Vampyre",
-      "version": "Level 72",
+      "version": "Level 72 (Spider)",
       "combat_level": 72,
       "attack_speed": 4,
       "attack_styles": [
@@ -44467,7 +47128,7 @@
     "info": {
       "id": 3137,
       "name": "Feral Vampyre",
-      "version": "Level 77",
+      "version": "Level 77 (God Wars Dungeon)",
       "combat_level": 77,
       "attack_speed": 4,
       "attack_styles": [
@@ -45034,7 +47695,7 @@
       "burn": "Weak"
     },
     "max_hit": [
-      "6"
+      "4"
     ]
   },
   {
@@ -45391,6 +48052,180 @@
     },
     "max_hit": [
       "7"
+    ]
+  },
+  {
+    "info": {
+      "id": 12453,
+      "name": "Flaming pyrelord (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1026,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 100
+      }
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 150,
+      "hitpoints": 3500,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 18,
+        "magic": 150,
+        "heavy": 18,
+        "standard": 18,
+        "light": 18,
+        "slash": 18,
+        "stab": 18
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "1 (11 with burn)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12453,
+      "name": "Flaming pyrelord (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 363,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 250,
+      "hitpoints": 750,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 18,
+        "magic": 150,
+        "heavy": 18,
+        "standard": 18,
+        "light": 18,
+        "slash": 18,
+        "stab": 18
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "1"
+    ]
+  },
+  {
+    "info": {
+      "id": 12453,
+      "name": "Flaming pyrelord (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 338,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 100
+      }
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 150,
+      "hitpoints": 750,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 18,
+        "magic": 150,
+        "heavy": 18,
+        "standard": 18,
+        "light": 18,
+        "slash": 18,
+        "stab": 18
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "21"
     ]
   },
   {
@@ -47189,7 +50024,7 @@
       "id": 15226,
       "name": "Frigatebird",
       "version": null,
-      "combat_level": 70,
+      "combat_level": 89,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -47200,8 +50035,8 @@
     },
     "stats": {
       "attack": 80,
-      "defence": 0,
-      "hitpoints": 85,
+      "defence": 40,
+      "hitpoints": 121,
       "magic": 1,
       "ranged": 0,
       "strength": 70
@@ -47479,7 +50314,8 @@
       ],
       "size": 4,
       "attributes": [
-        "dragon"
+        "dragon",
+        "fiery"
       ],
       "weakness": {
         "element": "fire",
@@ -48844,6 +51680,174 @@
     "max_hit": [
       "60 (melee)",
       "35 (ranged)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12444,
+      "name": "General Graardor (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 624,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 250,
+      "hitpoints": 2000,
+      "magic": 80,
+      "ranged": 350,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 100,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 201,
+        "heavy": 90,
+        "standard": 90,
+        "light": 90,
+        "slash": 90,
+        "stab": 90
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 40,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "60 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12444,
+      "name": "General Graardor (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 624,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 250,
+      "hitpoints": 1000,
+      "magic": 80,
+      "ranged": 350,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 100,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 201,
+        "heavy": 90,
+        "standard": 90,
+        "light": 90,
+        "slash": 90,
+        "stab": 90
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 40,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "60 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12444,
+      "name": "General Graardor (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 624,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 250,
+      "hitpoints": 1500,
+      "magic": 80,
+      "ranged": 350,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 100,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 201,
+        "heavy": 90,
+        "standard": 90,
+        "light": 90,
+        "slash": 90,
+        "stab": 90
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 40,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "60 (Melee)"
     ]
   },
   {
@@ -50458,6 +53462,168 @@
   },
   {
     "info": {
+      "id": 12452,
+      "name": "Giant goblin",
+      "version": "Annihilation",
+      "combat_level": 1022,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 200,
+      "hitpoints": 3500,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -15,
+        "magic": -15,
+        "heavy": -15,
+        "standard": -15,
+        "light": -15,
+        "slash": -15,
+        "stab": -15
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12452,
+      "name": "Giant goblin",
+      "version": "Apocalypse",
+      "combat_level": 347,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 250,
+      "hitpoints": 750,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -15,
+        "magic": -15,
+        "heavy": -15,
+        "standard": -15,
+        "light": -15,
+        "slash": -15,
+        "stab": -15
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12452,
+      "name": "Giant goblin",
+      "version": "Armageddon",
+      "combat_level": 397,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 200,
+      "hitpoints": 1000,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 120,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -15,
+        "magic": -15,
+        "heavy": -15,
+        "standard": -15,
+        "light": -15,
+        "slash": -15,
+        "stab": -15
+      },
+      "strength": {
+        "melee": 43,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
       "id": 4799,
       "name": "Giant lobster",
       "version": null,
@@ -50585,7 +53751,7 @@
       "hitpoints": 100,
       "magic": 20,
       "ranged": 0,
-      "strength": 0
+      "strength": 90
     },
     "bonuses": {
       "attack": {
@@ -50785,6 +53951,60 @@
     },
     "max_hit": [
       "4"
+    ]
+  },
+  {
+    "info": {
+      "id": 9483,
+      "name": "Giant rat (Tutorial Island)",
+      "version": "2020",
+      "combat_level": 3,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 1,
+      "hitpoints": 3,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -100,
+        "magic": 0,
+        "heavy": -100,
+        "standard": -100,
+        "light": -100,
+        "slash": -100,
+        "stab": -100
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "2"
     ]
   },
   {
@@ -54997,10 +58217,10 @@
   },
   {
     "info": {
-      "id": 1834,
+      "id": 3141,
       "name": "Gorak",
-      "version": "Level 145",
-      "combat_level": 145,
+      "version": "GWD",
+      "combat_level": 149,
       "attack_speed": 4,
       "attack_styles": [
         "Typeless Crush"
@@ -55010,12 +58230,12 @@
       "weakness": null
     },
     "stats": {
-      "attack": 130,
-      "defence": 131,
-      "hitpoints": 112,
+      "attack": 133,
+      "defence": 135,
+      "hitpoints": 128,
       "magic": 1,
       "ranged": 1,
-      "strength": 130
+      "strength": 126
     },
     "bonuses": {
       "attack": {
@@ -55051,10 +58271,10 @@
   },
   {
     "info": {
-      "id": 3141,
+      "id": 1834,
       "name": "Gorak",
-      "version": "Level 149",
-      "combat_level": 149,
+      "version": "Level 145",
+      "combat_level": 145,
       "attack_speed": 4,
       "attack_styles": [
         "Typeless Crush"
@@ -55064,12 +58284,12 @@
       "weakness": null
     },
     "stats": {
-      "attack": 133,
-      "defence": 135,
-      "hitpoints": 128,
+      "attack": 130,
+      "defence": 131,
+      "hitpoints": 112,
       "magic": 1,
       "ranged": 1,
-      "strength": 126
+      "strength": 130
     },
     "bonuses": {
       "attack": {
@@ -55581,7 +58801,7 @@
       "id": 15200,
       "name": "Great white shark",
       "version": null,
-      "combat_level": 141,
+      "combat_level": 175,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -55592,8 +58812,8 @@
     },
     "stats": {
       "attack": 155,
-      "defence": 0,
-      "hitpoints": 175,
+      "defence": 70,
+      "hitpoints": 243,
       "magic": 0,
       "ranged": 1,
       "strength": 145
@@ -55650,6 +58870,174 @@
       "attack": 300,
       "defence": 240,
       "hitpoints": 400,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 260
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 0,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12451,
+      "name": "Greater abyssal demon (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 719,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 150,
+      "hitpoints": 2000,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 260
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 0,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12451,
+      "name": "Greater abyssal demon (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 429,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 240,
+      "hitpoints": 750,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 260
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 0,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "27"
+    ]
+  },
+  {
+    "info": {
+      "id": 12451,
+      "name": "Greater abyssal demon (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 407,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 150,
+      "hitpoints": 750,
       "magic": 1,
       "ranged": 1,
       "strength": 260
@@ -59332,6 +62720,60 @@
   },
   {
     "info": {
+      "id": 15566,
+      "name": "Guard (Deadman Mode)",
+      "version": "Ruins of Unkah",
+      "combat_level": 1337,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 800,
+      "defence": 300,
+      "hitpoints": 800,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 400
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 60,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 7,
+        "magic": 0,
+        "heavy": 8,
+        "standard": 8,
+        "light": 8,
+        "slash": 9,
+        "stab": 8
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "Varies"
+    ]
+  },
+  {
+    "info": {
       "id": 6575,
       "name": "Guard (Deadman Mode)",
       "version": "Seers' Village (ranged)",
@@ -59713,6 +63155,114 @@
       "id": 12460,
       "name": "Guard (Deadman Mode)",
       "version": "Warriors' Guild",
+      "combat_level": 1337,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 800,
+      "defence": 300,
+      "hitpoints": 800,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 400
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 60,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 7,
+        "magic": 0,
+        "heavy": 8,
+        "standard": 8,
+        "light": 8,
+        "slash": 9,
+        "stab": 8
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "Varies"
+    ]
+  },
+  {
+    "info": {
+      "id": 12461,
+      "name": "Guard (Deadman Mode)",
+      "version": "Warriors' Guild (ranged)",
+      "combat_level": 1337,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 800,
+      "defence": 300,
+      "hitpoints": 800,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 400
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 60,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 7,
+        "magic": 0,
+        "heavy": 8,
+        "standard": 8,
+        "light": 8,
+        "slash": 9,
+        "stab": 8
+      },
+      "strength": {
+        "melee": 7,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "Varies"
+    ]
+  },
+  {
+    "info": {
+      "id": 15568,
+      "name": "Guard (Deadman Mode)",
+      "version": "Wintertodt",
       "combat_level": 1337,
       "attack_speed": 2,
       "attack_styles": [
@@ -64735,7 +68285,7 @@
       "id": 15196,
       "name": "Hammerhead shark",
       "version": null,
-      "combat_level": 69,
+      "combat_level": 91,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -64746,8 +68296,8 @@
     },
     "stats": {
       "attack": 80,
-      "defence": 0,
-      "hitpoints": 90,
+      "defence": 50,
+      "hitpoints": 128,
       "magic": 1,
       "ranged": 0,
       "strength": 65
@@ -65789,7 +69339,61 @@
     "info": {
       "id": 14852,
       "name": "Hermit crab",
-      "version": null,
+      "version": "Active",
+      "combat_level": 19,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 1,
+      "hitpoints": 75,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": -50,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "1"
+    ]
+  },
+  {
+    "info": {
+      "id": 14853,
+      "name": "Hermit crab",
+      "version": "Hidden",
       "combat_level": 19,
       "attack_speed": 4,
       "attack_styles": [
@@ -67625,7 +71229,8 @@
       "combat_level": 40,
       "attack_speed": 4,
       "attack_styles": [
-        "Stab"
+        "Stab",
+        "Ranged"
       ],
       "size": 2,
       "attributes": null,
@@ -67671,7 +71276,8 @@
       "burn": null
     },
     "max_hit": [
-      "5"
+      "5 (Melee)",
+      "? (Ranged)"
     ]
   },
   {
@@ -68113,6 +71719,63 @@
     },
     "max_hit": [
       "1"
+    ]
+  },
+  {
+    "info": {
+      "id": 15553,
+      "name": "I DSCIM YOU",
+      "version": null,
+      "combat_level": 495,
+      "attack_speed": 3,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 25,
+      "hitpoints": 1500,
+      "magic": 100,
+      "ranged": 25,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 50,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 25,
+        "stab": 25
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21"
     ]
   },
   {
@@ -69163,7 +72826,7 @@
       "attributes": null,
       "weakness": {
         "element": "fire",
-        "severity": 100
+        "severity": 50
       }
     },
     "stats": {
@@ -69513,7 +73176,7 @@
       "attributes": null,
       "weakness": {
         "element": "fire",
-        "severity": 100
+        "severity": 50
       }
     },
     "stats": {
@@ -71824,6 +75487,168 @@
   },
   {
     "info": {
+      "id": 13660,
+      "name": "Jaguar warrior (Deadman)",
+      "version": "All-Stars",
+      "combat_level": 331,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 100,
+      "hitpoints": 750,
+      "magic": 100,
+      "ranged": 160,
+      "strength": 165
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 100,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 15,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21 (x4)"
+    ]
+  },
+  {
+    "info": {
+      "id": 13660,
+      "name": "Jaguar warrior (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 893,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 100,
+      "hitpoints": 3000,
+      "magic": 100,
+      "ranged": 160,
+      "strength": 165
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 100,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 15,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21 (x4)"
+    ]
+  },
+  {
+    "info": {
+      "id": 13660,
+      "name": "Jaguar warrior (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 518,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 100,
+      "hitpoints": 1500,
+      "magic": 100,
+      "ranged": 160,
+      "strength": 165
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 50,
+        "magic": 100,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 50,
+        "stab": 50
+      },
+      "strength": {
+        "melee": 15,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21 (x4)"
+    ]
+  },
+  {
+    "info": {
       "id": 4276,
       "name": "Jail guard",
       "version": "1",
@@ -72428,6 +76253,174 @@
       "venom": true,
       "freeze": 0,
       "burn": "Normal"
+    },
+    "max_hit": [
+      "49"
+    ]
+  },
+  {
+    "info": {
+      "id": 12455,
+      "name": "Jal-ImKot (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 240,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 210,
+      "defence": 120,
+      "hitpoints": 3000,
+      "magic": 120,
+      "ranged": 220,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 65,
+        "magic": 30,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 65,
+        "stab": 65
+      },
+      "strength": {
+        "melee": 40,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "49"
+    ]
+  },
+  {
+    "info": {
+      "id": 12455,
+      "name": "Jal-ImKot (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 240,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 210,
+      "defence": 120,
+      "hitpoints": 750,
+      "magic": 120,
+      "ranged": 220,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 65,
+        "magic": 30,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 65,
+        "stab": 65
+      },
+      "strength": {
+        "melee": 40,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "49"
+    ]
+  },
+  {
+    "info": {
+      "id": 12455,
+      "name": "Jal-ImKot (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 240,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 210,
+      "defence": 120,
+      "hitpoints": 1000,
+      "magic": 120,
+      "ranged": 220,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 65,
+        "magic": 30,
+        "heavy": 50,
+        "standard": 50,
+        "light": 50,
+        "slash": 65,
+        "stab": 65
+      },
+      "strength": {
+        "melee": 40,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
     },
     "max_hit": [
       "49"
@@ -74536,7 +78529,7 @@
       "attack_styles": [
         "Stab"
       ],
-      "size": 2,
+      "size": 1,
       "attributes": null,
       "weakness": {
         "element": "fire",
@@ -74593,7 +78586,7 @@
       "attack_styles": [
         "Stab"
       ],
-      "size": 2,
+      "size": 1,
       "attributes": null,
       "weakness": {
         "element": "fire",
@@ -74869,6 +78862,174 @@
   },
   {
     "info": {
+      "id": 12449,
+      "name": "Justiciar Zachariah (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 768,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 500,
+      "defence": 100,
+      "hitpoints": 2000,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Melee)",
+      "26 (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12449,
+      "name": "Justiciar Zachariah (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 348,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 500,
+      "defence": 100,
+      "hitpoints": 320,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Melee)",
+      "26 (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12449,
+      "name": "Justiciar Zachariah (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 393,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash",
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 500,
+      "defence": 100,
+      "hitpoints": 500,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Melee)",
+      "26 (Magic)"
+    ]
+  },
+  {
+    "info": {
       "id": 14702,
       "name": "Juvenile custodian stalker",
       "version": null,
@@ -74985,6 +79146,174 @@
       "30 (magic)",
       "46 (melee)",
       "49 (special attack)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12446,
+      "name": "K'ril Tsutsaroth (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 650,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 340,
+      "defence": 270,
+      "hitpoints": 1500,
+      "magic": 200,
+      "ranged": 1,
+      "strength": 300
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 160,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 80,
+        "magic": 130,
+        "heavy": 80,
+        "standard": 80,
+        "light": 80,
+        "slash": 80,
+        "stab": 80
+      },
+      "strength": {
+        "melee": 31,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "46 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12446,
+      "name": "K'ril Tsutsaroth (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 650,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 340,
+      "defence": 270,
+      "hitpoints": 1000,
+      "magic": 200,
+      "ranged": 1,
+      "strength": 300
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 160,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 80,
+        "magic": 130,
+        "heavy": 80,
+        "standard": 80,
+        "light": 80,
+        "slash": 80,
+        "stab": 80
+      },
+      "strength": {
+        "melee": 31,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "46 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12446,
+      "name": "K'ril Tsutsaroth (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 650,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 340,
+      "defence": 270,
+      "hitpoints": 1000,
+      "magic": 200,
+      "ranged": 1,
+      "strength": 300
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 160,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 80,
+        "magic": 130,
+        "heavy": 80,
+        "standard": 80,
+        "light": 80,
+        "slash": 80,
+        "stab": 80
+      },
+      "strength": {
+        "melee": 31,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "46 (Melee)"
     ]
   },
   {
@@ -77328,6 +81657,186 @@
   },
   {
     "info": {
+      "id": 12440,
+      "name": "King Black Dragon (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 318,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab",
+        "Dragonfire"
+      ],
+      "size": 5,
+      "attributes": [
+        "dragon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 240,
+      "defence": 0,
+      "hitpoints": 500,
+      "magic": 240,
+      "ranged": 1,
+      "strength": 240
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 80,
+        "heavy": 70,
+        "standard": 40,
+        "light": 70,
+        "slash": 90,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "25 (Melee)",
+      "65 (Dragonfire)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12440,
+      "name": "King Black Dragon (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 278,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab",
+        "Dragonfire"
+      ],
+      "size": 5,
+      "attributes": [
+        "dragon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 240,
+      "defence": 240,
+      "hitpoints": 250,
+      "magic": 240,
+      "ranged": 1,
+      "strength": 240
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 80,
+        "heavy": 70,
+        "standard": 40,
+        "light": 70,
+        "slash": 90,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "25 (Melee)",
+      "65 (Dragonfire)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12440,
+      "name": "King Black Dragon (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 256,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Stab",
+        "Dragonfire"
+      ],
+      "size": 5,
+      "attributes": [
+        "dragon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 240,
+      "defence": 150,
+      "hitpoints": 250,
+      "magic": 240,
+      "ranged": 1,
+      "strength": 240
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 90,
+        "magic": 80,
+        "heavy": 70,
+        "standard": 40,
+        "light": 70,
+        "slash": 90,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": "Normal"
+    },
+    "max_hit": [
+      "25 (Melee)",
+      "65 (Dragonfire)"
+    ]
+  },
+  {
+    "info": {
       "id": 7405,
       "name": "King kurask",
       "version": null,
@@ -79357,6 +83866,117 @@
   },
   {
     "info": {
+      "id": 12443,
+      "name": "Kree'arra (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 580,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 260,
+      "hitpoints": 350,
+      "magic": 200,
+      "ranged": 380,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 136,
+        "ranged": 120,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 180,
+        "magic": 200,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 180,
+        "stab": 180
+      },
+      "strength": {
+        "melee": 12,
+        "ranged": 50,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21"
+    ]
+  },
+  {
+    "info": {
+      "id": 12443,
+      "name": "Kree'arra (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 580,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "air",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 150,
+      "hitpoints": 350,
+      "magic": 200,
+      "ranged": 380,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 136,
+        "ranged": 120,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 180,
+        "magic": 200,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 180,
+        "stab": 180
+      },
+      "strength": {
+        "melee": 12,
+        "ranged": 50,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "25"
+    ]
+  },
+  {
+    "info": {
       "id": 9560,
       "name": "Kroy",
       "version": null,
@@ -79866,7 +84486,7 @@
       "combat_level": 116,
       "attack_speed": 5,
       "attack_styles": [
-        "Melee",
+        "Crush",
         "Ranged"
       ],
       "size": 2,
@@ -79915,7 +84535,8 @@
       "burn": "Normal"
     },
     "max_hit": [
-      "12"
+      "10 (Melee)",
+      "12 (Ranged)"
     ]
   },
   {
@@ -82418,7 +87039,7 @@
     "info": {
       "id": 13663,
       "name": "Magic Mark",
-      "version": null,
+      "version": "All-Stars",
       "combat_level": 217,
       "attack_speed": 5,
       "attack_styles": [
@@ -82464,7 +87085,117 @@
       "freeze": 100,
       "burn": null
     },
-    "max_hit": null
+    "max_hit": [
+      "18"
+    ]
+  },
+  {
+    "info": {
+      "id": 13663,
+      "name": "Magic Mark",
+      "version": "Annihilation",
+      "combat_level": 967,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 10,
+      "defence": 30,
+      "hitpoints": 3500,
+      "magic": 175,
+      "ranged": 0,
+      "strength": 30
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 150,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 25,
+        "stab": 25
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "18"
+    ]
+  },
+  {
+    "info": {
+      "id": 13663,
+      "name": "Magic Mark",
+      "version": "Armageddon",
+      "combat_level": 467,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 10,
+      "defence": 30,
+      "hitpoints": 1500,
+      "magic": 175,
+      "ranged": 0,
+      "strength": 30
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 150,
+        "heavy": 10,
+        "standard": 10,
+        "light": 10,
+        "slash": 25,
+        "stab": 25
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "18"
+    ]
   },
   {
     "info": {
@@ -82633,6 +87364,168 @@
     "max_hit": [
       "20"
     ]
+  },
+  {
+    "info": {
+      "id": 12456,
+      "name": "Malevolent Mage (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 661,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 150,
+      "hitpoints": 2000,
+      "magic": 255,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 300,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Weak"
+    },
+    "max_hit": null
+  },
+  {
+    "info": {
+      "id": 12456,
+      "name": "Malevolent Mage (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 286,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 150,
+      "hitpoints": 500,
+      "magic": 255,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 300,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": null
+  },
+  {
+    "info": {
+      "id": 12456,
+      "name": "Malevolent Mage (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 286,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 150,
+      "hitpoints": 500,
+      "magic": 255,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 300,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Weak"
+    },
+    "max_hit": null
   },
   {
     "info": {
@@ -83664,8 +88557,8 @@
     "info": {
       "id": 15220,
       "name": "Manta ray (monster)",
-      "version": "In combat",
-      "combat_level": 114,
+      "version": null,
+      "combat_level": 141,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -83676,8 +88569,8 @@
     },
     "stats": {
       "attack": 155,
-      "defence": 0,
-      "hitpoints": 160,
+      "defence": 40,
+      "hitpoints": 225,
       "magic": 1,
       "ranged": 0,
       "strength": 75
@@ -83830,7 +88723,7 @@
       "burn": null
     },
     "max_hit": [
-      "38"
+      "26 (melee)\n30 (ranged)\n38 (special)"
     ]
   },
   {
@@ -84375,6 +89268,7 @@
       "burn": null
     },
     "max_hit": [
+      "? (melee)",
       "80 (lightning)"
     ]
   },
@@ -85530,6 +90424,58 @@
   },
   {
     "info": {
+      "id": 2482,
+      "name": "Minotaur",
+      "version": "Unused",
+      "combat_level": 19,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 22,
+      "defence": 15,
+      "hitpoints": 13,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 15
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 1,
+        "magic": 1,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 1,
+        "stab": 1
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": null
+  },
+  {
+    "info": {
       "id": 13671,
       "name": "Mirrorback Araxyte",
       "version": null,
@@ -85595,7 +90541,7 @@
       "attack_styles": [
         "Stab",
         "Magic",
-        "Ranged",
+        "Magical ranged",
         "Dragonfire"
       ],
       "size": 4,
@@ -85647,7 +90593,7 @@
     "max_hit": [
       "28 (Melee)",
       "18 (Magic)",
-      "22 (Ranged)",
+      "18 (Magical ranged)",
       "50 (Dragonfire)"
     ]
   },
@@ -85713,9 +90659,11 @@
       "id": 15230,
       "name": "Mogre (Sailing)",
       "version": null,
-      "combat_level": 54,
+      "combat_level": 61,
       "attack_speed": 6,
-      "attack_styles": null,
+      "attack_styles": [
+        "Crush"
+      ],
       "size": 2,
       "attributes": null,
       "weakness": {
@@ -85726,7 +90674,7 @@
     "stats": {
       "attack": 40,
       "defence": 40,
-      "hitpoints": 60,
+      "hitpoints": 87,
       "magic": 1,
       "ranged": 60,
       "strength": 50
@@ -85760,7 +90708,7 @@
       "burn": null
     },
     "max_hit": [
-      "8"
+      "6"
     ]
   },
   {
@@ -85983,7 +90931,8 @@
       "burn": null
     },
     "max_hit": [
-      "2"
+      "2 (Melee)",
+      "10 (Magic)"
     ]
   },
   {
@@ -87811,8 +92760,8 @@
       "flat_armour": 0
     },
     "immunities": {
-      "poison": false,
-      "venom": false,
+      "poison": true,
+      "venom": true,
       "freeze": 0,
       "burn": null
     },
@@ -89708,7 +94657,10 @@
       "attributes": [
         "xerician"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
     },
     "stats": {
       "attack": 250,
@@ -89769,7 +94721,10 @@
       "attributes": [
         "xerician"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
     },
     "stats": {
       "attack": 375,
@@ -89829,7 +94784,10 @@
       "attributes": [
         "xerician"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
     },
     "stats": {
       "attack": 150,
@@ -89887,7 +94845,10 @@
       "attributes": [
         "xerician"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "earth",
+        "severity": 40
+      }
     },
     "stats": {
       "attack": 225,
@@ -90319,7 +95280,7 @@
       "id": 15202,
       "name": "Narwhal",
       "version": null,
-      "combat_level": 103,
+      "combat_level": 119,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -90331,7 +95292,7 @@
     "stats": {
       "attack": 95,
       "defence": 50,
-      "hitpoints": 155,
+      "hitpoints": 220,
       "magic": 1,
       "ranged": 0,
       "strength": 65
@@ -91560,6 +96521,174 @@
     },
     "max_hit": [
       "31"
+    ]
+  },
+  {
+    "info": {
+      "id": 12459,
+      "name": "Night beast (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 457,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush",
+        "Magic"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 270,
+      "defence": 100,
+      "hitpoints": 1000,
+      "magic": 300,
+      "ranged": 1,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 120,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 80,
+        "stab": 75
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "30 (Melee)",
+      "? (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12459,
+      "name": "Night beast (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 362,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush",
+        "Magic"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 270,
+      "defence": 220,
+      "hitpoints": 500,
+      "magic": 300,
+      "ranged": 1,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 200,
+        "magic": 190,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 80,
+        "stab": 75
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "30 (Melee)",
+      "? (Magic)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12459,
+      "name": "Night beast (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 332,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush",
+        "Magic"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 270,
+      "defence": 100,
+      "hitpoints": 500,
+      "magic": 300,
+      "ranged": 1,
+      "strength": 290
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 120,
+        "magic": 100,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 80,
+        "stab": 75
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "30 (Melee)",
+      "? (Magic)"
     ]
   },
   {
@@ -94097,6 +99226,63 @@
   },
   {
     "info": {
+      "id": 2233,
+      "name": "Ogre",
+      "version": "GWD",
+      "combat_level": 58,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 20
+      }
+    },
+    "stats": {
+      "attack": 46,
+      "defence": 43,
+      "hitpoints": 70,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 48
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 22,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 21,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "8"
+    ]
+  },
+  {
+    "info": {
       "id": 136,
       "name": "Ogre",
       "version": "Level 53",
@@ -94150,63 +99336,6 @@
     },
     "max_hit": [
       "7"
-    ]
-  },
-  {
-    "info": {
-      "id": 2233,
-      "name": "Ogre",
-      "version": "Level 58",
-      "combat_level": 58,
-      "attack_speed": 6,
-      "attack_styles": [
-        "Crush"
-      ],
-      "size": 2,
-      "attributes": null,
-      "weakness": {
-        "element": "earth",
-        "severity": 20
-      }
-    },
-    "stats": {
-      "attack": 46,
-      "defence": 43,
-      "hitpoints": 70,
-      "magic": 1,
-      "ranged": 1,
-      "strength": 48
-    },
-    "bonuses": {
-      "attack": {
-        "melee": 22,
-        "ranged": 0,
-        "magic": 0
-      },
-      "defence": {
-        "crush": 0,
-        "magic": 0,
-        "heavy": 0,
-        "standard": 0,
-        "light": 0,
-        "slash": 0,
-        "stab": 0
-      },
-      "strength": {
-        "melee": 21,
-        "ranged": 0,
-        "magic": 0
-      },
-      "flat_armour": 0
-    },
-    "immunities": {
-      "poison": false,
-      "venom": false,
-      "freeze": 0,
-      "burn": null
-    },
-    "max_hit": [
-      "8"
     ]
   },
   {
@@ -94550,7 +99679,7 @@
       "id": 15204,
       "name": "Orca",
       "version": null,
-      "combat_level": 173,
+      "combat_level": 205,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -94561,8 +99690,8 @@
     },
     "stats": {
       "attack": 165,
-      "defence": 50,
-      "hitpoints": 265,
+      "defence": 75,
+      "hitpoints": 370,
       "magic": 1,
       "ranged": 0,
       "strength": 125
@@ -94715,7 +99844,7 @@
       "id": 15222,
       "name": "Osprey",
       "version": null,
-      "combat_level": 55,
+      "combat_level": 74,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -94726,8 +99855,8 @@
     },
     "stats": {
       "attack": 60,
-      "defence": 0,
-      "hitpoints": 80,
+      "defence": 40,
+      "hitpoints": 114,
       "magic": 1,
       "ranged": 0,
       "strength": 50
@@ -98663,6 +103792,60 @@
   },
   {
     "info": {
+      "id": 15556,
+      "name": "Pestilent Bloat (Deadman)",
+      "version": null,
+      "combat_level": 716,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 2000,
+      "magic": 150,
+      "ranged": 180,
+      "strength": 340
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 150,
+        "ranged": 180,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 40,
+        "magic": 600,
+        "heavy": 800,
+        "standard": 800,
+        "light": 800,
+        "slash": 20,
+        "stab": 40
+      },
+      "strength": {
+        "melee": 82,
+        "ranged": 4,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "20"
+    ]
+  },
+  {
+    "info": {
       "id": 10812,
       "name": "Pestilent Bloat",
       "version": "Entry",
@@ -98938,6 +104121,120 @@
     },
     "max_hit": [
       "6"
+    ]
+  },
+  {
+    "info": {
+      "id": 15549,
+      "name": "Phantom Muspah (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 732,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "air",
+        "severity": 65
+      }
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 200,
+      "hitpoints": 2000,
+      "magic": 100,
+      "ranged": 280,
+      "strength": 280
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 393,
+        "ranged": 64,
+        "magic": 280
+      },
+      "defence": {
+        "crush": 120,
+        "magic": 34,
+        "heavy": 261,
+        "standard": 261,
+        "light": 261,
+        "slash": 134,
+        "stab": 185
+      },
+      "strength": {
+        "melee": 11,
+        "ranged": 6,
+        "magic": 180
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 33,
+      "burn": null
+    },
+    "max_hit": [
+      "34"
+    ]
+  },
+  {
+    "info": {
+      "id": 15549,
+      "name": "Phantom Muspah (Deadman)",
+      "version": "Factions",
+      "combat_level": 444,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Stab"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "air",
+        "severity": 65
+      }
+    },
+    "stats": {
+      "attack": 280,
+      "defence": 200,
+      "hitpoints": 850,
+      "magic": 100,
+      "ranged": 280,
+      "strength": 280
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 393,
+        "ranged": 64,
+        "magic": 280
+      },
+      "defence": {
+        "crush": 120,
+        "magic": 34,
+        "heavy": 261,
+        "standard": 261,
+        "light": 261,
+        "slash": 134,
+        "stab": 185
+      },
+      "strength": {
+        "melee": 11,
+        "ranged": 6,
+        "magic": 180
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 33,
+      "burn": null
+    },
+    "max_hit": [
+      "34"
     ]
   },
   {
@@ -99655,7 +104952,7 @@
       "hitpoints": 38,
       "magic": 10,
       "ranged": 0,
-      "strength": 0
+      "strength": 50
     },
     "bonuses": {
       "attack": {
@@ -99705,7 +105002,7 @@
       "hitpoints": 38,
       "magic": 10,
       "ranged": 0,
-      "strength": 0
+      "strength": 50
     },
     "bonuses": {
       "attack": {
@@ -99755,7 +105052,7 @@
       "hitpoints": 38,
       "magic": 10,
       "ranged": 0,
-      "strength": 0
+      "strength": 50
     },
     "bonuses": {
       "attack": {
@@ -99805,7 +105102,7 @@
       "hitpoints": 38,
       "magic": 10,
       "ranged": 0,
-      "strength": 0
+      "strength": 50
     },
     "bonuses": {
       "attack": {
@@ -100932,8 +106229,182 @@
       "burn": null
     },
     "max_hit": [
-      "43 (magic)",
-      "16 (melee)"
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12448,
+      "name": "Porazdir (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 655,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 2000,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12448,
+      "name": "Porazdir (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 235,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 320,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
+    ]
+  },
+  {
+    "info": {
+      "id": 12448,
+      "name": "Porazdir (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 280,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Magic",
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 500,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "defence": {
+        "crush": 200,
+        "magic": -60,
+        "heavy": 200,
+        "standard": 200,
+        "light": 200,
+        "slash": 200,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 80
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "43 (Magic)",
+      "16 (Melee)"
     ]
   },
   {
@@ -102294,7 +107765,7 @@
       "id": 15206,
       "name": "Pygmy kraken",
       "version": null,
-      "combat_level": 87,
+      "combat_level": 100,
       "attack_speed": 5,
       "attack_styles": [
         "Magic"
@@ -102309,7 +107780,7 @@
     "stats": {
       "attack": 1,
       "defence": 50,
-      "hitpoints": 125,
+      "hitpoints": 177,
       "magic": 90,
       "ranged": 1,
       "strength": 1
@@ -103484,7 +108955,7 @@
     "info": {
       "id": 13664,
       "name": "Ranging Ro",
-      "version": null,
+      "version": "All-Stars",
       "combat_level": 223,
       "attack_speed": 4,
       "attack_styles": [
@@ -103498,6 +108969,114 @@
       "attack": 10,
       "defence": 100,
       "hitpoints": 500,
+      "magic": 15,
+      "ranged": 150,
+      "strength": 30
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 200,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 13664,
+      "name": "Ranging Ro",
+      "version": "Annihilation",
+      "combat_level": 973,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 10,
+      "defence": 100,
+      "hitpoints": 3500,
+      "magic": 15,
+      "ranged": 150,
+      "strength": 30
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 100,
+        "magic": 200,
+        "heavy": 100,
+        "standard": 100,
+        "light": 100,
+        "slash": 100,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 13664,
+      "name": "Ranging Ro",
+      "version": "Armageddon",
+      "combat_level": 473,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 10,
+      "defence": 100,
+      "hitpoints": 1500,
       "magic": 15,
       "ranged": 150,
       "strength": 30
@@ -108541,11 +114120,11 @@
       "defence": {
         "crush": 90,
         "magic": 30,
-        "heavy": 95,
+        "heavy": 50,
         "standard": 95,
         "light": 95,
         "slash": 115,
-        "stab": 30
+        "stab": 20
       },
       "strength": {
         "melee": 0,
@@ -108561,7 +114140,11 @@
       "burn": null
     },
     "max_hit": [
-      "38"
+      "29 (Melee)",
+      "31 (Ranged)",
+      "26 (Magic)",
+      "40 (range special)",
+      "50 (Dragonfire)"
     ]
   },
   {
@@ -110742,8 +116325,8 @@
   {
     "info": {
       "id": 14940,
-      "name": "Scorpion (Sailing)",
-      "version": null,
+      "name": "Scorpion",
+      "version": "Level 1",
       "combat_level": 1,
       "attack_speed": 4,
       "attack_styles": [
@@ -110751,7 +116334,10 @@
       ],
       "size": 1,
       "attributes": null,
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 25
+      }
     },
     "stats": {
       "attack": 1,
@@ -111139,6 +116725,118 @@
     },
     "max_hit": [
       "12"
+    ]
+  },
+  {
+    "info": {
+      "id": 15548,
+      "name": "Scurrius (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1470,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": [
+        "rat"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 5000,
+      "magic": 100,
+      "ranged": 100,
+      "strength": 300
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 150,
+        "ranged": 150,
+        "magic": 150
+      },
+      "defence": {
+        "crush": 20,
+        "magic": 10,
+        "heavy": 20,
+        "standard": 20,
+        "light": 20,
+        "slash": 20,
+        "stab": 20
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 10,
+        "magic": 20
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 50,
+      "burn": null
+    },
+    "max_hit": [
+      "36"
+    ]
+  },
+  {
+    "info": {
+      "id": 15548,
+      "name": "Scurrius (Deadman)",
+      "version": "Factions",
+      "combat_level": 470,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 3,
+      "attributes": [
+        "rat"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 1000,
+      "magic": 100,
+      "ranged": 100,
+      "strength": 300
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 150,
+        "ranged": 150,
+        "magic": 150
+      },
+      "defence": {
+        "crush": 20,
+        "magic": 10,
+        "heavy": 20,
+        "standard": 20,
+        "light": 20,
+        "slash": 20,
+        "stab": 20
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 10,
+        "magic": 20
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 50,
+      "burn": null
+    },
+    "max_hit": [
+      "36"
     ]
   },
   {
@@ -112973,7 +118671,7 @@
     "bonuses": {
       "attack": {
         "melee": 0,
-        "ranged": 0,
+        "ranged": 20,
         "magic": 0
       },
       "defence": {
@@ -112987,7 +118685,7 @@
       },
       "strength": {
         "melee": 0,
-        "ranged": 20,
+        "ranged": 0,
         "magic": 0
       },
       "flat_armour": 0
@@ -115034,7 +120732,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "earth",
+        "severity": 35
+      }
     },
     "stats": {
       "attack": 15,
@@ -121408,7 +127109,7 @@
       "combat_level": 1563,
       "attack_speed": 0,
       "attack_styles": [
-        "Crush"
+        "Various"
       ],
       "size": 5,
       "attributes": null,
@@ -121451,10 +127152,64 @@
       "burn": null
     },
     "max_hit": [
-      "45 (Typeless AOE",
-      "Triple Parry)",
+      "45 (Typeless AOE)",
       "45 (Grapple)",
-      ""
+      "15-25-35 (Triple Parry 1)",
+      "15-30-45 (Triple Parry 2)"
+    ]
+  },
+  {
+    "info": {
+      "id": 15554,
+      "name": "Sol Heredit (Deadman)",
+      "version": null,
+      "combat_level": 668,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Melee"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 350,
+      "defence": 200,
+      "hitpoints": 1500,
+      "magic": 300,
+      "ranged": 350,
+      "strength": 400
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 250,
+        "ranged": 150,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 30,
+        "magic": 750,
+        "heavy": 825,
+        "standard": 825,
+        "light": 825,
+        "slash": 5,
+        "stab": 65
+      },
+      "strength": {
+        "melee": 5,
+        "ranged": 5,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "44"
     ]
   },
   {
@@ -123237,7 +128992,7 @@
       "id": 15208,
       "name": "Spined kraken",
       "version": null,
-      "combat_level": 121,
+      "combat_level": 128,
       "attack_speed": 5,
       "attack_styles": [
         "Magic"
@@ -123251,8 +129006,8 @@
     },
     "stats": {
       "attack": 1,
-      "defence": 100,
-      "hitpoints": 125,
+      "defence": 75,
+      "hitpoints": 177,
       "magic": 135,
       "ranged": 1,
       "strength": 1
@@ -123563,61 +129318,7 @@
     "info": {
       "id": 5947,
       "name": "Spinolyp",
-      "version": "Spinolyp (1)",
-      "combat_level": 76,
-      "attack_speed": 4,
-      "attack_styles": [
-        "Ranged"
-      ],
-      "size": 1,
-      "attributes": null,
-      "weakness": null
-    },
-    "stats": {
-      "attack": 10,
-      "defence": 10,
-      "hitpoints": 100,
-      "magic": 1,
-      "ranged": 100,
-      "strength": 10
-    },
-    "bonuses": {
-      "attack": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "defence": {
-        "crush": 100,
-        "magic": 50,
-        "heavy": 50,
-        "standard": 50,
-        "light": 50,
-        "slash": 100,
-        "stab": 100
-      },
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "flat_armour": 0
-    },
-    "immunities": {
-      "poison": false,
-      "venom": false,
-      "freeze": 0,
-      "burn": null
-    },
-    "max_hit": [
-      "10"
-    ]
-  },
-  {
-    "info": {
-      "id": 5961,
-      "name": "Spinolyp",
-      "version": "Spinolyp (2)",
+      "version": "Spinolyp",
       "combat_level": 76,
       "attack_speed": 4,
       "attack_styles": [
@@ -124732,6 +130433,61 @@
   },
   {
     "info": {
+      "id": 15550,
+      "name": "Splatter (Deadman)",
+      "version": null,
+      "combat_level": 648,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 10,
+      "hitpoints": 2000,
+      "magic": 300,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26 (Melee)",
+      "100+ (Explosion)"
+    ]
+  },
+  {
+    "info": {
       "id": 1689,
       "name": "Splatter",
       "version": "Level 22",
@@ -125415,7 +131171,7 @@
       "id": 15218,
       "name": "Stingray",
       "version": null,
-      "combat_level": 82,
+      "combat_level": 98,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -125426,8 +131182,8 @@
     },
     "stats": {
       "attack": 130,
-      "defence": 0,
-      "hitpoints": 90,
+      "defence": 25,
+      "hitpoints": 128,
       "magic": 1,
       "ranged": 0,
       "strength": 55
@@ -126726,6 +132482,114 @@
   },
   {
     "info": {
+      "id": 12458,
+      "name": "Sulphur Lizard (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 757,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 75,
+      "hitpoints": 2500,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 0,
+        "heavy": 15,
+        "standard": 15,
+        "light": 15,
+        "slash": 25,
+        "stab": 15
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": -1
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21"
+    ]
+  },
+  {
+    "info": {
+      "id": 12458,
+      "name": "Sulphur Lizard (Deadman)",
+      "version": "Apocalypse, Armageddon",
+      "combat_level": 257,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 150,
+      "defence": 75,
+      "hitpoints": 500,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 200
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 25,
+        "magic": 0,
+        "heavy": 15,
+        "standard": 15,
+        "light": 15,
+        "slash": 25,
+        "stab": 15
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "21"
+    ]
+  },
+  {
+    "info": {
       "id": 13033,
       "name": "Sulphur Nagua",
       "version": null,
@@ -127966,7 +133830,7 @@
       "burn": null
     },
     "max_hit": [
-      "12"
+      "11"
     ]
   },
   {
@@ -128922,7 +134786,7 @@
       "id": 15228,
       "name": "Tern",
       "version": null,
-      "combat_level": 22,
+      "combat_level": 26,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -128934,7 +134798,7 @@
     "stats": {
       "attack": 25,
       "defence": 0,
-      "hitpoints": 30,
+      "hitpoints": 46,
       "magic": 1,
       "ranged": 0,
       "strength": 20
@@ -129255,7 +135119,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "air",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 60,
@@ -130096,7 +135963,8 @@
     },
     "max_hit": [
       "22",
-      "35+ (Gaze attack)"
+      "50+ (Gaze attack)",
+      "50+ (Bind attack)"
     ]
   },
   {
@@ -130314,7 +136182,10 @@
       "burn": null
     },
     "max_hit": [
-      "86"
+      "86 (Melee orb & Bite)",
+      "41 (Ranged orb)",
+      "55 (Magic orb)",
+      "?? (Smoke Blast)"
     ]
   },
   {
@@ -130373,7 +136244,7 @@
       "50 (Melee orb & Bite)",
       "24 (Ranged orb)",
       "32 (Magic orb)",
-      "59 (Smoke Blast)"
+      "60 (Smoke Blast)"
     ]
   },
   {
@@ -130429,7 +136300,10 @@
       "burn": null
     },
     "max_hit": [
-      "34"
+      "34 (Melee orb & Bite)",
+      "16 (Ranged orb)",
+      "22 (Magic orb)",
+      "41+ (Smoke Blast)"
     ]
   },
   {
@@ -131197,7 +137071,7 @@
       "burn": null
     },
     "max_hit": [
-      "70+ (Melee)",
+      "70+ (x2) (Melee)",
       "53 (Ranged)",
       "45 (Magic)",
       "70 (Screech)",
@@ -131258,7 +137132,7 @@
       "burn": null
     },
     "max_hit": [
-      "42 (Melee)",
+      "42 (x2) (Melee)",
       "40 (Ranged)",
       "36 (Magic)",
       "45 (Screech)",
@@ -131319,7 +137193,7 @@
       "burn": null
     },
     "max_hit": [
-      "30 (Melee)",
+      "30 (x2) (Melee)",
       "28 (Ranged)",
       "26 (Magic)",
       "45 (Screech)",
@@ -131387,7 +137261,64 @@
     "info": {
       "id": 13659,
       "name": "Thermonuclear smoke devil (Deadman)",
-      "version": null,
+      "version": "Annihilation",
+      "combat_level": 563,
+      "attack_speed": 2,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 4,
+      "attributes": null,
+      "weakness": {
+        "element": "air",
+        "severity": 20
+      }
+    },
+    "stats": {
+      "attack": 230,
+      "defence": 150,
+      "hitpoints": 1500,
+      "magic": 1,
+      "ranged": 310,
+      "strength": 220
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 20,
+        "magic": 200,
+        "heavy": 300,
+        "standard": 300,
+        "light": 300,
+        "slash": 12,
+        "stab": 30
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "32"
+    ]
+  },
+  {
+    "info": {
+      "id": 13659,
+      "name": "Thermonuclear smoke devil (Deadman)",
+      "version": "Armageddon",
       "combat_level": 313,
       "attack_speed": 2,
       "attack_styles": [
@@ -132908,7 +138839,7 @@
       "id": 15198,
       "name": "Tiger shark",
       "version": null,
-      "combat_level": 97,
+      "combat_level": 125,
       "attack_speed": 4,
       "attack_styles": [
         "Slash"
@@ -132919,8 +138850,8 @@
     },
     "stats": {
       "attack": 120,
-      "defence": 0,
-      "hitpoints": 125,
+      "defence": 60,
+      "hitpoints": 174,
       "magic": 1,
       "ranged": 0,
       "strength": 85
@@ -136275,6 +142206,120 @@
   },
   {
     "info": {
+      "id": 15551,
+      "name": "Tumeken's Warden (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 945,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 3000,
+      "magic": 190,
+      "ranged": 350,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 225,
+        "magic": 225
+      },
+      "defence": {
+        "crush": 70,
+        "magic": -30,
+        "heavy": 70,
+        "standard": 70,
+        "light": 70,
+        "slash": 70,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 12,
+        "magic": 12
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "22"
+    ]
+  },
+  {
+    "info": {
+      "id": 15551,
+      "name": "Tumeken's Warden (Deadman)",
+      "version": "Factions",
+      "combat_level": 445,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 300,
+      "defence": 100,
+      "hitpoints": 1000,
+      "magic": 190,
+      "ranged": 350,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 225,
+        "magic": 225
+      },
+      "defence": {
+        "crush": 70,
+        "magic": -30,
+        "heavy": 70,
+        "standard": 70,
+        "light": 70,
+        "slash": 70,
+        "stab": 70
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 12,
+        "magic": 12
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 100,
+      "burn": null
+    },
+    "max_hit": [
+      "22"
+    ]
+  },
+  {
+    "info": {
       "id": 11756,
       "name": "Tumeken's Warden",
       "version": "Active",
@@ -136572,7 +142617,7 @@
     "info": {
       "id": 430,
       "name": "Turoth",
-      "version": "Level 83",
+      "version": "Baby",
       "combat_level": 83,
       "attack_speed": 4,
       "attack_styles": [
@@ -136628,7 +142673,7 @@
     "info": {
       "id": 429,
       "name": "Turoth",
-      "version": "Level 85",
+      "version": "Child",
       "combat_level": 85,
       "attack_speed": 4,
       "attack_styles": [
@@ -136682,10 +142727,10 @@
   },
   {
     "info": {
-      "id": 428,
+      "id": 427,
       "name": "Turoth",
-      "version": "Level 87",
-      "combat_level": 87,
+      "version": "Dad",
+      "combat_level": 89,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -136697,12 +142742,12 @@
       "weakness": null
     },
     "stats": {
-      "attack": 56,
-      "defence": 86,
-      "hitpoints": 79,
+      "attack": 58,
+      "defence": 88,
+      "hitpoints": 81,
       "magic": 1,
       "ranged": 1,
-      "strength": 86
+      "strength": 88
     },
     "bonuses": {
       "attack": {
@@ -136738,10 +142783,10 @@
   },
   {
     "info": {
-      "id": 427,
+      "id": 428,
       "name": "Turoth",
-      "version": "Level 89",
-      "combat_level": 89,
+      "version": "Mum",
+      "combat_level": 87,
       "attack_speed": 4,
       "attack_styles": [
         "Stab"
@@ -136753,12 +142798,12 @@
       "weakness": null
     },
     "stats": {
-      "attack": 58,
-      "defence": 88,
-      "hitpoints": 81,
+      "attack": 56,
+      "defence": 86,
+      "hitpoints": 79,
       "magic": 1,
       "ranged": 1,
-      "strength": 88
+      "strength": 86
     },
     "bonuses": {
       "attack": {
@@ -137822,6 +143867,246 @@
   },
   {
     "info": {
+      "id": 13661,
+      "name": "TzTok-Jad (Deadman)",
+      "version": "All-Stars",
+      "combat_level": 527,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Stab",
+        "Magic",
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 350,
+      "defence": 200,
+      "hitpoints": 1000,
+      "magic": 450,
+      "ranged": 450,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "78 (Melee)",
+      "108"
+    ]
+  },
+  {
+    "info": {
+      "id": 13661,
+      "name": "TzTok-Jad (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1758,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Stab",
+        "Magic",
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 640,
+      "defence": 200,
+      "hitpoints": 5000,
+      "magic": 750,
+      "ranged": 750,
+      "strength": 770
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "78 (Melee)",
+      "108"
+    ]
+  },
+  {
+    "info": {
+      "id": 13661,
+      "name": "TzTok-Jad (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 1527,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Stab",
+        "Magic",
+        "Ranged"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 350,
+      "defence": 200,
+      "hitpoints": 5000,
+      "magic": 450,
+      "ranged": 450,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "78 (Melee)",
+      "108"
+    ]
+  },
+  {
+    "info": {
+      "id": 15557,
+      "name": "TzTok-Jad-Rek",
+      "version": null,
+      "combat_level": 186,
+      "attack_speed": 8,
+      "attack_styles": [
+        "Stab",
+        "Magic",
+        "Ranged"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "water",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 160,
+      "defence": 25,
+      "hitpoints": 200,
+      "magic": 250,
+      "ranged": 250,
+      "strength": 240
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "25 (Melee)",
+      "?"
+    ]
+  },
+  {
+    "info": {
       "id": 4652,
       "name": "Ugthanki",
       "version": null,
@@ -138709,7 +144994,7 @@
         "undead"
       ],
       "weakness": {
-        "element": "fire",
+        "element": "earth",
         "severity": 50
       }
     },
@@ -138768,7 +145053,7 @@
         "undead"
       ],
       "weakness": {
-        "element": "fire",
+        "element": "earth",
         "severity": 50
       }
     },
@@ -139603,7 +145888,63 @@
     "info": {
       "id": 4436,
       "name": "Vampyre Juvenile",
-      "version": "Burgh de Rott/Crombwick Manor",
+      "version": "Burgh de Rott and Crombwick Manor",
+      "combat_level": 45,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": [
+        "vampyre1"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 40,
+      "defence": 30,
+      "hitpoints": 60,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 30
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "4"
+    ]
+  },
+  {
+    "info": {
+      "id": 9731,
+      "name": "Vampyre Juvenile",
+      "version": "Darkmeyer",
       "combat_level": 45,
       "attack_speed": 4,
       "attack_styles": [
@@ -139659,7 +146000,7 @@
     "info": {
       "id": 3692,
       "name": "Vampyre Juvenile",
-      "version": "Meiyerditch/Darkmeyer",
+      "version": "Meiyerditch",
       "combat_level": 45,
       "attack_speed": 4,
       "attack_styles": [
@@ -139713,9 +146054,65 @@
   },
   {
     "info": {
+      "id": 9614,
+      "name": "Vampyre Juvinate",
+      "version": "Level 119 (Sins of the Father)",
+      "combat_level": 119,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": [
+        "vampyre2"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 127,
+      "defence": 65,
+      "hitpoints": 150,
+      "magic": 50,
+      "ranged": 50,
+      "strength": 76
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "9"
+    ]
+  },
+  {
+    "info": {
       "id": 5636,
       "name": "Vampyre Juvinate",
-      "version": "Level 119",
+      "version": "Level 119 (Temple Trekking)",
       "combat_level": 119,
       "attack_speed": 4,
       "attack_styles": [
@@ -139771,7 +146168,7 @@
     "info": {
       "id": 4443,
       "name": "Vampyre Juvinate",
-      "version": "Level 50",
+      "version": "Level 50 (In Aid of the Myreque)",
       "combat_level": 50,
       "attack_speed": 4,
       "attack_styles": [
@@ -139827,7 +146224,7 @@
     "info": {
       "id": 4427,
       "name": "Vampyre Juvinate",
-      "version": "Level 54",
+      "version": "Level 54 (Burgh de Rott)",
       "combat_level": 54,
       "attack_speed": 4,
       "attack_styles": [
@@ -139881,9 +146278,65 @@
   },
   {
     "info": {
-      "id": 3690,
+      "id": 9727,
       "name": "Vampyre Juvinate",
-      "version": "Level 54 (Meiyerditch/Darkmeyer)",
+      "version": "Level 54 (Darkmeyer)",
+      "combat_level": 54,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": [
+        "vampyre2"
+      ],
+      "weakness": null
+    },
+    "stats": {
+      "attack": 40,
+      "defence": 30,
+      "hitpoints": 85,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 40
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "5"
+    ]
+  },
+  {
+    "info": {
+      "id": 3694,
+      "name": "Vampyre Juvinate",
+      "version": "Level 54 (Meiyerditch)",
       "combat_level": 54,
       "attack_speed": 4,
       "attack_styles": [
@@ -139939,7 +146392,7 @@
     "info": {
       "id": 5634,
       "name": "Vampyre Juvinate",
-      "version": "Level 59",
+      "version": "Level 59 (Temple Trekking)",
       "combat_level": 59,
       "attack_speed": 4,
       "attack_styles": [
@@ -139995,7 +146448,7 @@
     "info": {
       "id": 4442,
       "name": "Vampyre Juvinate",
-      "version": "Level 75",
+      "version": "Level 75 (In Aid of the Myreque)",
       "combat_level": 75,
       "attack_speed": 4,
       "attack_styles": [
@@ -140051,7 +146504,7 @@
     "info": {
       "id": 5635,
       "name": "Vampyre Juvinate",
-      "version": "Level 90",
+      "version": "Level 90 (Temple Trekking)",
       "combat_level": 90,
       "attack_speed": 4,
       "attack_styles": [
@@ -140107,8 +146560,8 @@
     "info": {
       "id": 15212,
       "name": "Vampyre kraken",
-      "version": "In combat",
-      "combat_level": 189,
+      "version": null,
+      "combat_level": 211,
       "attack_speed": 5,
       "attack_styles": [
         "Magic"
@@ -140123,7 +146576,7 @@
     "stats": {
       "attack": 1,
       "defence": 115,
-      "hitpoints": 225,
+      "hitpoints": 311,
       "magic": 215,
       "ranged": 1,
       "strength": 1
@@ -140612,7 +147065,7 @@
     "info": {
       "id": 13656,
       "name": "Vardorvis (Deadman)",
-      "version": null,
+      "version": "All-Stars",
       "combat_level": 296,
       "attack_speed": 6,
       "attack_styles": [
@@ -140626,6 +147079,117 @@
       "attack": 200,
       "defence": 100,
       "hitpoints": 500,
+      "magic": 300,
+      "ranged": 0,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 85,
+        "magic": 400,
+        "heavy": 300,
+        "standard": 300,
+        "light": 300,
+        "slash": 65,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "30"
+    ]
+  },
+  {
+    "info": {
+      "id": 13656,
+      "name": "Vardorvis (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 777,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 35
+      }
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 25,
+      "hitpoints": 2500,
+      "magic": 300,
+      "ranged": 0,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 200,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 85,
+        "magic": 400,
+        "heavy": 300,
+        "standard": 300,
+        "light": 300,
+        "slash": 65,
+        "stab": 200
+      },
+      "strength": {
+        "melee": 10,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "30"
+    ]
+  },
+  {
+    "info": {
+      "id": 13656,
+      "name": "Vardorvis (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 558,
+      "attack_speed": 6,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 150,
+      "hitpoints": 1500,
       "magic": 300,
       "ranged": 0,
       "strength": 250
@@ -140774,7 +147338,8 @@
       "burn": null
     },
     "max_hit": [
-      "32-43 (Melee)"
+      "32-43 (Melee)",
+      "35 (axes)"
     ]
   },
   {
@@ -140831,7 +147396,8 @@
       "burn": null
     },
     "max_hit": [
-      "30-37 (Melee)"
+      "30-37 (Melee)",
+      "?? (axes)"
     ]
   },
   {
@@ -140946,6 +147512,60 @@
     },
     "max_hit": [
       "Varies"
+    ]
+  },
+  {
+    "info": {
+      "id": 15576,
+      "name": "Veiled kraken",
+      "version": null,
+      "combat_level": 210,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 5,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 115,
+      "hitpoints": 225,
+      "magic": 100,
+      "ranged": 1,
+      "strength": 185
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 325,
+        "heavy": 0,
+        "standard": 325,
+        "light": 325,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 15
+    },
+    "immunities": {
+      "poison": false,
+      "venom": true,
+      "freeze": 0,
+      "burn": "Strong"
+    },
+    "max_hit": [
+      "19"
     ]
   },
   {
@@ -142213,6 +148833,174 @@
     },
     "max_hit": [
       "19"
+    ]
+  },
+  {
+    "info": {
+      "id": 12457,
+      "name": "Vitreous warped Jelly (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 908,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 50,
+      "hitpoints": 3000,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "19"
+    ]
+  },
+  {
+    "info": {
+      "id": 12457,
+      "name": "Vitreous warped Jelly (Deadman)",
+      "version": "Apocalypse",
+      "combat_level": 333,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 250,
+      "hitpoints": 500,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "19"
+    ]
+  },
+  {
+    "info": {
+      "id": 12457,
+      "name": "Vitreous warped Jelly (Deadman)",
+      "version": "Armageddon",
+      "combat_level": 408,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 3,
+      "attributes": null,
+      "weakness": {
+        "element": "earth",
+        "severity": 30
+      }
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 50,
+      "hitpoints": 1000,
+      "magic": 180,
+      "ranged": 1,
+      "strength": 250
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "26"
     ]
   },
   {
@@ -144246,7 +151034,7 @@
     "info": {
       "id": 3260,
       "name": "Warrior (Thieving)",
-      "version": "Blond",
+      "version": "Blonde",
       "combat_level": 24,
       "attack_speed": 4,
       "attack_styles": [
@@ -149663,6 +156451,126 @@
   },
   {
     "info": {
+      "id": 15555,
+      "name": "Yama (Deadman)",
+      "version": "Annihilation",
+      "combat_level": 1024,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 5,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 320,
+      "defence": 225,
+      "hitpoints": 3000,
+      "magic": 250,
+      "ranged": 210,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 50,
+        "ranged": 100,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 333,
+        "magic": 60,
+        "heavy": 333,
+        "standard": 200,
+        "light": 333,
+        "slash": 80,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 15,
+        "ranged": 80,
+        "magic": 65
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "44 (Melee)",
+      "60 (Meteor)"
+    ]
+  },
+  {
+    "info": {
+      "id": 15555,
+      "name": "Yama (Deadman)",
+      "version": "Factions",
+      "combat_level": 899,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 5,
+      "attributes": [
+        "demon"
+      ],
+      "weakness": {
+        "element": "water",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 320,
+      "defence": 225,
+      "hitpoints": 2500,
+      "magic": 250,
+      "ranged": 210,
+      "strength": 350
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 50,
+        "ranged": 100,
+        "magic": 100
+      },
+      "defence": {
+        "crush": 333,
+        "magic": 60,
+        "heavy": 333,
+        "standard": 200,
+        "light": 333,
+        "slash": 80,
+        "stab": 100
+      },
+      "strength": {
+        "melee": 15,
+        "ranged": 80,
+        "magic": 65
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "44 (Melee)",
+      "60 (Meteor)"
+    ]
+  },
+  {
+    "info": {
       "id": 14176,
       "name": "Yama",
       "version": "Normal",
@@ -150829,6 +157737,452 @@
   },
   {
     "info": {
+      "id": 15237,
+      "name": "Zemouregal (Deadman)",
+      "version": "Breach",
+      "combat_level": 984,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 125,
+      "hitpoints": 2500,
+      "magic": 255,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 30,
+        "magic": 255,
+        "heavy": 15,
+        "standard": 15,
+        "light": 15,
+        "slash": 30,
+        "stab": 30
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "23+"
+    ]
+  },
+  {
+    "info": {
+      "id": 15564,
+      "name": "Zemouregal (Deadman)",
+      "version": "Deadman's chest",
+      "combat_level": 322,
+      "attack_speed": 7,
+      "attack_styles": [
+        "Magic"
+      ],
+      "size": 2,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 1,
+      "defence": 125,
+      "hitpoints": 500,
+      "magic": 255,
+      "ranged": 1,
+      "strength": 1
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 30,
+        "magic": 255,
+        "heavy": 15,
+        "standard": 15,
+        "light": 15,
+        "slash": 30,
+        "stab": 30
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "23+"
+    ]
+  },
+  {
+    "info": {
+      "id": 15562,
+      "name": "Zemouregal Summon",
+      "version": "Fremennik",
+      "combat_level": 151,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 50,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 15563,
+      "name": "Zemouregal Summon",
+      "version": "Khazard",
+      "combat_level": 163,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": null
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 100,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": true,
+      "venom": true,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 15558,
+      "name": "Zemouregal Summon",
+      "version": "Mummy",
+      "combat_level": 163,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 150,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 15561,
+      "name": "Zemouregal Summon",
+      "version": "Pirate",
+      "combat_level": 90,
+      "attack_speed": 5,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 75,
+      "defence": 100,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 100
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "11"
+    ]
+  },
+  {
+    "info": {
+      "id": 15559,
+      "name": "Zemouregal Summon",
+      "version": "Shade",
+      "combat_level": 141,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Crush"
+      ],
+      "size": 1,
+      "attributes": [
+        "spectral"
+      ],
+      "weakness": {
+        "element": "air",
+        "severity": 40
+      }
+    },
+    "stats": {
+      "attack": 250,
+      "defence": 10,
+      "hitpoints": 35,
+      "magic": 50,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": -3
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
+      "id": 15560,
+      "name": "Zemouregal Summon",
+      "version": "Undead One",
+      "combat_level": 147,
+      "attack_speed": 4,
+      "attack_styles": [
+        "Slash"
+      ],
+      "size": 1,
+      "attributes": null,
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
+    },
+    "stats": {
+      "attack": 200,
+      "defence": 100,
+      "hitpoints": 35,
+      "magic": 1,
+      "ranged": 1,
+      "strength": 150
+    },
+    "bonuses": {
+      "attack": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "defence": {
+        "crush": 0,
+        "magic": 0,
+        "heavy": 0,
+        "standard": 0,
+        "light": 0,
+        "slash": 0,
+        "stab": 0
+      },
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "flat_armour": 0
+    },
+    "immunities": {
+      "poison": false,
+      "venom": false,
+      "freeze": 0,
+      "burn": null
+    },
+    "max_hit": [
+      "16"
+    ]
+  },
+  {
+    "info": {
       "id": 866,
       "name": "Zogre",
       "version": null,
@@ -150951,7 +158305,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 19,
@@ -151007,7 +158364,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 19,
@@ -151063,7 +158423,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 19,
@@ -151119,7 +158482,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 19,
@@ -151175,7 +158541,10 @@
       "attributes": [
         "undead"
       ],
-      "weakness": null
+      "weakness": {
+        "element": "fire",
+        "severity": 50
+      }
     },
     "stats": {
       "attack": 19,
