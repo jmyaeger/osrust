@@ -999,7 +999,7 @@ fn apply_limiters(
 
     // Subtract flat armour from hitsplat, with a minimum of 1 on an accurate hit
 
-    if monster.bonuses.flat_armour > 0 {
+    if monster.bonuses.flat_armour > 0 && player.combat_type() != CombatType::Magic {
         dist = dist.transform(
             &flat_add_transformer(-monster.bonuses.flat_armour, 1),
             &TransformOpts {

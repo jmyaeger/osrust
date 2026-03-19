@@ -74,7 +74,9 @@ impl Hit {
     ) {
         self.apply_berserker_necklace(player);
         self.damage = max(self.damage, 1);
-        self.apply_flat_armour(monster);
+        if player.combat_type() != CombatType::Magic {
+            self.apply_flat_armour(monster);
+        }
         self.apply_limiters(rng, limiter);
     }
 
