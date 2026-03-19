@@ -161,15 +161,15 @@ fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
     let inquisitor_boost = inquisitor_boost(player);
     let obsidian_boost = obsidian_boost(player);
 
-    let keris_penalty = if player.is_wearing("Keris partisan of amascut", None)
+    let keris_penalties = if player.is_wearing("Keris partisan of amascut", None)
         && !constants::TOA_MONSTERS.contains(&monster.info.id.unwrap_or(0))
     {
-        -22
+        (-50, -22)
     } else {
-        0
+        (0, 0)
     };
 
-    let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee + keris_penalty);
+    let base_max_hit = calc_max_hit(eff_str, player.bonuses.strength.melee + keris_penalties.1);
 
     // Obsidian bonus is additive based on base max hit (verified in-game)
     let scaled_max_hit =
@@ -181,7 +181,10 @@ fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         (CombatType::Crush, player.bonuses.attack.crush),
     ];
 
-    for &(combat_type, bonus) in &combat_types {
+    for &(combat_type, mut bonus) in &combat_types {
+        if combat_type == CombatType::Stab {
+            bonus -= keris_penalties.0;
+        }
         let base_att_roll = calc_roll(eff_att, bonus);
         let mut att_roll = gear_bonus.multiply_to_int(base_att_roll)
             + obsidian_boost.multiply_to_int(base_att_roll);

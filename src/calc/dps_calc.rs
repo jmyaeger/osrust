@@ -908,7 +908,10 @@ fn apply_limiters(
     // TODO: Implement updated Efaritay's aid here once wiki calc does
 
     // Ice demon takes 1/3 unless using a fire spell
-    if monster.info.name.contains("Ice demon") && !player.is_using_fire_spell() {
+    if monster.info.name.contains("Ice demon")
+        && !player.is_using_fire_spell()
+        && !player.is_using_demonbane()
+    {
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 

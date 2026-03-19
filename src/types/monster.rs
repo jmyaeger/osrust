@@ -916,7 +916,7 @@ impl Monster {
             && player.gear.weapon.attack_range < 2
             && (constants::IMMUNE_TO_NON_HALBERD_MELEE_DAMAGE_MONSTERS
                 .contains(&self.info.id.unwrap_or(0))
-                || self.is_flying())
+                || (self.is_flying() && self.info.name.as_str() != "Vespula"))
         {
             return true;
         }
