@@ -33,10 +33,11 @@ fn get_normal_accuracy(
         let att_roll_factor = match &player.gear.weapon.name as &str {
             "Saradomin godsword" | "Bandos godsword" | "Zamorak godsword" | "Armadyl godsword"
             | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword"
-            | "Brine sabre" | "Barrelchest anchor" => Fraction::new(2, 1),
-            "Accursed sceptre" | "Accursed sceptre (a)" | "Volatile nightmare staff" => {
-                Fraction::new(3, 2)
-            }
+            | "Brine sabre" | "Barrelchest anchor" | "Eye of ayak" => Fraction::new(2, 1),
+            "Accursed sceptre"
+            | "Accursed sceptre (a)"
+            | "Volatile nightmare staff"
+            | "Arkan blade" => Fraction::new(3, 2),
             "Dragon dagger" => Fraction::new(115, 100),
             "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
                 Fraction::new(5, 4)
@@ -46,7 +47,6 @@ fn get_normal_accuracy(
             }
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
             "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
-            "Eye of ayak" => Fraction::new(2, 1),
             _ => Fraction::new(1, 1),
         }
         .unwrap();
@@ -211,6 +211,9 @@ fn get_dot_expected(
         } else if player.is_wearing("Ancient godsword", None) {
             let accuracy = get_hit_chance(player, monster, true)?;
             Ok(accuracy * 25.0)
+        } else if player.is_wearing("Arkan blade", None) {
+            let accuracy = get_hit_chance(player, monster, true)?;
+            Ok(accuracy * 10.0)
         } else {
             Ok(0.0)
         }
@@ -799,7 +802,8 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         | "Toxic blowpipe"
         | "Dragon mace"
         | "Accursed sceptre"
-        | "Accursed sceptre (a)" => (0, base_max_hit * 3 / 2),
+        | "Accursed sceptre (a)"
+        | "Arkan blade" => (0, base_max_hit * 3 / 2),
         "Voidwaker" => (base_max_hit / 2, base_max_hit * 3 / 2),
         "Dragon dagger" => (0, base_max_hit * 23 / 20),
         "Abyssal dagger" => (0, base_max_hit * 17 / 20),

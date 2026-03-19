@@ -465,7 +465,7 @@ pub const STAB_SPEC_WEAPONS: [&str; 5] = [
     "Dragon sword",
 ];
 
-pub const SLASH_SPEC_WEAPONS: [&str; 13] = [
+pub const SLASH_SPEC_WEAPONS: [&str; 14] = [
     "Ancient godsword",
     "Bandos godsword",
     "Armadyl godsword",
@@ -479,6 +479,7 @@ pub const SLASH_SPEC_WEAPONS: [&str; 13] = [
     "Abyssal dagger",
     "Dragon claws",
     "Saradomin sword",
+    "Arkan blade",
 ];
 
 pub const CRUSH_SPEC_WEAPONS: [&str; 3] = ["Dinh's bulwark", "Ancient mace", "Dragon mace"];
@@ -699,7 +700,7 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
 pub const EAT_DELAY: u32 = 3;
 
-pub const SPEC_COSTS: [(&str, u8); 72] = [
+pub const SPEC_COSTS: [(&str, u8); 73] = [
     ("Ancient godsword", 50),
     ("Eldritch nightmare staff", 55),
     ("Keris partisan of the sun", 75),
@@ -772,6 +773,7 @@ pub const SPEC_COSTS: [(&str, u8); 72] = [
     ("Brine sabre", 75),
     ("Crimson bludgeon", 50),
     ("Eye of ayak", 50),
+    ("Arkan blade", 30),
 ];
 
 pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =

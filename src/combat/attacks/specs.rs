@@ -1739,6 +1739,35 @@ pub fn eye_of_ayak_spec(
     hit
 }
 
+pub fn arkan_blade_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut SmallRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let mut info = AttackInfo::new(player, monster);
+
+    // Boost accuracy and damage by 50%
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+    info.max_hit = info.max_hit * 3 / 2;
+
+    // Spec rolls against slash defence
+    info.max_def_roll = monster.def_rolls.get(CombatType::Slash);
+
+    let mut hit = base_attack(&info, rng, false);
+
+    if hit.success {
+        // Apply a strong burn stack
+        if !monster.is_immune_to_strong_burn() {
+            monster.add_burn_stack(10);
+        }
+
+        hit.apply_transforms(player, monster, rng, limiter);
+    }
+
+    hit
+}
+
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
