@@ -619,7 +619,8 @@ impl Monster {
 
     pub fn scale_toa(&mut self) {
         // Scale the HP and defence rolls based on the toa_level field of the monster
-        if constants::TOA_MONSTERS.contains(&self.info.id.unwrap_or(0)) {
+        let id = &self.info.id.unwrap_or(0);
+        if constants::TOA_MONSTERS.contains(id) && !constants::KEPHRI_OVERLORD_IDS.contains(id) {
             self.scale_toa_hp();
             self.scale_toa_defence();
         }
