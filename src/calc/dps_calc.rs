@@ -211,7 +211,7 @@ fn get_dot_expected(
         } else if player.is_wearing("Ancient godsword", None) {
             let accuracy = get_hit_chance(player, monster, true)?;
             Ok(accuracy * 25.0)
-        } else if player.is_wearing("Arkan blade", None) {
+        } else if player.is_wearing("Arkan blade", None) && !monster.is_immune_to_strong_burn() {
             let accuracy = get_hit_chance(player, monster, true)?;
             Ok(accuracy * 10.0)
         } else {
@@ -237,6 +237,10 @@ fn get_dot_max(player: &Player, monster: &Monster, using_spec: bool) -> u32 {
 }
 
 fn burning_claw_dot(player: &Player, monster: &Monster) -> Result<f64, DpsCalcError> {
+    if monster.is_immune_to_normal_burn() {
+        return Ok(0.0);
+    }
+
     let mut dot = 0.0;
     let accuracy = get_hit_chance(player, monster, true)?;
     for acc_roll in 0..3 {
