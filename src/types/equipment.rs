@@ -608,7 +608,7 @@ impl Armor {
     }
 
     pub fn is_bolt(&self) -> bool {
-        self.name.contains("bolts")
+        self.name.to_lowercase().contains("bolt")
     }
 
     pub fn is_arrow(&self) -> bool {

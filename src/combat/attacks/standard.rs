@@ -141,8 +141,10 @@ pub fn standard_attack(
         hit.apply_transforms(player, monster, rng, limiter);
     }
 
-    // Reset any attack speed changes (e.g., eye of ayak spec)
-    Rc::make_mut(&mut player.gear).weapon.speed = player.gear.weapon.base_speed;
+    // Reset any attack speed changes from eye of ayak spec
+    if player.is_wearing("Eye of ayak", None) {
+        player.set_active_style(player.attrs.active_style);
+    }
 
     hit
 }

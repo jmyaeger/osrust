@@ -954,6 +954,8 @@ pub fn full_karils_aotd_player() -> Player {
     player.equip("Karil's leathertop", None).unwrap();
     player.equip("Karil's leatherskirt", None).unwrap();
     player.equip("Karil's crossbow", None).unwrap();
+    player.unequip_slot(&GearSlot::Ammo);
+    player.equip("Bolt rack", None).unwrap();
     player.equip("Amulet of the damned", Some("Full")).unwrap();
     player.update_set_effects();
     player.update_bonuses();
