@@ -7,7 +7,7 @@ use osrs::sims::graardor::{GraardorConfig, GraardorFight, GraardorMethod};
 use osrs::sims::hunleff::{AttackStrategy, HunllefConfig, HunllefEatStrategy, HunllefFight};
 use osrs::sims::single_way::{SingleWayConfig, SingleWayFight};
 use osrs::sims::vardorvis::{VardorvisConfig, VardorvisEatStrategy, VardorvisFight};
-use osrs::types::equipment::CombatStyle;
+use osrs::types::equipment::{CombatStyle, GearSlot};
 use osrs::types::monster::Monster;
 use osrs::types::player::{GearSwitch, Player, SwitchType};
 use osrs::types::potions::Potion;
@@ -35,13 +35,13 @@ fn main() {
 
 #[allow(unused)]
 fn simulate_single_way() {
-    let mut player = loadouts::max_melee_player();
-    player.equip("Avernic treads (max)", None).unwrap();
+    let mut player = loadouts::full_eclipse_player();
+    // player.equip("Avernic treads (max)", None).unwrap();
     // player.equip("Dragon hunter lance", None).unwrap();
     // player.equip("Slayer helmet (i)", None).unwrap();
     // player.equip("Inquisitor's hauberk", None).unwrap();
     // player.equip("Inquisitor's plateskirt", None).unwrap();
-    player.equip("Soulreaper axe", None).unwrap();
+    // player.equip("Soulreaper axe", None).unwrap();
 
     // player.set_active_style(CombatStyle::Swipe);
     // player.equip("Amulet of torture", None).unwrap();
@@ -56,11 +56,12 @@ fn simulate_single_way() {
     // player.equip("Lightbearer", None).unwrap();
     // player.add_potion(Potion::OverloadPlus);
 
-    player.update_bonuses();
-    player.update_set_effects();
-    player.set_active_style(CombatStyle::Hack);
+    // player.update_bonuses();
+    // player.update_set_effects();
+    // player.set_active_style(CombatStyle::Hack);
 
-    let mut monster = Monster::new("Dark beast", None).expect("Error creating monster.");
+    let mut monster =
+        Monster::new("Great Olm", Some("Head (Normal)")).expect("Error creating monster.");
 
     // let single_shield_hp = monster.stats.hitpoints.base;
     // monster.stats.hitpoints = Stat::new(single_shield_hp * 3, None);
@@ -72,7 +73,7 @@ fn simulate_single_way() {
 
     let config = SingleWayConfig {
         thralls: None,
-        remove_final_attack_delay: false,
+        remove_final_attack_delay: true,
         reset_soulreaper_stacks: Some(0),
     };
 

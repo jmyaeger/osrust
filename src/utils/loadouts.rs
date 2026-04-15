@@ -1,4 +1,4 @@
-use crate::types::equipment::CombatStyle;
+use crate::types::equipment::{CombatStyle, Gear};
 use crate::types::player::Player;
 use crate::types::potions::Potion;
 use crate::types::prayers::Prayer;
@@ -92,4 +92,28 @@ pub fn bowfa_crystal_player() -> Player {
     player.update_set_effects();
 
     player
+}
+
+pub fn full_eclipse_player() -> Player {
+    let gear = Gear::builder()
+        .head("Eclipse moon helm", None)
+        .neck("Amulet of fury", None)
+        .body("Eclipse moon chestplate", None)
+        .legs("Eclipse moon tassets", None)
+        .cape("Dizana's quiver", Some("Uncharged"))
+        .feet("Avernic treads (max)", None)
+        .ring("Ultor ring", None)
+        .hands("Barrows gloves", None)
+        .weapon("Eclipse atlatl", None)
+        .ammo("Atlatl dart", None)
+        .build()
+        .unwrap();
+    Player::builder()
+        .gear(gear)
+        .active_style(CombatStyle::Rapid)
+        .prayer(Prayer::Rigour)
+        .potion(Potion::SuperCombat)
+        .potion(Potion::Ranging)
+        .build()
+        .unwrap()
 }

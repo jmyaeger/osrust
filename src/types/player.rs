@@ -376,8 +376,7 @@ impl Default for PlayerState {
     }
 }
 
-#[allow(unpredictable_function_pointer_comparisons)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Player {
     pub stats: PlayerStats,
     pub gear: Rc<Gear>,
