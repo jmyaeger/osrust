@@ -12,9 +12,22 @@ use crate::utils::logging::MonsterFightId;
 use rand::Rng;
 use serde::{Deserialize, de::Error};
 use std::cmp::{max, min};
+use std::sync::LazyLock;
 use strum_macros::Display;
 
 const MONSTER_JSON_STR: &str = include_str!("../databases/monsters.json");
+static MONSTERS: LazyLock<Vec<Monster>> = LazyLock::new(|| {
+    let mut monsters: Vec<Monster> =
+        serde_json::from_str(MONSTER_JSON_STR).expect("Bundled monster JSON is invalid");
+    for monster in &mut monsters {
+        monster.finish_loading();
+    }
+    monsters
+});
+
+pub fn all_monsters() -> &'static [Monster] {
+    &MONSTERS
+}
 
 // Enum for combat stats
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
@@ -473,6 +486,7 @@ impl Monster {
             .into_iter()
             .find(|m| m.info.name == name && m.info.version == string_version)
             .ok_or(MonsterError::MonsterNotFound(name.to_string()))?;
+
         // Set defence level floor
         monster.set_defence_floor();
 
@@ -508,8 +522,49 @@ impl Monster {
         Ok(monster)
     }
 
+    /// Do the post-init processing that `from_json_str` does (for cases where the Monster is
+    /// loaded from a cached Vec<Monster> instead of a JSON string)
+    fn finish_loading(&mut self) {
+        // Set defence level floor
+        self.set_defence_floor();
+
+        // Set base magic def bonus (to allow it to be drained by the eye of ayak)
+        self.bonuses.defence.magic_base = self.bonuses.defence.magic;
+
+        // Calculate base defence rolls and copy to live defence rolls
+        self.base_def_rolls = rolls::monster_def_rolls(self);
+        self.def_rolls.clone_from(&self.base_def_rolls);
+
+        // Calculate base attack rolls and copy to live attack rolls
+        self.base_att_rolls = rolls::monster_att_rolls(self);
+        self.att_rolls.clone_from(&self.base_att_rolls);
+
+        if let (Some(max_hits), Some(attack_styles)) =
+            (&mut self.max_hits, &self.info.attack_styles)
+        {
+            if max_hits.len() == 1 && attack_styles.len() == 1 {
+                max_hits[0].style = attack_styles[0];
+            } else {
+                for hit in max_hits.iter_mut() {
+                    if hit.style == AttackType::Melee
+                        && let Some(&melee_style) = attack_styles.iter().find(|&x| {
+                            matches!(x, AttackType::Stab | AttackType::Slash | AttackType::Crush)
+                        })
+                    {
+                        hit.style = melee_style;
+                    }
+                }
+            }
+        }
+    }
+
     pub fn new(name: &str, version: Option<&str>) -> Result<Monster, MonsterError> {
-        Self::from_json_str(name, version, MONSTER_JSON_STR)
+        let version = version.map(ToString::to_string);
+        all_monsters()
+            .iter()
+            .find(|m| m.info.name == name && m.info.version == version)
+            .cloned()
+            .ok_or(MonsterError::MonsterNotFound(name.to_string()))
     }
 
     pub fn name(&self) -> &str {

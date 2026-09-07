@@ -5,9 +5,18 @@ use std::any::Any;
 use std::collections::HashMap;
 use std::fmt;
 use std::string::ToString;
+use std::sync::LazyLock;
 use strum_macros::{Display, EnumIter};
 
 const EQUIPMENT_JSON_STR: &str = include_str!("../databases/equipment.json");
+
+static EQUIPMENT: LazyLock<Vec<EquipmentJson>> = LazyLock::new(|| {
+    serde_json::from_str(EQUIPMENT_JSON_STR).expect("Bundled equipment JSON is invalid.")
+});
+
+pub fn all_equipment() -> &'static [EquipmentJson] {
+    &EQUIPMENT
+}
 
 // Intermediate struct for JSON deserialization
 #[derive(Debug, Deserialize, PartialEq, Clone)]
@@ -511,9 +520,17 @@ impl EquipmentBonuses {
 // Equipment trait to provide common method for Armor and Weapon structs
 pub trait Equipment: Any {
     fn set_info(&mut self, item_name: &str, version: Option<&str>) -> Result<(), GearError> {
-        self.set_fields_from_json(EQUIPMENT_JSON_STR, item_name, version)
+        let version_string = version.map(ToString::to_string);
+        let entry = all_equipment()
+            .iter()
+            .find(|item| item.name == item_name && item.version == version_string)
+            .ok_or(GearError::EquipmentNotFound {
+                name: item_name.to_string(),
+                version: version_string,
+            })?;
+        self.set_from_entry(entry.clone())
     }
-
+    fn set_from_entry(&mut self, entry: EquipmentJson) -> Result<(), GearError>;
     fn set_fields_from_json(
         &mut self,
         json: &str,
@@ -555,6 +572,11 @@ impl Equipment for Armor {
 
         *self = matched_item.into_armor()?;
 
+        Ok(())
+    }
+
+    fn set_from_entry(&mut self, entry: EquipmentJson) -> Result<(), GearError> {
+        *self = entry.into_armor()?;
         Ok(())
     }
 
@@ -700,6 +722,11 @@ impl Equipment for Weapon {
 
         *self = weapon;
 
+        Ok(())
+    }
+
+    fn set_from_entry(&mut self, entry: EquipmentJson) -> Result<(), GearError> {
+        *self = entry.into_weapon()?;
         Ok(())
     }
 
