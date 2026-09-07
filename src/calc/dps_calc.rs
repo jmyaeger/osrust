@@ -17,7 +17,7 @@ use crate::types::equipment::{CombatStance, CombatType};
 use crate::types::monster::Monster;
 use crate::types::player::Player;
 use crate::types::spells::{Spell, StandardSpell};
-use crate::utils::math::{Fraction, lerp};
+use crate::utils::math::{Fraction, binomial_probability, lerp};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
@@ -592,6 +592,28 @@ pub fn get_distribution(
             } else {
                 dist = AttackDistribution::new(vec![first_hit, second_hit]);
             }
+        }
+    }
+
+    // Crimson kisten spec distribution
+    if player.is_wearing("Crimson kisten", None) && player.is_using_melee() && using_spec {
+        let mut hit_dist = HitDistribution::new(vec![]);
+        for successfull_rolls in 1..=4 {
+            let low = max_hit * (2 * successfull_rolls + 5) / 10;
+            let high = max_hit * (2 * successfull_rolls + 9) / 10;
+            let prob = binomial_probability(4, successfull_rolls, acc);
+            let chance_of_dmg = prob / (high - low + 1) as f64;
+            for dmg in low..=high {
+                hit_dist.add_hit(WeightedHit::new(
+                    chance_of_dmg,
+                    vec![Hitsplat::new(dmg, true)],
+                ));
+            }
+            hit_dist.add_hit(WeightedHit::new(
+                binomial_probability(4, 0, acc),
+                vec![Hitsplat::inaccurate()],
+            ));
+            dist = AttackDistribution::new(vec![hit_dist.flatten()]);
         }
     }
 

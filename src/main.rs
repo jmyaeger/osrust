@@ -89,11 +89,11 @@ fn simulate_single_way() {
 
     // let bp_spec_strategy: SpecStrategy<CoreCondition> = SpecStrategy::builder(&main_hand).build();
 
-    // player.equip("Crimson bludgeon", None).unwrap();
+    // player.equip("Crimson kisten", None).unwrap();
     // player.equip("Avernic defender", None).unwrap();
     // player.set_active_style(CombatStyle::Pummel);
     // let bludgeon_switch = GearSwitch::new(
-    //     SwitchType::Spec("Crimson bludgeon spec".into()),
+    //     SwitchType::Spec("Crimson kisten spec".into()),
     //     &player,
     //     &monster,
     // );

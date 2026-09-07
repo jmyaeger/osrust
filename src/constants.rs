@@ -488,7 +488,12 @@ pub const SLASH_SPEC_WEAPONS: [&str; 14] = [
     "Arkan blade",
 ];
 
-pub const CRUSH_SPEC_WEAPONS: [&str; 3] = ["Dinh's bulwark", "Ancient mace", "Dragon mace"];
+pub const CRUSH_SPEC_WEAPONS: [&str; 4] = [
+    "Dinh's bulwark",
+    "Ancient mace",
+    "Dragon mace",
+    "Crimson kisten",
+];
 
 pub const MAGIC_SPEC_WEAPONS: [&str; 2] = ["Saradomin's blessed sword", "Voidwaker"];
 
@@ -777,7 +782,7 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Zamorak godsword", 50),
     ("Soulreaper axe", 0),
     ("Brine sabre", 75),
-    ("Crimson bludgeon", 50),
+    ("Crimson kisten", 50),
     ("Eye of Ayak", 50),
     ("Arkan blade", 30),
     ("Rosewood blowpipe", 25),

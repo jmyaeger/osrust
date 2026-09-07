@@ -1,3 +1,4 @@
+use factorial::Factorial;
 use num::{FromPrimitive, Integer as _, ToPrimitive};
 use std::fmt;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
@@ -179,4 +180,18 @@ pub fn lerp(
     // Linear interpolation function
     target_start
         + (current - source_start) * (target_end - target_start) / (source_end - source_start)
+}
+
+fn binomial_coefficient(n: u32, k: u32) -> u32 {
+    if k > n {
+        return 0;
+    }
+    n.factorial() / (k.factorial() * (n - k).factorial())
+}
+
+pub fn binomial_probability(n: u32, k: u32, p: f64) -> f64 {
+    if p > 1.0 || p < 0.0 {
+        panic!("Error calculating binomial probability: p must be between 0.0-1.0.")
+    }
+    binomial_coefficient(n, k) as f64 * p.powi(k as i32) * (1.0 - p).powi(n as i32 - k as i32)
 }

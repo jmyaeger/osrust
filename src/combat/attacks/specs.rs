@@ -1707,7 +1707,7 @@ pub fn elder_maul_spec(
     }
 }
 
-pub fn crimson_bludgeon_spec(
+pub fn crimson_kisten_spec(
     player: &mut Player,
     monster: &mut Monster,
     rng: &mut SmallRng,
@@ -1715,17 +1715,13 @@ pub fn crimson_bludgeon_spec(
 ) -> Hit {
     let info = AttackInfo::new(player, monster);
     let mut successful_rolls = 0;
-    let def_roll = defence_roll(info.max_def_roll, rng);
+
+    // Re-rolls defense each time, per Mod Rice
     for _ in 0..4 {
-        if accuracy_roll(info.max_att_roll, rng) > def_roll {
+        if accuracy_roll(info.max_att_roll, rng) > defence_roll(info.max_def_roll, rng) {
             successful_rolls += 1;
         }
     }
-    // for _ in 0..4 {
-    //     if accuracy_roll(info.max_att_roll, rng) > defence_roll(info.max_def_roll, rng) {
-    //         successful_rolls += 1;
-    //     }
-    // }
 
     if successful_rolls == 0 {
         return Hit::inaccurate();
@@ -1735,10 +1731,7 @@ pub fn crimson_bludgeon_spec(
     let pct_high = 90 + successful_rolls * 20;
     let base_max = info.max_hit;
     let min_hit = base_max * pct_low / 100;
-    let mut max_hit = base_max * pct_high / 100;
-    if successful_rolls == 4 {
-        max_hit -= 1;
-    }
+    let max_hit = base_max * pct_high / 100;
 
     let damage = damage_roll(min_hit, max_hit, rng);
     let mut hit = Hit::accurate(damage);
@@ -1884,7 +1877,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Eclipse atlatl" => atlatl_spec,
         "Scorching bow" => scorching_bow_spec,
         "Elder maul" => elder_maul_spec,
-        "Crimson bludgeon" => crimson_bludgeon_spec,
+        "Crimson kisten" => crimson_kisten_spec,
         "Eye of Ayak" => eye_of_ayak_spec,
         "Rosewood blowpipe" => rosewood_bp_spec,
         "Arkan blade" => arkan_blade_spec,
