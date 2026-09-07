@@ -788,3 +788,36 @@ pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =
 
 pub const THRALL_ATTACK_SPEED: i32 = 4;
 pub const ECLIPSE_MOON_BURN_CHANCE: f64 = 0.2;
+
+pub const BOWS_THAT_USE_ARROWS: &[i32] = &[
+    11708, // Cursed goblin bow
+    23357, // Rain bow
+    841,   // Shortbow
+    839,   // Longbow
+    843,   // Oak shortbow
+    845,   // Oak longbow
+    4236,  // Signed oak bow
+    849,   // Willow shortbow
+    847,   // Willow longbow
+    10280, // Willow comp bow
+    853,   // Maple shortbow
+    851,   // Maple longbow
+    2883,  // Ogre bow
+    4827,  // Comp ogre bow
+    857,   // Yew shortbow
+    855,   // Yew longbow
+    10282, // Yew comp bow
+    28794, // Bone shortbow
+    6724,  // Seercull
+    861,   // Magic shortbow
+    12788, // Magic shortbow (i)
+    859,   // Magic longbow
+    10284, // Magic comp bow
+    11235, // Dark bow
+    27853, // Dark bow (bh)
+    12424, // 3rd age bow
+    27610, // Venator bow
+    27612, // Venator bow (uncharged)
+    20997, // Twisted bow
+    29591, // Scorching bow
+];

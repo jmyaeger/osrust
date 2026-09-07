@@ -492,13 +492,15 @@ impl AttackDistribution {
     }
 }
 
-pub fn flat_limit_transformer(minimum: u32, maximum: u32) -> impl HitTransformer {
+pub fn flat_limit_transformer(minimum: Option<u32>, maximum: Option<u32>) -> impl HitTransformer {
     // Hard cap the damage to a maximum or minimum value
     move |h| {
         HitDistribution::new(vec![WeightedHit::new(
             1.0,
             vec![Hitsplat::new(
-                h.damage.min(maximum).max(minimum),
+                h.damage
+                    .min(maximum.unwrap_or(u32::MAX))
+                    .max(minimum.unwrap_or(0)),
                 h.accurate,
             )],
         )])

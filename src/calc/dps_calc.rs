@@ -706,7 +706,7 @@ pub fn get_distribution(
         dist = AttackDistribution::new(vec![standard_hit_dist.clone(), standard_hit_dist.clone()]);
         if using_spec {
             dist = dist.transform(
-                &flat_limit_transformer(48, min_hit),
+                &flat_limit_transformer(Some(min_hit), Some(48)),
                 &TransformOpts::default(),
             );
         }
@@ -789,12 +789,22 @@ pub fn get_distribution(
         dist = dist.scale_damage(Fraction::new(numerator, 10000).unwrap());
     }
 
+    // Seeking arrows clamp ranged min hit to 3 on accurate hits
+    if player.is_using_ranged() && player.is_using_seeking_arrows() {
+        dist = dist.transform(
+            &flat_limit_transformer(Some(3), None),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        )
+    }
+
     // Accurate 0 -> 1 is either overwritten by ruby bolts or divided back down to 0
     if accurate_zero_applicable
         && (monster.name() != "Corporeal Beast" || player.is_using_corpbane_weapon())
     {
         dist = dist.transform(
-            &|h| HitDistribution::single(1.0, vec![Hitsplat::new(max(h.damage, 1), h.accurate)]),
+            &flat_limit_transformer(Some(1), None),
             &TransformOpts {
                 transform_inaccurate: false,
             },
@@ -990,7 +1000,10 @@ fn apply_limiters(
         if !player.is_using_vampyrebane(2) && player.is_wearing("Efaritay's aid", None) {
             dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
         } else if player.is_wearing_silver_weapon() {
-            dist = dist.transform(&flat_limit_transformer(0, 10), &TransformOpts::default());
+            dist = dist.transform(
+                &flat_limit_transformer(None, Some(10)),
+                &TransformOpts::default(),
+            );
         }
     }
 

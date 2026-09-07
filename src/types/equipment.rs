@@ -23,6 +23,7 @@ pub fn all_equipment() -> &'static [EquipmentJson] {
 pub struct EquipmentJson {
     pub name: String,
     pub version: Option<String>,
+    pub id: i32,
     pub slot: String,
     pub image: String,
     pub speed: Option<i32>,
@@ -59,6 +60,7 @@ impl EquipmentJson {
         let weapon = Weapon {
             name: self.name,
             version: self.version,
+            id: self.id,
             bonuses: self.bonuses,
             slot: GearSlot::Weapon,
             speed,
@@ -83,6 +85,7 @@ impl EquipmentJson {
         Ok(Armor {
             name: self.name,
             version: self.version,
+            id: self.id,
             bonuses: self.bonuses,
             slot: parse_gear_slot(self.slot)?,
             image: self.image,
@@ -548,6 +551,7 @@ pub trait Equipment: Any {
 pub struct Armor {
     pub name: String,
     pub version: Option<String>,
+    pub id: i32,
     pub bonuses: EquipmentBonuses,
     pub slot: GearSlot,
     pub image: String,
@@ -666,6 +670,7 @@ fn parse_gear_slot(slot: String) -> Result<GearSlot, GearError> {
 pub struct Weapon {
     pub name: String,
     pub version: Option<String>,
+    pub id: i32,
     pub bonuses: EquipmentBonuses,
     #[serde(skip)]
     pub slot: GearSlot, // Can skip deserializing because it's always a weapon
@@ -763,6 +768,7 @@ impl Default for Weapon {
         Weapon {
             name: String::from("Unarmed"),
             version: None,
+            id: 0,
             bonuses: EquipmentBonuses::default(),
             slot: GearSlot::Weapon,
             speed: 5,

@@ -1136,6 +1136,24 @@ impl Player {
         }
     }
 
+    pub fn is_using_normal_bow(&self) -> bool {
+        constants::BOWS_THAT_USE_ARROWS.contains(&self.gear.weapon.id)
+    }
+
+    pub fn is_using_seeking_arrows(&self) -> bool {
+        self.is_using_normal_bow()
+            && (self
+                .gear
+                .ammo
+                .as_ref()
+                .is_some_and(|ammo| ammo.name.contains("Seeking"))
+                || self
+                    .gear
+                    .second_ammo
+                    .as_ref()
+                    .is_some_and(|ammo| ammo.name.contains("Seeking")))
+    }
+
     pub fn set_spell(&mut self, spell: spells::Spell) -> Result<(), PlayerError> {
         if spell.required_level() > self.stats.magic.current {
             return Err(PlayerError::MagicLevelTooLow(spell));
