@@ -1066,7 +1066,11 @@ fn has_probabilistic_attack_speed(player: &Player) -> bool {
 
 // Get the player's expected attack speed from the attack distribution itself,
 // so probabilistic delays stay consistent with the TTK distribution.
-fn get_expected_attack_speed(dist: &AttackDistribution, player: &Player, using_spec: bool) -> f64 {
+pub fn get_expected_attack_speed(
+    dist: &AttackDistribution,
+    player: &Player,
+    using_spec: bool,
+) -> f64 {
     let delay_provider = get_weapon_delay_provider(player, using_spec);
     let mut dist = dist.clone();
 
