@@ -349,8 +349,8 @@ pub const NON_BOLT_OR_ARROW_AMMO: [(&str, Option<&str>); 21] = [
     ("Craw's bow", Some("Charged")),
     ("Crystal bow", Some("Active")),
     ("Webweaver bow", Some("Charged")),
-    ("Bow of faerdhinen", Some("Charged")),
-    ("Bow of faerdhinen (c)", None),
+    ("Bow of Faerdhinen", Some("Charged")),
+    ("Bow of Faerdhinen (c)", None),
     ("Swamp lizard", None),
     ("Orange salamander", None),
     ("Red salamander", None),
@@ -376,8 +376,8 @@ pub const USES_OWN_AMMO: [(&str, Option<&str>); 16] = [
     ("Crystal bow (attuned)", None),
     ("Crystal bow (perfected)", None),
     ("Webweaver bow", Some("Charged")),
-    ("Bow of faerdhinen", Some("Charged")),
-    ("Bow of faerdhinen (c)", None),
+    ("Bow of Faerdhinen", Some("Charged")),
+    ("Bow of Faerdhinen (c)", None),
 ];
 
 pub const OPAL_PROC_CHANCE: f64 = 0.05;
@@ -422,7 +422,7 @@ pub const SILVER_WEAPONS: [(&str, Option<&str>); 17] = [
     ("Silverlight", Some("Dyed")),
     ("Darklight", None),
     ("Arclight", None),
-    ("Rod of ivandis", None),
+    ("Rod of Ivandis", None),
     ("Wolfbane", None),
     ("Blisterwood flail", None),
     ("Blisterwood sickle", None),
@@ -619,8 +619,8 @@ pub const WILDY_STAVES: [(&str, Option<&str>); 4] = [
 
 pub const ELF_BOWS: [(&str, Option<&str>); 3] = [
     ("Crystal bow", Some("Active")),
-    ("Bow of faerdhinen", Some("Charged")),
-    ("Bow of faerdhinen (c)", None),
+    ("Bow of Faerdhinen", Some("Charged")),
+    ("Bow of Faerdhinen (c)", None),
 ];
 
 pub const SMOKE_STAVES: [(&str, Option<&str>); 3] = [
@@ -708,7 +708,7 @@ pub const EAT_DELAY: u32 = 3;
 
 pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Ancient godsword", 50),
-    ("Eldritch nightmare staff", 55),
+    ("Eldritch Nightmare staff", 55),
     ("Keris partisan of the sun", 75),
     ("Purging staff", 25),
     ("Toxic blowpipe", 50),
@@ -732,11 +732,11 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Dragon warhammer", 50),
     ("Elder maul", 50),
     ("Seercull", 100),
-    ("Staff of the dead", 100),
+    ("Staff of the Dead", 100),
     ("Toxic staff of the dead", 100),
-    ("Staff of light", 100),
-    ("Staff of balance", 100),
-    ("Tonalztics of ralos", 50),
+    ("Staff of Light", 100),
+    ("Staff of Balance", 100),
+    ("Tonalztics of Ralos", 50),
     ("Abyssal bludgeon", 50),
     ("Armadyl crossbow", 50),
     ("Armadyl godsword", 50),
@@ -759,7 +759,7 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Saradomin's blessed sword", 65),
     ("Soulflame horn", 25),
     ("Voidwaker", 50),
-    ("Volatile nightmare staff", 55),
+    ("Volatile Nightmare staff", 55),
     ("Zaryte crossbow", 75),
     ("Abyssal dagger", 25),
     ("Burning claws", 35),
@@ -778,7 +778,7 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Soulreaper axe", 0),
     ("Brine sabre", 75),
     ("Crimson bludgeon", 50),
-    ("Eye of ayak", 50),
+    ("Eye of Ayak", 50),
     ("Arkan blade", 30),
     ("Rosewood blowpipe", 25),
 ];

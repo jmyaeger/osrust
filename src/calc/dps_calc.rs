@@ -34,10 +34,10 @@ fn get_normal_accuracy(
         let att_roll_factor = match &player.gear.weapon.name as &str {
             "Saradomin godsword" | "Bandos godsword" | "Zamorak godsword" | "Armadyl godsword"
             | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword"
-            | "Brine sabre" | "Barrelchest anchor" | "Eye of ayak" => Fraction::new(2, 1),
+            | "Brine sabre" | "Barrelchest anchor" | "Eye of Ayak" => Fraction::new(2, 1),
             "Accursed sceptre"
             | "Accursed sceptre (a)"
-            | "Volatile nightmare staff"
+            | "Volatile Nightmare staff"
             | "Arkan blade"
             | "Granite hammer" => Fraction::new(3, 2),
             "Dragon dagger" => Fraction::new(115, 100),
@@ -492,7 +492,7 @@ pub fn get_distribution(
     // Karil's set effect + amulet of the damned distribution
     if player.is_using_ranged()
         && player.set_effects.full_karils
-        && player.is_wearing_any_version("Amulet of the damned")
+        && player.is_wearing_any_version("Amulet of the Damned")
     {
         let hits1 = standard_hit_dist.clone().scale_probability(0.75).hits;
         let hits2 = standard_hit_dist.clone().hits;
@@ -513,7 +513,7 @@ pub fn get_distribution(
     }
 
     // Scythe distribution
-    if player.is_using_melee() && player.is_wearing_any_version("Scythe of vitur") {
+    if player.is_using_melee() && player.is_wearing_any_version("Scythe of Vitur") {
         let mut hits: Vec<HitDistribution> = Vec::new();
 
         for i in 0..monster.info.size.clamp(1, 3) {
@@ -663,7 +663,7 @@ pub fn get_distribution(
     // Full Ahrim's + amulet of the damned distribution
     if player.is_using_magic()
         && player.set_effects.full_ahrims
-        && player.is_wearing_any_version("Amulet of the damned")
+        && player.is_wearing_any_version("Amulet of the Damned")
     {
         dist = dist.transform(
             &|h| {
@@ -695,7 +695,7 @@ pub fn get_distribution(
             ("Ivandis flail", _, _) => {
                 dist = dist.scale_damage(Fraction::new(6, 5).unwrap());
             }
-            ("Rod of ivandis", _, 1 | 2) | (_, true, 1) => {
+            ("Rod of Ivandis", _, 1 | 2) | (_, true, 1) => {
                 dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
             }
             (_, _, _) => {}
@@ -871,7 +871,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         }
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
-        "Eye of ayak" => (0, base_max_hit * 13 / 10),
+        "Eye of Ayak" => (0, base_max_hit * 13 / 10),
         _ => (0, base_max_hit),
     };
 
@@ -1053,7 +1053,7 @@ pub fn get_expected_damage(
 }
 
 fn get_attack_speed(player: &Player, using_spec: bool) -> u32 {
-    if using_spec && player.is_wearing("Eye of ayak", Some("Charged")) {
+    if using_spec && player.is_wearing("Eye of Ayak", Some("Charged")) {
         5
     } else {
         player.gear.weapon.speed as u32
@@ -1525,7 +1525,7 @@ mod tests {
         player.equip("Amulet of torture", None).unwrap();
         player.equip("Infernal cape", None).unwrap();
         player.equip("Rada's blessing 4", None).unwrap();
-        player.equip("Scythe of vitur", Some("Charged")).unwrap();
+        player.equip("Scythe of Vitur", Some("Charged")).unwrap();
         player.equip("Torva platebody", None).unwrap();
         player.equip("Torva platelegs", None).unwrap();
         player.equip("Ferocious gloves", None).unwrap();

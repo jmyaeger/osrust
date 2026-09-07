@@ -298,7 +298,7 @@ mod tests {
         player.add_prayer(Prayer::Rigour);
         player.add_potion(Potion::Ranging);
 
-        player.equip("Bow of faerdhinen (c)", None).unwrap();
+        player.equip("Bow of Faerdhinen (c)", None).unwrap();
         player.equip("Crystal helm", Some("Active")).unwrap();
         player.equip("Crystal body", Some("Active")).unwrap();
         player.equip("Crystal legs", Some("Active")).unwrap();

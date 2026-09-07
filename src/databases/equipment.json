@@ -561,11 +561,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age amulet",
+    "name": "3rd Age amulet",
     "id": 10344,
     "version": null,
     "slot": "neck",
-    "image": "3rd age amulet.png",
+    "image": "3rd Age amulet.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -594,11 +594,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age axe",
+    "name": "3rd Age axe",
     "id": 20011,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age axe.png",
+    "image": "3rd Age axe.png",
     "speed": 5,
     "category": "Axe",
     "bonuses": {
@@ -627,11 +627,11 @@
     "attack_range": 1
   },
   {
-    "name": "3rd age bow",
+    "name": "3rd Age bow",
     "id": 12424,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age bow.png",
+    "image": "3rd Age bow.png",
     "speed": 4,
     "category": "Bow",
     "bonuses": {
@@ -660,11 +660,11 @@
     "attack_range": 9
   },
   {
-    "name": "3rd age cloak",
+    "name": "3rd Age cloak",
     "id": 12437,
     "version": null,
     "slot": "cape",
-    "image": "3rd age cloak.png",
+    "image": "3rd Age cloak.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -693,11 +693,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age druidic cloak",
+    "name": "3rd Age druidic cloak",
     "id": 23345,
     "version": null,
     "slot": "cape",
-    "image": "3rd age druidic cloak.png",
+    "image": "3rd Age druidic cloak.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -726,11 +726,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age druidic robe bottoms",
+    "name": "3rd Age druidic robe bottoms",
     "id": 23339,
     "version": null,
     "slot": "legs",
-    "image": "3rd age druidic robe bottoms.png",
+    "image": "3rd Age druidic robe bottoms.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -759,11 +759,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age druidic robe top",
+    "name": "3rd Age druidic robe top",
     "id": 23336,
     "version": null,
     "slot": "body",
-    "image": "3rd age druidic robe top.png",
+    "image": "3rd Age druidic robe top.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -792,11 +792,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age druidic staff",
+    "name": "3rd Age druidic staff",
     "id": 23342,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age druidic staff.png",
+    "image": "3rd Age druidic staff.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -825,11 +825,11 @@
     "attack_range": 1
   },
   {
-    "name": "3rd age felling axe",
+    "name": "3rd Age felling axe",
     "id": 28226,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age felling axe.png",
+    "image": "3rd Age felling axe.png",
     "speed": 7,
     "category": "Axe",
     "bonuses": {
@@ -858,11 +858,11 @@
     "attack_range": 1
   },
   {
-    "name": "3rd age full helmet",
+    "name": "3rd Age full helmet",
     "id": 10350,
     "version": null,
     "slot": "head",
-    "image": "3rd age full helmet.png",
+    "image": "3rd Age full helmet.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -891,11 +891,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age kiteshield",
+    "name": "3rd Age kiteshield",
     "id": 10352,
     "version": null,
     "slot": "shield",
-    "image": "3rd age kiteshield.png",
+    "image": "3rd Age kiteshield.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -924,11 +924,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age longsword",
+    "name": "3rd Age longsword",
     "id": 12426,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age longsword.png",
+    "image": "3rd Age longsword.png",
     "speed": 5,
     "category": "2h Sword",
     "bonuses": {
@@ -957,11 +957,11 @@
     "attack_range": 1
   },
   {
-    "name": "3rd age mage hat",
+    "name": "3rd Age mage hat",
     "id": 10342,
     "version": null,
     "slot": "head",
-    "image": "3rd age mage hat.png",
+    "image": "3rd Age mage hat.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -990,11 +990,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age pickaxe",
+    "name": "3rd Age pickaxe",
     "id": 20014,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age pickaxe.png",
+    "image": "3rd Age pickaxe.png",
     "speed": 5,
     "category": "Pickaxe",
     "bonuses": {
@@ -1023,11 +1023,11 @@
     "attack_range": 1
   },
   {
-    "name": "3rd age platebody",
+    "name": "3rd Age platebody",
     "id": 10348,
     "version": null,
     "slot": "body",
-    "image": "3rd age platebody.png",
+    "image": "3rd Age platebody.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1056,11 +1056,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age platelegs",
+    "name": "3rd Age platelegs",
     "id": 10346,
     "version": null,
     "slot": "legs",
-    "image": "3rd age platelegs.png",
+    "image": "3rd Age platelegs.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1089,11 +1089,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age plateskirt",
+    "name": "3rd Age plateskirt",
     "id": 23242,
     "version": null,
     "slot": "legs",
-    "image": "3rd age plateskirt.png",
+    "image": "3rd Age plateskirt.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1122,11 +1122,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age range coif",
+    "name": "3rd Age range coif",
     "id": 10334,
     "version": null,
     "slot": "head",
-    "image": "3rd age range coif.png",
+    "image": "3rd Age range coif.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1155,11 +1155,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age range legs",
+    "name": "3rd Age range legs",
     "id": 10332,
     "version": null,
     "slot": "legs",
-    "image": "3rd age range legs.png",
+    "image": "3rd Age range legs.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1188,11 +1188,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age range top",
+    "name": "3rd Age range top",
     "id": 10330,
     "version": null,
     "slot": "body",
-    "image": "3rd age range top.png",
+    "image": "3rd Age range top.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1221,11 +1221,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age robe",
+    "name": "3rd Age robe",
     "id": 10340,
     "version": null,
     "slot": "legs",
-    "image": "3rd age robe.png",
+    "image": "3rd Age robe.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1254,11 +1254,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age robe top",
+    "name": "3rd Age robe top",
     "id": 10338,
     "version": null,
     "slot": "body",
-    "image": "3rd age robe top.png",
+    "image": "3rd Age robe top.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1287,11 +1287,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age vambraces",
+    "name": "3rd Age vambraces",
     "id": 10336,
     "version": null,
     "slot": "hands",
-    "image": "3rd age vambraces.png",
+    "image": "3rd Age vambraces.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -1320,11 +1320,11 @@
     "attack_range": null
   },
   {
-    "name": "3rd age wand",
+    "name": "3rd Age wand",
     "id": 12422,
     "version": null,
     "slot": "weapon",
-    "image": "3rd age wand.png",
+    "image": "3rd Age wand.png",
     "speed": 4,
     "category": "Staff",
     "bonuses": {
@@ -8283,6 +8283,39 @@
     "attack_range": null
   },
   {
+    "name": "Amulet of Nature",
+    "id": 6040,
+    "version": null,
+    "slot": "neck",
+    "image": "Amulet of Nature.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Amulet of accuracy",
     "id": 1478,
     "version": null,
@@ -8302,6 +8335,39 @@
         "crush": 4,
         "magic": 4,
         "ranged": 4
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Amulet of air",
+    "id": 34407,
+    "version": null,
+    "slot": "neck",
+    "image": "Amulet of air.png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 10,
+        "ranged": 0
       },
       "defence": {
         "stab": 0,
@@ -8514,6 +8580,39 @@
     "attack_range": null
   },
   {
+    "name": "Amulet of earth",
+    "id": 34419,
+    "version": null,
+    "slot": "neck",
+    "image": "Amulet of earth.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 10,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Amulet of eternal glory",
     "id": 19707,
     "version": null,
@@ -8542,6 +8641,39 @@
         "ranged": 3
       },
       "prayer": 3
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Amulet of fire",
+    "id": 34425,
+    "version": null,
+    "slot": "neck",
+    "image": "Amulet of fire.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 10,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
     },
     "is_two_handed": null,
     "attack_range": null
@@ -9141,39 +9273,6 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of nature",
-    "id": 6040,
-    "version": null,
-    "slot": "neck",
-    "image": "Amulet of nature.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
     "name": "Amulet of power",
     "id": 1731,
     "version": null,
@@ -9339,11 +9438,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the damned",
+    "name": "Amulet of the Damned",
     "id": 12851,
     "version": "Full",
     "slot": "neck",
-    "image": "Amulet of the damned (full).png",
+    "image": "Amulet of the Damned (full).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9372,11 +9471,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the damned",
+    "name": "Amulet of the Damned",
     "id": 12853,
     "version": null,
     "slot": "neck",
-    "image": "Amulet of the damned.png",
+    "image": "Amulet of the Damned.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9405,11 +9504,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the eye",
+    "name": "Amulet of the Eye",
     "id": 26994,
     "version": "Blue",
     "slot": "neck",
-    "image": "Amulet of the eye (blue).png",
+    "image": "Amulet of the Eye (blue).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9438,11 +9537,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the eye",
+    "name": "Amulet of the Eye",
     "id": 26992,
     "version": "Green",
     "slot": "neck",
-    "image": "Amulet of the eye (green).png",
+    "image": "Amulet of the Eye (green).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9471,11 +9570,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the eye",
+    "name": "Amulet of the Eye",
     "id": 26990,
     "version": "Red",
     "slot": "neck",
-    "image": "Amulet of the eye (red).png",
+    "image": "Amulet of the Eye (red).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9504,11 +9603,11 @@
     "attack_range": null
   },
   {
-    "name": "Amulet of the eye",
+    "name": "Amulet of the Eye",
     "id": 26914,
     "version": "Regular",
     "slot": "neck",
-    "image": "Amulet of the eye.png",
+    "image": "Amulet of the Eye.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -9598,6 +9697,39 @@
         "ranged": 0
       },
       "prayer": 2
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Amulet of water",
+    "id": 34413,
+    "version": null,
+    "slot": "neck",
+    "image": "Amulet of water.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 10,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
     },
     "is_two_handed": null,
     "attack_range": null
@@ -13101,11 +13233,11 @@
     "attack_range": 1
   },
   {
-    "name": "Armadyl godsword (deadman)",
+    "name": "Armadyl godsword (Deadman)",
     "id": 29605,
     "version": null,
     "slot": "weapon",
-    "image": "Armadyl godsword (deadman).png",
+    "image": "Armadyl godsword (Deadman).png",
     "speed": 6,
     "category": "2h Sword",
     "bonuses": {
@@ -16236,11 +16368,11 @@
     "attack_range": null
   },
   {
-    "name": "Beads of the dead",
+    "name": "Beads of the Dead",
     "id": 616,
     "version": null,
     "slot": "neck",
-    "image": "Beads of the dead.png",
+    "image": "Beads of the Dead.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -22110,11 +22242,11 @@
     "attack_range": null
   },
   {
-    "name": "Blade of saeldor",
+    "name": "Blade of Saeldor",
     "id": 23995,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Blade of saeldor.png",
+    "image": "Blade of Saeldor.png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22143,11 +22275,44 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c)",
+    "name": "Blade of Saeldor",
+    "id": 23997,
+    "version": "Inactive",
+    "slot": "weapon",
+    "image": "Blade of Saeldor (inactive).png",
+    "speed": 4,
+    "category": "Slash Sword",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
+    "name": "Blade of Saeldor (c)",
     "id": 24551,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c).png",
+    "image": "Blade of Saeldor (c).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22176,11 +22341,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Amlodd)",
+    "name": "Blade of Saeldor (c) (Amlodd)",
     "id": 25882,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Amlodd).png",
+    "image": "Blade of Saeldor (c) (Amlodd).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22209,11 +22374,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Cadarn)",
+    "name": "Blade of Saeldor (c) (Cadarn)",
     "id": 25876,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Cadarn).png",
+    "image": "Blade of Saeldor (c) (Cadarn).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22242,11 +22407,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Crwys)",
+    "name": "Blade of Saeldor (c) (Crwys)",
     "id": 25878,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Crwys).png",
+    "image": "Blade of Saeldor (c) (Crwys).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22275,11 +22440,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Iorwerth)",
+    "name": "Blade of Saeldor (c) (Iorwerth)",
     "id": 25872,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Iorwerth).png",
+    "image": "Blade of Saeldor (c) (Iorwerth).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22308,11 +22473,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Ithell)",
+    "name": "Blade of Saeldor (c) (Ithell)",
     "id": 25870,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Ithell).png",
+    "image": "Blade of Saeldor (c) (Ithell).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22341,11 +22506,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Meilyr)",
+    "name": "Blade of Saeldor (c) (Meilyr)",
     "id": 25880,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Meilyr).png",
+    "image": "Blade of Saeldor (c) (Meilyr).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22374,11 +22539,11 @@
     "attack_range": 1
   },
   {
-    "name": "Blade of saeldor (c) (Trahaearn)",
+    "name": "Blade of Saeldor (c) (Trahaearn)",
     "id": 25874,
     "version": null,
     "slot": "weapon",
-    "image": "Blade of saeldor (c) (Trahaearn).png",
+    "image": "Blade of Saeldor (c) (Trahaearn).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -22473,6 +22638,39 @@
     "attack_range": 5
   },
   {
+    "name": "Blessed Dizana's quiver",
+    "id": 28955,
+    "version": null,
+    "slot": "cape",
+    "image": "Blessed Dizana's quiver.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 3,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 18
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Blessed axe",
     "id": 10491,
     "version": null,
@@ -22504,39 +22702,6 @@
     },
     "is_two_handed": false,
     "attack_range": 1
-  },
-  {
-    "name": "Blessed dizana's quiver",
-    "id": 28955,
-    "version": null,
-    "slot": "cape",
-    "image": "Blessed dizana's quiver.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 3,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 18
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
   },
   {
     "name": "Blessed spirit shield",
@@ -23950,6 +24115,39 @@
         "slash": 0,
         "crush": 0,
         "magic": 3,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Blue hat (Legends' Quest)",
+    "id": 740,
+    "version": null,
+    "slot": "head",
+    "image": "Blue hat (Legends' Quest).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 2,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 2,
         "ranged": 0
       },
       "prayer": 0
@@ -25773,11 +25971,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of balance",
+    "name": "Book of Balance",
     "id": 3844,
     "version": null,
     "slot": "shield",
-    "image": "Book of balance.png",
+    "image": "Book of Balance.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25806,11 +26004,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of balance (or)",
+    "name": "Book of Balance (or)",
     "id": 26488,
     "version": null,
     "slot": "shield",
-    "image": "Book of balance (or).png",
+    "image": "Book of Balance (or).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25839,11 +26037,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of darkness",
+    "name": "Book of Darkness",
     "id": 12612,
     "version": null,
     "slot": "shield",
-    "image": "Book of darkness.png",
+    "image": "Book of Darkness.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25872,11 +26070,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of darkness (or)",
+    "name": "Book of Darkness (or)",
     "id": 26490,
     "version": null,
     "slot": "shield",
-    "image": "Book of darkness (or).png",
+    "image": "Book of Darkness (or).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25905,11 +26103,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of egg",
+    "name": "Book of Egg",
     "id": 29433,
     "version": null,
     "slot": "shield",
-    "image": "Book of egg.png",
+    "image": "Book of Egg.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25938,11 +26136,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of law",
+    "name": "Book of Law",
     "id": 12610,
     "version": null,
     "slot": "shield",
-    "image": "Book of law.png",
+    "image": "Book of Law.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -25971,11 +26169,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of law (or)",
+    "name": "Book of Law (or)",
     "id": 26492,
     "version": null,
     "slot": "shield",
-    "image": "Book of law (or).png",
+    "image": "Book of Law (or).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -26004,11 +26202,77 @@
     "attack_range": null
   },
   {
-    "name": "Book of the dead",
+    "name": "Book of War",
+    "id": 12608,
+    "version": null,
+    "slot": "shield",
+    "image": "Book of War.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 2,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 5
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Book of War (or)",
+    "id": 26494,
+    "version": null,
+    "slot": "shield",
+    "image": "Book of War (or).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 2,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 5
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Book of the Dead",
     "id": 25818,
     "version": null,
     "slot": "shield",
-    "image": "Book of the dead.png",
+    "image": "Book of the Dead.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -26037,77 +26301,11 @@
     "attack_range": null
   },
   {
-    "name": "Book of war",
-    "id": 12608,
-    "version": null,
-    "slot": "shield",
-    "image": "Book of war.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 2,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 5
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Book of war (or)",
-    "id": 26494,
-    "version": null,
-    "slot": "shield",
-    "image": "Book of war (or).png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 2,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 5
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Boots of brimstone",
+    "name": "Boots of Brimstone",
     "id": 22951,
     "version": null,
     "slot": "feet",
-    "image": "Boots of brimstone.png",
+    "image": "Boots of Brimstone.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -26235,11 +26433,11 @@
     "attack_range": null
   },
   {
-    "name": "Boots of the eye",
+    "name": "Boots of the Eye",
     "id": 26856,
     "version": null,
     "slot": "feet",
-    "image": "Boots of the eye.png",
+    "image": "Boots of the Eye.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -26466,11 +26664,11 @@
     "attack_range": null
   },
   {
-    "name": "Bow of faerdhinen",
+    "name": "Bow of Faerdhinen",
     "id": 25865,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Bow of faerdhinen.png",
+    "image": "Bow of Faerdhinen.png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26499,11 +26697,44 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c)",
+    "name": "Bow of Faerdhinen",
+    "id": 25862,
+    "version": "Inactive",
+    "slot": "weapon",
+    "image": "Bow of Faerdhinen (inactive).png",
+    "speed": 5,
+    "category": "Bow",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 10
+  },
+  {
+    "name": "Bow of Faerdhinen (c)",
     "id": 25867,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c).png",
+    "image": "Bow of Faerdhinen (c).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26532,11 +26763,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Amlodd)",
+    "name": "Bow of Faerdhinen (c) (Amlodd)",
     "id": 25896,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Amlodd).png",
+    "image": "Bow of Faerdhinen (c) (Amlodd).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26565,11 +26796,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Cadarn)",
+    "name": "Bow of Faerdhinen (c) (Cadarn)",
     "id": 25890,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Cadarn).png",
+    "image": "Bow of Faerdhinen (c) (Cadarn).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26598,11 +26829,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Crwys)",
+    "name": "Bow of Faerdhinen (c) (Crwys)",
     "id": 25892,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Crwys).png",
+    "image": "Bow of Faerdhinen (c) (Crwys).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26631,11 +26862,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Iorwerth)",
+    "name": "Bow of Faerdhinen (c) (Iorwerth)",
     "id": 25886,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Iorwerth).png",
+    "image": "Bow of Faerdhinen (c) (Iorwerth).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26664,11 +26895,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Ithell)",
+    "name": "Bow of Faerdhinen (c) (Ithell)",
     "id": 25884,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Ithell).png",
+    "image": "Bow of Faerdhinen (c) (Ithell).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26697,11 +26928,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Meilyr)",
+    "name": "Bow of Faerdhinen (c) (Meilyr)",
     "id": 25894,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Meilyr).png",
+    "image": "Bow of Faerdhinen (c) (Meilyr).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26730,11 +26961,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (Trahaearn)",
+    "name": "Bow of Faerdhinen (c) (Trahaearn)",
     "id": 25888,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (Trahaearn).png",
+    "image": "Bow of Faerdhinen (c) (Trahaearn).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -26763,11 +26994,11 @@
     "attack_range": 10
   },
   {
-    "name": "Bow of faerdhinen (c) (deadman)",
+    "name": "Bow of Faerdhinen (c) (deadman)",
     "id": 33021,
     "version": null,
     "slot": "weapon",
-    "image": "Bow of faerdhinen (c) (deadman).png",
+    "image": "Bow of Faerdhinen (c) (deadman).png",
     "speed": 5,
     "category": "Bow",
     "bonuses": {
@@ -37752,6 +37983,39 @@
     "attack_range": 1
   },
   {
+    "name": "Corrupted Volatile Nightmare staff",
+    "id": 29602,
+    "version": null,
+    "slot": "weapon",
+    "image": "Corrupted Volatile Nightmare staff.png",
+    "speed": 5,
+    "category": "Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 15
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 16,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 14,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
     "name": "Corrupted armadyl godsword",
     "id": 28537,
     "version": null,
@@ -39163,39 +39427,6 @@
         "slash": 1,
         "crush": 0,
         "magic": 2,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": false,
-    "attack_range": 1
-  },
-  {
-    "name": "Corrupted volatile nightmare staff",
-    "id": 29602,
-    "version": null,
-    "slot": "weapon",
-    "image": "Corrupted volatile nightmare staff.png",
-    "speed": 5,
-    "category": "Staff",
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 15
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 16,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 14,
         "ranged": 0
       },
       "prayer": 0
@@ -57552,6 +57783,39 @@
     "attack_range": 10
   },
   {
+    "name": "Dark bow (Deadman)",
+    "id": 29611,
+    "version": null,
+    "slot": "weapon",
+    "image": "Dark bow (Deadman).png",
+    "speed": 9,
+    "category": "Bow",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 95
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": true,
+    "attack_range": 10
+  },
+  {
     "name": "Dark bow (bh)",
     "id": 27853,
     "version": null,
@@ -57571,39 +57835,6 @@
         "crush": 0,
         "magic": 0,
         "ranged": 105
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": true,
-    "attack_range": 10
-  },
-  {
-    "name": "Dark bow (deadman)",
-    "id": 29611,
-    "version": null,
-    "slot": "weapon",
-    "image": "Dark bow (deadman).png",
-    "speed": 9,
-    "category": "Bow",
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 95
       },
       "defence": {
         "stab": 0,
@@ -64289,7 +64520,7 @@
     "version": null,
     "slot": "weapon",
     "image": "Dragon hunter wand.png",
-    "speed": 5,
+    "speed": 4,
     "category": "Staff",
     "bonuses": {
       "strength": {
@@ -68508,11 +68739,11 @@
     "attack_range": 1
   },
   {
-    "name": "Eldritch nightmare staff",
+    "name": "Eldritch Nightmare staff",
     "id": 24425,
     "version": null,
     "slot": "weapon",
-    "image": "Eldritch nightmare staff.png",
+    "image": "Eldritch Nightmare staff.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -68539,6 +68770,39 @@
     },
     "is_two_handed": false,
     "attack_range": 1
+  },
+  {
+    "name": "Elemental amulet",
+    "id": 34428,
+    "version": null,
+    "slot": "neck",
+    "image": "Elemental amulet.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 10,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
   },
   {
     "name": "Elemental helmet",
@@ -70818,11 +71082,11 @@
     "attack_range": null
   },
   {
-    "name": "Eye of ayak",
+    "name": "Eye of Ayak",
     "id": 31113,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Eye of ayak.png",
+    "image": "Eye of Ayak.png",
     "speed": 3,
     "category": "Powered Staff",
     "bonuses": {
@@ -70851,11 +71115,11 @@
     "attack_range": 6
   },
   {
-    "name": "Eye of ayak",
+    "name": "Eye of Ayak",
     "id": 31115,
     "version": "Uncharged",
     "slot": "weapon",
-    "image": "Eye of ayak (uncharged).png",
+    "image": "Eye of Ayak (uncharged).png",
     "speed": 3,
     "category": "Powered Staff",
     "bonuses": {
@@ -75438,39 +75702,6 @@
     "attack_range": null
   },
   {
-    "name": "Ghommal's lucky penny",
-    "id": 27544,
-    "version": null,
-    "slot": "ammo",
-    "image": "Ghommal's lucky penny.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
     "name": "Ghost buster 500",
     "id": 9911,
     "version": "Black",
@@ -77213,6 +77444,39 @@
         "crush": 2,
         "magic": 0,
         "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Gloves of the Damned",
+    "id": 30380,
+    "version": null,
+    "slot": "hands",
+    "image": "Gloves of the Damned.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
       },
       "prayer": 0
     },
@@ -82733,7 +82997,7 @@
   {
     "name": "Greenman mask",
     "id": 31034,
-    "version": "Default",
+    "version": "Base",
     "slot": "head",
     "image": "Greenman mask.png",
     "speed": null,
@@ -85503,6 +85767,39 @@
     "attack_range": null
   },
   {
+    "name": "Hallowfell",
+    "id": 34027,
+    "version": null,
+    "slot": "weapon",
+    "image": "Hallowfell.png",
+    "speed": 6,
+    "category": "2h Sword",
+    "bonuses": {
+      "strength": {
+        "melee": 110,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 117,
+        "crush": 25,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 4
+    },
+    "is_two_handed": true,
+    "attack_range": 1
+  },
+  {
     "name": "Ham boots",
     "id": 4310,
     "version": null,
@@ -86262,11 +86559,11 @@
     "attack_range": null
   },
   {
-    "name": "Harmonised nightmare staff",
+    "name": "Harmonised Nightmare staff",
     "id": 24423,
     "version": null,
     "slot": "weapon",
-    "image": "Harmonised nightmare staff.png",
+    "image": "Harmonised Nightmare staff.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -86394,11 +86691,11 @@
     "attack_range": null
   },
   {
-    "name": "Hat of the eye",
+    "name": "Hat of the Eye",
     "id": 26870,
     "version": "Blue",
     "slot": "head",
-    "image": "Hat of the eye (blue).png",
+    "image": "Hat of the Eye (blue).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86427,11 +86724,11 @@
     "attack_range": null
   },
   {
-    "name": "Hat of the eye",
+    "name": "Hat of the Eye",
     "id": 26864,
     "version": "Green",
     "slot": "head",
-    "image": "Hat of the eye (green).png",
+    "image": "Hat of the Eye (green).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86460,11 +86757,11 @@
     "attack_range": null
   },
   {
-    "name": "Hat of the eye",
+    "name": "Hat of the Eye",
     "id": 26858,
     "version": "Red",
     "slot": "head",
-    "image": "Hat of the eye (red).png",
+    "image": "Hat of the Eye (red).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86493,11 +86790,11 @@
     "attack_range": null
   },
   {
-    "name": "Hat of the eye",
+    "name": "Hat of the Eye",
     "id": 26850,
     "version": "Regular",
     "slot": "head",
-    "image": "Hat of the eye.png",
+    "image": "Hat of the Eye.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86823,11 +87120,11 @@
     "attack_range": null
   },
   {
-    "name": "Helm of neitiznot",
+    "name": "Helm of Neitiznot",
     "id": 10828,
     "version": null,
     "slot": "head",
-    "image": "Helm of neitiznot.png",
+    "image": "Helm of Neitiznot.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86856,11 +87153,11 @@
     "attack_range": null
   },
   {
-    "name": "Helm of neitiznot (or)",
+    "name": "Helm of Neitiznot (or)",
     "id": 28070,
     "version": null,
     "slot": "head",
-    "image": "Helm of neitiznot (or).png",
+    "image": "Helm of Neitiznot (or).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -86889,11 +87186,11 @@
     "attack_range": null
   },
   {
-    "name": "Helm of raedwald",
+    "name": "Helm of Raedwald",
     "id": 19687,
     "version": null,
     "slot": "head",
-    "image": "Helm of raedwald.png",
+    "image": "Helm of Raedwald.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -87879,11 +88176,11 @@
     "attack_range": null
   },
   {
-    "name": "Horn of plenty",
+    "name": "Horn of Plenty",
     "id": 31241,
     "version": "Charged",
     "slot": "shield",
-    "image": "Horn of plenty.png",
+    "image": "Horn of Plenty.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -87912,11 +88209,11 @@
     "attack_range": null
   },
   {
-    "name": "Horn of plenty",
+    "name": "Horn of Plenty",
     "id": 31243,
     "version": "Empty",
     "slot": "shield",
-    "image": "Horn of plenty (empty).png",
+    "image": "Horn of Plenty (empty).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89199,11 +89496,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued guthix cape",
+    "name": "Imbued Guthix cape",
     "id": 21793,
     "version": null,
     "slot": "cape",
-    "image": "Imbued guthix cape.png",
+    "image": "Imbued Guthix cape.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89232,11 +89529,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued guthix cape (deadman)",
+    "name": "Imbued Guthix cape (Deadman)",
     "id": 29615,
     "version": null,
     "slot": "cape",
-    "image": "Imbued guthix cape (deadman).png",
+    "image": "Imbued Guthix cape (Deadman).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89265,11 +89562,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued guthix max cape",
+    "name": "Imbued Guthix max cape",
     "id": 21784,
     "version": null,
     "slot": "cape",
-    "image": "Imbued guthix max cape.png",
+    "image": "Imbued Guthix max cape.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89298,11 +89595,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued guthix max hood",
+    "name": "Imbued Guthix max hood",
     "id": 21786,
     "version": null,
     "slot": "head",
-    "image": "Imbued guthix max hood.png",
+    "image": "Imbued Guthix max hood.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89331,11 +89628,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued saradomin cape",
+    "name": "Imbued Saradomin cape",
     "id": 21791,
     "version": null,
     "slot": "cape",
-    "image": "Imbued saradomin cape.png",
+    "image": "Imbued Saradomin cape.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89364,11 +89661,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued saradomin cape (deadman)",
+    "name": "Imbued Saradomin cape (Deadman)",
     "id": 29617,
     "version": null,
     "slot": "cape",
-    "image": "Imbued saradomin cape (deadman).png",
+    "image": "Imbued Saradomin cape (Deadman).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89397,11 +89694,11 @@
     "attack_range": null
   },
   {
-    "name": "Imbued saradomin max cape",
+    "name": "Imbued Saradomin max cape",
     "id": 21776,
     "version": null,
     "slot": "cape",
-    "image": "Imbued saradomin max cape.png",
+    "image": "Imbued Saradomin max cape.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89430,11 +89727,143 @@
     "attack_range": null
   },
   {
-    "name": "Imbued saradomin max hood",
+    "name": "Imbued Saradomin max hood",
     "id": 21778,
     "version": null,
     "slot": "head",
-    "image": "Imbued saradomin max hood.png",
+    "image": "Imbued Saradomin max hood.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Imbued Zamorak cape",
+    "id": 21795,
+    "version": null,
+    "slot": "cape",
+    "image": "Imbued Zamorak cape.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 2
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 15,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 3,
+        "slash": 3,
+        "crush": 3,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Imbued Zamorak cape (Deadman)",
+    "id": 29613,
+    "version": null,
+    "slot": "cape",
+    "image": "Imbued Zamorak cape (Deadman).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 2
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 15,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 3,
+        "slash": 3,
+        "crush": 3,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Imbued Zamorak max cape",
+    "id": 21780,
+    "version": null,
+    "slot": "cape",
+    "image": "Imbued Zamorak max cape.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 2
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 15,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 3,
+        "slash": 3,
+        "crush": 3,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Imbued Zamorak max hood",
+    "id": 21782,
+    "version": null,
+    "slot": "head",
+    "image": "Imbued Zamorak max hood.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -89494,138 +89923,6 @@
     },
     "is_two_handed": false,
     "attack_range": 10
-  },
-  {
-    "name": "Imbued zamorak cape",
-    "id": 21795,
-    "version": null,
-    "slot": "cape",
-    "image": "Imbued zamorak cape.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 2
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 15,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 3,
-        "slash": 3,
-        "crush": 3,
-        "magic": 15,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Imbued zamorak cape (deadman)",
-    "id": 29613,
-    "version": null,
-    "slot": "cape",
-    "image": "Imbued zamorak cape (deadman).png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 2
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 15,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 3,
-        "slash": 3,
-        "crush": 3,
-        "magic": 15,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Imbued zamorak max cape",
-    "id": 21780,
-    "version": null,
-    "slot": "cape",
-    "image": "Imbued zamorak max cape.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 2
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 15,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 3,
-        "slash": 3,
-        "crush": 3,
-        "magic": 15,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
-  },
-  {
-    "name": "Imbued zamorak max hood",
-    "id": 21782,
-    "version": null,
-    "slot": "head",
-    "image": "Imbued zamorak max hood.png",
-    "speed": null,
-    "category": null,
-    "bonuses": {
-      "strength": {
-        "melee": 0,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": null,
-    "attack_range": null
   },
   {
     "name": "Imcando hammer",
@@ -99429,11 +99726,11 @@
     "attack_range": null
   },
   {
-    "name": "Mask of balance",
+    "name": "Mask of Balance",
     "id": 13203,
     "version": null,
     "slot": "head",
-    "image": "Mask of balance.png",
+    "image": "Mask of Balance.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -99462,11 +99759,11 @@
     "attack_range": null
   },
   {
-    "name": "Mask of ranul",
+    "name": "Mask of Ranul",
     "id": 23522,
     "version": null,
     "slot": "head",
-    "image": "Mask of ranul.png",
+    "image": "Mask of Ranul.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -99495,11 +99792,11 @@
     "attack_range": null
   },
   {
-    "name": "Mask of rebirth",
+    "name": "Mask of Rebirth",
     "id": 27370,
     "version": null,
     "slot": "head",
-    "image": "Mask of rebirth.png",
+    "image": "Mask of Rebirth.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -99957,11 +100254,11 @@
     "attack_range": 1
   },
   {
-    "name": "Medallion of the deep",
+    "name": "Medallion of the Deep",
     "id": 32386,
     "version": null,
     "slot": "neck",
-    "image": "Medallion of the deep.png",
+    "image": "Medallion of the Deep.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -106887,6 +107184,39 @@
     "attack_range": null
   },
   {
+    "name": "Necklace of fangs",
+    "id": 34401,
+    "version": null,
+    "slot": "neck",
+    "image": "Necklace of fangs.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 1,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 12
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Necklace of passage",
     "id": 21155,
     "version": "(1)",
@@ -107314,6 +107644,237 @@
     },
     "is_two_handed": false,
     "attack_range": 1
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33851,
+    "version": "Black",
+    "slot": "body",
+    "image": "Noble robe top (black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33839,
+    "version": "Blue",
+    "slot": "body",
+    "image": "Noble robe top (blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33836,
+    "version": "Green",
+    "slot": "body",
+    "image": "Noble robe top (green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33854,
+    "version": "Pink",
+    "slot": "body",
+    "image": "Noble robe top (pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33842,
+    "version": "Red",
+    "slot": "body",
+    "image": "Noble robe top (red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33848,
+    "version": "White",
+    "slot": "body",
+    "image": "Noble robe top (white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Noble robe top",
+    "id": 33845,
+    "version": "Yellow",
+    "slot": "body",
+    "image": "Noble robe top (yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
   },
   {
     "name": "Noose wand",
@@ -110616,11 +111177,11 @@
     "attack_range": null
   },
   {
-    "name": "Pendant of ates",
+    "name": "Pendant of Ates",
     "id": 29893,
     "version": "Charged",
     "slot": "neck",
-    "image": "Pendant of ates.png",
+    "image": "Pendant of Ates.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -110649,11 +111210,11 @@
     "attack_range": null
   },
   {
-    "name": "Pendant of ates",
+    "name": "Pendant of Ates",
     "id": 29892,
     "version": "Inert",
     "slot": "neck",
-    "image": "Pendant of ates (inert).png",
+    "image": "Pendant of Ates (inert).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -110682,11 +111243,11 @@
     "attack_range": null
   },
   {
-    "name": "Pendant of lucien",
+    "name": "Pendant of Lucien",
     "id": 86,
     "version": null,
     "slot": "neck",
-    "image": "Pendant of lucien.png",
+    "image": "Pendant of Lucien.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -119658,11 +120219,11 @@
     "attack_range": null
   },
   {
-    "name": "Ring of 3rd age",
+    "name": "Ring of 3rd Age",
     "id": 23185,
     "version": null,
     "slot": "ring",
-    "image": "Ring of 3rd age.png",
+    "image": "Ring of 3rd Age.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -119691,11 +120252,11 @@
     "attack_range": null
   },
   {
-    "name": "Ring of charos",
+    "name": "Ring of Charos",
     "id": 6465,
     "version": "Activated",
     "slot": "ring",
-    "image": "Ring of charos(a).png",
+    "image": "Ring of Charos(a).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -119724,11 +120285,11 @@
     "attack_range": null
   },
   {
-    "name": "Ring of charos",
+    "name": "Ring of Charos",
     "id": 4202,
     "version": null,
     "slot": "ring",
-    "image": "Ring of charos.png",
+    "image": "Ring of Charos.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121374,11 +121935,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe bottoms of the eye",
+    "name": "Robe bottoms of the Eye",
     "id": 26874,
     "version": "Blue",
     "slot": "legs",
-    "image": "Robe bottoms of the eye (blue).png",
+    "image": "Robe bottoms of the Eye (blue).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121407,11 +121968,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe bottoms of the eye",
+    "name": "Robe bottoms of the Eye",
     "id": 26868,
     "version": "Green",
     "slot": "legs",
-    "image": "Robe bottoms of the eye (green).png",
+    "image": "Robe bottoms of the Eye (green).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121440,11 +122001,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe bottoms of the eye",
+    "name": "Robe bottoms of the Eye",
     "id": 26862,
     "version": "Red",
     "slot": "legs",
-    "image": "Robe bottoms of the eye (red).png",
+    "image": "Robe bottoms of the Eye (red).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121473,11 +122034,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe bottoms of the eye",
+    "name": "Robe bottoms of the Eye",
     "id": 26854,
     "version": "Regular",
     "slot": "legs",
-    "image": "Robe bottoms of the eye.png",
+    "image": "Robe bottoms of the Eye.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121506,11 +122067,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe of elidinis (bottom)",
+    "name": "Robe of Elidinis (bottom)",
     "id": 6787,
     "version": null,
     "slot": "legs",
-    "image": "Robe of elidinis (bottom).png",
+    "image": "Robe of Elidinis (bottom).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121539,11 +122100,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe of elidinis (top)",
+    "name": "Robe of Elidinis (top)",
     "id": 6786,
     "version": null,
     "slot": "body",
-    "image": "Robe of elidinis (top).png",
+    "image": "Robe of Elidinis (top).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121638,11 +122199,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe top of the eye",
+    "name": "Robe top of the Eye",
     "id": 26872,
     "version": "Blue",
     "slot": "body",
-    "image": "Robe top of the eye (blue).png",
+    "image": "Robe top of the Eye (blue).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121671,11 +122232,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe top of the eye",
+    "name": "Robe top of the Eye",
     "id": 26866,
     "version": "Green",
     "slot": "body",
-    "image": "Robe top of the eye (green).png",
+    "image": "Robe top of the Eye (green).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121704,11 +122265,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe top of the eye",
+    "name": "Robe top of the Eye",
     "id": 26860,
     "version": "Red",
     "slot": "body",
-    "image": "Robe top of the eye (red).png",
+    "image": "Robe top of the Eye (red).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121737,11 +122298,11 @@
     "attack_range": null
   },
   {
-    "name": "Robe top of the eye",
+    "name": "Robe top of the Eye",
     "id": 26852,
     "version": "Regular",
     "slot": "body",
-    "image": "Robe top of the eye.png",
+    "image": "Robe top of the Eye.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -121968,11 +122529,11 @@
     "attack_range": null
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7648,
     "version": "(1)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122001,11 +122562,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7639,
     "version": "(10)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122034,11 +122595,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7647,
     "version": "(2)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122067,11 +122628,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7646,
     "version": "(3)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122100,11 +122661,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7645,
     "version": "(4)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122133,11 +122694,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7644,
     "version": "(5)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122166,11 +122727,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7643,
     "version": "(6)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122199,11 +122760,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7642,
     "version": "(7)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122232,11 +122793,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7641,
     "version": "(8)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -122265,11 +122826,11 @@
     "attack_range": 1
   },
   {
-    "name": "Rod of ivandis",
+    "name": "Rod of Ivandis",
     "id": 7640,
     "version": "(9)",
     "slot": "weapon",
-    "image": "Rod of ivandis.png",
+    "image": "Rod of Ivandis.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -130713,11 +131274,11 @@
     "attack_range": 1
   },
   {
-    "name": "Scythe of vitur",
+    "name": "Scythe of Vitur",
     "id": 22325,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Scythe of vitur.png",
+    "image": "Scythe of Vitur.png",
     "speed": 5,
     "category": "Scythe",
     "bonuses": {
@@ -130746,11 +131307,11 @@
     "attack_range": 1
   },
   {
-    "name": "Scythe of vitur",
+    "name": "Scythe of Vitur",
     "id": 22486,
     "version": "Uncharged",
     "slot": "weapon",
-    "image": "Scythe of vitur (uncharged).png",
+    "image": "Scythe of Vitur (uncharged).png",
     "speed": 5,
     "category": "Scythe",
     "bonuses": {
@@ -138930,44 +139491,11 @@
     "attack_range": 1
   },
   {
-    "name": "Staff of air",
-    "id": 1381,
-    "version": null,
-    "slot": "weapon",
-    "image": "Staff of air.png",
-    "speed": 5,
-    "category": "Staff",
-    "bonuses": {
-      "strength": {
-        "melee": 3,
-        "ranged": 0,
-        "magic": 0
-      },
-      "attack": {
-        "stab": 0,
-        "slash": -1,
-        "crush": 7,
-        "magic": 10,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 2,
-        "slash": 3,
-        "crush": 1,
-        "magic": 10,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": false,
-    "attack_range": 1
-  },
-  {
-    "name": "Staff of balance",
+    "name": "Staff of Balance",
     "id": 24144,
     "version": null,
     "slot": "weapon",
-    "image": "Staff of balance.png",
+    "image": "Staff of Balance.png",
     "speed": 4,
     "category": "Bladed Staff",
     "bonuses": {
@@ -138996,11 +139524,11 @@
     "attack_range": 1
   },
   {
-    "name": "Staff of bob the cat",
+    "name": "Staff of Bob the Cat",
     "id": 23363,
     "version": null,
     "slot": "weapon",
-    "image": "Staff of bob the cat.png",
+    "image": "Staff of Bob the Cat.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -139013,6 +139541,72 @@
         "stab": 2,
         "slash": -1,
         "crush": 10,
+        "magic": 10,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 2,
+        "slash": 3,
+        "crush": 1,
+        "magic": 10,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
+    "name": "Staff of Light",
+    "id": 22296,
+    "version": null,
+    "slot": "weapon",
+    "image": "Staff of Light.png",
+    "speed": 4,
+    "category": "Bladed Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 72,
+        "ranged": 0,
+        "magic": 15
+      },
+      "attack": {
+        "stab": 55,
+        "slash": 70,
+        "crush": 0,
+        "magic": 17,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 3,
+        "crush": 3,
+        "magic": 17,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 1
+  },
+  {
+    "name": "Staff of air",
+    "id": 1381,
+    "version": null,
+    "slot": "weapon",
+    "image": "Staff of air.png",
+    "speed": 5,
+    "category": "Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 3,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": -1,
+        "crush": 7,
         "magic": 10,
         "ranged": 0
       },
@@ -139095,44 +139689,11 @@
     "attack_range": 1
   },
   {
-    "name": "Staff of light",
-    "id": 22296,
-    "version": null,
-    "slot": "weapon",
-    "image": "Staff of light.png",
-    "speed": 4,
-    "category": "Bladed Staff",
-    "bonuses": {
-      "strength": {
-        "melee": 72,
-        "ranged": 0,
-        "magic": 15
-      },
-      "attack": {
-        "stab": 55,
-        "slash": 70,
-        "crush": 0,
-        "magic": 17,
-        "ranged": 0
-      },
-      "defence": {
-        "stab": 0,
-        "slash": 3,
-        "crush": 3,
-        "magic": 17,
-        "ranged": 0
-      },
-      "prayer": 0
-    },
-    "is_two_handed": false,
-    "attack_range": 1
-  },
-  {
-    "name": "Staff of the dead",
+    "name": "Staff of the Dead",
     "id": 11791,
     "version": null,
     "slot": "weapon",
-    "image": "Staff of the dead.png",
+    "image": "Staff of the Dead.png",
     "speed": 4,
     "category": "Bladed Staff",
     "bonuses": {
@@ -143328,7 +143889,7 @@
     "category": "Blunt",
     "bonuses": {
       "strength": {
-        "melee": 16,
+        "melee": 18,
         "ranged": 0,
         "magic": 0
       },
@@ -147477,11 +148038,11 @@
     "attack_range": 7
   },
   {
-    "name": "Tome of earth",
+    "name": "Tome of Earth",
     "id": 30064,
     "version": "Charged",
     "slot": "shield",
-    "image": "Tome of earth.png",
+    "image": "Tome of Earth.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147510,11 +148071,11 @@
     "attack_range": null
   },
   {
-    "name": "Tome of earth",
+    "name": "Tome of Earth",
     "id": 30066,
     "version": "Empty",
     "slot": "shield",
-    "image": "Tome of earth (empty).png",
+    "image": "Tome of Earth (empty).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147543,11 +148104,11 @@
     "attack_range": null
   },
   {
-    "name": "Tome of fire",
+    "name": "Tome of Fire",
     "id": 20714,
     "version": "Charged",
     "slot": "shield",
-    "image": "Tome of fire.png",
+    "image": "Tome of Fire.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147576,11 +148137,11 @@
     "attack_range": null
   },
   {
-    "name": "Tome of fire",
+    "name": "Tome of Fire",
     "id": 20716,
     "version": "Empty",
     "slot": "shield",
-    "image": "Tome of fire (empty).png",
+    "image": "Tome of Fire (empty).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147609,11 +148170,11 @@
     "attack_range": null
   },
   {
-    "name": "Tome of water",
+    "name": "Tome of Water",
     "id": 25574,
     "version": "Charged",
     "slot": "shield",
-    "image": "Tome of water.png",
+    "image": "Tome of Water.png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147642,11 +148203,11 @@
     "attack_range": null
   },
   {
-    "name": "Tome of water",
+    "name": "Tome of Water",
     "id": 25576,
     "version": "Empty",
     "slot": "shield",
-    "image": "Tome of water (empty).png",
+    "image": "Tome of Water (empty).png",
     "speed": null,
     "category": null,
     "bonuses": {
@@ -147675,11 +148236,11 @@
     "attack_range": null
   },
   {
-    "name": "Tonalztics of ralos",
+    "name": "Tonalztics of Ralos",
     "id": 28922,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Tonalztics of ralos.png",
+    "image": "Tonalztics of Ralos.png",
     "speed": 7,
     "category": "Thrown",
     "bonuses": {
@@ -147708,11 +148269,11 @@
     "attack_range": 7
   },
   {
-    "name": "Tonalztics of ralos",
+    "name": "Tonalztics of Ralos",
     "id": 28919,
     "version": "Uncharged",
     "slot": "weapon",
-    "image": "Tonalztics of ralos (uncharged).png",
+    "image": "Tonalztics of Ralos (uncharged).png",
     "speed": 7,
     "category": "Thrown",
     "bonuses": {
@@ -148698,11 +149259,11 @@
     "attack_range": 5
   },
   {
-    "name": "Toxic staff (deadman)",
+    "name": "Toxic staff (Deadman)",
     "id": 33036,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Toxic staff (deadman).png",
+    "image": "Toxic staff (Deadman).png",
     "speed": 4,
     "category": "Bladed Staff",
     "bonuses": {
@@ -148731,7 +149292,7 @@
     "attack_range": 1
   },
   {
-    "name": "Toxic staff (deadman)",
+    "name": "Toxic staff (Deadman)",
     "id": 33035,
     "version": "Uncharged",
     "slot": "weapon",
@@ -151074,11 +151635,11 @@
     "attack_range": null
   },
   {
-    "name": "Trident of the seas",
+    "name": "Trident of the Seas",
     "id": 11905,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the seas (full).png",
+    "image": "Trident of the Seas (full).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151107,11 +151668,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas",
+    "name": "Trident of the Seas",
     "id": 11907,
     "version": "Partially charged",
     "slot": "weapon",
-    "image": "Trident of the seas.png",
+    "image": "Trident of the Seas.png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151140,11 +151701,44 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas (e)",
+    "name": "Trident of the Seas",
+    "id": 11908,
+    "version": "Uncharged",
+    "slot": "weapon",
+    "image": "Uncharged trident.png",
+    "speed": 4,
+    "category": "Powered Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 15,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 2,
+        "slash": 3,
+        "crush": 1,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 7
+  },
+  {
+    "name": "Trident of the Seas (e)",
     "id": 22288,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the seas (e).png",
+    "image": "Trident of the Seas (e).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151173,11 +151767,44 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas (e) (o)",
+    "name": "Trident of the Seas (e)",
+    "id": 22290,
+    "version": "Uncharged",
+    "slot": "weapon",
+    "image": "Uncharged trident (e).png",
+    "speed": 4,
+    "category": "Powered Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 15,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 2,
+        "slash": 3,
+        "crush": 1,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 7
+  },
+  {
+    "name": "Trident of the Seas (e) (o)",
     "id": 33326,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the seas (e) (o).png",
+    "image": "Trident of the Seas (e) (o).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151190,7 +151817,7 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 25,
+        "magic": 15,
         "ranged": 0
       },
       "defence": {
@@ -151206,7 +151833,7 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas (e) (o)",
+    "name": "Trident of the Seas (e) (o)",
     "id": 33328,
     "version": "Uncharged",
     "slot": "weapon",
@@ -151223,7 +151850,7 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 25,
+        "magic": 15,
         "ranged": 0
       },
       "defence": {
@@ -151239,11 +151866,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas (o)",
+    "name": "Trident of the Seas (o)",
     "id": 33323,
     "version": "Fully charged",
     "slot": "weapon",
-    "image": "Trident of the seas (full) (o).png",
+    "image": "Trident of the Seas (full) (o).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151256,7 +151883,7 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 25,
+        "magic": 15,
         "ranged": 0
       },
       "defence": {
@@ -151272,11 +151899,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the seas (o)",
+    "name": "Trident of the Seas (o)",
     "id": 33322,
     "version": "Partially charged",
     "slot": "weapon",
-    "image": "Trident of the seas (o).png",
+    "image": "Trident of the Seas (o).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151289,7 +151916,7 @@
         "stab": 0,
         "slash": 0,
         "crush": 0,
-        "magic": 25,
+        "magic": 15,
         "ranged": 0
       },
       "defence": {
@@ -151305,11 +151932,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp",
+    "name": "Trident of the Swamp",
     "id": 12899,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the swamp.png",
+    "image": "Trident of the Swamp.png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151338,11 +151965,44 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (e)",
+    "name": "Trident of the Swamp",
+    "id": 12900,
+    "version": "Uncharged",
+    "slot": "weapon",
+    "image": "Uncharged toxic trident.png",
+    "speed": 4,
+    "category": "Powered Staff",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 25,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 2,
+        "slash": 3,
+        "crush": 1,
+        "magic": 15,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": false,
+    "attack_range": 7
+  },
+  {
+    "name": "Trident of the Swamp (e)",
     "id": 22292,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the swamp (e).png",
+    "image": "Trident of the Swamp (e).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151371,7 +152031,7 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (e)",
+    "name": "Trident of the Swamp (e)",
     "id": 22294,
     "version": "Uncharged",
     "slot": "weapon",
@@ -151404,11 +152064,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (e) (o)",
+    "name": "Trident of the Swamp (e) (o)",
     "id": 33318,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the swamp (e) (o).png",
+    "image": "Trident of the Swamp (e) (o).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151437,7 +152097,7 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (e) (o)",
+    "name": "Trident of the Swamp (e) (o)",
     "id": 33320,
     "version": "Uncharged",
     "slot": "weapon",
@@ -151470,11 +152130,11 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (o)",
+    "name": "Trident of the Swamp (o)",
     "id": 33314,
     "version": "Charged",
     "slot": "weapon",
-    "image": "Trident of the swamp (o).png",
+    "image": "Trident of the Swamp (o).png",
     "speed": 4,
     "category": "Powered Staff",
     "bonuses": {
@@ -151503,7 +152163,7 @@
     "attack_range": 7
   },
   {
-    "name": "Trident of the swamp (o)",
+    "name": "Trident of the Swamp (o)",
     "id": 33316,
     "version": "Uncharged",
     "slot": "weapon",
@@ -154176,6 +154836,39 @@
     "attack_range": null
   },
   {
+    "name": "Vampyre snelm",
+    "id": 34063,
+    "version": null,
+    "slot": "head",
+    "image": "Vampyre snelm.png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": -3,
+        "ranged": -1
+      },
+      "defence": {
+        "stab": 7,
+        "slash": 8,
+        "crush": 6,
+        "magic": -1,
+        "ranged": 7
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
     "name": "Vampyric slayer helmet",
     "id": 25904,
     "version": null,
@@ -156585,11 +157278,11 @@
     "attack_range": 1
   },
   {
-    "name": "Voidwaker (deadman)",
+    "name": "Voidwaker (Deadman)",
     "id": 29607,
     "version": null,
     "slot": "weapon",
-    "image": "Voidwaker (deadman).png",
+    "image": "Voidwaker (Deadman).png",
     "speed": 4,
     "category": "Slash Sword",
     "bonuses": {
@@ -156618,11 +157311,11 @@
     "attack_range": 1
   },
   {
-    "name": "Volatile nightmare staff",
+    "name": "Volatile Nightmare staff",
     "id": 24424,
     "version": null,
     "slot": "weapon",
-    "image": "Volatile nightmare staff.png",
+    "image": "Volatile Nightmare staff.png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -156651,11 +157344,11 @@
     "attack_range": 1
   },
   {
-    "name": "Volatile nightmare staff (deadman)",
+    "name": "Volatile Nightmare staff (Deadman)",
     "id": 29609,
     "version": null,
     "slot": "weapon",
-    "image": "Volatile nightmare staff (deadman).png",
+    "image": "Volatile Nightmare staff (Deadman).png",
     "speed": 5,
     "category": "Staff",
     "bonuses": {
@@ -160026,25 +160719,25 @@
     "category": null,
     "bonuses": {
       "strength": {
-        "melee": 0,
+        "melee": 50,
         "ranged": 0,
-        "magic": 0.0
+        "magic": 0
       },
       "attack": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
+        "stab": 100,
+        "slash": 100,
+        "crush": 100,
+        "magic": 100,
+        "ranged": 100
       },
       "defence": {
-        "stab": 0,
-        "slash": 0,
-        "crush": 0,
-        "magic": 0,
-        "ranged": 0
+        "stab": 100,
+        "slash": 100,
+        "crush": 100,
+        "magic": 100,
+        "ranged": 100
       },
-      "prayer": 0
+      "prayer": 50
     },
     "is_two_handed": null,
     "attack_range": null
@@ -161278,6 +161971,1953 @@
     "image": "Wrath tiara.png",
     "speed": null,
     "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena",
+    "id": 26725,
+    "version": "Charged",
+    "slot": "hands",
+    "image": "Wristbands of the Arena (c).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena",
+    "id": 26726,
+    "version": "Charged and Locked",
+    "slot": "hands",
+    "image": "Wristbands of the Arena (cl).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena",
+    "id": 26723,
+    "version": null,
+    "slot": "hands",
+    "image": "Wristbands of the Arena.png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena (i)",
+    "id": 26729,
+    "version": "Charged",
+    "slot": "hands",
+    "image": "Wristbands of the Arena (ic).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 14,
+        "slash": 13,
+        "crush": 15,
+        "magic": 7,
+        "ranged": 13
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena (i)",
+    "id": 26730,
+    "version": "Charged and Locked",
+    "slot": "hands",
+    "image": "Wristbands of the Arena (ilc).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 14,
+        "slash": 13,
+        "crush": 15,
+        "magic": 7,
+        "ranged": 13
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wristbands of the Arena (i)",
+    "id": 26727,
+    "version": null,
+    "slot": "hands",
+    "image": "Wristbands of the Arena (i).png",
+    "speed": null,
+    "category": null,
+    "bonuses": {
+      "strength": {
+        "melee": 12,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 14,
+        "slash": 13,
+        "crush": 15,
+        "magic": 7,
+        "ranged": 13
+      },
+      "defence": {
+        "stab": 12,
+        "slash": 12,
+        "crush": 12,
+        "magic": 6,
+        "ranged": 12
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig boots",
+    "id": 33881,
+    "version": null,
+    "slot": "feet",
+    "image": "Wyrmscraig boots.png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33872,
+    "version": "Black",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33860,
+    "version": "Blue",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33857,
+    "version": "Green",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33875,
+    "version": "Pink",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33863,
+    "version": "Red",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33869,
+    "version": "White",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig noble skirt",
+    "id": 33866,
+    "version": "Yellow",
+    "slot": "legs",
+    "image": "Wyrmscraig noble skirt (yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig shoes",
+    "id": 33878,
+    "version": null,
+    "slot": "feet",
+    "image": "Wyrmscraig shoes.png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33923,
+    "version": "Black",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33911,
+    "version": "Blue",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33908,
+    "version": "Green",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33926,
+    "version": "Pink",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33914,
+    "version": "Red",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33920,
+    "version": "White",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (A)",
+    "id": 33917,
+    "version": "Yellow",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (A, yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33944,
+    "version": "Black",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33932,
+    "version": "Blue",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33929,
+    "version": "Green",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33947,
+    "version": "Pink",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33935,
+    "version": "Red",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33941,
+    "version": "White",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe bottom (B)",
+    "id": 33938,
+    "version": "Yellow",
+    "slot": "legs",
+    "image": "Wyrmscraig villager robe bottom (B, yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33905,
+    "version": "Beige",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, beige).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33899,
+    "version": "Black",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33887,
+    "version": "Blue",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33884,
+    "version": "Green",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33902,
+    "version": "Pink",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33890,
+    "version": "Red",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33896,
+    "version": "White",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (A)",
+    "id": 33893,
+    "version": "Yellow",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (A, yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33965,
+    "version": "Black",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33953,
+    "version": "Blue",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33950,
+    "version": "Green",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33968,
+    "version": "Pink",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33956,
+    "version": "Red",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33962,
+    "version": "White",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager robe top (B)",
+    "id": 33959,
+    "version": "Yellow",
+    "slot": "body",
+    "image": "Wyrmscraig villager robe top (B, yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33986,
+    "version": "Black",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33974,
+    "version": "Blue",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33971,
+    "version": "Green",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33989,
+    "version": "Pink",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33977,
+    "version": "Red",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33983,
+    "version": "White",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager skirt",
+    "id": 33980,
+    "version": "Yellow",
+    "slot": "legs",
+    "image": "Wyrmscraig villager skirt (yellow).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 34013,
+    "version": "Beige",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (beige).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 34007,
+    "version": "Black",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (black).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 33995,
+    "version": "Blue",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (blue).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 33992,
+    "version": "Green",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (green).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 34010,
+    "version": "Pink",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (pink).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 33998,
+    "version": "Red",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (red).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 34004,
+    "version": "White",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (white).png",
+    "speed": null,
+    "category": "Unarmed",
+    "bonuses": {
+      "strength": {
+        "melee": 0,
+        "ranged": 0,
+        "magic": 0
+      },
+      "attack": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "defence": {
+        "stab": 0,
+        "slash": 0,
+        "crush": 0,
+        "magic": 0,
+        "ranged": 0
+      },
+      "prayer": 0
+    },
+    "is_two_handed": null,
+    "attack_range": null
+  },
+  {
+    "name": "Wyrmscraig villager work skirt",
+    "id": 34001,
+    "version": "Yellow",
+    "slot": "legs",
+    "image": "Wyrmscraig villager work skirt (yellow).png",
+    "speed": null,
+    "category": "Unarmed",
     "bonuses": {
       "strength": {
         "melee": 0,

@@ -62,7 +62,7 @@ pub fn max_mage_sang_staff_player() -> Player {
 
     player.equip("Ancestral hat", None).unwrap();
     player.equip("Occult necklace", None).unwrap();
-    player.equip("Imbued guthix cape", None).unwrap();
+    player.equip("Imbued Guthix cape", None).unwrap();
     player.equip("Rada's blessing 4", None).unwrap();
     player.equip("Sanguinesti staff", Some("Charged")).unwrap();
     player.equip("Elidinis' ward (f)", None).unwrap();
@@ -81,7 +81,7 @@ pub fn max_mage_sang_staff_player() -> Player {
 pub fn bowfa_crystal_player() -> Player {
     let mut player = max_ranged_zcb_player();
 
-    player.equip("Bow of faerdhinen (c)", None).unwrap();
+    player.equip("Bow of Faerdhinen (c)", None).unwrap();
     player.equip("Crystal helm", Some("Active")).unwrap();
     player.equip("Crystal body", Some("Active")).unwrap();
     player.equip("Crystal legs", Some("Active")).unwrap();

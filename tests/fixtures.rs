@@ -297,7 +297,7 @@ pub fn mid_level_melee_player() -> Player {
     player.add_prayer(Prayer::Piety);
     player.add_potion(Potion::SuperCombat);
 
-    player.equip("Helm of neitiznot", None).unwrap();
+    player.equip("Helm of Neitiznot", None).unwrap();
     player.equip("Amulet of fury", None).unwrap();
     player.equip("Fire cape", None).unwrap();
     player.equip("Rada's blessing 3", None).unwrap();
@@ -659,7 +659,7 @@ pub fn max_mage_sang_staff_player() -> Player {
 
     player.equip("Ancestral hat", None).unwrap();
     player.equip("Occult necklace", None).unwrap();
-    player.equip("Imbued guthix cape", None).unwrap();
+    player.equip("Imbued Guthix cape", None).unwrap();
     player.equip("Rada's blessing 4", None).unwrap();
     player.equip("Sanguinesti staff", Some("Charged")).unwrap();
     player.equip("Elidinis' ward (f)", None).unwrap();
@@ -687,7 +687,7 @@ pub fn max_mage_sang_staff_brimstone_ring_player() -> Player {
 pub fn max_mage_toxic_trident_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player
-        .equip("Trident of the swamp", Some("Charged"))
+        .equip("Trident of the Swamp", Some("Charged"))
         .unwrap();
     player.update_bonuses();
     player
@@ -697,7 +697,7 @@ pub fn max_mage_toxic_trident_player() -> Player {
 pub fn max_mage_trident_player() -> Player {
     let mut player = max_mage_sang_staff_player();
     player
-        .equip("Trident of the seas", Some("Charged"))
+        .equip("Trident of the Seas", Some("Charged"))
         .unwrap();
     player.update_bonuses();
     player
@@ -706,7 +706,7 @@ pub fn max_mage_trident_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_fire_surge_player() -> Player {
     let mut player = max_mage_sang_staff_player();
-    player.equip("Harmonised nightmare staff", None).unwrap();
+    player.equip("Harmonised Nightmare staff", None).unwrap();
     player.update_bonuses();
     player
         .set_spell(Spell::Standard(StandardSpell::FireSurge))
@@ -749,7 +749,7 @@ pub fn mid_level_magic_warped_sceptre_player() -> Player {
 
     player.equip("Ahrim's hood", None).unwrap();
     player.equip("Occult necklace", None).unwrap();
-    player.equip("Imbued guthix cape", None).unwrap();
+    player.equip("Imbued Guthix cape", None).unwrap();
     player.equip("Rada's blessing 3", None).unwrap();
     player.equip("Warped sceptre", Some("Charged")).unwrap();
     player.equip("Malediction ward", None).unwrap();
@@ -846,7 +846,7 @@ pub fn max_mage_accursed_sceptre_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.equip("Tome of water", Some("Charged")).unwrap();
+    player.equip("Tome of Water", Some("Charged")).unwrap();
     player
         .set_spell(Spell::Standard(StandardSpell::WaterSurge))
         .unwrap();
@@ -857,14 +857,14 @@ pub fn max_mage_harm_tome_of_water_surge_player() -> Player {
 #[fixture]
 pub fn max_mage_harm_fire_surge_tome_player() -> Player {
     let mut player = max_mage_harm_fire_surge_player();
-    player.equip("Tome of fire", Some("Charged")).unwrap();
+    player.equip("Tome of Fire", Some("Charged")).unwrap();
     player.update_bonuses();
     player
 }
 #[fixture]
 pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
     let mut player = mid_level_mage_chaos_gauntlets_fire_bolt_player();
-    player.equip("Tome of fire", Some("Charged")).unwrap();
+    player.equip("Tome of Fire", Some("Charged")).unwrap();
     player.update_bonuses();
     player
 }
@@ -872,7 +872,7 @@ pub fn mid_level_mage_chaos_gauntlets_fire_bolt_tome_player() -> Player {
 #[fixture]
 pub fn max_melee_blade_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Blade of saeldor (c)", None).unwrap();
+    player.equip("Blade of Saeldor (c)", None).unwrap();
     player.set_active_style(CombatStyle::Slash);
     player.update_bonuses();
     player
@@ -881,7 +881,7 @@ pub fn max_melee_blade_player() -> Player {
 #[fixture]
 pub fn max_melee_scythe_player() -> Player {
     let mut player = max_melee_player();
-    player.equip("Scythe of vitur", Some("Charged")).unwrap();
+    player.equip("Scythe of Vitur", Some("Charged")).unwrap();
     player.set_active_style(CombatStyle::Chop);
     player.update_bonuses();
     player
@@ -900,7 +900,7 @@ pub fn max_melee_fang_player() -> Player {
 pub fn full_ahrims_aotd_player() -> Player {
     let mut player = mid_level_magic_warped_sceptre_player();
     player.equip("Ahrim's staff", None).unwrap();
-    player.equip("Amulet of the damned", Some("Full")).unwrap();
+    player.equip("Amulet of the Damned", Some("Full")).unwrap();
     player.attrs.spell = Some(Spell::Arceuus(ArceuusSpell::UndeadGrasp));
     player.set_active_style(CombatStyle::Spell);
     player.update_set_effects();
@@ -956,7 +956,7 @@ pub fn full_karils_aotd_player() -> Player {
     player.equip("Karil's crossbow", None).unwrap();
     player.unequip_slot(&GearSlot::Ammo);
     player.equip("Bolt rack", None).unwrap();
-    player.equip("Amulet of the damned", Some("Full")).unwrap();
+    player.equip("Amulet of the Damned", Some("Full")).unwrap();
     player.update_set_effects();
     player.update_bonuses();
     player
@@ -975,7 +975,7 @@ pub fn max_melee_torags_hammers_player() -> Player {
 pub fn max_ranged_tonalztics_charged_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player
-        .equip("Tonalztics of ralos", Some("Charged"))
+        .equip("Tonalztics of Ralos", Some("Charged"))
         .unwrap();
     player.update_bonuses();
     player
@@ -985,7 +985,7 @@ pub fn max_ranged_tonalztics_charged_player() -> Player {
 pub fn max_ranged_tonalztics_uncharged_player() -> Player {
     let mut player = max_ranged_zcb_player();
     player
-        .equip("Tonalztics of ralos", Some("Uncharged"))
+        .equip("Tonalztics of Ralos", Some("Uncharged"))
         .unwrap();
     player.update_bonuses();
     player

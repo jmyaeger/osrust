@@ -373,11 +373,11 @@ fn calc_player_magic_rolls(player: &mut Player, monster: &Monster) {
     }
 
     // Apply tome of fire/water damage bonuses (which are now pre-roll)
-    if (player.is_wearing("Tome of fire", Some("Charged")) && player.is_using_fire_spell())
-        || player.is_wearing("Tome of earth", Some("Charged")) && player.is_using_earth_spell()
+    if (player.is_wearing("Tome of Fire", Some("Charged")) && player.is_using_fire_spell())
+        || player.is_wearing("Tome of Earth", Some("Charged")) && player.is_using_earth_spell()
     {
         max_hit = max_hit * 11 / 10;
-    } else if player.is_wearing("Tome of water", Some("Charged")) && player.is_using_water_spell() {
+    } else if player.is_wearing("Tome of Water", Some("Charged")) && player.is_using_water_spell() {
         att_roll = att_roll * 11 / 10; //TODO: Check if this still exists
         max_hit = max_hit * 11 / 10;
     }
@@ -832,12 +832,12 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
     match player.gear.weapon.name.as_str() {
         "Starter staff" => 8,
         "Warped sceptre" => (8 * visible_magic + 96) / 37,
-        "Trident of the seas" | "Trident of the seas (e)" => {
+        "Trident of the Seas" | "Trident of the Seas (e)" => {
             max(1, (visible_magic / 3).saturating_sub(5))
         }
         "Thammaron's sceptre" => max(1, (visible_magic / 3).saturating_sub(8)),
         "Accursed sceptre" => max(1, (visible_magic / 3).saturating_sub(6)),
-        "Trident of the swamp" | "Trident of the swamp (e)" => {
+        "Trident of the Swamp" | "Trident of the Swamp (e)" => {
             max(1, (visible_magic / 3).saturating_sub(2))
         }
         "Sanguinesti staff" => max(1, (visible_magic / 3).saturating_sub(1)),

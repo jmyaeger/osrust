@@ -222,9 +222,9 @@ def main():
                     "Sanguinesti staff",
                     "Thammaron's sceptre",
                     "Thammaron's sceptre (a)",
-                    "Trident of the seas",
-                    "Trident of the seas (e)",
-                    "Trident of the swamp",
+                    "Trident of the Seas",
+                    "Trident of the Seas (e)",
+                    "Trident of the Swamp",
                     "trident of the swamp (e)",
                     "Tumeken's shadow",
                     "Ursine chainmace",
@@ -239,8 +239,8 @@ def main():
             if (
                 equipment["name"]
                 in [
-                    "Blade of saeldor",
-                    "Bow of faerdhinen",
+                    "Blade of Saeldor",
+                    "Bow of Faerdhinen",
                     "Crystal body",
                     "Crystal helm",
                     "Crystal legs",

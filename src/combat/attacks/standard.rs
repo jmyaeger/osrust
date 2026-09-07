@@ -136,7 +136,7 @@ pub fn standard_attack(
     }
 
     // Reset any attack speed changes from eye of ayak spec
-    if player.is_wearing("Eye of ayak", None) {
+    if player.is_wearing("Eye of Ayak", None) {
         player.set_active_style(player.attrs.active_style);
     }
 
@@ -249,7 +249,7 @@ pub fn ahrims_staff_attack(
         monster.drain_stat(&CombatStat::Strength, 5, None);
     }
 
-    if player.is_wearing_any_version("Amulet of the damned") && rng.random_range(0..4) == 0 {
+    if player.is_wearing_any_version("Amulet of the Damned") && rng.random_range(0..4) == 0 {
         // With amulet of the damned, 25% chance to increase damage 30% post-roll
         hit.damage = hit.damage * 13 / 10;
     }
@@ -310,7 +310,7 @@ pub fn karils_crossbow_attack(
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
     if player.set_effects.full_karils
-        && player.is_wearing_any_version("Amulet of the damned")
+        && player.is_wearing_any_version("Amulet of the Damned")
         && rng.random_range(0..4) == 0
     {
         // Set effect rolls 25% chance to hit an additional time for half the first hit's damage
@@ -331,8 +331,8 @@ pub fn guthans_warspear_attack(
     let hit = standard_attack(player, monster, rng, limiter);
     if player.set_effects.full_guthans && rng.random_range(0..4) == 0 {
         // Set effect rolls 25% chance to heal by the damage dealt
-        if player.is_wearing_any_version("Amulet of the damned") {
-            // Amulet of the damned allows up to 10 HP of overheal
+        if player.is_wearing_any_version("Amulet of the Damned") {
+            // Amulet of the Damned allows up to 10 HP of overheal
             player.heal(hit.damage, Some(10));
         } else {
             player.heal(hit.damage, None);
@@ -359,7 +359,7 @@ pub fn torags_hammers_attack(
     let mut hit2 = base_attack(&info2, rng, false);
 
     // Not implementing the normal set effect because it only applies in PvP
-    // Amulet of the damned effect gets implemented in roll calcs
+    // Amulet of the Damned effect gets implemented in roll calcs
 
     if hit1.success {
         hit1.apply_transforms(player, monster, rng, limiter);
@@ -1101,10 +1101,10 @@ pub fn get_attack_functions(player: &Player) -> AttackFn {
         | "Keris partisan of corruption"
         | "Keris partisan of breaching" => keris_attack as AttackFn,
         "Keris partisan of the sun" => yellow_keris_attack as AttackFn,
-        "Scythe of vitur" => scythe_attack as AttackFn,
+        "Scythe of Vitur" => scythe_attack as AttackFn,
         "Soulreaper axe" => soulreaper_axe_attack as AttackFn,
         "Gadderhammer" => gadderhammer_attack as AttackFn,
-        "Tonalztics of ralos" => tonalztics_of_ralos_attack as AttackFn,
+        "Tonalztics of Ralos" => tonalztics_of_ralos_attack as AttackFn,
         "Dual macuahuitl" => dual_macuahuitl_attack as AttackFn,
         "Eclipse atlatl" => atlatl_attack as AttackFn,
         "Blue moon spear" => blue_moon_spear_attack as AttackFn,

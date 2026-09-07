@@ -413,7 +413,7 @@ fn simulate_vardorvis() {
     // player.reset_current_stats(false);
     player.equip("Noxious halberd", None).unwrap();
     player.set_active_style(CombatStyle::Swipe);
-    // player.equip("Blade of saeldor (c)", None).unwrap();
+    // player.equip("Blade of Saeldor (c)", None).unwrap();
     // player.equip("Dragon defender", None).unwrap();
     // player.equip("Bandos chestplate", None).unwrap();
     // player.equip("Bandos tassets", None).unwrap();

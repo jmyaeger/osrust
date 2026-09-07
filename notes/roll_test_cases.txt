@@ -123,14 +123,14 @@ Boost tests:
 - Accursed sceptre + salve against revenant
 - Accursed sceptre + avarice + forinthry surge against revenant
 - Accursed sceptre + slayer helm against Callisto
-- Tome of water + water surge 
+- Tome of Water + water surge 
 - Slayer helm + shadow against Kree
 - Slayer helm + fire bolt with chaos gauntlets-
 - Slayer helm + charge + god spell
 - Slayer helm + smoke battlestaff + fire surge
 - Slayer helm + full virtus + kodai + ice barrage
 - Slayer helm + salve (test exculsivity - same with avarice)
-- Tome of fire + fire surge
-- Tome of fire + fire surge + slayer helm
-- Tome of fire + fire surge + salve
-- Tome of fire + fire bolt + chaos gauntlets
+- Tome of Fire + fire surge
+- Tome of Fire + fire surge + slayer helm
+- Tome of Fire + fire surge + salve
+- Tome of Fire + fire bolt + chaos gauntlets

@@ -862,7 +862,7 @@ impl Player {
         {
             // Prevent staff speed from being set to its melee attack speed if player is casting spells
             gear.weapon.speed =
-                if gear.is_wearing("Harmonised nightmare staff", None) && is_using_standard_spell {
+                if gear.is_wearing("Harmonised Nightmare staff", None) && is_using_standard_spell {
                     4
                 } else if gear.is_wearing("Twinflame staff", None) {
                     6
@@ -1116,7 +1116,7 @@ impl Player {
     pub fn is_using_vampyrebane(&self, tier: u8) -> bool {
         let mut weapons = vec!["Blisterwood flail", "Blisterwood sickle", "Ivandis flail"];
         if tier == 2 {
-            weapons.push("Rod of ivandis");
+            weapons.push("Rod of Ivandis");
         }
 
         weapons.contains(&self.gear.weapon.name.as_str())

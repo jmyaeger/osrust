@@ -30,7 +30,7 @@ Limiter tests:
 - Max ranged against Kraken
 - Scythe against Verzik P1
 - Tentacle whip against Verzik P1
-- Trident of the swamp against Verzik P1
+- Trident of the Swamp against Verzik P1
 - Dawnbringer autos against Verzik P1
 - Max mage against Tekton
 - Max mage against Vasa crystal
