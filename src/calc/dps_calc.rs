@@ -173,7 +173,7 @@ fn get_confliction_gauntlets_accuracy(
     Ok(double_roll / (1.0 - double_roll - single_roll))
 }
 
-fn get_hit_chance(
+pub fn get_hit_chance(
     player: &Player,
     monster: &Monster,
     using_spec: bool,
