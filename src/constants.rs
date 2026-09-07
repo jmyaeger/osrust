@@ -762,7 +762,7 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Volatile nightmare staff", 55),
     ("Zaryte crossbow", 75),
     ("Abyssal dagger", 25),
-    ("Burning claws", 30),
+    ("Burning claws", 35),
     ("Dark bow", 55),
     ("Dragon claws", 50),
     ("Dragon dagger", 25),

@@ -8,10 +8,11 @@ Written for Python 3.9.
 """
 
 # import os
-import requests
 import json
 import re
 import urllib.parse
+
+import requests
 
 FILE_NAME = "../src/databases/equipment.json"
 WIKI_BASE = "https://oldschool.runescape.wiki"
@@ -98,9 +99,7 @@ def getEquipmentData():
 
         r = requests.get(
             API_BASE + "?" + urllib.parse.urlencode(query),
-            headers={
-                "User-Agent": "osrs-dps-calc (https://github.com/weirdgloop/osrs-dps-calc)"
-            },
+            headers={"User-Agent": "Orion (@jmyaeger on Discord)"},
         )
 
         data = r.json()
@@ -330,7 +329,7 @@ def main():
     #     r = requests.get(
     #         WIKI_BASE + "/w/Special:Filepath/" + img,
     #         headers={
-    #             "User-Agent": "osrs-dps-calc (https://github.com/weirdgloop/osrs-dps-calc)"
+    #             "User-Agent": "Orion (@jmyaeger on Discord)"
     #         },
     #     )
     #     if r.ok:

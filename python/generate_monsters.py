@@ -329,7 +329,7 @@ def main():
     #     r = requests.get(
     #         WIKI_BASE + "/w/Special:Filepath/" + img,
     #         headers={
-    #             "User-Agent": "osrs-dps-calc (https://github.com/weirdgloop/osrs-dps-calc)"
+    #             "User-Agent": "Orion (@jmyaeger on Discord)"
     #         },
     #     )
     #     if r.status_code == 200:

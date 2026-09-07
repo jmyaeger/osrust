@@ -869,11 +869,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
         "Eye of ayak" => (0, base_max_hit * 13 / 10),
-        _ => {
-            return Err(DpsCalcError::SpecNotImplemented(
-                player.gear.weapon.name.clone(),
-            ));
-        }
+        _ => (0, base_max_hit),
     };
 
     Ok(min_max)
