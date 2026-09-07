@@ -1078,14 +1078,24 @@ fn get_expected_attack_speed(dist: &AttackDistribution, player: &Player, using_s
 }
 
 // Get the average damage per tick
-fn get_dpt(dist: &AttackDistribution, player: &Player, using_spec: bool) -> f64 {
+fn get_dpt(
+    dist: &AttackDistribution,
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
     let speed = get_expected_attack_speed(dist, player, using_spec);
-    dist.get_expected_damage() / speed
+    Ok(get_expected_damage(dist, player, monster, using_spec)? / speed)
 }
 
 // Get the average damage per second
-pub fn get_dps(dist: &AttackDistribution, player: &Player, using_spec: bool) -> f64 {
-    get_dpt(dist, player, using_spec) / constants::SECONDS_PER_TICK
+pub fn get_dps(
+    dist: &AttackDistribution,
+    player: &Player,
+    monster: &Monster,
+    using_spec: bool,
+) -> Result<f64, DpsCalcError> {
+    Ok(get_dpt(dist, player, monster, using_spec)? / constants::SECONDS_PER_TICK)
 }
 
 // Get the expected number of hits per kill
