@@ -425,20 +425,23 @@ pub fn get_distribution(
 
     // Simple multi-hit specs
     if using_spec {
-        let mut hit_count = 1;
-        if player.is_wearing_any_version("Dragon dagger")
+        let hit_count = if player.is_wearing_any_version("Dragon dagger")
             || player.is_wearing_any_version("Dragon knife")
             || player.is_wearing_any(constants::MAGIC_SHORTBOWS)
             || player.is_wearing_any_version("Rosewood blowpipe")
         {
-            hit_count = 2;
+            2
         } else if player.is_wearing("Webweaver bow", None) {
-            hit_count = 4;
-        }
+            4
+        } else {
+            0
+        };
 
-        dist = AttackDistribution::default();
-        for _ in 0..hit_count {
-            dist.add_dist(standard_hit_dist.clone());
+        if hit_count > 0 {
+            dist = AttackDistribution::default();
+            for _ in 0..hit_count {
+                dist.add_dist(standard_hit_dist.clone());
+            }
         }
     }
 
