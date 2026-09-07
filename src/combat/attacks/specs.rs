@@ -1823,6 +1823,37 @@ pub fn rosewood_bp_spec(
     hit1.combine(&hit2)
 }
 
+pub fn sunspear_spec(
+    player: &mut Player,
+    monster: &mut Monster,
+    rng: &mut SmallRng,
+    limiter: &Option<Box<dyn Limiter>>,
+) -> Hit {
+    let info = AttackInfo::new(player, monster);
+
+    // Sunspear spec always hits for 70% of the max hit + 1
+    let damage = info.max_hit * 7 / 10 + 1;
+
+    // If the monster's HP is at or below 70% of the max hit, attack roll is fixed at
+    // 70% of the max attack roll (TODO: see if this is <= or <)
+    let att_roll = if monster.stats.hitpoints.current <= damage {
+        info.max_att_roll * 7 / 10
+    } else {
+        accuracy_roll(info.max_att_roll, rng)
+    };
+    let def_roll = defence_roll(info.max_def_roll, rng);
+    let mut hit = if att_roll > def_roll {
+        Hit::accurate(damage)
+    } else {
+        Hit::inaccurate()
+    };
+
+    if hit.success {
+        hit.apply_transforms(player, monster, rng, limiter);
+    }
+
+    hit
+}
 // TODO: implement purging staff spec
 
 pub fn get_spec_attack_function(player: &Player) -> AttackFn {
@@ -1881,6 +1912,7 @@ pub fn get_spec_attack_function(player: &Player) -> AttackFn {
         "Eye of Ayak" => eye_of_ayak_spec,
         "Rosewood blowpipe" => rosewood_bp_spec,
         "Arkan blade" => arkan_blade_spec,
+        "Sunspear" => sunspear_spec,
         _ => player.attack,
     }
 }

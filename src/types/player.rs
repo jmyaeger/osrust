@@ -973,7 +973,7 @@ impl Player {
     pub fn is_wearing_silver_weapon(&self) -> bool {
         // Check if the player is wearing any type of silver weapon
         self.is_wearing_any(constants::SILVER_WEAPONS)
-            || (self.combat_type() == CombatType::Ranged && self.is_wearing("Silver bolts", None))
+            || (self.is_wearing_any_version("Silver bolts") && self.is_using_crossbow())
     }
 
     pub fn is_wearing_ivandis_weapon(&self) -> bool {
@@ -1114,7 +1114,14 @@ impl Player {
     }
 
     pub fn is_using_vampyrebane(&self, tier: u8) -> bool {
-        let mut weapons = vec!["Blisterwood flail", "Blisterwood sickle", "Ivandis flail"];
+        let mut weapons = vec![
+            "Blisterwood flail",
+            "Blisterwood sickle",
+            "Ivandis flail",
+            "Hallowed flail",
+            "Blisterwood stake",
+            "Sunspear",
+        ];
         if tier == 2 {
             weapons.push("Rod of Ivandis");
         }

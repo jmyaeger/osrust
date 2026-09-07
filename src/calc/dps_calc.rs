@@ -21,64 +21,7 @@ use crate::utils::math::{Fraction, binomial_probability, lerp};
 use std::cmp::{max, min};
 use std::collections::HashMap;
 
-fn get_normal_accuracy(
-    player: &Player,
-    monster: &Monster,
-    using_spec: bool,
-) -> Result<f64, DpsCalcError> {
-    // Calculate theoretical hit chance for most weapons
-    let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls.get(combat_type)?;
-
-    if using_spec {
-        let att_roll_factor = match &player.gear.weapon.name as &str {
-            "Saradomin godsword" | "Bandos godsword" | "Zamorak godsword" | "Armadyl godsword"
-            | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword"
-            | "Brine sabre" | "Barrelchest anchor" | "Eye of Ayak" => Fraction::new(2, 1),
-            "Accursed sceptre"
-            | "Accursed sceptre (a)"
-            | "Volatile Nightmare staff"
-            | "Arkan blade"
-            | "Granite hammer" => Fraction::new(3, 2),
-            "Dragon dagger" => Fraction::new(115, 100),
-            "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
-                Fraction::new(5, 4)
-            }
-            "Soulreaper axe" => {
-                Fraction::new(100 + 6 * player.boosts.soulreaper_stacks as i32, 100)
-            }
-            "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
-            "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
-            "Rosewood blowpipe" => Fraction::new(4, 5),
-            _ => Fraction::new(1, 1),
-        }
-        .unwrap();
-        max_att_roll = att_roll_factor.multiply_to_int(max_att_roll);
-    }
-
-    if player.is_wearing("Keris partisan of the sun", None)
-        && constants::TOA_MONSTERS.contains(&monster.id())
-        && monster.stats.hitpoints.current < monster.stats.hitpoints.base / 4
-    {
-        max_att_roll = max_att_roll * 5 / 4;
-    }
-
-    let mut def_roll = if using_spec {
-        if constants::STAB_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls.get(CombatType::Stab)
-        } else if constants::SLASH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls.get(CombatType::Slash)
-        } else if constants::CRUSH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls.get(CombatType::Crush)
-        } else if constants::MAGIC_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
-            monster.def_rolls.get(CombatType::Magic)
-        } else {
-            monster.def_rolls.get(combat_type)
-        }
-    } else {
-        monster.def_rolls.get(combat_type)
-    };
-
+fn normal_accuracy(attack: i32, defense: i32) -> f64 {
     let std_roll = |attack: i32, defence: i32| -> f64 {
         if attack > defence {
             1.0 - ((defence as f64 + 2.0) / (2.0 * (attack as f64 + 1.0)))
@@ -87,37 +30,26 @@ fn get_normal_accuracy(
         }
     };
 
+    let mut max_att_roll = attack;
+    let mut max_def_roll = defense;
+
     if max_att_roll < 0 {
         max_att_roll = min(0, max_att_roll + 2);
     }
 
-    if def_roll < 0 {
-        def_roll = min(0, def_roll + 2);
+    if max_def_roll < 0 {
+        max_def_roll = min(0, max_def_roll + 2);
     }
 
-    match (max_att_roll < 0, def_roll < 0) {
-        (false, false) => Ok(std_roll(max_att_roll, def_roll)),
-        (false, true) => Ok(1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0)),
-        (true, false) => Ok(0.0),
-        (true, true) => Ok(std_roll(-max_att_roll, -def_roll)),
+    match (max_att_roll < 0, max_def_roll < 0) {
+        (false, false) => std_roll(max_att_roll, max_def_roll),
+        (false, true) => 1.0 - 1.0 / (-max_def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0),
+        (true, false) => 0.0,
+        (true, true) => std_roll(-max_def_roll, -max_att_roll),
     }
 }
 
-fn get_fang_accuracy(
-    player: &Player,
-    monster: &Monster,
-    using_spec: bool,
-) -> Result<f64, DpsCalcError> {
-    // Calculate theoretical hit chance for Osmumten's fang outside of ToA
-    let combat_type = player.combat_type();
-    let mut max_att_roll = player.att_rolls.get(combat_type)?;
-
-    if using_spec {
-        max_att_roll = max_att_roll * 3 / 2;
-    }
-
-    let mut def_roll = monster.def_rolls.get(combat_type);
-
+fn fang_accuracy(attack: i32, defense: i32) -> f64 {
     let std_roll = |attack: i32, defence: i32| -> f64 {
         if attack > defence {
             1.0 - (defence as f64 + 2.0) * (2.0 * defence as f64 + 3.0)
@@ -146,31 +78,54 @@ fn get_fang_accuracy(
         }
     };
 
+    let mut max_att_roll = attack;
+    let mut max_def_roll = defense;
     if max_att_roll < 0 {
         max_att_roll = min(0, max_att_roll + 2);
     }
-
-    if def_roll < 0 {
-        def_roll = min(0, def_roll + 2);
+    if max_def_roll < 0 {
+        max_def_roll = min(0, max_def_roll + 2);
     }
 
-    match (max_att_roll < 0, def_roll < 0) {
-        (false, false) => Ok(std_roll(max_att_roll, def_roll)),
-        (false, true) => Ok(1.0 - 1.0 / (-def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0)),
-        (true, false) => Ok(0.0),
-        (true, true) => Ok(rv_roll(-def_roll, -max_att_roll)),
+    match (max_att_roll < 0, max_def_roll < 0) {
+        (false, false) => std_roll(max_att_roll, max_def_roll),
+        (false, true) => 1.0 - 1.0 / (-max_def_roll as f64 + 1.0) / (max_att_roll as f64 + 1.0),
+        (true, false) => 0.0,
+        (true, true) => rv_roll(-max_def_roll, -max_att_roll),
     }
 }
 
-fn get_confliction_gauntlets_accuracy(
-    player: &Player,
-    monster: &Monster,
-    using_spec: bool,
-) -> Result<f64, DpsCalcError> {
-    let single_roll = get_normal_accuracy(player, monster, using_spec)?;
-    let double_roll = get_fang_accuracy(player, monster, using_spec)?;
+fn fixed_attack_roll_accuracy(attack: i32, defense: i32) -> f64 {
+    let std_roll = |attack: i32, defense: i32| {
+        if attack > defense {
+            1.0
+        } else {
+            attack as f64 / (defense as f64 + 1.0)
+        }
+    };
 
-    Ok(double_roll / (1.0 - double_roll - single_roll))
+    let mut att_roll = attack;
+    let mut max_def_roll = defense;
+    if att_roll < 0 {
+        att_roll = min(0, att_roll + 2);
+    }
+    if max_def_roll < 0 {
+        max_def_roll = min(0, max_def_roll + 2);
+    }
+
+    match (att_roll < 0, max_def_roll < 0) {
+        (false, false) => std_roll(att_roll, max_def_roll),
+        (false, true) => 1.0,
+        (true, false) => 0.0,
+        (true, true) => std_roll(-max_def_roll, -att_roll),
+    }
+}
+
+fn get_confliction_gauntlets_accuracy(attack: i32, defense: i32) -> f64 {
+    let single_roll = normal_accuracy(attack, defense);
+    let double_roll = fang_accuracy(attack, defense);
+
+    double_roll / (1.0 - double_roll - single_roll)
 }
 
 pub fn get_hit_chance(
@@ -194,29 +149,87 @@ pub fn get_hit_chance(
         return Ok(1.0);
     }
 
+    let combat_type = player.combat_type();
+    let mut max_att_roll = player.att_rolls.get(combat_type)?;
+
+    if using_spec {
+        let att_roll_factor = match &player.gear.weapon.name as &str {
+            "Saradomin godsword" | "Bandos godsword" | "Zamorak godsword" | "Armadyl godsword"
+            | "Zaryte crossbow" | "Webweaver bow" | "Toxic blowpipe" | "Ancient godsword"
+            | "Brine sabre" | "Barrelchest anchor" | "Eye of Ayak" => Fraction::new(2, 1),
+            "Accursed sceptre"
+            | "Accursed sceptre (a)"
+            | "Volatile Nightmare staff"
+            | "Arkan blade"
+            | "Osmumten's fang"
+            | "Osmumten's fang (or)"
+            | "Granite hammer" => Fraction::new(3, 2),
+            "Dragon dagger" => Fraction::new(115, 100),
+            "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
+                Fraction::new(5, 4)
+            }
+            "Soulreaper axe" => {
+                Fraction::new(100 + 6 * player.boosts.soulreaper_stacks as i32, 100)
+            }
+            "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
+            "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
+            "Rosewood blowpipe" => Fraction::new(4, 5),
+            _ => Fraction::new(1, 1),
+        }
+        .unwrap();
+        max_att_roll = att_roll_factor.multiply_to_int(max_att_roll);
+    }
+
+    if player.is_wearing("Keris partisan of the sun", None)
+        && constants::TOA_MONSTERS.contains(&monster.id())
+        && monster.stats.hitpoints.current < monster.stats.hitpoints.base / 4
+    {
+        max_att_roll = max_att_roll * 5 / 4;
+    }
+
+    let max_def_roll = if using_spec {
+        if constants::STAB_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+            monster.def_rolls.get(CombatType::Stab)
+        } else if constants::SLASH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+            monster.def_rolls.get(CombatType::Slash)
+        } else if constants::CRUSH_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+            monster.def_rolls.get(CombatType::Crush)
+        } else if constants::MAGIC_SPEC_WEAPONS.contains(&player.gear.weapon.name.as_str()) {
+            monster.def_rolls.get(CombatType::Magic)
+        } else {
+            monster.def_rolls.get(combat_type)
+        }
+    } else {
+        monster.def_rolls.get(combat_type)
+    };
+
     let mut hit_chance = if player.is_wearing("Confliction gauntlets", None)
         && player.is_using_magic()
         && !player.gear.weapon.is_two_handed
     {
-        get_confliction_gauntlets_accuracy(player, monster, using_spec)?
+        get_confliction_gauntlets_accuracy(max_att_roll, max_def_roll)
+    } else if player.is_wearing("Sunspear", None) && using_spec {
+        let (_, max_hit) = get_spec_min_max_hit(player, monster)?;
+        if monster.stats.hitpoints.current <= max_hit {
+            fixed_attack_roll_accuracy(max_att_roll * 7 / 10, max_def_roll)
+        } else {
+            normal_accuracy(max_att_roll, max_def_roll)
+        }
     } else {
-        get_normal_accuracy(player, monster, using_spec)?
+        normal_accuracy(max_att_roll, max_def_roll)
     };
 
     if player.is_wearing("Osmumten's fang", None) && player.combat_type() == CombatType::Stab {
         if monster.is_toa_monster() {
             hit_chance = 1.0 - (1.0 - hit_chance) * (1.0 - hit_chance);
         } else {
-            hit_chance = get_fang_accuracy(player, monster, using_spec)?;
+            hit_chance = fang_accuracy(max_att_roll, max_def_roll);
         }
     }
 
     if player.is_using_magic() && player.is_wearing("Brimstone ring", None) {
-        let mut monster_copy = monster.clone();
-        let def_roll = monster.def_rolls.get(CombatType::Magic) * 9 / 10;
-        monster_copy.def_rolls.set(CombatType::Magic, def_roll);
-        hit_chance =
-            hit_chance * 0.75 + get_normal_accuracy(player, &monster_copy, using_spec)? * 0.25;
+        let max_def_roll = monster.def_rolls.get(CombatType::Magic) * 9 / 10;
+        hit_chance = hit_chance * 0.75 + normal_accuracy(max_att_roll, max_def_roll) * 0.25;
     }
 
     Ok(hit_chance)
@@ -703,25 +716,21 @@ pub fn get_distribution(
         if player.is_wearing("Efaritay's aid", None) {
             dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
         }
-        match (
+        let factor = match (
             player.gear.weapon.name.as_str(),
             player.is_wearing_silver_weapon(),
             tier,
         ) {
-            ("Blisterwood flail", _, _) => {
-                dist = dist.scale_damage(Fraction::new(5, 4).unwrap());
+            ("Blisterwood flail" | "Hallowed flail" | "Blisterwood stake", _, _) => {
+                Fraction::new(5, 4).unwrap()
             }
-            ("Blisterwood sickle", _, _) => {
-                dist = dist.scale_damage(Fraction::new(23, 20).unwrap());
-            }
-            ("Ivandis flail", _, _) => {
-                dist = dist.scale_damage(Fraction::new(6, 5).unwrap());
-            }
-            ("Rod of Ivandis", _, 1 | 2) | (_, true, 1) => {
-                dist = dist.scale_damage(Fraction::new(11, 10).unwrap());
-            }
-            (_, _, _) => {}
-        }
+            ("Sunspear", _, _) => Fraction::new(3, 2).unwrap(),
+            ("Blisterwood sickle", _, _) => Fraction::new(23, 20).unwrap(),
+            ("Ivandis flail", _, _) => Fraction::new(6, 5).unwrap(),
+            ("Rod of Ivandis", _, 1 | 2) | (_, true, 1) => Fraction::new(11, 10).unwrap(),
+            (_, _, _) => Fraction::new(1, 1).unwrap(),
+        };
+        dist = dist.scale_damage(factor);
     }
 
     if player.is_using_ranged() && player.is_wearing("Dark bow", None) {
@@ -904,6 +913,7 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         "Magic shortbow" | "Magic shortbow (i)" | "Magic longbow" | "Magic comp bow"
         | "Seercull" => (0, player.seercull_spec_max()),
         "Eye of Ayak" => (0, base_max_hit * 13 / 10),
+        "Sunspear" => (base_max_hit * 7 / 10 + 1, base_max_hit * 7 / 10 + 1),
         _ => (0, base_max_hit),
     };
 
@@ -986,8 +996,6 @@ fn apply_limiters(
         dist = dist.transform(&division_transformer(3, 0), &TransformOpts::default());
     }
 
-    // TODO: Implement updated Efaritay's aid here once wiki calc does
-
     // Ice demon takes 1/3 unless using a fire spell
     if monster.info.name.contains("Ice demon")
         && !player.is_using_fire_spell()
@@ -1018,8 +1026,8 @@ fn apply_limiters(
     }
 
     // Efaritay's aid with non-silver weapons against T2 vampyres deals 50% damage, applied post-roll
-    if monster.vampyre_tier() == Some(2) {
-        if !player.is_using_vampyrebane(2) && player.is_wearing("Efaritay's aid", None) {
+    if monster.vampyre_tier() == Some(2) && !player.is_using_vampyrebane(2) {
+        if player.is_wearing("Efaritay's aid", None) {
             dist = dist.transform(&division_transformer(2, 0), &TransformOpts::default());
         } else if player.is_wearing_silver_weapon() {
             dist = dist.transform(

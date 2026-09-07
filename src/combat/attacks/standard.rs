@@ -77,6 +77,7 @@ impl Hit {
         if player.combat_type() != CombatType::Magic {
             self.apply_flat_armour(monster);
         }
+        self.apply_vampyrebane(player, monster);
         self.apply_limiters(rng, limiter);
     }
 
@@ -110,6 +111,30 @@ impl Hit {
             && player.is_wearing_tzhaar_weapon()
         {
             self.damage = self.damage * 6 / 5;
+        }
+    }
+
+    pub fn apply_vampyrebane(&mut self, player: &Player, monster: &Monster) {
+        if let Some(tier) = monster.vampyre_tier() {
+            let efaritay = player.is_wearing("Efaritay's aid", None);
+            let apply_efaritay = |dmg| if efaritay { dmg * 11 / 10 } else { dmg };
+            if player.is_wearing_any(vec![
+                ("Blisterwood flail", None),
+                ("Hallowed flail", None),
+                ("Blisterwood stake", None),
+            ]) {
+                self.damage = apply_efaritay(self.damage) * 5 / 4;
+            } else if player.is_wearing("Sunspear", None) {
+                self.damage = apply_efaritay(self.damage) * 3 / 2;
+            } else if player.is_wearing("Blisterwood sickle", None) {
+                self.damage = apply_efaritay(self.damage) * 23 / 20;
+            } else if player.is_wearing("Ivandis flail", None) {
+                self.damage = apply_efaritay(self.damage) * 6 / 5;
+            } else if (player.is_wearing_any_version("Rod of Ivandis") && tier != 3)
+                || (player.is_wearing_silver_weapon() && tier == 1)
+            {
+                self.damage = apply_efaritay(self.damage) * 11 / 10;
+            }
         }
     }
 }

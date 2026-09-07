@@ -409,7 +409,7 @@ pub const PICKAXE_BONUSES: [(&str, u32); 10] = [
     ("Crystal pickaxe", 61),
 ];
 
-pub const SILVER_WEAPONS: [(&str, Option<&str>); 17] = [
+pub const SILVER_WEAPONS: [(&str, Option<&str>); 29] = [
     ("Blessed axe", None),
     ("Silver sickle", None),
     ("Silver sickle (b)", None),
@@ -422,11 +422,23 @@ pub const SILVER_WEAPONS: [(&str, Option<&str>); 17] = [
     ("Silverlight", Some("Dyed")),
     ("Darklight", None),
     ("Arclight", None),
-    ("Rod of Ivandis", None),
+    ("Rod of Ivandis", Some("1")),
+    ("Rod of Ivandis", Some("2")),
+    ("Rod of Ivandis", Some("3")),
+    ("Rod of Ivandis", Some("4")),
+    ("Rod of Ivandis", Some("5")),
+    ("Rod of Ivandis", Some("6")),
+    ("Rod of Ivandis", Some("7")),
+    ("Rod of Ivandis", Some("8")),
+    ("Rod of Ivandis", Some("9")),
+    ("Rod of Ivandis", Some("10")),
     ("Wolfbane", None),
     ("Blisterwood flail", None),
     ("Blisterwood sickle", None),
     ("Ivandis flail", None),
+    ("Hallowed flail", None),
+    ("Sunspear", None),
+    ("Blisterwood stake", None),
 ];
 
 pub const SECONDS_PER_TICK: f64 = 0.6;
@@ -634,10 +646,13 @@ pub const SMOKE_STAVES: [(&str, Option<&str>); 3] = [
     ("Twinflame staff", None),
 ];
 
-pub const IVANDIS_WEAPONS: [(&str, Option<&str>); 3] = [
+pub const IVANDIS_WEAPONS: [(&str, Option<&str>); 6] = [
     ("Blisterwood flail", None),
     ("Blisterwood sickle", None),
     ("Ivandis flail", None),
+    ("Hallowed flail", None),
+    ("Sunspear", None),
+    ("Blisterwood stake", None),
 ];
 
 pub const KERIS_WEAPONS: [(&str, Option<&str>); 6] = [
@@ -711,7 +726,7 @@ pub const DEMONBANE_WEAPONS: [(&str, Option<&str>); 6] = [
 pub const OGRE_BOWS: [(&str, Option<&str>); 2] = [("Ogre bow", None), ("Comp ogre bow", None)];
 pub const EAT_DELAY: u32 = 3;
 
-pub const SPEC_COSTS: [(&str, u8); 74] = [
+pub const SPEC_COSTS: [(&str, u8); 75] = [
     ("Ancient godsword", 50),
     ("Eldritch Nightmare staff", 55),
     ("Keris partisan of the sun", 75),
@@ -786,6 +801,7 @@ pub const SPEC_COSTS: [(&str, u8); 74] = [
     ("Eye of Ayak", 50),
     ("Arkan blade", 30),
     ("Rosewood blowpipe", 25),
+    ("Sunspear", 50),
 ];
 
 pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =

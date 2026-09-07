@@ -879,6 +879,11 @@ impl Weapon {
                 (Pummel, Crush, Aggressive),
                 (Block, Crush, Defensive),
             ],
+            "Flail" => [
+                (Chop, Slash, Accurate),
+                (Slash, Slash, Aggressive),
+                (Block, Slash, Defensive),
+            ],
             "Partisan" => [
                 (Stab, Stab, Accurate),
                 (Lunge, Stab, Aggressive),
@@ -956,7 +961,7 @@ impl Weapon {
                 (Rapid, Light, Rapid),
                 (Longrange, Light, Longrange),
             ],
-            "Chinchompa" => [
+            "Chinchompas" => [
                 (ShortFuse, Heavy, ShortFuse),
                 (MediumFuse, Heavy, MediumFuse),
                 (LongFuse, Heavy, LongFuse),
