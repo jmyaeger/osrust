@@ -604,7 +604,7 @@ fn apply_melee_weapon_boosts(
             (Fraction::new(3, 2).unwrap(), Fraction::new(3, 2).unwrap())
         }
         "Silverlight" | "Darklight" if monster.is_demon() => (
-            Fraction::new(1, 1).unwrap(),
+            Fraction::new(1, 1).unwrap() + get_demonbane_factor(60, monster),
             Fraction::new(1, 1).unwrap() + get_demonbane_factor(60, monster),
         ),
         "Arclight" | "Emberlight" if monster.is_demon() => (
