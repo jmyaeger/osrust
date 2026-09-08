@@ -804,8 +804,12 @@ pub const SPEC_COSTS: [(&str, u8); 75] = [
     ("Sunspear", 50),
 ];
 
-pub const DEMONBANE_VULNERABILITY: [(&str, i32); 3] =
-    [("Duke Sucellus", 70), ("Yama", 120), ("Void Flare", 200)];
+pub const DEMONBANE_VULNERABILITY: [(&str, i32); 4] = [
+    ("Duke Sucellus", 70),
+    ("Yama", 120),
+    ("Void Flare", 200),
+    ("Ice demon", 115),
+];
 
 pub const THRALL_ATTACK_SPEED: i32 = 4;
 pub const ECLIPSE_MOON_BURN_CHANCE: f64 = 0.2;

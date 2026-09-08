@@ -208,12 +208,13 @@ fn calc_player_melee_rolls(player: &mut Player, monster: &Monster) {
         .att_rolls
         .set(
             CombatType::Crush,
-            player.att_rolls.get(CombatType::Crush).unwrap() * inquisitor_boost as i32 / 1000,
+            player.att_rolls.get(CombatType::Crush).unwrap() * (200 + inquisitor_boost as i32)
+                / 200,
         )
         .unwrap_or_else(|_| panic!("Failed to apply Inquisitor's set accuracy boost."));
     player.max_hits.set(
         CombatType::Crush,
-        player.max_hits.get(CombatType::Crush) * inquisitor_boost / 1000,
+        player.max_hits.get(CombatType::Crush) * (200 + inquisitor_boost) / 200,
     );
 }
 
@@ -639,21 +640,17 @@ fn apply_melee_weapon_boosts(
 }
 
 fn inquisitor_boost(player: &Player) -> u32 {
-    let mut inquisitor_pieces = [&player.gear.head, &player.gear.body, &player.gear.legs]
-        .iter()
-        .filter_map(|slot| slot.as_ref())
-        .filter(|armor| armor.name.contains("Inquisitor"))
-        .count();
-
-    if inquisitor_pieces > 0 {
-        if player.is_wearing("Inquisitor's mace", None) {
-            inquisitor_pieces *= 5;
-        } else if inquisitor_pieces == 3 {
-            inquisitor_pieces += 2;
-        }
+    let mut inq_bonus = 0;
+    if player.is_wearing("Inquisitor's great helm", None) {
+        inq_bonus += 1;
     }
-
-    1000 + 5 * inquisitor_pieces as u32
+    if player.is_wearing("Inquisitor's hauberk", None) {
+        inq_bonus += 2;
+    }
+    if player.is_wearing("Inquisitor's plateskirt", None) {
+        inq_bonus += 2;
+    }
+    inq_bonus
 }
 
 fn crystal_bonus(player: &Player) -> u32 {
@@ -816,7 +813,7 @@ fn charged_staff_max_hit(player: &Player) -> u32 {
         "Trident of the Swamp" | "Trident of the Swamp (e)" => {
             max(1, (visible_magic / 3).saturating_sub(2))
         }
-        "Sanguinesti staff" => max(1, (visible_magic / 3).saturating_sub(1)),
+        "Sanguinesti staff" => max(1, visible_magic / 3),
         "Dawnbringer" => max(1, (visible_magic / 6).saturating_sub(1)),
         "Tumeken's shadow" => visible_magic / 3 + 1,
         "Bone staff" => max(1, (visible_magic / 3).saturating_sub(5)) + 10,

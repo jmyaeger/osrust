@@ -490,6 +490,22 @@ impl AttackDistribution {
 
         ret
     }
+
+    pub fn always_max(&self) -> AttackDistribution {
+        AttackDistribution::new(
+            self.dists
+                .iter()
+                .map(|d| {
+                    let best = d
+                        .hits
+                        .iter()
+                        .max_by_key(|h| (h.any_accurate(), h.get_sum()))
+                        .unwrap();
+                    HitDistribution::new(vec![WeightedHit::new(1.0, best.hitsplats.clone())])
+                })
+                .collect(),
+        )
+    }
 }
 
 pub fn flat_limit_transformer(minimum: Option<u32>, maximum: Option<u32>) -> impl HitTransformer {

@@ -403,10 +403,11 @@ pub fn sang_staff_attack(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let hit = standard_attack(player, monster, rng, limiter);
-    if rng.random_range(0..6) == 0 {
-        // 1/6 chance to heal by half of the damage dealt
+    let mut hit = standard_attack(player, monster, rng, limiter);
+    if hit.success && rng.random_range(0..5) == 0 {
+        // 1/5 chance to heal by half of the damage dealt and deal 8 extra damage
         player.heal(hit.damage / 2, None);
+        hit.damage += 8
     }
 
     hit

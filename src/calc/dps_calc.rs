@@ -163,13 +163,14 @@ pub fn get_hit_chance(
             | "Arkan blade"
             | "Osmumten's fang"
             | "Osmumten's fang (or)"
+            | "Tonalztics of Ralos"
             | "Granite hammer" => Fraction::new(3, 2),
             "Dragon dagger" => Fraction::new(115, 100),
             "Abyssal dagger" | "Abyssal whip" | "Dragon mace" | "Dragon sword" | "Elder maul" => {
                 Fraction::new(5, 4)
             }
             "Soulreaper axe" => {
-                Fraction::new(100 + 6 * player.boosts.soulreaper_stacks as i32, 100)
+                Fraction::new(100 + 12 * player.boosts.soulreaper_stacks as i32, 100)
             }
             "Magic shortbow" | "Magic shortbow (i)" => Fraction::new(10, 7),
             "Heavy ballista" | "Light ballista" => Fraction::new(5, 4),
@@ -338,37 +339,6 @@ pub fn get_distribution(
         )]));
     }
 
-    // Check if the monster always takes the maximum hit for the current combat type
-    if player.is_using_magic() && constants::ALWAYS_MAX_HIT_MAGIC.contains(&monster.id())
-        || player.is_using_melee() && constants::ALWAYS_MAX_HIT_MELEE.contains(&monster.id())
-        || player.is_using_ranged() && constants::ALWAYS_MAX_HIT_RANGED.contains(&monster.id())
-    {
-        if monster.info.name == "Void Flare"
-            && player.boosts.mark_of_darkness
-            && player.is_using_demonbane_spell()
-        {
-            let damage_boost = if player.is_wearing("Purging staff", None) {
-                50
-            } else {
-                25
-            };
-            return Ok(AttackDistribution::new(vec![HitDistribution::single(
-                1.0,
-                vec![Hitsplat::new(
-                    max_hit
-                        + get_demonbane_factor(100, monster)
-                            .multiply_to_int(max_hit * damage_boost / 100),
-                    true,
-                )],
-            )]));
-        }
-
-        return Ok(AttackDistribution::new(vec![HitDistribution::single(
-            1.0,
-            vec![Hitsplat::new(dist.get_max(), true)],
-        )]));
-    }
-
     // Add a minimum hit if the player is using sunfire runes and a fire spell
     if player.boosts.sunfire.active && player.is_using_fire_spell() {
         dist = AttackDistribution::new(vec![HitDistribution::linear(
@@ -418,7 +388,10 @@ pub fn get_distribution(
 
     // Halberd specs
     if using_spec
-        && player.is_wearing_any(vec![("Dragon halberd", None), ("Crystal halberd", None)])
+        && player.is_wearing_any(vec![
+            ("Dragon halberd", None),
+            ("Crystal halberd", Some("Active")),
+        ])
     {
         // Second hit has 75% accuracy
         let second_hit_att_roll = player.att_rolls.get(player.combat_type())? * 3 / 4;
@@ -444,7 +417,7 @@ pub fn get_distribution(
             || player.is_wearing_any_version("Rosewood blowpipe")
         {
             2
-        } else if player.is_wearing("Webweaver bow", None) {
+        } else if player.is_wearing("Webweaver bow", Some("Charged")) {
             4
         } else {
             0
@@ -456,40 +429,6 @@ pub fn get_distribution(
                 dist.add_dist(standard_hit_dist.clone());
             }
         }
-    }
-
-    // Abyssal dagger spec
-    if using_spec && player.is_wearing_any_version("Abyssal dagger") {
-        let second_hit = HitDistribution::linear(1.0, min_hit, max_hit);
-        dist = dist.transform(
-            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit),
-            &TransformOpts {
-                transform_inaccurate: false,
-            },
-        );
-    }
-
-    // Saradomin sword spec
-    if using_spec && player.is_wearing("Saradomin sword", None) {
-        let magic_hit = HitDistribution::linear(1.0, 1, 16);
-        if !constants::IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.id()) {
-            dist = dist.transform(
-                &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&magic_hit),
-                &TransformOpts {
-                    transform_inaccurate: false,
-                },
-            );
-        }
-    }
-
-    // Granite hammer spec
-    if using_spec && player.is_wearing("Granite hammer", None) {
-        dist = dist.transform(
-            &flat_add_transformer(5, 0),
-            &TransformOpts {
-                transform_inaccurate: true,
-            },
-        );
     }
 
     // Verac's set effect distribution
@@ -583,7 +522,7 @@ pub fn get_distribution(
                 let mut monster_copy = monster.clone();
 
                 // Drains defence by 10% of the magic level
-                let def_drain = monster_copy.stats.magic.base / 10;
+                let def_drain = monster_copy.stats.magic.base / 8;
                 monster_copy.stats.defence.drain(def_drain);
                 monster_copy.def_rolls = monster_def_rolls(&monster_copy);
 
@@ -643,6 +582,58 @@ pub fn get_distribution(
             .hits;
 
         dist = dist_from_multiple_hits(vec![hits1, hits2]);
+    }
+
+    if player.is_using_ranged() && player.is_wearing_any_version("Dark bow") {
+        dist = AttackDistribution::new(vec![standard_hit_dist.clone(), standard_hit_dist.clone()]);
+        if using_spec {
+            dist = dist.transform(
+                &flat_limit_transformer(Some(min_hit), Some(48)),
+                &TransformOpts::default(),
+            );
+        }
+    }
+
+    // Check if the monster always takes the maximum hit for the current combat type
+    if player.is_using_magic() && constants::ALWAYS_MAX_HIT_MAGIC.contains(&monster.id())
+        || player.is_using_melee() && constants::ALWAYS_MAX_HIT_MELEE.contains(&monster.id())
+        || player.is_using_ranged() && constants::ALWAYS_MAX_HIT_RANGED.contains(&monster.id())
+    {
+        dist = dist.always_max();
+    }
+
+    // Abyssal dagger spec
+    if using_spec && player.is_wearing_any_version("Abyssal dagger") {
+        let second_hit = HitDistribution::linear(1.0, min_hit, max_hit);
+        dist = dist.transform(
+            &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&second_hit),
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        );
+    }
+
+    // Saradomin sword spec
+    if using_spec && player.is_wearing("Saradomin sword", None) {
+        let magic_hit = HitDistribution::linear(1.0, 1, 16);
+        if !constants::IMMUNE_TO_MAGIC_MONSTERS.contains(&monster.id()) {
+            dist = dist.transform(
+                &|h| HitDistribution::new(vec![WeightedHit::new(1.0, vec![*h])]).zip(&magic_hit),
+                &TransformOpts {
+                    transform_inaccurate: false,
+                },
+            );
+        }
+    }
+
+    // Granite hammer spec
+    if using_spec && player.is_wearing("Granite hammer", None) {
+        dist = dist.transform(
+            &flat_add_transformer(5, 0),
+            &TransformOpts {
+                transform_inaccurate: true,
+            },
+        );
     }
 
     // Guardians (CoX) distribution
@@ -711,6 +702,24 @@ pub fn get_distribution(
         );
     }
 
+    // Sanguinesti staff heal procs
+    if player.is_wearing_any(vec![
+        ("Sanguinesti staff", Some("Charged")),
+        ("Holy sanguinesti staff", Some("Charged")),
+    ]) {
+        dist = dist.transform(
+            &|h| {
+                HitDistribution::new(vec![
+                    WeightedHit::new(0.8, vec![*h]),
+                    WeightedHit::new(0.2, vec![Hitsplat::new(h.damage + 8, h.accurate)]),
+                ])
+            },
+            &TransformOpts {
+                transform_inaccurate: false,
+            },
+        )
+    }
+
     // Vampyre stuff
     if let Some(tier) = monster.vampyre_tier() {
         if player.is_wearing("Efaritay's aid", None) {
@@ -731,16 +740,6 @@ pub fn get_distribution(
             (_, _, _) => Fraction::new(1, 1).unwrap(),
         };
         dist = dist.scale_damage(factor);
-    }
-
-    if player.is_using_ranged() && player.is_wearing("Dark bow", None) {
-        dist = AttackDistribution::new(vec![standard_hit_dist.clone(), standard_hit_dist.clone()]);
-        if using_spec {
-            dist = dist.transform(
-                &flat_limit_transformer(Some(min_hit), Some(48)),
-                &TransformOpts::default(),
-            );
-        }
     }
 
     let bolt_context = BoltContext::new(
@@ -869,10 +868,10 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
             let mut player_copy = player.clone();
             player_copy.boosts.soulreaper_stacks = 0;
             calc_active_player_rolls(&mut player_copy, monster);
-
+            let max_hit = player_copy.max_hits.get(combat_type);
             (
-                0,
-                player_copy.max_hits.get(combat_type) * (100 + 6 * current_stacks) / 100,
+                max_hit * (6 * current_stacks) / 100,
+                max_hit * (100 + 6 * current_stacks) / 100,
             )
         }
         "Saradomin godsword" | "Zamorak godsword" | "Ancient godsword" | "Dragon halberd"
@@ -905,7 +904,8 @@ fn get_spec_min_max_hit(player: &Player, monster: &Monster) -> Result<(u32, u32)
         }
         "Webweaver bow" => (0, base_max_hit - base_max_hit * 6 / 10),
         "Dark bow" => {
-            let descent_of_dragons = player.is_wearing("Dragon arrow", None);
+            let descent_of_dragons = player.is_wearing_any_version("Dragon arrow")
+                || player.is_wearing_any_version("Seeking dragon arrow");
             let min_hit = if descent_of_dragons { 5 } else { 8 };
             let damage_factor = if descent_of_dragons { 15 } else { 13 };
             (min_hit, base_max_hit * damage_factor / 10)

@@ -1494,9 +1494,12 @@ pub fn soulreaper_axe_spec(
 
     let mut info = AttackInfo::new(player, monster);
 
-    // Increase max hit and accuracy by 6% per stack
-    info.max_hit = info.max_hit * (100 + 6 * current_stacks) / 100;
-    info.max_att_roll = info.max_att_roll * (100 + 6 * current_stacks as i32) / 100;
+    // Increase accuracy by 12% per stack
+    info.max_att_roll = info.max_att_roll * (100 + 12 * current_stacks as i32) / 100;
+
+    // Increase min hit and max hit by 6% of max hit per stack
+    info.min_hit = info.max_hit * (6 + current_stacks) / 100;
+    info.max_hit += info.min_hit;
 
     let mut hit = base_attack(&info, rng, false);
 
@@ -1521,8 +1524,11 @@ pub fn tonalztics_of_ralos_spec(
     // Rolls up to 3/4 of the "true" max hit for each hit
     info.max_hit = info.max_hit * 3 / 4;
 
+    // Accuracy is boosted by 50%
+    info.max_att_roll = info.max_att_roll * 3 / 2;
+
     let drain_cap = Some(monster.stats.defence.base / 2);
-    let drain_amount = monster.stats.magic.base / 10;
+    let drain_amount = monster.stats.magic.base / 8;
 
     let mut hit1 = base_attack(&info, rng, false);
     if hit1.success {
@@ -1802,11 +1808,7 @@ pub fn rosewood_bp_spec(
     rng: &mut SmallRng,
     limiter: &Option<Box<dyn Limiter>>,
 ) -> Hit {
-    let mut info = AttackInfo::new(player, monster);
-
-    // Reduce accuracy by 20% and boost damage by 10%
-    info.max_att_roll = info.max_att_roll * 4 / 5;
-    info.max_hit = info.max_hit * 11 / 10;
+    let info = AttackInfo::new(player, monster);
 
     // Rolls two independent hits
     let mut hit1 = base_attack(&info, rng, false);
