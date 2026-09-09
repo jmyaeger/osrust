@@ -1391,6 +1391,10 @@ impl Player {
     pub fn fight_id(&self) -> PlayerFightId {
         self.attrs.fight_id
     }
+
+    pub fn highest_offensive_style(&self) -> CombatType {
+        self.bonuses.attack.highest_style()
+    }
 }
 
 /// Builder for constructing `Player` instances.

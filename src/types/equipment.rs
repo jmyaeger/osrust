@@ -482,6 +482,20 @@ impl StyleBonus {
         self.ranged += other.ranged;
         self.magic += other.magic;
     }
+
+    pub fn highest_style(&self) -> CombatType {
+        [
+            (self.stab, CombatType::Stab),
+            (self.slash, CombatType::Slash),
+            (self.crush, CombatType::Crush),
+            (self.ranged, CombatType::Ranged),
+            (self.magic, CombatType::Magic),
+        ]
+        .into_iter()
+        .max_by_key(|&(bonus, _)| bonus)
+        .map(|(_, combat_type)| combat_type)
+        .expect("array should be non-empty")
+    }
 }
 
 // Equipment strength bonuses for each primary style
